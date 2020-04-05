@@ -6,9 +6,9 @@ namespace Serilog.Ui.MsSqlServerProvider
 {
     public class SqlServerDataProvider : IDataProvider
     {
-        private readonly SqlServerOptions _options;
+        private readonly RelationalDbOptions _options;
 
-        public SqlServerDataProvider(SqlServerOptions options)
+        public SqlServerDataProvider(RelationalDbOptions options)
         {
             _options = options;
         }

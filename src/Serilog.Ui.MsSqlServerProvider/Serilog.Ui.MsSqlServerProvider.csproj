@@ -8,4 +8,8 @@
     <ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+
 </Project>

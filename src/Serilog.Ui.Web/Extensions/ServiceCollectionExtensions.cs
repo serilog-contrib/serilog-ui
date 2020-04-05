@@ -2,11 +2,11 @@
 using Serilog.Ui.Core;
 using System;
 
-namespace Serilog.Ui.Web.Extensions
+namespace Serilog.Ui.Web
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddSerilogUi(this IServiceCollection services, Action<DataProviderOptionBuilder> optionsBuilder)
+        public static IServiceCollection AddSerilogUi(this IServiceCollection services, Action<DataProviderOptionsBuilder> optionsBuilder)
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
@@ -14,7 +14,7 @@ namespace Serilog.Ui.Web.Extensions
             if (optionsBuilder == null)
                 throw new ArgumentNullException(nameof(optionsBuilder));
 
-            var builder = new DataProviderOptionBuilder(services);
+            var builder = new DataProviderOptionsBuilder(services);
             optionsBuilder.Invoke(builder);
 
             return services;

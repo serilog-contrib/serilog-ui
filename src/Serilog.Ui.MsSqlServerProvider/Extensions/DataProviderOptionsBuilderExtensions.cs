@@ -7,7 +7,7 @@ namespace Serilog.Ui.MsSqlServerProvider
     public static class DataProviderOptionBuilderExtensions
     {
         public static void UseSqlServer(
-            this DataProviderOptionBuilder optionsBuilder,
+            this DataProviderOptionsBuilder optionsBuilder,
             string connectionString,
             string tableName,
             string schemaName = null
@@ -26,7 +26,7 @@ namespace Serilog.Ui.MsSqlServerProvider
                 Schema = schemaName
             };
 
-            optionsBuilder.Services.AddSingleton(relationProvider);
+            ((IDataProviderOptionsBuilder)optionsBuilder).Services.AddSingleton(relationProvider);
         }
     }
 }
