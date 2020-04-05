@@ -27,6 +27,7 @@ namespace Serilog.Ui.MsSqlServerProvider
             };
 
             ((IDataProviderOptionsBuilder)optionsBuilder).Services.AddSingleton(relationProvider);
+            ((IDataProviderOptionsBuilder)optionsBuilder).Services.AddScoped<IDataProvider, SqlServerDataProvider>();
         }
     }
 }
