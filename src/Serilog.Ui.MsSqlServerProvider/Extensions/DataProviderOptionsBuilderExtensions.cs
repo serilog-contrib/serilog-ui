@@ -10,7 +10,7 @@ namespace Serilog.Ui.MsSqlServerProvider
             this DataProviderOptionsBuilder optionsBuilder,
             string connectionString,
             string tableName,
-            string schemaName = null
+            string schemaName = "dbo"
         )
         {
             if (string.IsNullOrEmpty(connectionString))

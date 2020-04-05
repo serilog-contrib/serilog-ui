@@ -20,8 +20,8 @@ namespace Serilog.Ui.MsSqlServerProvider
         {
             using (IDbConnection connection = new SqlConnection(_options.ConnectionString))
             {
-                var logsTask = GetLogsAsync(connection, page - 1, count);
-                var logCountTask = CountLogsAsync(connection);
+                var logsTask = GetLogsAsync(page - 1, count);
+                var logCountTask = CountLogsAsync();
 
                 await Task.WhenAll(logsTask, logCountTask);
 
@@ -29,20 +29,24 @@ namespace Serilog.Ui.MsSqlServerProvider
             }
         }
 
-        private Task<IEnumerable<LogModel>> GetLogsAsync(IDbConnection connection, int page, int count)
+        private async Task<IEnumerable<LogModel>> GetLogsAsync(int page, int count)
         {
             var query =
                 $"SELECT [Id], [Message],[Level], [TimeStamp], [Exception], [Properties] FROM [{_options.Schema}].[{_options.TableName}] " +
                 "ORDER BY Id DESC OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY";
-
-            return connection.QueryAsync<LogModel>(query, new { page, count });
+            using (IDbConnection connection = new SqlConnection(_options.ConnectionString))
+            {
+                return await connection.QueryAsync<LogModel>(query, new { Offset = page, Count = count });
+            }
         }
 
-        public async Task<int> CountLogsAsync(IDbConnection connection)
+        public async Task<int> CountLogsAsync()
         {
             var query = $"SELECT COUNT(Id) FROM [{_options.Schema}].[{_options.TableName}]";
-
-            return await connection.ExecuteScalarAsync<int>(query);
+            using (IDbConnection connection = new SqlConnection(_options.ConnectionString))
+            {
+                return await connection.ExecuteScalarAsync<int>(query);
+            }
         }
     }
 }
