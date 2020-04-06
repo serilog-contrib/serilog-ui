@@ -3,7 +3,100 @@
 @{
     ViewData["Title"] = "Log List";
     Layout = "~/Views/Shared/_LogLayout.cshtml";
+    var levelClass = string.Empty;
+    var totalPages = Model.LogCount / 20;
 }
 <h1>Log List</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<div class="row">
+    <div class="col-sm-12 col-md-6">
+        <div class="table-select">
+            <label>
+                Show
+                <select name="dtBasicExample_length" class="custom-select custom-select-sm form-control form-control-sm">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select> entries
+            </label>
+        </div>
+    </div>
+    <div class="col-sm-12 col-md-6">
+        <div class="table-filter">
+            <label>Search:<input type="search" class="form-control form-control-sm" placeholder="" aria-controls="dtBasicExample"></label>
+        </div>
+    </div>
+</div>
+
+<table class="table" id="log-table">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Level</th>
+            <th scope="col" style="width: 100px">Date</th>
+            <th scope="col">Message</th>
+            <th scope="col">Exception</th>
+            <th scope="col">Properties</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var log in Model.Logs)
+        {
+            switch (log.Level)
+            {
+                case "Verbose":
+                case "Debug":
+                    levelClass = "bg-success";
+                    break;
+                case "Information":
+                    levelClass = "bg-primary";
+                    break;
+                case "Warning":
+                    levelClass = "bg-warning";
+                    break;
+                case "Error":
+                    levelClass = "bg-danger";
+                    break;
+            }
+
+            <tr>
+                <th scope="row">@log.Id</th>
+                <td class="text-center"><span style="padding: 5px;" class="@levelClass text-white">@log.Level</span></td>
+                <td class="text-center">@log.Timestamp</td>
+                <td>
+                    <span class="overflow-auto"> @log.Message</span>
+                </td>
+                <td class="text-center">@log.Exception</td>
+                <td class="text-center"><a href="#" title="Click to view">View</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="row">
+    <div class="col-sm-12 col-md-5">
+        <div class="table-paging-info">Showing 41 to 50 of @Model.LogCount entries</div>
+    </div>
+    <div class="col-sm-12 col-md-7">
+        <div class="table-pagination">
+            <ul class="pagination">
+                <li class="paginate_button page-item previous" id="dtBasicExample_previous">
+                    <a href="#" aria-controls="dtBasicExample" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                </li>
+                <li class="paginate_button page-item ">
+                    <a href="#" aria-controls="dtBasicExample" data-dt-idx="1" tabindex="0" class="page-link">1</a>
+                </li>
+                <li class="paginate_button page-item ">
+                    <a href="#" aria-controls="dtBasicExample" data-dt-idx="2" tabindex="0" class="page-link">2</a>
+                </li>
+                <li class="paginate_button page-item ">
+                    <a href="#" aria-controls="dtBasicExample" data-dt-idx="3" tabindex="0" class="page-link">3</a>
+                </li>
+                <li class="paginate_button page-item "><a href="#" aria-controls="dtBasicExample" data-dt-idx="4" tabindex="0" class="page-link">4</a></li>
+                <li class="paginate_button page-item active"><a href="#" aria-controls="dtBasicExample" data-dt-idx="5" tabindex="0" class="page-link">5</a></li>
+                <li class="paginate_button page-item "><a href="#" aria-controls="dtBasicExample" data-dt-idx="6" tabindex="0" class="page-link">6</a></li>
+                <li class="paginate_button page-item next" id="dtBasicExample_next"><a href="#" aria-controls="dtBasicExample" data-dt-idx="7" tabindex="0" class="page-link">Next</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

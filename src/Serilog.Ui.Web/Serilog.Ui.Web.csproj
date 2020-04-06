@@ -15,6 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="wwwroot\**\*.css" />
+    <EmbeddedResource Include="wwwroot\**\*.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
   </ItemGroup>
 </Project>
