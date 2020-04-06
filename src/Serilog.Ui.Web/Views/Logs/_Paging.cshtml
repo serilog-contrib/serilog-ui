@@ -1,0 +1,55 @@
+﻿@model LogViewModel
+@{
+    var totalPages = Model.LogCount / Model.Count;
+    totalPages += Model.LogCount % Model.Count != 0 ? 1 : 0;
+    var pageDisplayCount = totalPages;
+    var hasMore = false;
+    if (totalPages > 5)
+    {
+        pageDisplayCount = 5;
+        if (totalPages - Model.Page > 2)
+        {
+            hasMore = true;
+        }
+
+    }
+}
+
+<div class="table-pagination">
+    <input type="hidden" id="page" name="page" />
+    <ul class="pagination">
+        @if (Model.Page != 1)
+        {
+            var value = Model.Page - 1;
+            <li class="page-item previous">
+                <a href="#" data-val="@value" tabindex="@value" class="page-link">Previous</a>
+            </li>
+        }
+        @for (var i = 1; i <= pageDisplayCount; i++)
+        {
+            if (Model.Page == i)
+            {
+                <li class="page-item active">
+                    <span class="page-link disabled">
+                        @i
+                        <span class="sr-only">(current)</span>
+                    </span>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="#" data-val="@i" tabindex="@i" class="page-link">@i</a>
+                </li>
+            }
+        }
+        @if (hasMore)
+        {
+            var value = Model.Page + 1;
+            <li class="page-item ">&nbsp;...&nbsp;</li>
+            <li class="page-item next">
+                <a href="#" data-val="@value" tabindex="@value" class="page-link">Next</a>
+            </li>
+        }
+    </ul>
+</div>

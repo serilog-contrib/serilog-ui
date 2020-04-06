@@ -18,13 +18,21 @@ namespace Serilog.Ui.Web.Controllers
             _dataProvider = dataProvider;
         }
 
-        public async Task<IActionResult> Index(int page = 1, int count = 20)
+        public async Task<IActionResult> Index(int page = 1, int count = 10)
         {
+            if (page < 1)
+                page = 1;
+
+            if (count > 100)
+                count = 100;
+
             var (logs, logCount) = await _dataProvider.FetchDataAsync(page, count);
             var viewModel = new LogViewModel
             {
                 LogCount = logCount,
-                Logs = logs
+                Logs = logs,
+                Page = page,
+                Count = count
             };
 
             GetResources();

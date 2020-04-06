@@ -12,4 +12,10 @@
     $('#sidebarCollapse').on('click', function () {
         $('#sidebar').toggleClass('active');
     });
+
+    $('.page-link').on('click', function (e) {
+        e.preventDefault();
+        $('#page').val($(this).attr("data-val"));
+        $('form').submit()
+    });
 })(jQuery);

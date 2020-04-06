@@ -8,5 +8,9 @@ namespace Serilog.Ui.Web.ViewModel
         public int LogCount { get; set; }
 
         public IEnumerable<LogModel> Logs { get; set; }
+
+        public int Page { get; set; }
+
+        public int Count { get; set; }
     }
 }
