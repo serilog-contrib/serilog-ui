@@ -11,11 +11,7 @@
             <div class="table-select">
                 <label>
                     Show
-                    <select name="count" class="form-control form-control-sm">
-                        <option value="10">10</option>
-                        <option value="25">25</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
+                    <select asp-items="@Model.CountSelectListItems" name="count" class="form-control form-control-sm">
                     </select>
                     entries
                 </label>
@@ -42,33 +38,33 @@
         <tbody>
             @foreach (var log in Model.Logs)
             {
-            switch (log.Level)
-            {
-            case "Verbose":
-            case "Debug":
-            levelClass = "bg-success";
-            break;
-            case "Information":
-            levelClass = "bg-primary";
-            break;
-            case "Warning":
-            levelClass = "bg-warning";
-            break;
-            case "Error":
-            levelClass = "bg-danger";
-            break;
-            }
+                switch (log.Level)
+                {
+                    case "Verbose":
+                    case "Debug":
+                        levelClass = "bg-success";
+                        break;
+                    case "Information":
+                        levelClass = "bg-primary";
+                        break;
+                    case "Warning":
+                        levelClass = "bg-warning";
+                        break;
+                    case "Error":
+                        levelClass = "bg-danger";
+                        break;
+                }
 
-            <tr>
-                <th scope="row">@log.Id</th>
-                <td class="text-center"><span style="padding: 5px;" class="@levelClass text-white">@log.Level</span></td>
-                <td class="text-center">@log.Timestamp</td>
-                <td>
-                    <span class="overflow-auto"> @log.Message</span>
-                </td>
-                <td class="text-center">@log.Exception</td>
-                <td class="text-center"><a href="#" title="Click to view">View</a></td>
-            </tr>
+                <tr>
+                    <th scope="row">@log.Id</th>
+                    <td class="text-center"><span style="padding: 5px;" class="@levelClass text-white">@log.Level</span></td>
+                    <td class="text-center">@log.Timestamp</td>
+                    <td>
+                        <span class="overflow-auto"> @log.Message</span>
+                    </td>
+                    <td class="text-center">@log.Exception</td>
+                    <td class="text-center"><a href="#" title="Click to view">View</a></td>
+                </tr>
             }
         </tbody>
     </table>

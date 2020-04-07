@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Serilog.Ui.Core;
 using Serilog.Ui.Web.ViewModel;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,9 +12,23 @@ namespace Serilog.Ui.Web.Controllers
 {
     public class LogsController : Controller
     {
-        private static string _scripts;
-        private static string _styles;
+        private static readonly string Scripts;
+        private static readonly string Styles;
+        private static readonly IEnumerable<SelectListItem> SelectListItems;
         private readonly IDataProvider _dataProvider;
+
+        static LogsController()
+        {
+            Styles = SetResource("Serilog.Ui.Web.wwwroot.css.main.css");
+            Scripts = SetResource("Serilog.Ui.Web.wwwroot.js.main.js");
+            SelectListItems = new List<SelectListItem>
+            {
+                new SelectListItem {Text = "10", Value = "10"},
+                new SelectListItem {Text = "25", Value = "25"},
+                new SelectListItem {Text = "50", Value = "50"},
+                new SelectListItem {Text = "100", Value = "100"}
+            };
+        }
 
         public LogsController(IDataProvider dataProvider)
         {
@@ -26,39 +43,31 @@ namespace Serilog.Ui.Web.Controllers
             if (count > 100)
                 count = 100;
 
+            var x = SelectListItems.FirstOrDefault(i => i.Value == count.ToString());
+            if (x != null)
+                x.Selected = true;
+            else
+                SelectListItems.First().Selected = true;
+
             var (logs, logCount) = await _dataProvider.FetchDataAsync(page, count);
             var viewModel = new LogViewModel
             {
                 LogCount = logCount,
                 Logs = logs,
                 Page = page,
-                Count = count
+                Count = count,
+                CountSelectListItems = SelectListItems
             };
 
-            GetResources();
+            ViewData["Styles"] = Styles;
+            ViewData["Scripts"] = Scripts;
 
             return View(viewModel);
         }
 
-        private void GetResources()
+        private static string SetResource(string resourceName)
         {
-            if (_styles != null)
-            {
-                ViewData["Styles"] = _styles;
-                ViewData["Scripts"] = _scripts;
-                return;
-            }
-
-            _styles = SetResource("Serilog.Ui.Web.wwwroot.css.main.css");
-            ViewData["Styles"] = _styles;
-
-            _scripts = SetResource("Serilog.Ui.Web.wwwroot.js.main.js");
-            ViewData["Scripts"] = _scripts;
-        }
-
-        private string SetResource(string resourceName)
-        {
-            var resourceStream = GetType().Assembly.GetManifestResourceStream(resourceName);
+            var resourceStream = typeof(LogsController).Assembly.GetManifestResourceStream(resourceName);
             var resource = string.Empty;
 
             using var reader = new StreamReader(resourceStream, Encoding.UTF8);

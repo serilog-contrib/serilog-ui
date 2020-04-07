@@ -1,4 +1,5 @@
-﻿using Serilog.Ui.Core;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Serilog.Ui.Core;
 using System.Collections.Generic;
 
 namespace Serilog.Ui.Web.ViewModel
@@ -12,5 +13,7 @@ namespace Serilog.Ui.Web.ViewModel
         public int Page { get; set; }
 
         public int Count { get; set; }
+
+        public IEnumerable<SelectListItem> CountSelectListItems { get; set; }
     }
 }
