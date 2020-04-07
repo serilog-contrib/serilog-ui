@@ -14,6 +14,8 @@ namespace Serilog.Ui.Web.ViewModel
 
         public int Count { get; set; }
 
-        public IEnumerable<SelectListItem> CountSelectListItems { get; set; }
+        public IEnumerable<SelectListItem> LogCountSelectListItems { get; set; }
+
+        public IEnumerable<SelectListItem> LogLevelSelectListItems { get; set; }
     }
 }

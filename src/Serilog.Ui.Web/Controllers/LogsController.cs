@@ -14,19 +14,29 @@ namespace Serilog.Ui.Web.Controllers
     {
         private static readonly string Scripts;
         private static readonly string Styles;
-        private static readonly IEnumerable<SelectListItem> SelectListItems;
+        private static readonly IEnumerable<SelectListItem> LogCountSelectListItems;
+        private static readonly IEnumerable<SelectListItem> LogLevelSelectListItems;
         private readonly IDataProvider _dataProvider;
 
         static LogsController()
         {
             Styles = SetResource("Serilog.Ui.Web.wwwroot.css.main.css");
             Scripts = SetResource("Serilog.Ui.Web.wwwroot.js.main.js");
-            SelectListItems = new List<SelectListItem>
+            LogCountSelectListItems = new List<SelectListItem>
             {
                 new SelectListItem {Text = "10", Value = "10", Selected = true},
                 new SelectListItem {Text = "25", Value = "25"},
                 new SelectListItem {Text = "50", Value = "50"},
                 new SelectListItem {Text = "100", Value = "100"}
+            };
+            LogLevelSelectListItems = new List<SelectListItem>
+            {
+                new SelectListItem {Text = "---", Value = "", Selected = true},
+                new SelectListItem {Text = "Verbose", Value = "Verbose"},
+                new SelectListItem {Text = "Debug", Value = "Debug"},
+                new SelectListItem {Text = "Information", Value = "Information"},
+                new SelectListItem {Text = "Warning", Value = "Warning"},
+                new SelectListItem {Text = "Error", Value = "Error"}
             };
         }
 
@@ -35,7 +45,7 @@ namespace Serilog.Ui.Web.Controllers
             _dataProvider = dataProvider;
         }
 
-        public async Task<IActionResult> Index(int page = 1, int count = 10)
+        public async Task<IActionResult> Index(int page = 1, int count = 10, string level = null)
         {
             if (page < 1)
                 page = 1;
@@ -43,30 +53,55 @@ namespace Serilog.Ui.Web.Controllers
             if (count > 100)
                 count = 100;
 
-            if (SelectListItems.First(i => i.Selected).Value != count.ToString())
-            {
-                SelectListItems.First(i => i.Selected).Selected = false;
-                var x = SelectListItems.FirstOrDefault(i => i.Value == count.ToString());
-                if (x != null)
-                    x.Selected = true;
-                else
-                    SelectListItems.First().Selected = true;
-            };
+            SetLogCountSelectListItem(count);
 
-            var (logs, logCount) = await _dataProvider.FetchDataAsync(page, count);
+            SetLogLevelSelectListItem(level);
+
+            var (logs, logCount) = await _dataProvider.FetchDataAsync(page, count, level);
             var viewModel = new LogViewModel
             {
                 LogCount = logCount,
                 Logs = logs,
                 Page = page,
                 Count = count,
-                CountSelectListItems = SelectListItems
+                LogCountSelectListItems = LogCountSelectListItems,
+                LogLevelSelectListItems = LogLevelSelectListItems
             };
 
             ViewData["Styles"] = Styles;
             ViewData["Scripts"] = Scripts;
 
             return View(viewModel);
+        }
+
+        private static void SetLogLevelSelectListItem(string level)
+        {
+            if (LogLevelSelectListItems.First(i => i.Selected).Value != level)
+            {
+                LogLevelSelectListItems.First(i => i.Selected).Selected = false;
+                var x = LogLevelSelectListItems.FirstOrDefault(i => i.Value == level);
+                if (x != null)
+                    x.Selected = true;
+                else
+                    LogLevelSelectListItems.First().Selected = true;
+            }
+
+            ;
+        }
+
+        private static void SetLogCountSelectListItem(int count)
+        {
+            if (LogCountSelectListItems.First(i => i.Selected).Value != count.ToString())
+            {
+                LogCountSelectListItems.First(i => i.Selected).Selected = false;
+                var x = LogCountSelectListItems.FirstOrDefault(i => i.Value == count.ToString());
+                if (x != null)
+                    x.Selected = true;
+                else
+                    LogCountSelectListItems.First().Selected = true;
+            }
+
+            ;
         }
 
         private static string SetResource(string resourceName)

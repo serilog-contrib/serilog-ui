@@ -5,6 +5,6 @@ namespace Serilog.Ui.Core
 {
     public interface IDataProvider
     {
-        Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page, int count);
+        Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page, int count, string level = null);
     }
 }

@@ -22,5 +22,10 @@
     $("#logCount").on("change", function () {
         $("#page").val($(".page-link.disabled").attr("data-val"));
         $("form").submit()
-    })
+    });
+
+    $("#logFilter").on("change", function () {
+        $("#page").val($(".page-link.disabled").attr("data-val"));
+        $("form").submit()
+    });
 })(jQuery);
