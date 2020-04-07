@@ -23,7 +23,7 @@ namespace Serilog.Ui.Web.Controllers
             Scripts = SetResource("Serilog.Ui.Web.wwwroot.js.main.js");
             SelectListItems = new List<SelectListItem>
             {
-                new SelectListItem {Text = "10", Value = "10"},
+                new SelectListItem {Text = "10", Value = "10", Selected = true},
                 new SelectListItem {Text = "25", Value = "25"},
                 new SelectListItem {Text = "50", Value = "50"},
                 new SelectListItem {Text = "100", Value = "100"}
@@ -43,11 +43,15 @@ namespace Serilog.Ui.Web.Controllers
             if (count > 100)
                 count = 100;
 
-            var x = SelectListItems.FirstOrDefault(i => i.Value == count.ToString());
-            if (x != null)
-                x.Selected = true;
-            else
-                SelectListItems.First().Selected = true;
+            if (SelectListItems.First(i => i.Selected).Value != count.ToString())
+            {
+                SelectListItems.First(i => i.Selected).Selected = false;
+                var x = SelectListItems.FirstOrDefault(i => i.Value == count.ToString());
+                if (x != null)
+                    x.Selected = true;
+                else
+                    SelectListItems.First().Selected = true;
+            };
 
             var (logs, logCount) = await _dataProvider.FetchDataAsync(page, count);
             var viewModel = new LogViewModel

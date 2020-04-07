@@ -3,6 +3,17 @@
     ViewData["Title"] = "Log List";
     Layout = "~/Views/Shared/_LogLayout.cshtml";
     var levelClass = string.Empty;
+    var showingItemsStart = (Model.Page - 1) * Model.Count;
+    int showingItemsEnd;
+    if (showingItemsStart == 0)
+    {
+        showingItemsStart = 1;
+        showingItemsEnd = 10;
+    }
+    else
+    {
+        showingItemsEnd = showingItemsStart + Model.Count;
+    }
 }
 <h1>Log List</h1>
 <form method="get" asp-action="Index">
@@ -70,7 +81,7 @@
     </table>
     <div class="row">
         <div class="col-sm-12 col-md-5">
-            <div class="table-paging-info">Showing 41 to 50 of @Model.LogCount entries</div>
+            <div class="table-paging-info">Showing @showingItemsStart to @showingItemsEnd of @Model.LogCount entries</div>
         </div>
         <div class="col-sm-12 col-md-7">
             <partial name="_Paging" model="Model" />
