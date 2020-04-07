@@ -19,7 +19,7 @@
 <form method="get" asp-action="Index">
     <div class="row">
         <div class="col-sm-12 col-md-6">
-            <div class="table-select">
+            <div class="table-select" id="logCount">
                 <label>
                     Show
                     <select asp-items="@Model.CountSelectListItems" name="count" class="form-control form-control-sm">
@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <table class="table" id="log-table">
+    <table class="table" id="logTable">
         <thead class="thead-dark">
             <tr>
                 <th scope="col">#</th>
@@ -68,7 +68,7 @@
 
                 <tr>
                     <th scope="row">@log.Id</th>
-                    <td class="text-center"><span style="padding: 5px;" class="@levelClass text-white">@log.Level</span></td>
+                    <td class="text-center"><span class="log-level text-white @levelClass">@log.Level</span></td>
                     <td class="text-center">@log.Timestamp</td>
                     <td>
                         <span class="overflow-auto"> @log.Message</span>
