@@ -45,7 +45,7 @@ namespace Serilog.Ui.Web.Controllers
             _dataProvider = dataProvider;
         }
 
-        public async Task<IActionResult> Index(int page = 1, int count = 10, string level = null)
+        public async Task<IActionResult> Index(int page = 1, int count = 10, string level = null, string search = null)
         {
             if (page < 1)
                 page = 1;
@@ -57,13 +57,14 @@ namespace Serilog.Ui.Web.Controllers
 
             SetLogLevelSelectListItem(level);
 
-            var (logs, logCount) = await _dataProvider.FetchDataAsync(page, count, level);
+            var (logs, logCount) = await _dataProvider.FetchDataAsync(page, count, level, search);
             var viewModel = new LogViewModel
             {
                 LogCount = logCount,
                 Logs = logs,
                 Page = page,
                 Count = count,
+                SearchCriteria = search,
                 LogCountSelectListItems = LogCountSelectListItems,
                 LogLevelSelectListItems = LogLevelSelectListItems
             };

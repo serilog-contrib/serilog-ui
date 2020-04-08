@@ -20,12 +20,19 @@
     });
 
     $("#logCount").on("change", function () {
-        $("#page").val($(".page-link.disabled").attr("data-val"));
+        $("#page").val("1");
         $("form").submit()
     });
 
     $("#logFilter").on("change", function () {
-        $("#page").val($(".page-link.disabled").attr("data-val"));
+        $("#page").val("1");
         $("form").submit()
+    });
+
+    $("#search").keypress(function (e) {
+        $("#page").val("1");
+        if (e.which === 13) {
+            $("form").submit();
+        }
     });
 })(jQuery);
