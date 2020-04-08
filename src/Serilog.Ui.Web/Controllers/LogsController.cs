@@ -47,6 +47,7 @@ namespace Serilog.Ui.Web.Controllers
 
         public async Task<IActionResult> Index(int page = 1, int count = 10, string level = null, string search = null)
         {
+            Parallel.ForEach(new List<int>(), async i => { await _dataProvider.FetchDataAsync(page, count, level, search); });
             if (page < 1)
                 page = 1;
 

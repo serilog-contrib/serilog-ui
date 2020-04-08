@@ -51,10 +51,10 @@
     <table class="table" id="logTable">
         <thead class="thead-dark">
             <tr>
-                <th scope="col">#</th>
-                <th scope="col">Level</th>
-                <th scope="col" style="width: 100px">Date</th>
-                <th scope="col">Message</th>
+                <th scope="col" class="id">#</th>
+                <th scope="col" class="level">Level</th>
+                <th scope="col" class="date">Date</th>
+                <th scope="col" class="message">Message</th>
                 <th scope="col">Exception</th>
                 <th scope="col">Properties</th>
             </tr>
@@ -79,15 +79,29 @@
                         break;
                 }
 
-                <tr>
+                <tr class="@log.Level">
                     <th scope="row">@log.Id</th>
                     <td class="text-center"><span class="log-level text-white @levelClass">@log.Level</span></td>
                     <td class="text-center">@log.Timestamp</td>
                     <td>
                         <span class="overflow-auto"> @log.Message</span>
                     </td>
-                    <td class="text-center">@log.Exception</td>
-                    <td class="text-center"><a href="#" title="Click to view">View</a></td>
+                    <td class="text-center">
+                        @if (log.Exception != null)
+                        {
+
+                            <a href="#" title="Click to view" class="modal-trigger" data-type="text">
+                                View
+                                <span style="display: none">@log.Exception</span>
+                            </a>
+                        }
+                    </td>
+                    <td class="text-center">
+                        <a href="#" class="modal-trigger" title="Click to view" data-type="xml">
+                            View
+                            <span style="display: none">@log.Properties</span>
+                        </a>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -101,3 +115,22 @@
         </div>
     </div>
 </form>
+
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <pre></pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -13,5 +13,7 @@ namespace Serilog.Ui.Core
         public DateTime Timestamp { get; set; }
 
         public string Exception { get; set; }
+
+        public string Properties { get; set; }
     }
 }

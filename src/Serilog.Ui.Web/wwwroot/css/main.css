@@ -280,6 +280,18 @@ a[data-toggle="collapse"] {
         border-color: #3e64ff !important;
     }
 
+#logTable th.id {
+    width: 60px;
+}
+
+#logTable th.date {
+    width: 100px;
+}
+
+#logTable th.level {
+    width: 120px;
+}
+
 #logTable tbody tr:nth-of-type(odd) {
     background-color: rgba(0,0,0,.05);
 }
@@ -293,6 +305,26 @@ a[data-toggle="collapse"] {
     padding: 5px;
     width: 92px;
 }
+
+#logTable tr, #messageModal .modal-body {
+    color: #555;
+}
+
+    #logTable tr th, #logTable td {
+        vertical-align: middle;
+    }
+
+    #logTable tr.Information {
+        border-bottom: 2px solid #007bff;
+    }
+
+    #logTable tr.Warning {
+        border-bottom: 2px solid #ffc107;
+    }
+
+    #logTable tr.Error {
+        border-bottom: 2px solid #dc3545;
+    }
 
 .table .thead-dark th {
     text-align: center;
@@ -332,3 +364,7 @@ a[data-toggle="collapse"] {
     .table-pagination ul.pagination {
         display: inline-flex;
     }
+
+/*#messageModal .modal-body {
+    overflow: scroll;
+}*/
