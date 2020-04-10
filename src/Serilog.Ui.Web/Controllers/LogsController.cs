@@ -20,8 +20,8 @@ namespace Serilog.Ui.Web.Controllers
 
         static LogsController()
         {
-            Styles = SetResource("Serilog.Ui.Web.wwwroot.css.main.css");
-            Scripts = SetResource("Serilog.Ui.Web.wwwroot.js.main.js");
+            Styles = SetResource("Serilog.Ui.Web.wwwroot.css.main.min.css");
+            Scripts = SetResource("Serilog.Ui.Web.wwwroot.js.main.min.js");
             LogCountSelectListItems = new List<SelectListItem>
             {
                 new SelectListItem {Text = "10", Value = "10", Selected = true},
