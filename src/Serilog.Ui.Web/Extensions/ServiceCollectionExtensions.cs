@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
+using Serilog.Ui.Web.Filters;
 using System;
 using System.Linq;
 
@@ -11,7 +12,8 @@ namespace Serilog.Ui.Web
         public static IServiceCollection AddSerilogUi(
             this IServiceCollection services,
             IMvcBuilder mvcBuilder,
-            Action<DataProviderOptionsBuilder> optionsBuilder)
+            Action<SerilogUiOptionsBuilder> optionsBuilder
+            )
         {
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
@@ -19,13 +21,8 @@ namespace Serilog.Ui.Web
             if (optionsBuilder == null)
                 throw new ArgumentNullException(nameof(optionsBuilder));
 
-            var builder = new DataProviderOptionsBuilder(services);
+            var builder = new SerilogUiOptionsBuilder(services);
             optionsBuilder.Invoke(builder);
-
-            //var assembly = typeof(ServiceCollectionExtensions).Assembly;
-            // var location = assembly.Location;
-            //var embeddedFileProvider = new EmbeddedFileProvider(assembly);
-            //mvcBuilder.AddRazorRuntimeCompilation(options => options.FileProviders.Add(embeddedFileProvider));
 
             var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => a.FullName.StartsWith("Serilog.Ui.Web")).ToList();
             foreach (var assembly in assemblies)
@@ -39,12 +36,13 @@ namespace Serilog.Ui.Web
                 }
             }
 
-            return services;
-        }
+            var isAuthorizationFilterExist = services.Any(s => s.ServiceType.FullName == typeof(AuthorizationOptions).FullName);
+            if (!isAuthorizationFilterExist)
+                services.AddScoped<AuthorizationOptions>();
 
-        private static void ConfigureApplicationParts(ApplicationPartManager apm)
-        {
-            apm.ApplicationParts.Add(new AssemblyPart(typeof(ServiceCollectionExtensions).Assembly));
+            services.AddScoped<AuthorizationFilter>();
+
+            return services;
         }
     }
 }

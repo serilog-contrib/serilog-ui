@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Serilog.Ui.Core;
+using Serilog.Ui.Web.Filters;
 using Serilog.Ui.Web.ViewModel;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Serilog.Ui.Web.Controllers
 {
+    [ServiceFilter(typeof(AuthorizationFilter))]
     public class LogsController : Controller
     {
         private static readonly string Scripts;

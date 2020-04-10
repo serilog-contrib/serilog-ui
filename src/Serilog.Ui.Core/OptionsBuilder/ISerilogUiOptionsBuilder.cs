@@ -2,7 +2,7 @@
 
 namespace Serilog.Ui.Core
 {
-    public interface IDataProviderOptionsBuilder
+    public interface ISerilogUiOptionsBuilder
     {
         IServiceCollection Services { get; }
     }

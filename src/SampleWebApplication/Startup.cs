@@ -31,8 +31,10 @@ namespace SampleWebApplication
         {
             var mvcBuilder = services.AddControllersWithViews();
 
-            services.AddSerilogUi(mvcBuilder, options =>
-                options.UseSqlServer("Server=.;Database=SerilogWebUi;Integrated Security=True;", "Logs"));
+            services.AddSerilogUi(mvcBuilder, options => options
+                    .EnableAuthorization(authOptions => authOptions.Usernames = new[] { "Test" })
+                    .UseSqlServer("Server=.;Database=SerilogWebUi;Integrated Security=True;", "Logs")
+                );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
