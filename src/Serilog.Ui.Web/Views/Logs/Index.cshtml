@@ -1,4 +1,5 @@
-﻿@model LogViewModel
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model Serilog.Ui.Web.ViewModel.LogViewModel
 @{
     ViewData["Title"] = "Log List";
     Layout = "~/Views/Shared/_LogLayout.cshtml";
@@ -80,10 +81,10 @@
                 }
 
                 <tr class="@log.Level">
-                    <th scope="row">@log.Id</th>
+                    <td>@log.Id</td>
                     <td class="text-center"><span class="log-level text-white @levelClass">@log.Level</span></td>
                     <td class="text-center">@log.Timestamp</td>
-                    <td>
+                    <td class="log-message">
                         <span class="overflow-auto"> @log.Message</span>
                     </td>
                     <td class="text-center">

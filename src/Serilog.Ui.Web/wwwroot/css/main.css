@@ -306,12 +306,17 @@ a[data-toggle="collapse"] {
     width: 92px;
 }
 
-#logTable tr, #messageModal .modal-body {
-    color: #555;
+#logTable tr,
+#messageModal .modal-body {
+    color: #333;
 }
 
     #logTable tr th, #logTable td {
         vertical-align: middle;
+    }
+
+    #logTable tr.Debug, #logTable tr.Debug {
+        border-bottom: 2px solid #28a745;
     }
 
     #logTable tr.Information {
@@ -368,3 +373,7 @@ a[data-toggle="collapse"] {
 /*#messageModal .modal-body {
     overflow: scroll;
 }*/
+
+.log-message {
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}

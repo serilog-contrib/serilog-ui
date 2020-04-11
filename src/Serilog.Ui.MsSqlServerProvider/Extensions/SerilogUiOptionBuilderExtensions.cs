@@ -4,7 +4,7 @@ using System;
 
 namespace Serilog.Ui.MsSqlServerProvider
 {
-    public static class DataProviderOptionBuilderExtensions
+    public static class SerilogUiOptionBuilderExtensions
     {
         public static void UseSqlServer(
             this SerilogUiOptionsBuilder optionsBuilder,
