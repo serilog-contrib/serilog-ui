@@ -45,4 +45,6 @@ public void ConfigureServices(IServiceCollection services)
 ```
 Only `User1` and `User2` or users with `AdminRole` role can view logs.
 
-
+## Limitation
+* Log url `/logs` is fix and cannot be changed
+* Log viewer only works with MVC so you have to register views `services.AddControllersWithViews();` and also add default route `endpoints.MapControllerRoute( name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");`
