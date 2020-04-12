@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.MsSqlServerProvi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.Core", "src\Serilog.Ui.Core\Serilog.Ui.Core.csproj", "{0862FA16-35A3-4CF9-B797-67F70F6CFB8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebApplication", "src\SampleWebApplication\SampleWebApplication.csproj", "{954F2199-3657-4944-8F5C-C6501FD5B2BD}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,10 +29,6 @@ Global
 		{0862FA16-35A3-4CF9-B797-67F70F6CFB8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0862FA16-35A3-4CF9-B797-67F70F6CFB8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0862FA16-35A3-4CF9-B797-67F70F6CFB8B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{954F2199-3657-4944-8F5C-C6501FD5B2BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{954F2199-3657-4944-8F5C-C6501FD5B2BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{954F2199-3657-4944-8F5C-C6501FD5B2BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{954F2199-3657-4944-8F5C-C6501FD5B2BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,7 +37,6 @@ Global
 		{3BF751F9-67CA-47F2-84E0-068344A8F306} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
 		{55C49567-1879-4FA7-B15F-033DA89B8B1B} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
 		{0862FA16-35A3-4CF9-B797-67F70F6CFB8B} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
-		{954F2199-3657-4944-8F5C-C6501FD5B2BD} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {88374732-FEAD-4375-9CF1-75331A37CF07}
