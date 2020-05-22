@@ -4,16 +4,16 @@ namespace Serilog.Ui.Core
 {
     public class LogModel
     {
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
-        public string Level { get; set; }
+        public virtual string Level { get; set; }
 
-        public string Message { get; set; }
+        public virtual string Message { get; set; }
 
-        public DateTime Timestamp { get; set; }
+        public virtual DateTime Timestamp { get; set; }
 
-        public string Exception { get; set; }
+        public virtual string Exception { get; set; }
 
-        public string Properties { get; set; }
+        public virtual string Properties { get; set; }
     }
 }
