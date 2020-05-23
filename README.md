@@ -1,18 +1,24 @@
 # serilog-ui
-A simple log viewer to see logs saved by [Serilog.Sinks.MSSqlServer](https://github.com/serilog/serilog-sinks-mssqlserver) (other sinks will be added in the future).
+A simple log viewer to see logs saved by [Serilog.Sinks.MSSqlServer](https://github.com/serilog/serilog-sinks-mssqlserver) or [Serilog.Sinks.Postgresql](https://github.com/b00ted/serilog-sinks-postgresql) (other sinks will be added in the future).
 
 ![serilog ui](https://raw.githubusercontent.com/mo-esmp/serilog-ui/master/assets/serilog-ui.jpg)
 
-Install the _Serilog.UI_ [NuGet package](https://www.nuget.org/packages/Serilog.UI) and _Serilog.Ui.MsSqlServerProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.Ui.MsSqlServerProvider)
+Install the _Serilog.UI_ [NuGet package](https://www.nuget.org/packages/Serilog.UI) and _Serilog.Ui.MsSqlServerProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.Ui.MsSqlServerProvider):
 
 ```powershell
 Install-Package Serilog.UI
+```
+
+Then based on your databasbe install a provider, _Serilog.Ui.MsSqlServerProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.Ui.MsSqlServerProvider):
+
+```powershell
 Install-Package Serilog.UI.MsSqlServerProvider
 ```
-or
-```shell
-dotnet add package Serilog.UI
-dotnet add package Serilog.UI.MsSqlServerProvider
+
+or _Serilog.Ui.PostgreSqlProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.Ui.PostgreSqlProvider):
+
+```powershell
+Install-Package Serilog.Ui.PostgreSqlProvider
 ```
 
 Then, add `UseSerilogUi()` to `IServiceCollection` in `ConfigureServices` method:
@@ -22,6 +28,8 @@ public void ConfigureServices(IServiceCollection services)
 {
     var mvcBuilder = services.AddControllersWithViews();
     services.AddSerilogUi(mvcBuilder, options => options.UseSqlServer("ConnectionString", "LogTableName"));
+    // or
+    // services.AddSerilogUi(mvcBuilder, options => options.UseNpgSql("ConnectionString", "LogTableName"));
     .
     .
     .
