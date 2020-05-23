@@ -15,7 +15,7 @@ Then based on your databasbe install a provider, _Serilog.Ui.MsSqlServerProvider
 Install-Package Serilog.UI.MsSqlServerProvider
 ```
 
-or _Serilog.Ui.PostgreSqlProvider [NuGet package](https://www.nuget.org/packages/Serilog.Ui.PostgreSqlProvider):
+or _Serilog.Ui.PostgreSqlProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.Ui.PostgreSqlProvider):
 
 ```powershell
 Install-Package Serilog.Ui.PostgreSqlProvider
