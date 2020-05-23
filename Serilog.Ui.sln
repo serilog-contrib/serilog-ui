@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.MsSqlServerProvi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.Core", "src\Serilog.Ui.Core\Serilog.Ui.Core.csproj", "{0862FA16-35A3-4CF9-B797-67F70F6CFB8B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.PostgresSqlProvider", "src\Serilog.Ui.PostgresSqlProvider\Serilog.Ui.PostgresSqlProvider.csproj", "{0004A882-82C9-40C3-9D6C-CD297D1A50E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.PostgreSqlProvider", "src\Serilog.Ui.PostgreSqlProvider\Serilog.Ui.PostgreSqlProvider.csproj", "{0004A882-82C9-40C3-9D6C-CD297D1A50E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,12 +1,12 @@
-﻿using Dapper;
-using Npgsql;
-using Serilog.Ui.Core;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Threading.Tasks;
+using Dapper;
+using Npgsql;
+using Serilog.Ui.Core;
 
-namespace Serilog.Ui.PostgresSqlProvider
+namespace Serilog.Ui.PostgreSqlProvider
 {
     public class PostgresDataProvider : IDataProvider
     {

@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
-using System;
 
-namespace Serilog.Ui.PostgresSqlProvider.Extensions
+namespace Serilog.Ui.PostgreSqlProvider.Extensions
 {
     public static class SerilogUiOptionBuilderExtensions
     {

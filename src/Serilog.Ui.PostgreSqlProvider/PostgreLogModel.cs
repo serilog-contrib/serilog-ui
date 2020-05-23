@@ -1,6 +1,6 @@
 ﻿using Serilog.Ui.Core;
 
-namespace Serilog.Ui.PostgresSqlProvider
+namespace Serilog.Ui.PostgreSqlProvider
 {
     internal class PostgresLogModel : LogModel
     {
