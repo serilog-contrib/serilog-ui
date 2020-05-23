@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Dapper;
+using Npgsql;
+using Serilog.Ui.Core;
+using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Threading.Tasks;
-using Dapper;
-using Npgsql;
-using Serilog.Ui.Core;
 
 namespace Serilog.Ui.PostgreSqlProvider
 {
@@ -63,7 +63,7 @@ namespace Serilog.Ui.PostgreSqlProvider
                 {
                     Offset = page,
                     Count = count,
-                    Level = level,
+                    Level = LogLevelConverter.GetLevelValue(level),
                     Search = searchCriteria != null ? "%" + searchCriteria + "%" : null
                 });
         }
@@ -95,7 +95,7 @@ namespace Serilog.Ui.PostgreSqlProvider
             return await connection.ExecuteScalarAsync<int>(queryBuilder.ToString(),
                 new
                 {
-                    Level = level,
+                    Level = LogLevelConverter.GetLevelValue(level),
                     Search = searchCriteria != null ? "%" + searchCriteria + "%" : null
                 });
         }

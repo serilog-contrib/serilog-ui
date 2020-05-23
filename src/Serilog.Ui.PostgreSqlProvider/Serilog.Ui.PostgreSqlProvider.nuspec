@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
-    <id>Serilog.Ui.PostgresSqlProvider</id>
+    <id>Serilog.Ui.PostgreSqlProvider</id>
     <version>$version$</version>
-    <title>Serilog.UI.PostgresSqlProvider</title>
+    <title>Serilog.UI.PostgreSqlProvider</title>
     <authors>Mohsen Esmailpour</authors>
     <owners>mo.esmp</owners>
     <projectUrl>https://github.com/mo-esmp/serilog-ui</projectUrl>
