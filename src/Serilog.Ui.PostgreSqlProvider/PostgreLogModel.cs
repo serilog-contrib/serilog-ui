@@ -11,5 +11,7 @@ namespace Serilog.Ui.PostgreSqlProvider
             get => _level;
             set => _level = LogLevelConverter.GetLevelName(value);
         }
+
+        public override string PropertyType => "json";
     }
 }

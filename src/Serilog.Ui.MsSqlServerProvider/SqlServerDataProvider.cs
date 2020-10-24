@@ -60,7 +60,7 @@ namespace Serilog.Ui.MsSqlServerProvider
 
             using (IDbConnection connection = new SqlConnection(_options.ConnectionString))
             {
-                return await connection.QueryAsync<LogModel>(queryBuilder.ToString(),
+                return await connection.QueryAsync<SqlServerLogModel>(queryBuilder.ToString(),
                     new
                     {
                         Offset = page,

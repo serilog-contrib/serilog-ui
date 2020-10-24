@@ -35,7 +35,7 @@ namespace Serilog.Ui.PostgreSqlProvider
         private async Task<IEnumerable<LogModel>> GetLogsAsync(int page, int count, string level, string searchCriteria)
         {
             var queryBuilder = new StringBuilder();
-            queryBuilder.Append("SELECT message, message_template, level, timestamp, exception, log_event FROM ");
+            queryBuilder.Append("SELECT message, message_template, level, timestamp, exception, log_event AS \"Properties\" FROM ");
             queryBuilder.Append(_options.Schema);
             queryBuilder.Append(".");
             queryBuilder.Append(_options.TableName);
@@ -58,14 +58,20 @@ namespace Serilog.Ui.PostgreSqlProvider
             queryBuilder.Append(" ORDER BY timestamp DESC LIMIT @Count OFFSET @Offset ");
 
             using IDbConnection connection = new NpgsqlConnection(_options.ConnectionString);
-            return await connection.QueryAsync<PostgresLogModel>(queryBuilder.ToString(),
+            var logs = await connection.QueryAsync<PostgresLogModel>(queryBuilder.ToString(),
                 new
                 {
-                    Offset = page,
+                    Offset = page * count,
                     Count = count,
                     Level = LogLevelConverter.GetLevelValue(level),
                     Search = searchCriteria != null ? "%" + searchCriteria + "%" : null
                 });
+
+            var index = 1;
+            foreach (var log in logs)
+                log.Id = (page * count) + index++;
+
+            return logs;
         }
 
         public async Task<int> CountLogsAsync(string level, string searchCriteria)

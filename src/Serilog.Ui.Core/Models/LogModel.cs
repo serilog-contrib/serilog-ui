@@ -15,5 +15,7 @@ namespace Serilog.Ui.Core
         public virtual string Exception { get; set; }
 
         public virtual string Properties { get; set; }
+
+        public virtual string PropertyType { get; set; }
     }
 }
