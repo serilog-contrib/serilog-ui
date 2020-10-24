@@ -1,4 +1,6 @@
 ﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, Serilog.Ui.Web
+
 @model Serilog.Ui.Web.ViewModel.LogViewModel
 @{
     ViewData["Title"] = "Log List";
@@ -16,6 +18,7 @@
         showingItemsEnd = showingItemsStart + Model.Count;
     }
 }
+
 <h1>Log List</h1>
 <form method="get" asp-action="Index">
 
@@ -85,7 +88,7 @@
                     <td class="text-center"><span class="log-level text-white @levelClass">@log.Level</span></td>
                     <td class="text-center">@log.Timestamp</td>
                     <td class="log-message">
-                        <span class="overflow-auto"> @log.Message</span>
+                        <span class="overflow-auto"><truncate length="100">@log.Message</truncate></span>
                     </td>
                     <td class="text-center">
                         @if (log.Exception != null)
@@ -98,7 +101,7 @@
                         }
                     </td>
                     <td class="text-center">
-                        <a href="#" class="modal-trigger" title="Click to view" data-type="xml">
+                        <a href="#" class="modal-trigger" title="Click to view" data-type="@log.PropertyType">
                             View
                             <span style="display: none">@log.Properties</span>
                         </a>
