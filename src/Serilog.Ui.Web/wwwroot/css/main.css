@@ -377,3 +377,7 @@ a[data-toggle="collapse"] {
 .log-message {
     font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
+
+.modal-body.wrapped pre {
+    white-space: pre-wrap;
+}
