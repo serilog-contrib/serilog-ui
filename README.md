@@ -3,22 +3,21 @@ A simple log viewer to see logs saved by [Serilog.Sinks.MSSqlServer](https://git
 
 ![serilog ui](https://raw.githubusercontent.com/mo-esmp/serilog-ui/master/assets/serilog-ui.jpg)
 
-Install the _Serilog.UI_ [NuGet package](https://www.nuget.org/packages/Serilog.UI) and _Serilog.Ui.MsSqlServerProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.Ui.MsSqlServerProvider):
-
+Install the _Serilog.UI_ [NuGet package](https://www.nuget.org/packages/Serilog.UI)
 ```powershell
 Install-Package Serilog.UI
 ```
 
-Then based on your databasbe install a provider, _Serilog.Ui.MsSqlServerProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.Ui.MsSqlServerProvider):
+Then based on your databasbe install a provider, _Serilog.UI.MsSqlServerProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.UI.MsSqlServerProvider):
 
 ```powershell
 Install-Package Serilog.UI.MsSqlServerProvider
 ```
 
-or _Serilog.Ui.PostgreSqlProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.Ui.PostgreSqlProvider):
+or _Serilog.UI.PostgreSqlProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.UI.PostgreSqlProvider):
 
 ```powershell
-Install-Package Serilog.Ui.PostgreSqlProvider
+Install-Package Serilog.UI.PostgreSqlProvider
 ```
 
 Then, add `UseSerilogUi()` to `IServiceCollection` in `ConfigureServices` method:
