@@ -15,6 +15,10 @@ namespace Serilog.Ui.Web.Filters
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
+            //if (context.HttpContext.Connection.LocalIpAddress.ToString() == "127.0.0.1" ||
+            //    context.HttpContext.Connection.RemoteIpAddress.ToString() == "::1")
+            //    return;
+
             if (!_authorizationOptions.Enabled)
                 return;
 
@@ -24,11 +28,14 @@ namespace Serilog.Ui.Web.Filters
                 return;
             }
 
-            var userName = context.HttpContext.User.Identity.Name.ToLower();
+            if (context.HttpContext.User.Identity.Name != null)
+            {
+                var userName = context.HttpContext.User.Identity.Name.ToLower();
 
-            if (_authorizationOptions.Usernames != null &&
-                _authorizationOptions.Usernames.Any(u => u.ToLower() == userName))
-                return;
+                if (_authorizationOptions.Usernames != null &&
+                    _authorizationOptions.Usernames.Any(u => u.ToLower() == userName))
+                    return;
+            }
 
             if (_authorizationOptions.Roles != null &&
                 _authorizationOptions.Roles.Any(role => context.HttpContext.User.IsInRole(role)))
