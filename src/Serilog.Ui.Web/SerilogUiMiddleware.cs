@@ -51,11 +51,11 @@ namespace Serilog.Ui.Web
             if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(_options.RoutePrefix)}/api/logs/?$", RegexOptions.IgnoreCase))
             {
                 var provider = httpContext.RequestServices.GetService<IDataProvider>();
-                var logs = await provider.FetchDataAsync(1, 10);
+                var (logs, count) = await provider.FetchDataAsync(1, 10);
                 httpContext.Response.StatusCode = 200;
                 httpContext.Response.ContentType = "application/json;charset=utf-8";
                 //var result = JsonSerializer.Serialize(logs, _jsonSerializerOptions);
-                var result = JsonConvert.SerializeObject(logs, _jsonSerializerOptions);
+                var result = JsonConvert.SerializeObject(new { logs, count }, _jsonSerializerOptions);
                 await httpContext.Response.WriteAsync(result);
                 return;
             }
