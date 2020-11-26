@@ -69,16 +69,18 @@
 let fetchData = (routePrefix) => {
     const tbody = $("#logTable tbody");
     $.get(`/${routePrefix}/api/logs`, function (data) {
-        var
-            data.logs.forEach(function (log) {
-                let exception = "";
-                if (log.exception != undefined) {
-                    exception =
-                        `<a href="#" title="Click to view" class="modal-trigger" data-type="text">
+        $("#totalLogs").html(data.total);
+        $("#showingItemsStart").html(data.page);
+        $("#showingItemsEnd").html(data.count);
+        data.logs.forEach(function (log) {
+            let exception = "";
+            if (log.exception != undefined) {
+                exception =
+                    `<a href="#" title="Click to view" class="modal-trigger" data-type="text">
                         View <span style="display: none">${log.exception}</span>
                     </a>`;
-                }
-                const row = `<tr class="${log.level}">
+            }
+            const row = `<tr class="${log.level}">
                 <td>${log.id}</td>
                 <td class="text-center"><span class="log-level text-white ${levelClass(log.level)}">${log.level}</span></td>
                 <td class="text-center">${formatDate(log.timestamp)}</td>
@@ -95,8 +97,8 @@ let fetchData = (routePrefix) => {
                     </a>
                 </td>
             </tr>`;
-                $(tbody).append(row);
-            });
+            $(tbody).append(row);
+        });
     }).fail(function (error) {
         console.log(error);
         alert("error");

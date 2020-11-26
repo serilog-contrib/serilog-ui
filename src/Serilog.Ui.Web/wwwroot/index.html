@@ -74,13 +74,11 @@
                     <div class="table-select" id="logCount">
                         <label>
                             Show
-                            <select name="level" class="form-control form-control-sm">
-                                <option selected="selected" value="">---</option>
-                                <option value="Verbose">Verbose</option>
-                                <option value="Debug">Debug</option>
-                                <option value="Information">Information</option>
-                                <option value="Warning">Warning</option>
-                                <option value="Error">Error</option>
+                            <select id="level" name="level" class="form-control form-control-sm">
+                                <option value="10" selected="selected">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
                             </select>
                             entries
                         </label>
@@ -90,11 +88,13 @@
                     <div class="table-select" id="logFilter">
                         <label>
                             Level
-                            <select id="level" name="level" class="form-control form-control-sm">
-                                <option value="10" selected="selected">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
+                            <select name="level" class="form-control form-control-sm">
+                                <option selected="selected" value="">---</option>
+                                <option value="Verbose">Verbose</option>
+                                <option value="Debug">Debug</option>
+                                <option value="Information">Information</option>
+                                <option value="Warning">Warning</option>
+                                <option value="Error">Error</option>
                             </select>
                         </label>
                     </div>

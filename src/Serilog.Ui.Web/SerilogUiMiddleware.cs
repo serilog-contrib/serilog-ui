@@ -50,12 +50,9 @@ namespace Serilog.Ui.Web
             // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
             if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(_options.RoutePrefix)}/api/logs/?$", RegexOptions.IgnoreCase))
             {
-                var provider = httpContext.RequestServices.GetService<IDataProvider>();
-                var (logs, count) = await provider.FetchDataAsync(1, 10);
+                var result = await FetchLogsAsync(httpContext);
                 httpContext.Response.StatusCode = 200;
                 httpContext.Response.ContentType = "application/json;charset=utf-8";
-                //var result = JsonSerializer.Serialize(logs, _jsonSerializerOptions);
-                var result = JsonConvert.SerializeObject(new { logs, count }, _jsonSerializerOptions);
                 await httpContext.Response.WriteAsync(result);
                 return;
             }
@@ -91,7 +88,7 @@ namespace Serilog.Ui.Web
             return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
         }
 
-        private static void RespondWithRedirect(HttpResponse response, string location)
+        private void RespondWithRedirect(HttpResponse response, string location)
         {
             response.StatusCode = 301;
             response.Headers["Location"] = location;
@@ -111,5 +108,23 @@ namespace Serilog.Ui.Web
 
         private Func<Stream> IndexStream { get; } = () => typeof(AuthorizationOptions).GetTypeInfo().Assembly
             .GetManifestResourceStream("Serilog.Ui.Web.wwwroot.index.html");
+
+        private async Task<string> FetchLogsAsync(HttpContext httpContext)
+        {
+            httpContext.Request.Query.TryGetValue("page", out var pageStr);
+            httpContext.Request.Query.TryGetValue("count", out var countStr);
+
+            int.TryParse(pageStr, out var page);
+            int.TryParse(countStr, out var count);
+            page = page == default ? 1 : page;
+            count = count == default ? 10 : count;
+
+            var provider = httpContext.RequestServices.GetService<IDataProvider>();
+            var (logs, total) = await provider.FetchDataAsync(page, count);
+
+            //var result = JsonSerializer.Serialize(logs, _jsonSerializerOptions);
+            var result = JsonConvert.SerializeObject(new { logs, total, page, count }, _jsonSerializerOptions);
+            return result;
+        }
     }
 }
