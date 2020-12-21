@@ -20,6 +20,12 @@ or _Serilog.UI.PostgreSqlProvider_ [NuGet package](https://www.nuget.org/package
 Install-Package Serilog.UI.PostgreSqlProvider
 ```
 
+of _Serilog.UI.MongoDbProvider_ [Nuget package](TODO):
+
+```powershell
+Install-Package Serilog.UI.MongoDbProvider
+```
+
 Then, add `UseSerilogUi()` to `IServiceCollection` in `ConfigureServices` method:
 
 ```csharp
@@ -29,6 +35,8 @@ public void ConfigureServices(IServiceCollection services)
     services.AddSerilogUi(mvcBuilder, options => options.UseSqlServer("ConnectionString", "LogTableName"));
     // or
     // services.AddSerilogUi(mvcBuilder, options => options.UseNpgSql("ConnectionString", "LogTableName"));
+    // or
+    // services.AddSerilogUi(mvcBuilder, options => options.UseMongoDb("ConnectionString", "DatabaseName", "CollectionName"))
     .
     .
     .
