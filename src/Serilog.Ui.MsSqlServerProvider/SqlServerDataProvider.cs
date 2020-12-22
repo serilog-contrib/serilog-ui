@@ -60,7 +60,7 @@ namespace Serilog.Ui.MsSqlServerProvider
 
             using (IDbConnection connection = new SqlConnection(_options.ConnectionString))
             {
-                return await connection.QueryAsync<SqlServerLogModel>(queryBuilder.ToString(),
+                var logs = await connection.QueryAsync<SqlServerLogModel>(queryBuilder.ToString(),
                     new
                     {
                         Offset = page,
@@ -68,6 +68,12 @@ namespace Serilog.Ui.MsSqlServerProvider
                         Level = level,
                         Search = searchCriteria != null ? "%" + searchCriteria + "%" : null
                     });
+
+                var index = 1;
+                foreach (var log in logs)
+                    log.Id = (page * count) + index++ + "";
+
+                return logs;
             }
         }
 
