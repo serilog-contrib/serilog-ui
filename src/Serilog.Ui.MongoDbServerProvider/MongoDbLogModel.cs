@@ -2,8 +2,6 @@
 using MongoDB.Bson.Serialization.Attributes;
 using Serilog.Ui.Core;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.Json;
 
 namespace Serilog.Ui.MongoDbServerProvider
@@ -29,14 +27,16 @@ namespace Serilog.Ui.MongoDbServerProvider
 
         internal LogModel ToLogModel()
         {
-            var model = new LogModel();
-            model.Id = Id;
-            model.Level = Level;
-            model.Message = RenderedMessage;
-            model.Timestamp = Timestamp;
-            model.Exception = Exception;
-            model.Properties = JsonSerializer.Serialize(Properties);
-            model.PropertyType = PropertyType;
+            var model = new LogModel
+            {
+                Id = Id,
+                Level = Level,
+                Message = RenderedMessage,
+                Timestamp = Timestamp,
+                Exception = Exception,
+                Properties = JsonSerializer.Serialize(Properties),
+                PropertyType = PropertyType
+            };
 
             return model;
         }
