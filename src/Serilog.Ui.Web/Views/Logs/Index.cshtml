@@ -83,30 +83,30 @@
                         break;
                 }
 
-                <tr class="@log.Level">
-                    <td>@log.Id</td>
-                    <td class="text-center"><span class="log-level text-white @levelClass">@log.Level</span></td>
-                    <td class="text-center">@log.Timestamp</td>
-                    <td class="log-message">
-                        <span class="overflow-auto"><truncate length="100">@log.Message</truncate></span>
-                    </td>
-                    <td class="text-center">
-                        @if (log.Exception != null)
-                        {
+            <tr class="@log.Level">
+                <td>@log.RowNo</td>
+                <td class="text-center"><span class="log-level text-white @levelClass">@log.Level</span></td>
+                <td class="text-center">@log.Timestamp.ToString("MM/dd/yyyy HH:mm:ss.fff")</td>
+                <td class="log-message">
+                    <span class="overflow-auto"><truncate length="100">@log.Message</truncate></span>
+                </td>
+                <td class="text-center">
+                    @if (log.Exception != null)
+                            {
 
-                            <a href="#" title="Click to view" class="modal-trigger" data-type="text">
-                                View
-                                <span style="display: none">@log.Exception</span>
-                            </a>
-                        }
-                    </td>
-                    <td class="text-center">
-                        <a href="#" class="modal-trigger" title="Click to view" data-type="@log.PropertyType">
-                            View
-                            <span style="display: none">@log.Properties</span>
-                        </a>
-                    </td>
-                </tr>
+                    <a href="#" title="Click to view" class="modal-trigger" data-type="text">
+                        View
+                        <span style="display: none">@log.Exception</span>
+                    </a>
+                            }
+                </td>
+                <td class="text-center">
+                    <a href="#" class="modal-trigger" title="Click to view" data-type="@log.PropertyType">
+                        View
+                        <span style="display: none">@log.Properties</span>
+                    </a>
+                </td>
+            </tr>
             }
         </tbody>
     </table>

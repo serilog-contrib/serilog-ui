@@ -4,7 +4,7 @@ namespace Serilog.Ui.Core
 {
     public class LogModel
     {
-        public virtual string Id { get; set; }
+        public virtual int RowNo { get; set; }
 
         public virtual string Level { get; set; }
 
