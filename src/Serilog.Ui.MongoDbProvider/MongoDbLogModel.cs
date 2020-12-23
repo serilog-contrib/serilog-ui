@@ -1,8 +1,8 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using System;
+using MongoDB.Bson.Serialization.Attributes;
 using Serilog.Ui.Core;
-using System;
 
-namespace Serilog.Ui.MongoDbServerProvider
+namespace Serilog.Ui.MongoDbProvider
 {
     [BsonIgnoreExtraElements]
     public class MongoDbLogModel

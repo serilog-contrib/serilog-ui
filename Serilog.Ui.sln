@@ -13,11 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.Core", "src\Seri
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.PostgreSqlProvider", "src\Serilog.Ui.PostgreSqlProvider\Serilog.Ui.PostgreSqlProvider.csproj", "{0004A882-82C9-40C3-9D6C-CD297D1A50E7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.MongoDbServerProvider", "src\Serilog.Ui.MongoDbServerProvider\Serilog.Ui.MongoDbServerProvider.csproj", "{A6195106-0818-4CE1-A889-BB734960DD8D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.MongoDbProvider", "src\Serilog.Ui.MongoDbProvider\Serilog.Ui.MongoDbProvider.csproj", "{A6195106-0818-4CE1-A889-BB734960DD8D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{157CA77C-513A-409F-8045-E68739AAC8C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleWebApp", "samples\SampleWebApp\SampleWebApp.csproj", "{30C8AE36-8117-4E52-8140-8440D3C9AD39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleWebApp", "samples\SampleWebApp\SampleWebApp.csproj", "{30C8AE36-8117-4E52-8140-8440D3C9AD39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

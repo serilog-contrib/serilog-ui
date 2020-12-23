@@ -1,4 +1,4 @@
-﻿namespace Serilog.Ui.MongoDbServerProvider
+﻿namespace Serilog.Ui.MongoDbProvider
 {
     public class MongoDbOptions
     {

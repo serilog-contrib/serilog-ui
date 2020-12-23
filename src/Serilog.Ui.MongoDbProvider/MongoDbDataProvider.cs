@@ -1,11 +1,11 @@
-﻿using MongoDB.Driver;
-using Serilog.Ui.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MongoDB.Driver;
+using Serilog.Ui.Core;
 
-namespace Serilog.Ui.MongoDbServerProvider
+namespace Serilog.Ui.MongoDbProvider
 {
     public class MongoDbDataProvider : IDataProvider
     {

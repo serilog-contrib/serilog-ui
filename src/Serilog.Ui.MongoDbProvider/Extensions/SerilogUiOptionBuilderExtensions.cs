@@ -3,7 +3,7 @@ using MongoDB.Driver;
 using Serilog.Ui.Core;
 using System;
 
-namespace Serilog.Ui.MongoDbServerProvider
+namespace Serilog.Ui.MongoDbProvider
 {
     public static class SerilogUiOptionBuilderExtensions
     {
