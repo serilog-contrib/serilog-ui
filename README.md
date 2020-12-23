@@ -1,5 +1,5 @@
 # serilog-ui
-A simple log viewer to see logs saved by [Serilog.Sinks.MSSqlServer](https://github.com/serilog/serilog-sinks-mssqlserver) or [Serilog.Sinks.Postgresql](https://github.com/b00ted/serilog-sinks-postgresql) (other sinks will be added in the future).
+A simple log viewer to see logs saved by [Serilog.Sinks.MSSqlServer](https://github.com/serilog/serilog-sinks-mssqlserver), [Serilog.Sinks.Postgresql](https://github.com/b00ted/serilog-sinks-postgresql) and [Serilog.Sinks.MongoDB](https://github.com/serilog/serilog-sinks-mongodb) (other sinks will be added in the future).
 
 ![serilog ui](https://raw.githubusercontent.com/mo-esmp/serilog-ui/master/assets/serilog-ui.jpg)
 
@@ -20,7 +20,7 @@ or _Serilog.UI.PostgreSqlProvider_ [NuGet package](https://www.nuget.org/package
 Install-Package Serilog.UI.PostgreSqlProvider
 ```
 
-of _Serilog.UI.MongoDbProvider_ [Nuget package](TODO):
+of _Serilog.UI.MongoDbProvider_ [Nuget package](https://www.nuget.org/packages/Serilog.Ui.MongoDbProvider):
 
 ```powershell
 Install-Package Serilog.UI.MongoDbProvider
