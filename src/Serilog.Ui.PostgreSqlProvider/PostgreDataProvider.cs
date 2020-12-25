@@ -69,7 +69,7 @@ namespace Serilog.Ui.PostgreSqlProvider
 
             var index = 1;
             foreach (var log in logs)
-                log.Id = (page * count) + index++;
+                log.RowNo = (page * count) + index++;
 
             return logs;
         }
