@@ -6,7 +6,7 @@
     ViewData["Title"] = "Log List";
     Layout = "~/Views/Shared/_LogLayout.cshtml";
     var levelClass = string.Empty;
-    var showingItemsStart = (Model.Page - 1) * Model.Count;
+    var showingItemsStart = (Model.CurrentPage - 1) * Model.Count;
     int showingItemsEnd;
     if (showingItemsStart == 0)
     {

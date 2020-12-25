@@ -129,7 +129,11 @@
                     <div class="table-paging-info">Showing <span id="showingItemsStart"></span> to <span id="showingItemsEnd"></span> of <span id="totalLogs"></span> entries</div>
                 </div>
                 <div class="col-sm-12 col-md-7">
-                    <partial name="_Paging" model="Model" />
+                    <div class="table-pagination">
+                        <input type="hidden" id="page" name="page" />
+                        <ul id="pagination" class="pagination">
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>

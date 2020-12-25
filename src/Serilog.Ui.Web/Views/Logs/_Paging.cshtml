@@ -12,7 +12,7 @@
     if (totalPages > 5)
     {
 
-        if (totalPages == Model.Page)
+        if (totalPages == Model.CurrentPage)
         {
             hasMore = false;
             startIndex = totalPages - pageLength;
@@ -24,11 +24,11 @@
         }
         else
         {
-            if (totalPages - Model.Page > pageLength)
+            if (totalPages - Model.CurrentPage > pageLength)
             {
                 hasMore = true;
-                startIndex = Model.Page;
-                endIndex = Model.Page + pageLength;
+                startIndex = Model.CurrentPage;
+                endIndex = Model.CurrentPage + pageLength;
             }
             else
             {
@@ -43,23 +43,16 @@
 <div class="table-pagination">
     <input type="hidden" id="page" name="page" />
     <ul class="pagination">
-        @if (Model.Page != 1 || startIndex != 1)
+        @if (Model.CurrentPage != 1 || startIndex != 1)
         {
-            var value = Model.Page - 1;
-            <li class="page-item previous">
-                <a href="#" data-val="@value" tabindex="@value" class="page-link">Previous</a>
-            </li>
+            var value = Model.CurrentPage - 1;
+            <li class="page-item previous"> <a href="#" data-val="@value" tabindex="@value" class="page-link">Previous</a> </li>
         }
         @for (var i = startIndex; i <= endIndex; i++)
         {
-            if (Model.Page == i)
+            if (Model.CurrentPage == i)
             {
-                <li class="page-item active">
-                    <span data-val="@i" class="page-link disabled">
-                        @i
-                        <span class="sr-only">(current)</span>
-                    </span>
-                </li>
+                <li class="page-item active"> <span data-val="@i" class="page-link disabled"> @i <span class="sr-only">(current)</span> </span> </li>
             }
             else
             {
@@ -70,7 +63,7 @@
         }
         @if (hasMore)
         {
-            var value = Model.Page + 1;
+            var value = Model.CurrentPage + 1;
             <li class="page-item ">&nbsp;...&nbsp;</li>
             <li class="page-item next">
                 <a href="#" data-val="@value" tabindex="@value" class="page-link">Next</a>

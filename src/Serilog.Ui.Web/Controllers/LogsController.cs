@@ -65,7 +65,7 @@ namespace Serilog.Ui.Web.Controllers
             {
                 LogCount = logCount,
                 Logs = logs,
-                Page = page,
+                CurrentPage = page,
                 Count = count,
                 SearchCriteria = search,
                 LogCountSelectListItems = LogCountSelectListItems,

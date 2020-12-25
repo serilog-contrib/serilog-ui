@@ -15,10 +15,10 @@
         $("#sidebar").toggleClass("active");
     });
 
-    $(".page-link").on("click", function (e) {
+    $("body").on("click", ".page-link", function (e) {
         e.preventDefault();
         $("#page").val($(this).attr("data-val"));
-        $("form").submit();
+        fetchData();
     });
 
     $("#logCount").on("change", function () {
@@ -38,7 +38,7 @@
         }
     });
 
-    $("#search").on('input', function () {
+    $("#search").on("input", function () {
         if ($(this).val() !== "") {
             return;
         }
@@ -47,36 +47,37 @@
         fetchData();
     });
 
-    $(".modal-trigger").on("click", function (e) {
+    $("body").on("click", ".modal-trigger", function (e) {
         e.preventDefault();
 
         const modal = $("#messageModal");
-        const modalBody = modal.find('.modal-body');
+        const modalBody = modal.find(".modal-body");
         const dataType = $(this).attr("data-type");
         let message = $(this).find("span").text();
 
         if (dataType === "xml") {
-            message = formatXml(message, '  ');
-            $(modalBody).removeClass('wrapped');
+            message = $(this).find("span").html();
+            message = formatXml(message, "  ");
+            $(modalBody).removeClass("wrapped");
         } else if (dataType === "json") {
             const prop = JSON.parse(message);
             message = JSON.stringify(prop, null, 2);
-            $(modalBody).removeClass('wrapped');
+            $(modalBody).removeClass("wrapped");
         } else {
-            $(modalBody).addClass('wrapped');
+            $(modalBody).addClass("wrapped");
         }
 
-        modalBody.find('pre').text(message);
+        modalBody.find("pre").text(message);
         modal.modal("show");
     });
 
-    $("#loginClose").on('click', function () {
+    $("#loginClose").on("click", function () {
         localStorage.setItem("serilogui_token", $("#jwtToken").val());
     });
 })(jQuery);
 
 const routePrefix = {
-    url: '',
+    url: "",
     set setUrl(route) {
         this.url = route;
     }
@@ -89,10 +90,11 @@ const init = (route) => {
 
 const fetchData = () => {
     const tbody = $("#logTable tbody");
+    const page = $("#page").val();
     const count = $("#count").children("option:selected").val();
     const level = $("#level").children("option:selected").val();
     const searchTerm = escape($("#search").val());
-    const url = `/${routePrefix.url}/api/logs?count=${count}&level=${level}&search=${searchTerm}`;
+    const url = `/${routePrefix.url}/api/logs?page=${page}&count=${count}&level=${level}&search=${searchTerm}`;
     //const url = `/${routePrefix.url}/api/logs?count=${count}&level=${level}`;
     $.get(url, function (data) {
         $("#totalLogs").html(data.total);
@@ -126,6 +128,7 @@ const fetchData = () => {
             </tr>`;
             $(tbody).append(row);
         });
+        paging(data.total, data.count, data.currentPage);
     }).fail(function (error) {
         console.log(error);
         alert("error");
@@ -150,8 +153,8 @@ const levelClass = (logLevel) => {
 
 const formatDate = (date) => {
     var dt = new Date(date);
-    return `${(dt.getMonth() + 1).toString().padStart(2, '0')}/${dt.getDate().toString().padStart(2, '0')}/${dt.getFullYear().toString().padStart(4, '0')}
-            ${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}`;
+    return `${(dt.getMonth() + 1).toString().padStart(2, "0")}/${dt.getDate().toString().padStart(2, "0")}/${dt.getFullYear().toString().padStart(4, "0")}
+            ${dt.getHours().toString().padStart(2, "0")}:${dt.getMinutes().toString().padStart(2, "0")}:${dt.getSeconds().toString().padStart(2, "0")}`;
 }
 
 const truncateString = (str, num) => {
@@ -159,7 +162,7 @@ const truncateString = (str, num) => {
         return str;
     }
 
-    const truncated = str.slice(0, num) + '...';
+    const truncated = str.slice(0, num) + "...";
     const html = `<a href="#" title="Click to view" class="modal-trigger" data-type="text">
                     ${truncated}
                     <span style=\"display: none\">${str}</span>
@@ -168,13 +171,57 @@ const truncateString = (str, num) => {
     return html;
 }
 
-let formatXml = (xml, tab) => { // tab = optional indent value, default is tab (\t)
-    var formatted = '', indent = '';
-    tab = tab || '\t';
+const formatXml = (xml, tab) => { // tab = optional indent value, default is tab (\t)
+    var formatted = "", indent = "";
+    tab = tab || "\t";
     xml.split(/>\s*</).forEach(function (node) {
-        if (node.match(/^\/\w/)) indent = indent.substring(tab.length); // decrease indent by one 'tab'
-        formatted += indent + '<' + node + '>\r\n';
+        if (node.match(/^\/\w/)) indent = indent.substring(tab.length); // decrease indent by one "tab"
+        formatted += indent + "<" + node + ">\r\n";
         if (node.match(/^<?\w[^>]*[^\/]$/)) indent += tab;              // increase indent
     });
     return formatted.substring(1, formatted.length - 3);
+}
+
+const paging = (totalItems, itemPerPage, currentPage) => {
+    const defaultPageLength = 5;
+    const totalPages = Math.ceil(totalItems / itemPerPage);
+    let startIndex, endIndex;
+
+    if (totalPages <= defaultPageLength) {
+        startIndex = 1;
+        endIndex = totalPages;
+    } else if (totalPages === currentPage) {
+        startIndex = totalPages - defaultPageLength;
+        endIndex = totalPages;
+    } else {
+        startIndex = currentPage;
+        endIndex = (currentPage - 1) + defaultPageLength;
+    }
+
+    const hasPrev = totalPages > 1 && startIndex > 1;
+    const hasNext = totalPages > defaultPageLength && endIndex !== totalPages;
+    const pagination = $("#pagination");
+    $(pagination).empty();
+
+    if (hasPrev) {
+        const prevVal = currentPage - 1;
+        $(pagination).append(`<li class="page-item first"><a href="#" data-val="1" tabindex="${prevVal}" class="page-link">First</a></li>`);
+        $(pagination).append(`<li class="page-item previous"><a href="#" data-val="${prevVal}" tabindex="${prevVal}" class="page-link">Previous</a></li>`);
+    }
+
+    for (let i = startIndex; i <= endIndex; i++) {
+        if (currentPage === i) {
+            $(pagination).append(`<li class="page-item active"><span data-val="${i}" class="page-link disabled">${i} <span class="sr-only">(current)</span></span></li>`);
+        }
+        else {
+            $(pagination).append(`<li><a href="#" data-val="${i}" tabindex="${i}" class="page-link">${i}</a></li>`);
+        }
+    }
+
+    if (hasNext) {
+        const nextVal = currentPage + 1;
+        $(pagination).append(`<li class="page-item ">&nbsp;...&nbsp;</li>`);
+        $(pagination).append(`<li class="page-item next"><a href="#" data-val="${nextVal}" tabindex="${nextVal}" class="page-link">Next</a></li>`);
+        $(pagination).append(`<li class="page-item previous"><a href="#" data-val="${totalPages}" tabindex="${nextVal}" class="page-link">Last</a></li>`);
+    }
 }
