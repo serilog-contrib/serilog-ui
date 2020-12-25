@@ -113,6 +113,8 @@ namespace Serilog.Ui.Web
         {
             httpContext.Request.Query.TryGetValue("page", out var pageStr);
             httpContext.Request.Query.TryGetValue("count", out var countStr);
+            httpContext.Request.Query.TryGetValue("level", out var levelStr);
+            httpContext.Request.Query.TryGetValue("search", out var searchStr);
 
             int.TryParse(pageStr, out var page);
             int.TryParse(countStr, out var count);
@@ -120,7 +122,7 @@ namespace Serilog.Ui.Web
             count = count == default ? 10 : count;
 
             var provider = httpContext.RequestServices.GetService<IDataProvider>();
-            var (logs, total) = await provider.FetchDataAsync(page, count);
+            var (logs, total) = await provider.FetchDataAsync(page, count, levelStr, searchStr);
 
             //var result = JsonSerializer.Serialize(logs, _jsonSerializerOptions);
             var result = JsonConvert.SerializeObject(new { logs, total, page, count }, _jsonSerializerOptions);

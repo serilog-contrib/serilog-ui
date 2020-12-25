@@ -23,19 +23,28 @@
 
     $("#logCount").on("change", function () {
         $("#page").val("1");
-        $("form").submit();
+        fetchData();
     });
 
     $("#logFilter").on("change", function () {
         $("#page").val("1");
-        $("form").submit();
+        fetchData();
     });
 
     $("#search").on("keypress", function (e) {
-        $("#page").val("1");
         if (e.which === 13) {
-            $("form").submit();
+            $("#page").val("1");
+            fetchData();
         }
+    });
+
+    $("#search").on('input', function () {
+        if ($(this).val() !== "") {
+            return;
+        }
+
+        $("#page").val("1");
+        fetchData();
     });
 
     $(".modal-trigger").on("click", function (e) {
@@ -66,12 +75,30 @@
     });
 })(jQuery);
 
-let fetchData = (routePrefix) => {
+const routePrefix = {
+    url: '',
+    set setUrl(route) {
+        this.url = route;
+    }
+}
+
+const init = (route) => {
+    routePrefix.setUrl = route;
+    fetchData();
+}
+
+const fetchData = () => {
     const tbody = $("#logTable tbody");
-    $.get(`/${routePrefix}/api/logs`, function (data) {
+    const count = $("#count").children("option:selected").val();
+    const level = $("#level").children("option:selected").val();
+    const searchTerm = escape($("#search").val());
+    const url = `/${routePrefix.url}/api/logs?count=${count}&level=${level}&search=${searchTerm}`;
+    //const url = `/${routePrefix.url}/api/logs?count=${count}&level=${level}`;
+    $.get(url, function (data) {
         $("#totalLogs").html(data.total);
         $("#showingItemsStart").html(data.page);
         $("#showingItemsEnd").html(data.count);
+        $(tbody).empty();
         data.logs.forEach(function (log) {
             let exception = "";
             if (log.exception != undefined) {
@@ -81,7 +108,7 @@ let fetchData = (routePrefix) => {
                     </a>`;
             }
             const row = `<tr class="${log.level}">
-                <td>${log.id}</td>
+                <td class="text-center">${log.rowNo}</td>
                 <td class="text-center"><span class="log-level text-white ${levelClass(log.level)}">${log.level}</span></td>
                 <td class="text-center">${formatDate(log.timestamp)}</td>
                 <td class="log-message">

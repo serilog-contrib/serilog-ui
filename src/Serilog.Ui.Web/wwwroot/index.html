@@ -74,7 +74,7 @@
                     <div class="table-select" id="logCount">
                         <label>
                             Show
-                            <select id="level" name="level" class="form-control form-control-sm">
+                            <select id="count" name="count" class="form-control form-control-sm">
                                 <option value="10" selected="selected">10</option>
                                 <option value="25">25</option>
                                 <option value="50">50</option>
@@ -88,7 +88,7 @@
                     <div class="table-select" id="logFilter">
                         <label>
                             Level
-                            <select name="level" class="form-control form-control-sm">
+                            <select id="level" name="level" class="form-control form-control-sm">
                                 <option selected="selected" value="">---</option>
                                 <option value="Verbose">Verbose</option>
                                 <option value="Debug">Debug</option>
@@ -160,7 +160,7 @@
     <script>
         $(function () {
             const configObject = JSON.parse('%(Configs)');
-            fetchData(configObject.routePrefix);
+            init(configObject.routePrefix);
         });
     </script>
 </body>
