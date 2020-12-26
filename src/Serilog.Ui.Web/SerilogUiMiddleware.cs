@@ -12,6 +12,8 @@ using Newtonsoft.Json.Serialization;
 using Serilog.Ui.Core;
 using System;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -50,17 +52,23 @@ namespace Serilog.Ui.Web
             // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
             if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(_options.RoutePrefix)}/api/logs/?$", RegexOptions.IgnoreCase))
             {
-                var result = await FetchLogsAsync(httpContext);
-                httpContext.Response.StatusCode = 200;
                 httpContext.Response.ContentType = "application/json;charset=utf-8";
+                if (!CanAccess(httpContext))
+                {
+                    httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                    return;
+                }
+
+                var result = await FetchLogsAsync(httpContext);
+                httpContext.Response.StatusCode = (int)HttpStatusCode.OK;
                 await httpContext.Response.WriteAsync(result);
+
                 return;
             }
 
             if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
             {
                 var indexUrl = httpContext.Request.GetEncodedUrl().TrimEnd('/') + "/index.html";
-
                 RespondWithRedirect(httpContext.Response, indexUrl);
                 return;
             }
@@ -135,6 +143,30 @@ namespace Serilog.Ui.Web
                 Console.WriteLine(e);
                 throw;
             }
+        }
+
+        private bool CanAccess(HttpContext httpContext)
+        {
+            if (httpContext.Request.IsLocal())
+                return true;
+
+            var authOptions = httpContext.RequestServices.GetService<AuthorizationOptions>();
+            if (!authOptions.Enabled)
+                return false;
+
+            if (!httpContext.User.Identity.IsAuthenticated)
+                return false;
+
+            var userName = httpContext.User.Identity.Name?.ToLower();
+            if (authOptions.Usernames != null &&
+                authOptions.Usernames.Any(u => u.ToLower() == userName))
+                return true;
+
+            if (authOptions.Roles != null &&
+                authOptions.Roles.Any(role => httpContext.User.IsInRole(role)))
+                return true;
+
+            return false;
         }
     }
 }

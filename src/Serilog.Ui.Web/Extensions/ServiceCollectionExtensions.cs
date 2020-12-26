@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ApplicationParts;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
 using Serilog.Ui.Web.Filters;
 using System;
@@ -11,7 +10,6 @@ namespace Serilog.Ui.Web
     {
         public static IServiceCollection AddSerilogUi(
             this IServiceCollection services,
-            IMvcBuilder mvcBuilder,
             Action<SerilogUiOptionsBuilder> optionsBuilder
             )
         {
@@ -24,17 +22,17 @@ namespace Serilog.Ui.Web
             var builder = new SerilogUiOptionsBuilder(services);
             optionsBuilder.Invoke(builder);
 
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => a.FullName.StartsWith("Serilog.Ui.Web")).ToList();
-            foreach (var assembly in assemblies)
-            {
-                if (assembly.FullName.Contains("Views"))
-                    mvcBuilder.PartManager.ApplicationParts.Add(new CompiledRazorAssemblyPart(assembly));
-                else
-                {
-                    mvcBuilder.PartManager.ApplicationParts.Add(new AssemblyPart(assembly));
-                    var manifestResourceNames = assembly.GetManifestResourceNames();
-                }
-            }
+            //var assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => a.FullName.StartsWith("Serilog.Ui.Web")).ToList();
+            //foreach (var assembly in assemblies)
+            //{
+            //    if (assembly.FullName.Contains("Views"))
+            //        mvcBuilder.PartManager.ApplicationParts.Add(new CompiledRazorAssemblyPart(assembly));
+            //    else
+            //    {
+            //        mvcBuilder.PartManager.ApplicationParts.Add(new AssemblyPart(assembly));
+            //        var manifestResourceNames = assembly.GetManifestResourceNames();
+            //    }
+            //}
 
             var isAuthorizationFilterExist = services.Any(s => s.ServiceType.FullName == typeof(AuthorizationOptions).FullName);
             if (!isAuthorizationFilterExist)

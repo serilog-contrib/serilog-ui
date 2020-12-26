@@ -31,9 +31,12 @@ namespace Serilog.Ui.Web
             var uiOptions = new UiOptions();
             options?.Invoke(uiOptions);
 
-            var authOptions = applicationBuilder.ApplicationServices.GetService<AuthorizationOptions>();
+            var scope = applicationBuilder.ApplicationServices.CreateScope();
+            var authOptions = scope.ServiceProvider.GetService<AuthorizationOptions>();
             if (authOptions != null)
                 uiOptions.AuthType = authOptions.AuthenticationType;
+
+            scope.Dispose();
 
             return applicationBuilder.UseMiddleware<SerilogUiMiddleware>(uiOptions);
         }
