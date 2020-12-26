@@ -33,7 +33,8 @@ namespace SampleWebApp
 
             var mvcBuilder = services.AddControllersWithViews();
 
-            services.AddSerilogUi(mvcBuilder, options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs"));
+            services.AddSerilogUi(options => options
+                .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,6 +58,7 @@ namespace SampleWebApp
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseSerilogUi();
 
             app.UseEndpoints(endpoints =>
             {
