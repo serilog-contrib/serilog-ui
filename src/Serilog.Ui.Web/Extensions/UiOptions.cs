@@ -4,6 +4,6 @@
     {
         public string RoutePrefix { get; set; } = "serilog-ui";
 
-        internal AuthenticationType AuthType { get; set; } = AuthenticationType.Cookie;
+        internal string AuthType { get; set; }
     }
 }

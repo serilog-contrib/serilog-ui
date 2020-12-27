@@ -33,8 +33,7 @@ namespace Serilog.Ui.Web
 
             var scope = applicationBuilder.ApplicationServices.CreateScope();
             var authOptions = scope.ServiceProvider.GetService<AuthorizationOptions>();
-            if (authOptions != null)
-                uiOptions.AuthType = authOptions.AuthenticationType;
+            uiOptions.AuthType = authOptions.AuthenticationType.ToString();
 
             scope.Dispose();
 

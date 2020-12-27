@@ -39,7 +39,7 @@
                     <h1>Log List</h1>
                 </div>
                 <div class="col-sm-6 col-md-6">
-                    <button class="btn btn-outline-success float-right" data-toggle="modal" data-target="#loginModal"><i class="fa fa-unlock"></i> Authorize</button>
+                    <button id="jwtModalBtn" class="btn btn-outline-success float-right" data-toggle="modal" data-target="#loginModal"><i class="fa fa-unlock"></i> Authorize</button>
 
                     <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-lg" role="document">
@@ -164,7 +164,7 @@
     <script>
         $(function () {
             const configObject = JSON.parse('%(Configs)');
-            init(configObject.routePrefix);
+            init(configObject);
         });
     </script>
 </body>

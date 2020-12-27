@@ -83,8 +83,11 @@ const routePrefix = {
     }
 }
 
-const init = (route) => {
-    routePrefix.setUrl = route;
+const init = (config) => {
+    if (config.authType === "Cookie") {
+        $("#jwtModalBtn").remove();
+    }
+    routePrefix.setUrl = config.routePrefix;
     fetchData();
 }
 

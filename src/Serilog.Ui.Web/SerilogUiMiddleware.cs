@@ -27,7 +27,7 @@ namespace Serilog.Ui.Web
         private readonly UiOptions _options;
         private readonly StaticFileMiddleware _staticFileMiddleware;
         private readonly JsonSerializerSettings _jsonSerializerOptions;
-        private ILogger<SerilogUiMiddleware> _logger;
+        private readonly ILogger<SerilogUiMiddleware> _logger;
 
         public SerilogUiMiddleware(
             RequestDelegate next,
@@ -127,7 +127,8 @@ namespace Serilog.Ui.Web
 
             await using var stream = IndexStream();
             var htmlBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
-            htmlBuilder.Replace("%(Configs)", JsonConvert.SerializeObject(_options, _jsonSerializerOptions));
+            htmlBuilder.Replace("%(Configs)", JsonConvert.SerializeObject(
+                new { _options.RoutePrefix, _options.AuthType }, _jsonSerializerOptions));
 
             await response.WriteAsync(htmlBuilder.ToString(), Encoding.UTF8);
         }
@@ -155,10 +156,10 @@ namespace Serilog.Ui.Web
             return result;
         }
 
-        private bool CanAccess(HttpContext httpContext)
+        private static bool CanAccess(HttpContext httpContext)
         {
-            if (httpContext.Request.IsLocal())
-                return true;
+            //if (httpContext.Request.IsLocal())
+            //    return true;
 
             var authOptions = httpContext.RequestServices.GetService<AuthorizationOptions>();
             if (!authOptions.Enabled)
