@@ -130,8 +130,15 @@ const fetchData = () => {
         });
         paging(data.total, data.count, data.currentPage);
     }).fail(function (error) {
-        console.log(error);
-        alert("error");
+        if (error.status === 403) {
+            console.log(error);
+            alert("You are not authorized you to access logs.\r\nYou are not logged in or you don't have enough permissions to perform the requested operation.");
+        } else if (error.status === 500) {
+            const x = JSON.parse(error.responseJSON.errorMessage);
+            alert(x.errorMessage);
+        } else {
+            alert(error.responseText);
+        }
     });
 }
 

@@ -27,14 +27,18 @@ namespace Serilog.Ui.Web
         private readonly UiOptions _options;
         private readonly StaticFileMiddleware _staticFileMiddleware;
         private readonly JsonSerializerSettings _jsonSerializerOptions;
+        private ILogger<SerilogUiMiddleware> _logger;
 
         public SerilogUiMiddleware(
             RequestDelegate next,
             IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
-            UiOptions options)
+            UiOptions options,
+            ILogger<SerilogUiMiddleware> logger
+            )
         {
             _options = options;
+            _logger = logger;
             _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory);
             _jsonSerializerOptions = new JsonSerializerSettings
             {
@@ -52,16 +56,30 @@ namespace Serilog.Ui.Web
             // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
             if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(_options.RoutePrefix)}/api/logs/?$", RegexOptions.IgnoreCase))
             {
-                httpContext.Response.ContentType = "application/json;charset=utf-8";
-                if (!CanAccess(httpContext))
+                try
                 {
-                    httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                    return;
-                }
+                    httpContext.Response.ContentType = "application/json;charset=utf-8";
+                    if (!CanAccess(httpContext))
+                    {
+                        httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                        return;
+                    }
 
-                var result = await FetchLogsAsync(httpContext);
-                httpContext.Response.StatusCode = (int)HttpStatusCode.OK;
-                await httpContext.Response.WriteAsync(result);
+                    var result = await FetchLogsAsync(httpContext);
+                    httpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                    await httpContext.Response.WriteAsync(result);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, ex.Message);
+                    httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                    var errorMessage = httpContext.Request.IsLocal()
+                        ? JsonConvert.SerializeObject(new { errorMessage = ex.Message })
+                        : JsonConvert.SerializeObject(new { errorMessage = "Internal server error" });
+
+                    await httpContext.Response.WriteAsync(JsonConvert.SerializeObject(new { errorMessage }));
+                }
 
                 return;
             }
@@ -119,30 +137,22 @@ namespace Serilog.Ui.Web
 
         private async Task<string> FetchLogsAsync(HttpContext httpContext)
         {
-            try
-            {
-                httpContext.Request.Query.TryGetValue("page", out var pageStr);
-                httpContext.Request.Query.TryGetValue("count", out var countStr);
-                httpContext.Request.Query.TryGetValue("level", out var levelStr);
-                httpContext.Request.Query.TryGetValue("search", out var searchStr);
+            httpContext.Request.Query.TryGetValue("page", out var pageStr);
+            httpContext.Request.Query.TryGetValue("count", out var countStr);
+            httpContext.Request.Query.TryGetValue("level", out var levelStr);
+            httpContext.Request.Query.TryGetValue("search", out var searchStr);
 
-                int.TryParse(pageStr, out var currentPage);
-                int.TryParse(countStr, out var count);
-                currentPage = currentPage == default ? 1 : currentPage;
-                count = count == default ? 10 : count;
+            int.TryParse(pageStr, out var currentPage);
+            int.TryParse(countStr, out var count);
+            currentPage = currentPage == default ? 1 : currentPage;
+            count = count == default ? 10 : count;
 
-                var provider = httpContext.RequestServices.GetService<IDataProvider>();
-                var (logs, total) = await provider.FetchDataAsync(currentPage, count, levelStr, searchStr);
+            var provider = httpContext.RequestServices.GetService<IDataProvider>();
+            var (logs, total) = await provider.FetchDataAsync(currentPage, count, levelStr, searchStr);
 
-                //var result = JsonSerializer.Serialize(logs, _jsonSerializerOptions);
-                var result = JsonConvert.SerializeObject(new { logs, total, count, currentPage }, _jsonSerializerOptions);
-                return result;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            //var result = JsonSerializer.Serialize(logs, _jsonSerializerOptions);
+            var result = JsonConvert.SerializeObject(new { logs, total, count, currentPage }, _jsonSerializerOptions);
+            return result;
         }
 
         private bool CanAccess(HttpContext httpContext)
