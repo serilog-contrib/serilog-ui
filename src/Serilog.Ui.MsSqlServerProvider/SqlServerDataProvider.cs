@@ -63,7 +63,7 @@ namespace Serilog.Ui.MsSqlServerProvider
                 var logs = await connection.QueryAsync<SqlServerLogModel>(queryBuilder.ToString(),
                     new
                     {
-                        Offset = page,
+                        Offset = page * count,
                         Count = count,
                         Level = level,
                         Search = searchCriteria != null ? "%" + searchCriteria + "%" : null
