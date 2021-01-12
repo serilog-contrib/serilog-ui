@@ -71,8 +71,26 @@
         modal.modal("show");
     });
 
-    $("#loginClose").on("click", function () {
-        localStorage.setItem("serilogui_token", $("#jwtToken").val());
+    $("#saveJwt").on("click", function () {
+        const isJwtSaved = $(this).data("saved");
+        if (!isJwtSaved) {
+            const token = $("#jwtToken").val();
+            if (!token) return;
+
+            sessionStorage.setItem("serilogui_token", token);
+            $("#jwtToken").remove();
+            $("#tokenContainer").text("*********");
+            $(this).text("Clear");
+            $(this).data("saved", "true");
+            $("#jwtModalBtn").find("i").removeClass("fa-unlock").addClass("fa-lock");
+            fetchData();
+            return;
+        }
+        sessionStorage.removeItem("serilogui_token");
+        $(this).text("Save");
+        $(this).data("saved", "false");
+        $("#tokenContainer").html('<input type="text" class="form-control" id="jwtToken" placeholder="Bearer eyJhbGciOiJSUz...">');
+        $("#jwtModalBtn").find("i").removeClass("fa-lock").addClass("fa-unlock");
     });
 })(jQuery);
 
@@ -86,7 +104,11 @@ const routePrefix = {
 const init = (config) => {
     if (config.authType === "Cookie") {
         $("#jwtModalBtn").remove();
+        sessionStorage.removeItem("serilogui_token");
+    } else {
+        initTokenUi();
     }
+
     routePrefix.setUrl = config.routePrefix;
     fetchData();
 }
@@ -98,7 +120,8 @@ const fetchData = () => {
     const level = $("#level").children("option:selected").val();
     const searchTerm = escape($("#search").val());
     const url = `/${routePrefix.url}/api/logs?page=${page}&count=${count}&level=${level}&search=${searchTerm}`;
-    //const url = `/${routePrefix.url}/api/logs?count=${count}&level=${level}`;
+    const token = sessionStorage.getItem("serilogui_token");
+    $.ajaxSetup({ headers: { 'Authorization': token } });
     $.get(url, function (data) {
         $("#totalLogs").html(data.total);
         $("#showingItemsStart").html(data.page);
@@ -234,4 +257,14 @@ const paging = (totalItems, itemPerPage, currentPage) => {
         $(pagination).append(`<li class="page-item next"><a href="#" data-val="${nextVal}" tabindex="${nextVal}" class="page-link">Next</a></li>`);
         $(pagination).append(`<li class="page-item previous"><a href="#" data-val="${totalPages}" tabindex="${nextVal}" class="page-link">Last</a></li>`);
     }
+}
+
+const initTokenUi = () => {
+    const token = sessionStorage.getItem("serilogui_token");
+    if (!token) return;
+
+    $("#jwtToken").remove();
+    $("#tokenContainer").text("*********");
+    $("#saveJwt").text("Clear").data("saved", "true");
+    $("#jwtModalBtn").find("i").removeClass("fa-unlock").addClass("fa-lock");
 }

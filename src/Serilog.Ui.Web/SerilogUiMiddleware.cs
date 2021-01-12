@@ -158,8 +158,8 @@ namespace Serilog.Ui.Web
 
         private static bool CanAccess(HttpContext httpContext)
         {
-            //if (httpContext.Request.IsLocal())
-            //    return true;
+            if (httpContext.Request.IsLocal())
+                return true;
 
             var authOptions = httpContext.RequestServices.GetService<AuthorizationOptions>();
             if (!authOptions.Enabled)
