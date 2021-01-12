@@ -187,7 +187,7 @@ const levelClass = (logLevel) => {
 const formatDate = (date) => {
     var dt = new Date(date);
     return `${(dt.getMonth() + 1).toString().padStart(2, "0")}/${dt.getDate().toString().padStart(2, "0")}/${dt.getFullYear().toString().padStart(4, "0")}
-            ${dt.getHours().toString().padStart(2, "0")}:${dt.getMinutes().toString().padStart(2, "0")}:${dt.getSeconds().toString().padStart(2, "0")}`;
+            ${dt.getHours().toString().padStart(2, "0")}:${dt.getMinutes().toString().padStart(2, "0")}:${dt.getSeconds().toString().padStart(2, "0")}.${dt.getMilliseconds().toString()}`;
 }
 
 const truncateString = (str, num) => {
@@ -217,7 +217,9 @@ const formatXml = (xml, tab) => { // tab = optional indent value, default is tab
 
 const paging = (totalItems, itemPerPage, currentPage) => {
     const defaultPageLength = 5;
-    const totalPages = Math.ceil(totalItems / itemPerPage);
+    //const totalPages = Math.ceil(totalItems / itemPerPage);
+    let totalPages = parseInt(totalItems / itemPerPage);
+    totalPages += totalItems % itemPerPage !== 0 ? 1 : 0;
     let startIndex, endIndex;
 
     if (totalPages <= defaultPageLength) {
