@@ -217,9 +217,9 @@ const formatXml = (xml, tab) => { // tab = optional indent value, default is tab
 
 const paging = (totalItems, itemPerPage, currentPage) => {
     const defaultPageLength = 5;
-    //const totalPages = Math.ceil(totalItems / itemPerPage);
-    let totalPages = parseInt(totalItems / itemPerPage);
-    totalPages += totalItems % itemPerPage !== 0 ? 1 : 0;
+    const totalPages = Math.ceil(totalItems / itemPerPage);
+    //let totalPages = parseInt(totalItems / itemPerPage);
+    //totalPages += totalItems % itemPerPage !== 0 ? 1 : 0;
     let startIndex, endIndex;
 
     if (totalPages <= defaultPageLength) {
