@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Linq;
 using System.Net;
 
 namespace Serilog.Ui.Web
@@ -7,6 +8,10 @@ namespace Serilog.Ui.Web
     {
         public static bool IsLocal(this HttpRequest request)
         {
+            var ipAddress = request.HttpContext.Request.Headers["X-forwarded-for"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(ipAddress))
+                return false;
+
             var connection = request.HttpContext.Connection;
             if (connection.RemoteIpAddress != null)
             {
