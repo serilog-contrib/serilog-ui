@@ -89,7 +89,7 @@
         sessionStorage.removeItem("serilogui_token");
         $(this).text("Save");
         $(this).data("saved", "false");
-        $("#tokenContainer").html('<input type="text" class="form-control" id="jwtToken" placeholder="Bearer eyJhbGciOiJSUz...">');
+        $("#tokenContainer").html('<input type="text" class="form-control" id="jwtToken" autocomplete="off" placeholder="Bearer eyJhbGciOiJSUz...">');
         $("#jwtModalBtn").find("i").removeClass("fa-lock").addClass("fa-unlock");
     });
 })(jQuery);
