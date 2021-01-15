@@ -26,30 +26,59 @@ of _Serilog.UI.MongoDbProvider_ [Nuget package](https://www.nuget.org/packages/S
 Install-Package Serilog.UI.MongoDbProvider
 ```
 
-Then, add `UseSerilogUi()` to `IServiceCollection` in `ConfigureServices` method:
+Then, add `AddSerilogUi()` to `IServiceCollection` in `Startup.ConfigureServices` method:
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
-    var mvcBuilder = services.AddControllersWithViews();
-    services.AddSerilogUi(mvcBuilder, options => options.UseSqlServer("ConnectionString", "LogTableName"));
+    // Register the serilog UI services
+    services.AddSerilogUi(options => options.UseSqlServer("ConnectionString", "LogTableName"));
     // or
-    // services.AddSerilogUi(mvcBuilder, options => options.UseNpgSql("ConnectionString", "LogTableName"));
+    // services.AddSerilogUi(options => options.UseNpgSql("ConnectionString", "LogTableName"));
     // or
-    // services.AddSerilogUi(mvcBuilder, options => options.UseMongoDb("ConnectionString", "DatabaseName", "CollectionName"))
-    .
-    .
-    .
+    // services.AddSerilogUi(options => options.UseMongoDb("ConnectionString", "DatabaseName", "CollectionName"))
+}
 ```
 
-You can also secure log viewer by allwoing specific users or roles to view logs:
+In the `Startup.Configure` method, enable the middleware for serving logs UI. Place a call to the `UseSerilogUi` middleware after authentication and authorization middlewares otherwise authentication may not work for you:
+
+```csharp
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    .
+    .
+    .
+
+    app.UseRouting();
+    app.UseAuthentication();
+    app.UseAuthorization();
+        
+    // Enable middleware to serve log-ui (HTML, JS, CSS, etc.).
+    app.UseSerilogUi();
+
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
+    });
+}
+```
+
+Default url to view logs is `http://<your-app>/serilog-ui`. If you want to change this url path, just config route prefix:
+```csharp
+app.UseSerilogUi(option => option.RoutePrefix = "logs");
+```
+**Authorization configuration required**
+
+By default serilog-ui allows access to log page only for local requests. In order to give appropriate rights for production use, configuring authorization.You can secure log viewer by allwoing specific users or roles to view logs:
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
-    var mvcBuilder = services.AddControllersWithViews();
-    services.AddSerilogUi(mvcBuilder, options => options
+    services.AddSerilogUi(options => options
         .EnableAuthorization(authOptions =>
         {
+            authOption.AuthenticationType = AuthenticationType.Jwt; // or AuthenticationType.Cookie
             authOptions.Usernames = new[] { "User1", "User2" };
             authOptions.Roles = new[] { "AdminRole" };
         })
@@ -58,9 +87,7 @@ public void ConfigureServices(IServiceCollection services)
     .
     .
 ```
-Only `User1` and `User2` or users with `AdminRole` role can view logs.
+Only `User1` and `User2` or users with `AdminRole` role can view logs. If you set `AuthenticationType` to `Jwt`, you can set jwt token and `Authorization` header will be added to the request and for `Cookie` just login into you website and no extra step is required.
 
 ## Limitation
-* Log url `/logs` is fix and cannot be changed
-* Log viewer only works with MVC so you have to register views `services.AddControllersWithViews();` and also add default route `endpoints.MapControllerRoute( name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");`
 * Additional columns are not supported and only main columns can be retrieved
