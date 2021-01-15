@@ -73,7 +73,7 @@
 
     $("#saveJwt").on("click", function () {
         const isJwtSaved = $(this).data("saved");
-        if (!isJwtSaved) {
+        if (isJwtSaved.toString() === "false") {
             const token = $("#jwtToken").val();
             if (!token) return;
 
@@ -86,6 +86,7 @@
             fetchData();
             return;
         }
+
         sessionStorage.removeItem("serilogui_token");
         $(this).text("Save");
         $(this).data("saved", "false");
