@@ -10,5 +10,17 @@
     "inputFiles": [
       "wwwroot/js/main.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/main.min.css",
+    "inputFiles": [
+      "wwwroot/dist/main.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/main.min.js",
+    "inputFiles": [
+      "wwwroot/dist/main.js"
+    ]
   }
 ]
