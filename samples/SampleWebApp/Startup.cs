@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -5,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using SampleWebApp.Authentication.Jwt;
 using SampleWebApp.Data;
 using Serilog.Ui.MsSqlServerProvider;
 using Serilog.Ui.Web;
@@ -28,13 +31,22 @@ namespace SampleWebApp
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            AddAuthentication(services);
 
-            var mvcBuilder = services.AddControllersWithViews();
+            services.AddScoped<JwtTokenGenerator>();
+
+            services.AddControllersWithViews();
+            services.AddRazorPages();
 
             services.AddSerilogUi(options => options
+                .EnableAuthorization(authOption =>
+                {
+                    authOption.AuthenticationType = AuthenticationType.Jwt;
+                    authOption.Usernames = new[] { "mo.esmp@gmail.com" };
+                })
                 .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs"));
+
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +66,15 @@ namespace SampleWebApp
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+            // specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+            });
+
             app.UseRouting();
 
             app.UseAuthentication();
@@ -67,6 +88,34 @@ namespace SampleWebApp
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+        }
+
+        private void AddAuthentication(IServiceCollection services)
+        {
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters =
+                        new TokenValidationParameters
+                        {
+                            ValidateIssuer = false,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+                            ValidIssuer = Configuration["Jwt:Issuer"],
+                            ValidAudience = Configuration["Jwt:Audience"],
+                            IssuerSigningKey = JwtKeyGenerator.Generate(Configuration["Jwt:SecretKey"])
+                        };
+                });
         }
     }
 }
