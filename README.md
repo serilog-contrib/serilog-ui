@@ -65,13 +65,13 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 }
 ```
 
-Default url to view logs is `http://<your-app>/serilog-ui`. If you want to change this url path, just config route prefix:
+Default url to view log page is `http://<your-app>/serilog-ui`. If you want to change this url path, just config route prefix:
 ```csharp
 app.UseSerilogUi(option => option.RoutePrefix = "logs");
 ```
 **Authorization configuration required**
 
-By default serilog-ui allows access to log page only for local requests. In order to give appropriate rights for production use, configuring authorization.You can secure log viewer by allwoing specific users or roles to view logs:
+By default serilog-ui allows access to log page only for local requests. In order to give appropriate rights for production use, you need to configuring authorization. You can secure log page by allwoing specific users or roles to view logs:
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
