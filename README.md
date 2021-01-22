@@ -8,7 +8,7 @@ Install the _Serilog.UI_ [NuGet package](https://www.nuget.org/packages/Serilog.
 Install-Package Serilog.UI
 ```
 
-Then based on your databasbe install a provider, _Serilog.UI.MsSqlServerProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.UI.MsSqlServerProvider):
+Then install a provider based on your database, _Serilog.UI.MsSqlServerProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.UI.MsSqlServerProvider):
 
 ```powershell
 Install-Package Serilog.UI.MsSqlServerProvider
