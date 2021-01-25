@@ -103,40 +103,50 @@ const routePrefix = {
 }
 
 const init = (config) => {
-    if (config.authType === "Cookie") {
+    if (config.authType === "Jwt") {
+        initTokenUi();
+    } else {
         $("#jwtModalBtn").remove();
         sessionStorage.removeItem("serilogui_token");
-    } else {
-        initTokenUi();
     }
 
     routePrefix.setUrl = config.routePrefix;
-    fetchData();
+    fetchData(config.authType);
 }
 
-const fetchData = () => {
+const fetchData = (authType) => {
     const tbody = $("#logTable tbody");
     const page = $("#page").val();
     const count = $("#count").children("option:selected").val();
     const level = $("#level").children("option:selected").val();
     const searchTerm = escape($("#search").val());
-    const url = `/${routePrefix.url}/api/logs?page=${page}&count=${count}&level=${level}&search=${searchTerm}`;
+    const url = `${location.pathname.replace("/index.html", "")}/api/logs?page=${page}&count=${count}&level=${level}&search=${searchTerm}`;
     const token = sessionStorage.getItem("serilogui_token");
-    $.ajaxSetup({ headers: { 'Authorization': token } });
-    $.get(url, function (data) {
-        $("#totalLogs").html(data.total);
-        $("#showingItemsStart").html(data.page);
-        $("#showingItemsEnd").html(data.count);
-        $(tbody).empty();
-        data.logs.forEach(function (log) {
-            let exception = "";
-            if (log.exception != undefined) {
-                exception =
-                    `<a href="#" title="Click to view" class="modal-trigger" data-type="text">
+    let xf = null;
+    if (authType !== "Windows")
+        $.ajaxSetup({ headers: { 'Authorization': token } });
+    else {
+        xf = {
+            withCredentials: true
+        };
+    }
+    $.get({
+        url: url,
+        xhrFields: xf,
+        success: function (data) {
+            $("#totalLogs").html(data.total);
+            $("#showingItemsStart").html(data.page);
+            $("#showingItemsEnd").html(data.count);
+            $(tbody).empty();
+            data.logs.forEach(function (log) {
+                let exception = "";
+                if (log.exception != undefined) {
+                    exception =
+                        `<a href="#" title="Click to view" class="modal-trigger" data-type="text">
                         View <span style="display: none">${log.exception}</span>
                     </a>`;
-            }
-            const row = `<tr class="${log.level}">
+                }
+                const row = `<tr class="${log.level}">
                 <td class="text-center">${log.rowNo}</td>
                 <td class="text-center"><span class="log-level text-white ${levelClass(log.level)}">${log.level}</span></td>
                 <td class="text-center">${formatDate(log.timestamp)}</td>
@@ -153,9 +163,10 @@ const fetchData = () => {
                     </a>
                 </td>
             </tr>`;
-            $(tbody).append(row);
-        });
-        paging(data.total, data.count, data.currentPage);
+                $(tbody).append(row);
+            });
+            paging(data.total, data.count, data.currentPage);
+        }
     }).fail(function (error) {
         if (error.status === 403) {
             console.log(error);
