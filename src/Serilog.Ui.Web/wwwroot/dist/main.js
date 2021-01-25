@@ -95,6 +95,8 @@
     });
 })(jQuery);
 
+let authType;
+
 const routePrefix = {
     url: "",
     set setUrl(route) {
@@ -110,11 +112,13 @@ const init = (config) => {
         sessionStorage.removeItem("serilogui_token");
     }
 
+    authType = config.authType;
+
     routePrefix.setUrl = config.routePrefix;
-    fetchData(config.authType);
+    fetchData();
 }
 
-const fetchData = (authType) => {
+const fetchData = () => {
     const tbody = $("#logTable tbody");
     const page = $("#page").val();
     const count = $("#count").children("option:selected").val();
