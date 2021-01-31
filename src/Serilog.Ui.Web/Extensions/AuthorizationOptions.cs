@@ -16,6 +16,7 @@ namespace Serilog.Ui.Web
     public enum AuthenticationType
     {
         Cookie,
-        Jwt
+        Jwt,
+        Windows
     }
 }
