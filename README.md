@@ -1,5 +1,5 @@
 # serilog-ui
-A simple log viewer to see logs saved by [Serilog.Sinks.MSSqlServer](https://github.com/serilog/serilog-sinks-mssqlserver), [Serilog.Sinks.Postgresql](https://github.com/b00ted/serilog-sinks-postgresql), [Serilog.Sinks.MongoDB](https://github.com/serilog/serilog-sinks-mongodb) and [Serilog.Sinks.ElasticSearch](https://github.com/serilog/serilog-sinks-elasticsearch) (other sinks will be added in the future).
+A simple Serilog log viewer for [Serilog.Sinks.MSSqlServer](https://github.com/serilog/serilog-sinks-mssqlserver), [Serilog.Sinks.Postgresql](https://github.com/b00ted/serilog-sinks-postgresql), [Serilog.Sinks.MongoDB](https://github.com/serilog/serilog-sinks-mongodb) and [Serilog.Sinks.ElasticSearch](https://github.com/serilog/serilog-sinks-elasticsearch) sinks (other sinks will be added in the future).
 
 ![serilog ui](https://raw.githubusercontent.com/mo-esmp/serilog-ui/master/assets/serilog-ui.jpg)
 
@@ -8,25 +8,27 @@ Install the _Serilog.UI_ [NuGet package](https://www.nuget.org/packages/Serilog.
 Install-Package Serilog.UI
 ```
 
-Then install a provider based on your database, _Serilog.UI.MsSqlServerProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.UI.MsSqlServerProvider):
+Then install one of the providers based upon your sink:
+
+_Serilog.UI.MsSqlServerProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.UI.MsSqlServerProvider):
 
 ```powershell
 Install-Package Serilog.UI.MsSqlServerProvider
 ```
 
-or _Serilog.UI.PostgreSqlProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.UI.PostgreSqlProvider):
+_Serilog.UI.PostgreSqlProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.UI.PostgreSqlProvider):
 
 ```powershell
 Install-Package Serilog.UI.PostgreSqlProvider
 ```
 
-of _Serilog.UI.MongoDbProvider_ [Nuget package](https://www.nuget.org/packages/Serilog.Ui.MongoDbProvider):
+_Serilog.UI.MongoDbProvider_ [Nuget package](https://www.nuget.org/packages/Serilog.Ui.MongoDbProvider):
 
 ```powershell
 Install-Package Serilog.UI.MongoDbProvider
 ```
 
-of _Serilog.UI.ElasticSearchDbProvider_ [Nuget package](https://www.nuget.org/packages/Serilog.Ui.ElasticSearchDbProvider):
+_Serilog.UI.ElasticSearchProvider_ [Nuget package](https://www.nuget.org/packages/Serilog.Ui.ElasticSearchProvider):
 
 ```powershell
 Install-Package Serilog.UI.ElasticSearchDbProvider
