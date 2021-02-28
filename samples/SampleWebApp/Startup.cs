@@ -45,7 +45,6 @@ namespace SampleWebApp
                     authOption.AuthenticationType = AuthenticationType.Jwt;
                     authOption.Usernames = new[] { "mo.esmp@gmail.com" };
                 })
-                //.UseElasticSearchDb(new System.Uri("http://localhost:9200"), "logging-index")
                 .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs"));
 
             services.AddSwaggerGen();

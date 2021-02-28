@@ -1,5 +1,5 @@
 # serilog-ui
-A simple log viewer to see logs saved by [Serilog.Sinks.MSSqlServer](https://github.com/serilog/serilog-sinks-mssqlserver), [Serilog.Sinks.Postgresql](https://github.com/b00ted/serilog-sinks-postgresql) and [Serilog.Sinks.MongoDB](https://github.com/serilog/serilog-sinks-mongodb) (other sinks will be added in the future).
+A simple log viewer to see logs saved by [Serilog.Sinks.MSSqlServer](https://github.com/serilog/serilog-sinks-mssqlserver), [Serilog.Sinks.Postgresql](https://github.com/b00ted/serilog-sinks-postgresql), [Serilog.Sinks.MongoDB](https://github.com/serilog/serilog-sinks-mongodb) and [Serilog.Sinks.ElasticSearch](https://github.com/serilog/serilog-sinks-elasticsearch) (other sinks will be added in the future).
 
 ![serilog ui](https://raw.githubusercontent.com/mo-esmp/serilog-ui/master/assets/serilog-ui.jpg)
 
@@ -26,6 +26,12 @@ of _Serilog.UI.MongoDbProvider_ [Nuget package](https://www.nuget.org/packages/S
 Install-Package Serilog.UI.MongoDbProvider
 ```
 
+of _Serilog.UI.ElasticSearchDbProvider_ [Nuget package](https://www.nuget.org/packages/Serilog.Ui.ElasticSearchDbProvider):
+
+```powershell
+Install-Package Serilog.UI.ElasticSearchDbProvider
+```
+
 Then, add `AddSerilogUi()` to `IServiceCollection` in `Startup.ConfigureServices` method:
 
 ```csharp
@@ -37,6 +43,8 @@ public void ConfigureServices(IServiceCollection services)
     // services.AddSerilogUi(options => options.UseNpgSql("ConnectionString", "LogTableName"));
     // or
     // services.AddSerilogUi(options => options.UseMongoDb("ConnectionString", "DatabaseName", "CollectionName"))
+    // or
+    // services.AddSerilogUi(options => options.UseElasticSearchDb(endpoint: new System.Uri("http://localhost:9200"), indexName: "logging-index"))
 }
 ```
 
