@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using SampleWebApp.Authentication.Jwt;
 using SampleWebApp.Data;
+using Serilog.Ui.ElasticSearchProvider.Extensions;
 using Serilog.Ui.MsSqlServerProvider;
 using Serilog.Ui.Web;
 
@@ -44,6 +45,7 @@ namespace SampleWebApp
                     authOption.AuthenticationType = AuthenticationType.Jwt;
                     authOption.Usernames = new[] { "mo.esmp@gmail.com" };
                 })
+                //.UseElasticSearchDb(new System.Uri("http://localhost:9200"), "logging-index")
                 .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs"));
 
             services.AddSwaggerGen();
