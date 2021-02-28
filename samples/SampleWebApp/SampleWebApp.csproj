@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -16,12 +16,16 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Serilog.AspNetCore" Version="3.4.0" />
+    <PackageReference Include="Serilog.Formatting.Elasticsearch" Version="8.4.1" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.4.1" />
     <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.6.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Serilog.Ui.ElasticSearchProvider\Serilog.Ui.ElasticSearchProvider.csproj" />
     <ProjectReference Include="..\..\src\Serilog.Ui.MongoDbProvider\Serilog.Ui.MongoDbProvider.csproj" />
     <ProjectReference Include="..\..\src\Serilog.Ui.MsSqlServerProvider\Serilog.Ui.MsSqlServerProvider.csproj" />
     <ProjectReference Include="..\..\src\Serilog.Ui.PostgreSqlProvider\Serilog.Ui.PostgreSqlProvider.csproj" />

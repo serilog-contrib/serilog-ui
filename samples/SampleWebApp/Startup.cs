@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using SampleWebApp.Authentication.Jwt;
 using SampleWebApp.Data;
+using Serilog.Ui.ElasticSearchProvider.Extensions;
 using Serilog.Ui.MsSqlServerProvider;
 using Serilog.Ui.Web;
 
