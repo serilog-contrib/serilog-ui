@@ -5,7 +5,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Serilog.Ui.ElasticSearchProvider.Extensions
+namespace Serilog.Ui.ElasticSearchProvider
 {
     internal class VanillaSerializer : IElasticsearchSerializer
     {

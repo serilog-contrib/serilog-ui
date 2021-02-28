@@ -4,7 +4,7 @@ using Nest;
 using Serilog.Ui.Core;
 using System;
 
-namespace Serilog.Ui.ElasticSearchProvider.Extensions
+namespace Serilog.Ui.ElasticSearchProvider
 {
     public static class SerilogUiOptionBuilderExtensions
     {
