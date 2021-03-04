@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Serilog.Ui.Core
@@ -9,7 +10,9 @@ namespace Serilog.Ui.Core
             int page,
             int count,
             string level = null,
-            string searchCriteria = null
+            string searchCriteria = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null
         );
     }
 }

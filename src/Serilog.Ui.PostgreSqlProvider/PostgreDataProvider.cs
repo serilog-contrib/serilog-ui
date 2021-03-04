@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Npgsql;
 using Serilog.Ui.Core;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
@@ -14,14 +15,16 @@ namespace Serilog.Ui.PostgreSqlProvider
 
         public PostgresDataProvider(RelationalDbOptions options)
         {
-            _options = options;
+            _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
         public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
             int page,
             int count,
             string logLevel = null,
-            string searchCriteria = null
+            string searchCriteria = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null
         )
         {
             var logsTask = GetLogsAsync(page - 1, count, logLevel, searchCriteria);

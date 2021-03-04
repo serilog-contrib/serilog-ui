@@ -23,7 +23,9 @@ namespace Serilog.Ui.ElasticSearchProvider
             int page,
             int count,
             string level = null,
-            string searchCriteria = null)
+            string searchCriteria = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null)
         {
             return GetLogsAsync(page - 1, count, level, searchCriteria);
         }

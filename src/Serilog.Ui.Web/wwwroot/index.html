@@ -73,7 +73,7 @@
             </div>
 
             <div class="row">
-                <div class="col-sm-12 col-md-4">
+                <div class="col col-auto">
                     <div class="table-select" id="logCount">
                         <label>
                             Show
@@ -87,7 +87,7 @@
                         </label>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-4">
+                <div class="col col-auto">
                     <div class="table-select" id="logFilter">
                         <label>
                             Level
@@ -102,7 +102,25 @@
                         </label>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-4">
+                <div class="col col-auto">
+                    <div class="table-filter">
+                        <label>
+                            Start date:
+                            <input type="date" name="startDate" id="startDate" class="form-control form-control-sm">
+                            <button onclick="javascript:startDate.value='';">X</button>
+                        </label>
+                    </div>
+                </div>
+                <div class="col col-auto">
+                    <div class="table-filter">
+                        <label>
+                            End date:
+                            <input type="date" name="endDate" id="endDate" class="form-control form-control-sm">
+                            <button onclick="javascript:endDate.value='';">X</button>
+                        </label>
+                    </div>
+                </div>
+                <div class="col col-auto">
                     <div class="table-filter">
                         <label>
                             Search message:

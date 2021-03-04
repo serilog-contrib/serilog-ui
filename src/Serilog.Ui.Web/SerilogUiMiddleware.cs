@@ -142,15 +142,20 @@ namespace Serilog.Ui.Web
             httpContext.Request.Query.TryGetValue("count", out var countStr);
             httpContext.Request.Query.TryGetValue("level", out var levelStr);
             httpContext.Request.Query.TryGetValue("search", out var searchStr);
+            httpContext.Request.Query.TryGetValue("startDate", out var startDateStar);
+            httpContext.Request.Query.TryGetValue("endDate", out var endDateStar);
 
             int.TryParse(pageStr, out var currentPage);
             int.TryParse(countStr, out var count);
+            DateTime.TryParse(startDateStar, out var startDate);
+            DateTime.TryParse(endDateStar, out var endDate);
+
             currentPage = currentPage == default ? 1 : currentPage;
             count = count == default ? 10 : count;
 
             var provider = httpContext.RequestServices.GetService<IDataProvider>();
-            var (logs, total) = await provider.FetchDataAsync(currentPage, count, levelStr, searchStr);
-
+            var (logs, total) = await provider.FetchDataAsync(currentPage, count, levelStr, searchStr,
+                startDate == default ? (DateTime?)null : startDate, endDate == default ? (DateTime?)null : endDate);
             //var result = JsonSerializer.Serialize(logs, _jsonSerializerOptions);
             var result = JsonConvert.SerializeObject(new { logs, total, count, currentPage }, _jsonSerializerOptions);
             return result;

@@ -1,20 +1,21 @@
-﻿using System;
+﻿using MongoDB.Driver;
+using Serilog.Ui.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MongoDB.Driver;
-using Serilog.Ui.Core;
 
 namespace Serilog.Ui.MongoDbProvider
 {
     public class MongoDbDataProvider : IDataProvider
     {
-        private readonly IMongoClient _client;
         private readonly IMongoCollection<MongoDbLogModel> _collection;
 
         public MongoDbDataProvider(IMongoClient client, MongoDbOptions options)
         {
-            _client = client;
+            if (client is null) throw new ArgumentNullException(nameof(client));
+            if (options is null) throw new ArgumentNullException(nameof(options));
+
             _collection = client.GetDatabase(options.DatabaseName).GetCollection<MongoDbLogModel>(options.CollectionName);
         }
 
@@ -22,7 +23,9 @@ namespace Serilog.Ui.MongoDbProvider
             int page,
             int count,
             string level = null,
-            string searchCriteria = null)
+            string searchCriteria = null,
+            DateTime? startDate = null,
+            DateTime? endDate = null)
         {
             var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria);
             var logCountTask = CountLogsAsync(level, searchCriteria);
