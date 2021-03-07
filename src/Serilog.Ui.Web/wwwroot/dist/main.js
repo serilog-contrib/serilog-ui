@@ -31,18 +31,7 @@
         fetchData();
     });
 
-    $("#search").on("keypress", function (e) {
-        if (e.which === 13) {
-            $("#page").val("1");
-            fetchData();
-        }
-    });
-
-    $("#search").on("input", function () {
-        if ($(this).val() !== "") {
-            return;
-        }
-
+    $("#submit").on("click", function () {
         $("#page").val("1");
         fetchData();
     });
@@ -123,8 +112,20 @@ const fetchData = () => {
     const page = $("#page").val();
     const count = $("#count").children("option:selected").val();
     const level = $("#level").children("option:selected").val();
+    const startDate = $("#startDate").val();
+    const endDate = $("#endDate").val();
+
+    if (startDate && endDate !== null) {
+        const start = Date.parse(startDate);
+        const end = Date.parse(endDate);
+        if (start > end) {
+            alert("Start date cannot be greater than end date");
+            return;
+        }
+    }
+
     const searchTerm = escape($("#search").val());
-    const url = `${location.pathname.replace("/index.html", "")}/api/logs?page=${page}&count=${count}&level=${level}&search=${searchTerm}`;
+    const url = `${location.pathname.replace("/index.html", "")}/api/logs?page=${page}&count=${count}&level=${level}&search=${searchTerm}&startDate=${startDate}&endDate=${endDate}`;
     const token = sessionStorage.getItem("serilogui_token");
     let xf = null;
     if (authType !== "Windows")

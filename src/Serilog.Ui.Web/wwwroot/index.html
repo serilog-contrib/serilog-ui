@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="./font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="./bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="./main.min.css">
+    <link rel="stylesheet" type="text/css" href="./main.css">
 </head>
 <body>
     <div class="wrapper d-flex align-items-stretch">
@@ -35,10 +35,10 @@
         <div id="content" class="p-4 p-md-5">
 
             <div class="row">
-                <div class="col-sm-6 col-md-6">
+                <div class="col">
                     <h1>Log List</h1>
                 </div>
-                <div class="col-sm-6 col-md-6">
+                <div class="col">
                     <button id="jwtModalBtn" class="btn btn-outline-success float-right" data-toggle="modal" data-target="#loginModal">
                         <i class="fa fa-unlock"></i> Authorize
                     </button>
@@ -72,7 +72,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row" id="searchArea">
                 <div class="col col-auto">
                     <div class="table-select" id="logCount">
                         <label>
@@ -127,6 +127,9 @@
                             <input type="search" name="search" id="search" class="form-control form-control-sm" placeholder="type and hit enter">
                         </label>
                     </div>
+                </div>
+                <div class="col col-auto">
+                    <button type="button" name="submit" id="submit" class="btn btn-primary">Search</button>
                 </div>
             </div>
 

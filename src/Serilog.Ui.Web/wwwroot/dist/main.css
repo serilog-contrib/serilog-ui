@@ -381,3 +381,13 @@ a[data-toggle="collapse"] {
 .modal-body.wrapped pre {
     white-space: pre-wrap;
 }
+
+#searchArea .col {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+#submit {
+    cursor: pointer;
+    vertical-align: text-top;
+}

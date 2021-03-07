@@ -147,8 +147,12 @@ namespace Serilog.Ui.Web
 
             int.TryParse(pageStr, out var currentPage);
             int.TryParse(countStr, out var count);
+
             DateTime.TryParse(startDateStar, out var startDate);
             DateTime.TryParse(endDateStar, out var endDate);
+
+            if (endDate != default)
+                endDate = new DateTime(endDate.Year, endDate.Month, endDate.Day, 23, 59, 59);
 
             currentPage = currentPage == default ? 1 : currentPage;
             count = count == default ? 10 : count;
