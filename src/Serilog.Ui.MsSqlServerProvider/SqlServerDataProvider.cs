@@ -27,37 +27,30 @@ namespace Serilog.Ui.MsSqlServerProvider
             DateTime? endDate = null
         )
         {
-            var logsTask = GetLogsAsync(page - 1, count, logLevel, searchCriteria);
-            var logCountTask = CountLogsAsync(logLevel, searchCriteria);
+            var logsTask = GetLogsAsync(page - 1, count, logLevel, searchCriteria, startDate, endDate);
+            var logCountTask = CountLogsAsync(logLevel, searchCriteria, startDate, endDate);
 
             await Task.WhenAll(logsTask, logCountTask);
 
             return (await logsTask, await logCountTask);
         }
 
-        private async Task<IEnumerable<LogModel>> GetLogsAsync(int page, int count, string level, string searchCriteria)
+        private async Task<IEnumerable<LogModel>> GetLogsAsync(
+            int page,
+            int count,
+            string level,
+            string searchCriteria,
+            DateTime? startDate,
+            DateTime? endDate)
         {
             var queryBuilder = new StringBuilder();
-            queryBuilder.Append("SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM[");
+            queryBuilder.Append("SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [");
             queryBuilder.Append(_options.Schema);
             queryBuilder.Append("].[");
             queryBuilder.Append(_options.TableName);
             queryBuilder.Append("] ");
 
-            var whereIncluded = false;
-
-            if (!string.IsNullOrEmpty(level))
-            {
-                queryBuilder.Append("WHERE [LEVEL] = @Level ");
-                whereIncluded = true;
-            }
-
-            if (!string.IsNullOrEmpty(searchCriteria))
-            {
-                queryBuilder.Append(whereIncluded
-                    ? "AND [Message] LIKE @Search OR [Exception] LIKE @Search "
-                    : "WHERE [Message] LIKE @Search OR [Exception] LIKE @Search ");
-            }
+            GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
 
             queryBuilder.Append("ORDER BY Id DESC OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY");
 
@@ -69,7 +62,9 @@ namespace Serilog.Ui.MsSqlServerProvider
                         Offset = page * count,
                         Count = count,
                         Level = level,
-                        Search = searchCriteria != null ? "%" + searchCriteria + "%" : null
+                        Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
+                        StartDate = startDate,
+                        EndDate = endDate
                     });
 
                 var index = 1;
@@ -80,15 +75,42 @@ namespace Serilog.Ui.MsSqlServerProvider
             }
         }
 
-        public async Task<int> CountLogsAsync(string level, string searchCriteria)
+        public async Task<int> CountLogsAsync(
+            string level,
+            string searchCriteria,
+            DateTime? startDate = null,
+            DateTime? endDate = null)
         {
             var queryBuilder = new StringBuilder();
-            queryBuilder.Append("SELECT COUNT(Id) FROM[");
+            queryBuilder.Append("SELECT COUNT(Id) FROM [");
             queryBuilder.Append(_options.Schema);
             queryBuilder.Append("].[");
             queryBuilder.Append(_options.TableName);
             queryBuilder.Append("] ");
 
+            GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
+
+            using (IDbConnection connection = new SqlConnection(_options.ConnectionString))
+            {
+                return await connection.ExecuteScalarAsync<int>(queryBuilder.ToString(),
+                    new
+                    {
+                        Level = level,
+                        Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
+                        StartDate = startDate,
+                        EndDate = endDate
+                    });
+            }
+        }
+
+        private void GenerateWhereClause(
+            StringBuilder queryBuilder,
+            string level,
+            string searchCriteria,
+            DateTime? startDate = null,
+            DateTime? endDate = null
+        )
+        {
             var whereIncluded = false;
 
             if (!string.IsNullOrEmpty(level))
@@ -102,16 +124,22 @@ namespace Serilog.Ui.MsSqlServerProvider
                 queryBuilder.Append(whereIncluded
                     ? "AND [Message] LIKE @Search OR [Exception] LIKE @Search "
                     : "WHERE [Message] LIKE @Search OR [Exception] LIKE @Search ");
+                whereIncluded = true;
             }
 
-            using (IDbConnection connection = new SqlConnection(_options.ConnectionString))
+            if (startDate != null)
             {
-                return await connection.ExecuteScalarAsync<int>(queryBuilder.ToString(),
-                    new
-                    {
-                        Level = level,
-                        Search = searchCriteria != null ? "%" + searchCriteria + "%" : null
-                    });
+                queryBuilder.Append(whereIncluded
+                    ? "AND [TimeStamp] >= @StartDate "
+                    : "WHERE [TimeStamp] >= @StartDate ");
+                whereIncluded = true;
+            }
+
+            if (endDate != null)
+            {
+                queryBuilder.Append(whereIncluded
+                    ? "AND [TimeStamp] <= @EndDate "
+                    : "WHERE [TimeStamp] <= @EndDate ");
             }
         }
     }
