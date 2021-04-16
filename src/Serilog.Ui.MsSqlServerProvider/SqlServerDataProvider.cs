@@ -75,7 +75,7 @@ namespace Serilog.Ui.MsSqlServerProvider
             }
         }
 
-        public async Task<int> CountLogsAsync(
+        private async Task<int> CountLogsAsync(
             string level,
             string searchCriteria,
             DateTime? startDate = null,
@@ -108,8 +108,7 @@ namespace Serilog.Ui.MsSqlServerProvider
             string level,
             string searchCriteria,
             DateTime? startDate = null,
-            DateTime? endDate = null
-        )
+            DateTime? endDate = null)
         {
             var whereIncluded = false;
 

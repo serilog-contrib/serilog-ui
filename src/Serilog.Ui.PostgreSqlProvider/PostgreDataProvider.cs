@@ -27,7 +27,7 @@ namespace Serilog.Ui.PostgreSqlProvider
             DateTime? endDate = null
         )
         {
-            var logsTask = GetLogsAsync(page - 1, count, logLevel, searchCriteria);
+            var logsTask = GetLogsAsync(page - 1, count, logLevel, searchCriteria, startDate, endDate);
             var logCountTask = CountLogsAsync(logLevel, searchCriteria);
 
             await Task.WhenAll(logsTask, logCountTask);
@@ -35,7 +35,12 @@ namespace Serilog.Ui.PostgreSqlProvider
             return (await logsTask, await logCountTask);
         }
 
-        private async Task<IEnumerable<LogModel>> GetLogsAsync(int page, int count, string level, string searchCriteria)
+        private async Task<IEnumerable<LogModel>> GetLogsAsync(int page,
+            int count,
+            string level,
+            string searchCriteria,
+            DateTime? startDate,
+            DateTime? endDate)
         {
             var queryBuilder = new StringBuilder();
             queryBuilder.Append("SELECT message, message_template, level, timestamp, exception, log_event AS \"Properties\" FROM ");
@@ -43,20 +48,7 @@ namespace Serilog.Ui.PostgreSqlProvider
             queryBuilder.Append(".");
             queryBuilder.Append(_options.TableName);
 
-            var whereIncluded = false;
-
-            if (!string.IsNullOrEmpty(level))
-            {
-                queryBuilder.Append(" WHERE level = @Level ");
-                whereIncluded = true;
-            }
-
-            if (!string.IsNullOrEmpty(searchCriteria))
-            {
-                queryBuilder.Append(whereIncluded
-                    ? " AND message LIKE @Search OR exception LIKE @Search "
-                    : " WHERE message LIKE @Search OR exception LIKE @Search ");
-            }
+            GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
 
             queryBuilder.Append(" ORDER BY timestamp DESC LIMIT @Count OFFSET @Offset ");
 
@@ -67,7 +59,9 @@ namespace Serilog.Ui.PostgreSqlProvider
                     Offset = page * count,
                     Count = count,
                     Level = LogLevelConverter.GetLevelValue(level),
-                    Search = searchCriteria != null ? "%" + searchCriteria + "%" : null
+                    Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
+                    StartDate = startDate,
+                    EndDate = endDate
                 });
 
             var index = 1;
@@ -77,7 +71,11 @@ namespace Serilog.Ui.PostgreSqlProvider
             return logs;
         }
 
-        public async Task<int> CountLogsAsync(string level, string searchCriteria)
+        private async Task<int> CountLogsAsync(
+            string level,
+            string searchCriteria,
+            DateTime? startDate = null,
+            DateTime? endDate = null)
         {
             var queryBuilder = new StringBuilder();
             queryBuilder.Append("SELECT COUNT(message) FROM ");
@@ -85,6 +83,26 @@ namespace Serilog.Ui.PostgreSqlProvider
             queryBuilder.Append(".");
             queryBuilder.Append(_options.TableName);
 
+            GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
+
+            using IDbConnection connection = new NpgsqlConnection(_options.ConnectionString);
+            return await connection.ExecuteScalarAsync<int>(queryBuilder.ToString(),
+                new
+                {
+                    Level = LogLevelConverter.GetLevelValue(level),
+                    Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
+                    StartDate = startDate,
+                    EndDate = endDate
+                });
+        }
+
+        private void GenerateWhereClause(
+            StringBuilder queryBuilder,
+            string level,
+            string searchCriteria,
+            DateTime? startDate = null,
+            DateTime? endDate = null)
+        {
             var whereIncluded = false;
 
             if (!string.IsNullOrEmpty(level))
@@ -100,13 +118,20 @@ namespace Serilog.Ui.PostgreSqlProvider
                     : " WHERE message LIKE @Search OR exception LIKE @Search ");
             }
 
-            using IDbConnection connection = new NpgsqlConnection(_options.ConnectionString);
-            return await connection.ExecuteScalarAsync<int>(queryBuilder.ToString(),
-                new
-                {
-                    Level = LogLevelConverter.GetLevelValue(level),
-                    Search = searchCriteria != null ? "%" + searchCriteria + "%" : null
-                });
+            if (startDate != null)
+            {
+                queryBuilder.Append(whereIncluded
+                    ? " AND timestamp >= @StartDate "
+                    : " WHERE timestamp >= @StartDate ");
+                whereIncluded = true;
+            }
+
+            if (endDate != null)
+            {
+                queryBuilder.Append(whereIncluded
+                    ? " AND timestamp < @EndDate "
+                    : " WHERE timestamp < @EndDate ");
+            }
         }
     }
 }
