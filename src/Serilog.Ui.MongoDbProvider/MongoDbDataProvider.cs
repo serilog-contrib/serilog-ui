@@ -27,8 +27,8 @@ namespace Serilog.Ui.MongoDbProvider
             DateTime? startDate = null,
             DateTime? endDate = null)
         {
-            var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria);
-            var logCountTask = CountLogsAsync(level, searchCriteria);
+            var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
+            var logCountTask = CountLogsAsync(level, searchCriteria, startDate, endDate);
 
             await Task.WhenAll(logsTask, logCountTask);
 
@@ -39,15 +39,12 @@ namespace Serilog.Ui.MongoDbProvider
             int page,
             int count,
             string level,
-            string searchCriteria)
+            string searchCriteria,
+            DateTime? startDate,
+            DateTime? endDate)
         {
             var builder = Builders<MongoDbLogModel>.Filter.Empty;
-
-            if (!string.IsNullOrWhiteSpace(level))
-                builder &= Builders<MongoDbLogModel>.Filter.Eq(entry => entry.Level, level);
-
-            if (!string.IsNullOrWhiteSpace(searchCriteria))
-                builder &= Builders<MongoDbLogModel>.Filter.Text(searchCriteria);
+            GenerateWhereClause(ref builder, level, searchCriteria, startDate, endDate);
 
             var logs = await _collection.Find(builder)
                 .Skip(count * page)
@@ -62,20 +59,34 @@ namespace Serilog.Ui.MongoDbProvider
             return logs.Select(log => log.ToLogModel()).ToList();
         }
 
-        private async Task<int> CountLogsAsync(string level, string searchCriteria)
+        private async Task<int> CountLogsAsync(string level, string searchCriteria, DateTime? startDate, DateTime? endDate)
         {
             var builder = Builders<MongoDbLogModel>.Filter.Empty;
+            GenerateWhereClause(ref builder, level, searchCriteria, startDate, endDate);
 
+            var count = await _collection.Find(builder).CountDocumentsAsync();
+
+            return Convert.ToInt32(count);
+        }
+
+        private void GenerateWhereClause(
+            ref FilterDefinition<MongoDbLogModel> builder,
+            string level,
+            string searchCriteria,
+            DateTime? startDate = null,
+            DateTime? endDate = null)
+        {
             if (!string.IsNullOrWhiteSpace(level))
                 builder &= Builders<MongoDbLogModel>.Filter.Eq(entry => entry.Level, level);
 
             if (!string.IsNullOrWhiteSpace(searchCriteria))
                 builder &= Builders<MongoDbLogModel>.Filter.Text(searchCriteria);
 
-            var count = await _collection.Find(builder)
-                .CountDocumentsAsync();
+            if (startDate != null)
+                builder &= Builders<MongoDbLogModel>.Filter.Gte(entry => entry.Timestamp, startDate);
 
-            return Convert.ToInt32(count);
+            if (endDate != null)
+                builder &= Builders<MongoDbLogModel>.Filter.Lte(entry => entry.Timestamp, endDate);
         }
     }
 }
