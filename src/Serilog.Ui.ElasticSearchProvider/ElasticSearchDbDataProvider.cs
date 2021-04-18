@@ -27,7 +27,7 @@ namespace Serilog.Ui.ElasticSearchProvider
             DateTime? startDate = null,
             DateTime? endDate = null)
         {
-            return GetLogsAsync(page - 1, count, level, searchCriteria);
+            return GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
         }
 
         private async Task<(IEnumerable<LogModel>, int)> GetLogsAsync(
@@ -35,6 +35,8 @@ namespace Serilog.Ui.ElasticSearchProvider
             int count,
             string level,
             string searchCriteria,
+            DateTime? startDate = null,
+            DateTime? endDate = null,
             CancellationToken cancellationToken = default)
         {
             var descriptor = new SearchDescriptor<ElasticSearchDbLogModel>()
@@ -57,6 +59,14 @@ namespace Serilog.Ui.ElasticSearchProvider
                         .Query(searchCriteria)
                     )
                 );
+
+            if (startDate != null)
+                descriptor.Query(q => q.DateRange(dr =>
+                    dr.Field(f => f.Timestamp).GreaterThanOrEquals(startDate)));
+
+            if (endDate != null)
+                descriptor.Query(q => q.DateRange(dr =>
+                    dr.Field(f => f.Timestamp).LessThanOrEquals(endDate)));
 
             var result = await _client.SearchAsync<ElasticSearchDbLogModel>(descriptor, cancellationToken);
 
