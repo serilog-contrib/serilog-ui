@@ -43,30 +43,12 @@ namespace Serilog.Ui.ElasticSearchProvider
                 .Index(_options.IndexName)
                 .Sort(m => m.Descending(f => f.Timestamp))
                 .Size(count)
-                .Skip(page * count);
-
-            if (!string.IsNullOrEmpty(level))
-                descriptor.Query(q => q.Match(m => m.Field(f => f.Level).Query(level)));
-
-            if (!string.IsNullOrEmpty(searchCriteria))
-                descriptor.Query(q => q
-                    .Match(m => m
-                        .Field(f => f.Message)
-                        .Query(searchCriteria)
-                    ) || q
-                    .Match(m => m
-                        .Field(f => f.Exceptions)
-                        .Query(searchCriteria)
-                    )
-                );
-
-            if (startDate != null)
-                descriptor.Query(q => q.DateRange(dr =>
-                    dr.Field(f => f.Timestamp).GreaterThanOrEquals(startDate)));
-
-            if (endDate != null)
-                descriptor.Query(q => q.DateRange(dr =>
-                    dr.Field(f => f.Timestamp).LessThanOrEquals(endDate)));
+                .Skip(page * count)
+                .Query(q =>
+                    +q.Match(m => m.Field(f => f.Level).Query(level)) &&
+                    +q.DateRange(dr => dr.Field(f => f.Timestamp).GreaterThanOrEquals(startDate).LessThanOrEquals(endDate)) &&
+                    +q.Match(m => m.Field(f => f.Message).Query(searchCriteria)) ||
+                    +q.Match(m => m.Field(f => f.Exceptions).Query(searchCriteria)));
 
             var result = await _client.SearchAsync<ElasticSearchDbLogModel>(descriptor, cancellationToken);
 
