@@ -22,5 +22,11 @@
     "inputFiles": [
       "wwwroot/dist/main.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/dist/netstack.min.js",
+    "inputFiles": [
+      "wwwroot/dist/netstack.js"
+    ]
   }
 ]

@@ -58,6 +58,9 @@
 
         modalBody.find("pre").text(message);
         modal.modal("show");
+        $('.stacktrace').netStack({
+            prettyprint: true
+        });
     });
 
     $("#saveJwt").on("click", function () {

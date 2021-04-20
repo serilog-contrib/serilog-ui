@@ -391,3 +391,40 @@ a[data-toggle="collapse"] {
     cursor: pointer;
     vertical-align: text-top;
 }
+
+pre.stacktrace {
+    background-color: #333;
+    color: #ffffff;
+    padding-left: 5px;
+}
+
+    pre.stacktrace .st-type {
+        color: #0a8472;
+        font-weight: bolder;
+    }
+
+    pre.stacktrace .st-method {
+        color: #70c9ba;
+        font-weight: bolder;
+    }
+
+    pre.stacktrace .st-frame-params {
+        color: #ffffff;
+        font-weight: normal;
+    }
+
+    pre.stacktrace .st-param-type {
+        color: #0a8472;
+    }
+
+    pre.stacktrace .st-param-name {
+        color: #ffffff;
+    }
+
+    pre.stacktrace .st-file {
+        color: #f8b068;
+    }
+
+    pre.stacktrace .st-line {
+        color: #ff4f68;
+    }
