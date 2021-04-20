@@ -28,7 +28,7 @@ namespace Serilog.Ui.PostgreSqlProvider
         )
         {
             var logsTask = GetLogsAsync(page - 1, count, logLevel, searchCriteria, startDate, endDate);
-            var logCountTask = CountLogsAsync(logLevel, searchCriteria);
+            var logCountTask = CountLogsAsync(logLevel, searchCriteria, startDate, endDate);
 
             await Task.WhenAll(logsTask, logCountTask);
 
