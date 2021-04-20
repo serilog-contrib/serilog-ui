@@ -393,7 +393,7 @@ a[data-toggle="collapse"] {
 }
 
 pre.stacktrace {
-    background-color: #333;
+    background-color: #222;
     color: #ffffff;
     padding-left: 5px;
 }
