@@ -15,35 +15,13 @@ Install-Package Serilog.UI
 
 Then install one of the providers based upon your sink:
 
-_Serilog.UI.MsSqlServerProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.UI.MsSqlServerProvider):
-
-```powershell
-Install-Package Serilog.UI.MsSqlServerProvider
-```
-
-_Serilog.UI.MySqlProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.UI.MySqlProvider):
-
-```powershell
-Install-Package Serilog.UI.MySqlProvider
-```
-
-_Serilog.UI.PostgreSqlProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.UI.PostgreSqlProvider):
-
-```powershell
-Install-Package Serilog.UI.PostgreSqlProvider
-```
-
-_Serilog.UI.MongoDbProvider_ [Nuget package](https://www.nuget.org/packages/Serilog.Ui.MongoDbProvider):
-
-```powershell
-Install-Package Serilog.UI.MongoDbProvider
-```
-
-_Serilog.UI.ElasticSearchProvider_ [Nuget package](https://www.nuget.org/packages/Serilog.Ui.ElasticSearchProvider):
-
-```powershell
-Install-Package Serilog.UI.ElasticSearchDbProvider
-```
+| Provider Name                  | Install                                          | Package                                                                        |
+| ------------------------------ | ------------------------------------------------ | ------------------------------------------------------------------------------ |
+| Serilog.UI.MsSqlServerProvider | `Install-Package Serilog.UI.MsSqlServerProvider` | [NuGet package](https://www.nuget.org/packages/Serilog.UI.MsSqlServerProvider) |
+| Serilog.UI.PostgreSqlProvider  | `Install-Package Serilog.UI.MySqlProvider`       | [NuGet package](https://www.nuget.org/packages/Serilog.UI.MySqlProvider)       |
+| Serilog.UI.PostgreSqlProvider  | `Install-Package Serilog.UI.PostgreSqlProvider`  | [NuGet package](https://www.nuget.org/packages/Serilog.UI.PostgreSqlProvider)  |
+| Serilog.UI.MongoDbProviderr    | `Install-Package Serilog.UI.MongoDbProvider`     | [NuGet package](https://www.nuget.org/packages/Serilog.UI.MongoDbProvider)     |
+| Serilog.UI.ElasticSearchDbProvider | `Install-Package Serilog.UI.ElasticSearchDbProvider` | [NuGet package](https://www.nuget.org/packages/Serilog.UI.ElasticSearchDbProvider) |
 
 Then, add `AddSerilogUi()` to `IServiceCollection` in `Startup.ConfigureServices` method:
 
