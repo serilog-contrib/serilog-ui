@@ -1,5 +1,10 @@
 # serilog-ui
-A simple Serilog log viewer for [Serilog.Sinks.MSSqlServer](https://github.com/serilog/serilog-sinks-mssqlserver), [Serilog.Sinks.Postgresql](https://github.com/b00ted/serilog-sinks-postgresql), [Serilog.Sinks.MongoDB](https://github.com/serilog/serilog-sinks-mongodb) and [Serilog.Sinks.ElasticSearch](https://github.com/serilog/serilog-sinks-elasticsearch) sinks (other sinks will be added in the future).
+A simple Serilog log viewer for following sinks:
+- [Serilog.Sinks.MSSqlServer](https://github.com/serilog/serilog-sinks-mssqlserver)
+- [Serilog.Sinks.MySql](https://github.com/TeleSoftas/serilog-sinks-mariadb)
+- [Serilog.Sinks.Postgresql](https://github.com/b00ted/serilog-sinks-postgresql), 
+- [Serilog.Sinks.MongoDB](https://github.com/serilog/serilog-sinks-mongodb) 
+- [Serilog.Sinks.ElasticSearch](https://github.com/serilog/serilog-sinks-elasticsearch) 
 
 ![serilog ui](https://raw.githubusercontent.com/mo-esmp/serilog-ui/master/assets/serilog-ui.jpg)
 
