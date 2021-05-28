@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleWebApp", "samples\Sam
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.ElasticSearchProvider", "src\Serilog.Ui.ElasticSearchProvider\Serilog.Ui.ElasticSearchProvider.csproj", "{4CC537BE-8695-4976-BA43-B8484664C169}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Ui.MySqlProvider", "src\Serilog.Ui.MySqlProvider\Serilog.Ui.MySqlProvider.csproj", "{3363E5F5-54A0-413D-807C-D27DBFD52CC8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{4CC537BE-8695-4976-BA43-B8484664C169}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CC537BE-8695-4976-BA43-B8484664C169}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CC537BE-8695-4976-BA43-B8484664C169}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3363E5F5-54A0-413D-807C-D27DBFD52CC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3363E5F5-54A0-413D-807C-D27DBFD52CC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3363E5F5-54A0-413D-807C-D27DBFD52CC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3363E5F5-54A0-413D-807C-D27DBFD52CC8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,6 +73,7 @@ Global
 		{A6195106-0818-4CE1-A889-BB734960DD8D} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
 		{30C8AE36-8117-4E52-8140-8440D3C9AD39} = {157CA77C-513A-409F-8045-E68739AAC8C8}
 		{4CC537BE-8695-4976-BA43-B8484664C169} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
+		{3363E5F5-54A0-413D-807C-D27DBFD52CC8} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {88374732-FEAD-4375-9CF1-75331A37CF07}

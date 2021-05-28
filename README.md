@@ -16,6 +16,12 @@ _Serilog.UI.MsSqlServerProvider_ [NuGet package](https://www.nuget.org/packages/
 Install-Package Serilog.UI.MsSqlServerProvider
 ```
 
+_Serilog.UI.MySqlProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.UI.MySqlProvider):
+
+```powershell
+Install-Package Serilog.UI.MySqlProvider
+```
+
 _Serilog.UI.PostgreSqlProvider_ [NuGet package](https://www.nuget.org/packages/Serilog.UI.PostgreSqlProvider):
 
 ```powershell
@@ -41,12 +47,6 @@ public void ConfigureServices(IServiceCollection services)
 {
     // Register the serilog UI services
     services.AddSerilogUi(options => options.UseSqlServer("ConnectionString", "LogTableName"));
-    // or
-    // services.AddSerilogUi(options => options.UseNpgSql("ConnectionString", "LogTableName"));
-    // or
-    // services.AddSerilogUi(options => options.UseMongoDb("ConnectionString", "DatabaseName", "CollectionName"))
-    // or
-    // services.AddSerilogUi(options => options.UseElasticSearchDb(endpoint: new System.Uri("http://localhost:9200"), indexName: "logging-index"))
 }
 ```
 
