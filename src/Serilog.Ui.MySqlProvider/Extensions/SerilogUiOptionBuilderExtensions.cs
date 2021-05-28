@@ -2,7 +2,7 @@
 using Serilog.Ui.Core;
 using System;
 
-namespace Serilog.Ui.MySqlProvider.Extensions
+namespace Serilog.Ui.MySqlProvider
 {
     /// <summary>
     ///     MySQL data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
