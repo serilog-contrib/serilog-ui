@@ -17,6 +17,7 @@ namespace Serilog.Ui.MongoDbProvider
             if (options is null) throw new ArgumentNullException(nameof(options));
 
             _collection = client.GetDatabase(options.DatabaseName).GetCollection<MongoDbLogModel>(options.CollectionName);
+            var s = _collection.CollectionNamespace;
         }
 
         public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
@@ -27,12 +28,12 @@ namespace Serilog.Ui.MongoDbProvider
             DateTime? startDate = null,
             DateTime? endDate = null)
         {
-            var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
-            var logCountTask = CountLogsAsync(level, searchCriteria, startDate, endDate);
+            var logsTask = await GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
+            var logCountTask = await CountLogsAsync(level, searchCriteria, startDate, endDate);
 
-            await Task.WhenAll(logsTask, logCountTask);
+            //await Task.WhenAll(logsTask, logCountTask);
 
-            return (await logsTask, await logCountTask);
+            return (logsTask, logCountTask);
         }
 
         private async Task<IEnumerable<LogModel>> GetLogsAsync(
@@ -46,7 +47,8 @@ namespace Serilog.Ui.MongoDbProvider
             var builder = Builders<MongoDbLogModel>.Filter.Empty;
             GenerateWhereClause(ref builder, level, searchCriteria, startDate, endDate);
 
-            var logs = await _collection.Find(builder)
+            var logs = await _collection
+                .Find(builder)
                 .Skip(count * page)
                 .Limit(count)
                 .SortByDescending(entry => entry.Timestamp)
