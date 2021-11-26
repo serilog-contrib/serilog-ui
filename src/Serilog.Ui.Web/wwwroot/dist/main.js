@@ -159,7 +159,7 @@ const fetchData = () => {
                 <td class="text-center"><span class="log-level text-white ${levelClass(log.level)}">${log.level}</span></td>
                 <td class="text-center">${formatDate(log.timestamp)}</td>
                 <td class="log-message">
-                    <span class="overflow-auto"><truncate length="100">${truncateString(log.message, 100)}</truncate></span>
+                    <span class="overflow-auto"><truncate length="100">${truncateString(cleanHtmlTags(log.message), 100)}</truncate></span>
                 </td>
                 <td class="text-center">
                     ${exception}
@@ -289,4 +289,8 @@ const initTokenUi = () => {
     $("#tokenContainer").text("*********");
     $("#saveJwt").text("Clear").data("saved", "true");
     $("#jwtModalBtn").find("i").removeClass("fa-unlock").addClass("fa-lock");
+}
+
+const cleanHtmlTags=  (str)=> {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
