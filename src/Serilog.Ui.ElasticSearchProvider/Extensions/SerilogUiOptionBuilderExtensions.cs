@@ -6,8 +6,19 @@ using System;
 
 namespace Serilog.Ui.ElasticSearchProvider
 {
+    /// <summary>
+    ///     ElasticSearch data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
+    /// </summary>
     public static class SerilogUiOptionBuilderExtensions
     {
+        /// <summary>
+        ///     Configures the SerilogUi to connect to a MongoDB database.
+        /// </summary>
+        /// <param name="optionsBuilder"> The options builder. </param>
+        /// <param name="endpoint"> The url of ElasticSearch server. </param>
+        /// <param name="indexName"> Name of the log index. </param>
+        /// <exception cref="ArgumentNullException"> throw if endpoint is null </exception>
+        /// <exception cref="ArgumentNullException"> throw is indexName is null </exception>
         public static void UseElasticSearchDb(this SerilogUiOptionsBuilder optionsBuilder, Uri endpoint, string indexName)
         {
             if (endpoint == null)
