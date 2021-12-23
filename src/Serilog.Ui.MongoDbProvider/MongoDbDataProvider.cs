@@ -44,21 +44,29 @@ namespace Serilog.Ui.MongoDbProvider
             DateTime? startDate,
             DateTime? endDate)
         {
-            var builder = Builders<MongoDbLogModel>.Filter.Empty;
-            GenerateWhereClause(ref builder, level, searchCriteria, startDate, endDate);
+            try
+            {
+                var builder = Builders<MongoDbLogModel>.Filter.Empty;
+                GenerateWhereClause(ref builder, level, searchCriteria, startDate, endDate);
 
-            var logs = await _collection
-                .Find(builder)
-                .Skip(count * page)
-                .Limit(count)
-                .SortByDescending(entry => entry.Timestamp)
-                .ToListAsync();
+                var logs = await _collection
+                    .Find(builder)
+                    .Skip(count * page)
+                    .Limit(count)
+                    .SortByDescending(entry => entry.Timestamp)
+                    .ToListAsync();
 
-            var index = 1;
-            foreach (var log in logs)
-                log.Id = (page * count) + index++;
+                var index = 1;
+                foreach (var log in logs)
+                    log.Id = (page * count) + index++;
 
-            return logs.Select(log => log.ToLogModel()).ToList();
+                return logs.Select(log => log.ToLogModel()).ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
         }
 
         private async Task<int> CountLogsAsync(string level, string searchCriteria, DateTime? startDate, DateTime? endDate)
