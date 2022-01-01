@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using MongoDB.Driver;
 using Serilog.Ui.Core;
 using System;
@@ -38,7 +39,7 @@ namespace Serilog.Ui.MongoDbProvider
             };
 
             ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddSingleton(mongoProvider);
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddSingleton<IMongoClient>(o => new MongoClient(connectionString));
+            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.TryAddSingleton<IMongoClient>(o => new MongoClient(connectionString));
             ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddScoped<IDataProvider, MongoDbDataProvider>();
         }
 
