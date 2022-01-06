@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 using Serilog.Ui.Core;
 using System;
@@ -8,6 +9,7 @@ using System.Dynamic;
 namespace Serilog.Ui.MongoDbProvider
 {
     [BsonIgnoreExtraElements]
+    [BsonDiscriminator(RootClass = true)]
     public class MongoDbLogModel
     {
         [BsonIgnore]
@@ -23,8 +25,10 @@ namespace Serilog.Ui.MongoDbProvider
         [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
         public DateTime UtcTimeStamp { get; set; }
 
-        public dynamic Exception { get; set; }
+        [BsonElement("Exception")]
+        public BsonDocument Exception { get; set; }
 
+        [BsonElement("Properties")]
         public object Properties { get; set; }
 
         internal LogModel ToLogModel()
@@ -36,20 +40,18 @@ namespace Serilog.Ui.MongoDbProvider
                 Message = RenderedMessage,
                 Timestamp = Timestamp ?? UtcTimeStamp,
                 Exception = GetException(Exception),
-                Properties = Newtonsoft.Json.JsonConvert.SerializeObject(Properties),
+                Properties = JsonConvert.SerializeObject(Properties),
                 PropertyType = "json"
             };
         }
 
-        private object GetException(dynamic exception)
+        private string GetException(object exception)
         {
-            if (exception == null || IsPropertyExist(Exception, "_csharpnull"))
+            if (exception == null || IsPropertyExist(exception, "_csharpnull"))
                 return null;
 
-            if (exception is string)
-                return exception;
-
-            return Newtonsoft.Json.JsonConvert.SerializeObject(Exception, Formatting.Indented);
+            var str = exception.ToJson();
+            return str;
         }
 
         private bool IsPropertyExist(dynamic obj, string name)
