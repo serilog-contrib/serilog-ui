@@ -1,6 +1,9 @@
-﻿using System;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 using Serilog.Ui.Core;
+using System;
+using System.Collections.Generic;
+using System.Dynamic;
 
 namespace Serilog.Ui.MongoDbProvider
 {
@@ -15,9 +18,12 @@ namespace Serilog.Ui.MongoDbProvider
         public string RenderedMessage { get; set; }
 
         [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
-        public DateTime Timestamp { get; set; }
+        public DateTime? Timestamp { get; set; }
 
-        public string Exception { get; set; }
+        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
+        public DateTime UtcTimeStamp { get; set; }
+
+        public dynamic Exception { get; set; }
 
         public object Properties { get; set; }
 
@@ -28,11 +34,30 @@ namespace Serilog.Ui.MongoDbProvider
                 RowNo = Id,
                 Level = Level,
                 Message = RenderedMessage,
-                Timestamp = Timestamp,
-                Exception = Exception,
+                Timestamp = Timestamp ?? UtcTimeStamp,
+                Exception = GetException(Exception),
                 Properties = Newtonsoft.Json.JsonConvert.SerializeObject(Properties),
                 PropertyType = "json"
             };
+        }
+
+        private object GetException(dynamic exception)
+        {
+            if (exception == null || IsPropertyExist(Exception, "_csharpnull"))
+                return null;
+
+            if (exception is string)
+                return exception;
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(Exception, Formatting.Indented);
+        }
+
+        private bool IsPropertyExist(dynamic obj, string name)
+        {
+            if (obj is ExpandoObject)
+                return ((IDictionary<string, object>)obj).ContainsKey(name);
+
+            return obj?.GetType()?.GetProperty(name) != null;
         }
     }
 }
