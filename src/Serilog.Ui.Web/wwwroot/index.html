@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -106,7 +106,7 @@
                     <div class="table-filter">
                         <label>
                             Start date:
-                            <input type="date" name="startDate" id="startDate" class="form-control form-control-sm">
+                            <input type="datetime-local" name="startDate" id="startDate" class="form-control form-control-sm">
                             <button onclick="javascript:startDate.value='';">X</button>
                         </label>
                     </div>
@@ -115,7 +115,7 @@
                     <div class="table-filter">
                         <label>
                             End date:
-                            <input type="date" name="endDate" id="endDate" class="form-control form-control-sm">
+                            <input type="datetime-local" name="endDate" id="endDate" class="form-control form-control-sm">
                             <button onclick="javascript:endDate.value='';">X</button>
                         </label>
                     </div>
@@ -181,11 +181,32 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="changePageModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Change Page</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input id="custom-pagination-choice" class="form-control" min="1" max="1" type="number" />
+                    /<span class="custom-pagination-choice-totals">1</span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="changePage()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="./jquery-3.5.1.min.js"></script>
     <script src="./bootstrap.bundle.min.js"></script>
     <script src="./netstack.min.js"></script>
-    <script src="./main.min.js"></script>
+    <!--<script src="./combined.js"></script>-->
+    <!--<script src="./main.js"></script>-->
     <script>
         $(function () {
             const configObject = JSON.parse('%(Configs)');

@@ -1,8 +1,7 @@
-﻿"use strict";
+﻿'use strict';
 
 (function ($) {
-    "use strict";
-
+    'use strict';
     const fullHeight = function () {
         $(".js-fullheight").css("height", $(window).height());
         $(window).resize(function () {
@@ -10,12 +9,11 @@
         });
     };
     fullHeight();
-
     $(".sidebar-collapse").on("click", function () {
         $("#sidebar").toggleClass("active");
     });
 
-    $("body").on("click", ".page-link", function (e) {
+    $("body").on("click", ".page-link-item", function (e) {
         e.preventDefault();
         $("#page").val($(this).attr("data-val"));
         fetchData();
@@ -110,9 +108,9 @@ const init = (config) => {
     fetchData();
 }
 
-const fetchData = () => {
+const fetchData = (identifiedPage) => {
     const tbody = $("#logTable tbody");
-    const page = $("#page").val();
+    const page = identifiedPage ?? $("#page").val();
     const count = $("#count").children("option:selected").val();
     const level = $("#level").children("option:selected").val();
     const startDate = $("#startDate").val();
@@ -188,6 +186,15 @@ const fetchData = () => {
     });
 }
 
+const changePage = () => {
+    const customPage = $('#custom-pagination-choice');
+    const [value, currMax] = [Number.parseInt(customPage.val()), Number.parseInt(customPage.attr('max'))];
+    if (value > currMax) return;
+    $("#page").val(value);
+    fetchData(value);
+    $('.changePageModal').modal('hide');
+}
+
 const levelClass = (logLevel) => {
     switch (logLevel) {
         case "Verbose":
@@ -245,7 +252,7 @@ const paging = (totalItems, itemPerPage, currentPage) => {
     if (totalPages <= defaultPageLength) {
         startIndex = 1;
         endIndex = totalPages;
-    } else if (totalPages === currentPage) {
+    } else if (totalPages < currentPage + 5) {
         startIndex = totalPages - defaultPageLength;
         endIndex = totalPages;
     } else {
@@ -260,25 +267,29 @@ const paging = (totalItems, itemPerPage, currentPage) => {
 
     if (hasPrev) {
         const prevVal = currentPage - 1;
-        $(pagination).append(`<li class="page-item first"><a href="#" data-val="1" tabindex="${prevVal}" class="page-link">First</a></li>`);
-        $(pagination).append(`<li class="page-item previous"><a href="#" data-val="${prevVal}" tabindex="${prevVal}" class="page-link">Previous</a></li>`);
+        $(pagination).append(`<li class="page-item first"><a href="#" data-val="1" tabindex="${prevVal}" class="page-link page-link-item">First</a></li>`);
+        $(pagination).append(`<li class="page-item previous"><a href="#" data-val="${prevVal}" tabindex="${prevVal}" class="page-link page-link-item">Previous</a></li>`);
     }
 
     for (let i = startIndex; i <= endIndex; i++) {
         if (currentPage === i) {
-            $(pagination).append(`<li class="page-item active"><span data-val="${i}" class="page-link disabled">${i} <span class="sr-only">(current)</span></span></li>`);
+            $(pagination).append(`<li class="page-item active"><span data-val="${i}" class="page-link page-link-item disabled">${i} <span class="sr-only">(current)</span></span></li>`);
         }
         else {
-            $(pagination).append(`<li><a href="#" data-val="${i}" tabindex="${i}" class="page-link">${i}</a></li>`);
+            $(pagination).append(`<li><a href="#" data-val="${i}" tabindex="${i}" class="page-link page-link-item">${i}</a></li>`);
         }
     }
 
     if (hasNext) {
         const nextVal = currentPage + 1;
-        $(pagination).append(`<li class="page-item ">&nbsp;...&nbsp;</li>`);
-        $(pagination).append(`<li class="page-item next"><a href="#" data-val="${nextVal}" tabindex="${nextVal}" class="page-link">Next</a></li>`);
-        $(pagination).append(`<li class="page-item previous"><a href="#" data-val="${totalPages}" tabindex="${nextVal}" class="page-link">Last</a></li>`);
+        if (endIndex < totalPages + 5) {
+            $(pagination).append(`<li class="page-item page-link" data-toggle="modal" data-target="#changePageModal">&nbsp;...&nbsp;</li>`);
+            $(pagination).append(`<li class="page-item next"><a href="#" data-val="${nextVal}" tabindex="${nextVal}" class="page-link page-link-item">Next</a></li>`);
+            $(pagination).append(`<li class="page-item previous"><a href="#" data-val="${totalPages}" tabindex="${nextVal}" class="page-link page-link-item">Last</a></li>`);
+        }
     }
+
+    updatePagingModal(currentPage, totalPages);
 }
 
 const initTokenUi = () => {
@@ -291,6 +302,11 @@ const initTokenUi = () => {
     $("#jwtModalBtn").find("i").removeClass("fa-unlock").addClass("fa-lock");
 }
 
-const cleanHtmlTags=  (str)=> {
+const updatePagingModal = (current, totalPages) => {
+    $(".custom-pagination-choice-totals").text(totalPages);
+    $('#custom-pagination-choice').attr('max', totalPages).val(current);
+}
+
+const cleanHtmlTags = (str) => {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
