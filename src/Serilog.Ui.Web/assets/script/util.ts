@@ -1,7 +1,8 @@
 ﻿import parseJSON from "date-fns/parseJSON";
 import format from "date-fns/format";
+import { LogLevel } from "../types/types";
 
-export const formatDate = (date) => format(parseJSON(date), 'PP hh:mm:ss.SSS', { weekStartsOn: 1 });
+export const formatDate = (date: string) => format(parseJSON(date), 'PP hh:mm:ss.SSS', { weekStartsOn: 1 });
 
 export const formatXml = (xml: string, tab = "\t") => {
     let formatted = "", indent = "";
@@ -30,4 +31,20 @@ export const fixedLengthMessageWithModal = (str: string, sliceEnd: number) => {
 
 export const cleanHtmlTags = (str: string) => {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+export const getBgLogLevel = (logLevel: LogLevel) => {
+    switch (logLevel) {
+        case LogLevel.Verbose:
+        case LogLevel.Debug:
+            return "bg-success";
+        case LogLevel.Information:
+            return "bg-primary";
+        case LogLevel.Warning:
+            return "bg-warning";
+        case LogLevel.Error:
+            return "bg-danger";
+        default:
+            return "bg-light";
+    }
 }

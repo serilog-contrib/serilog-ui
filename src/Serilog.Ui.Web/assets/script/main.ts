@@ -9,9 +9,6 @@ import { formatXml } from './util';
 import { fetchLogs } from './fetch';
 import { changePageByModalChoice } from './pagination';
 
-//https://www.pico.net/kb/how-do-you-get-chrome-to-accept-a-self-signed-certificate/
-//https://github.com/parcel-bundler/parcel/issues/1746
-
 const initEventListeners = () => {
     // print current year
     const date = new Date().getFullYear();

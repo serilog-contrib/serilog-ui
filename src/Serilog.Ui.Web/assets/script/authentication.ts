@@ -30,8 +30,10 @@ export const initTokenUi = () => {
         if (!token) return;
 
         $("#jwtToken").remove();
-        $("#tokenContainer").text("*********");
-        $("#saveJwt").text("Clear").data("saved", "true");
+        document.querySelector("#tokenContainer").textContent = "*********";
+        const saveJwt = document.querySelector<HTMLButtonElement>("#saveJwt");
+        saveJwt.textContent = "Clear";
+        saveJwt.dataset.saved = "true";
         $("#jwtModalBtn").find("i").removeClass("fa-unlock").addClass("fa-lock");
     } else {
         $("#jwtModalBtn").remove();

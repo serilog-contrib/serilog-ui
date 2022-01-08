@@ -1,37 +1,52 @@
 ﻿import * as $ from 'jquery'
 import { fetchLogs } from './fetch';
 
-export const printPagination = (totalItems, itemPerPage, currentPage) => {
+type PagingInfo = {
+    currentPage: number,
+    totalPages: number,
+    boundaries: { startIndex: number, endIndex: number },
+    hasPrev: boolean,
+    hasNext: boolean
+}
+export const printPagination = (totalItems: number, itemPerPage: number, currentPage: number) => {
     const defaultPageLength = 5;
     const totalPages = Math.ceil(totalItems / itemPerPage);
-    //let totalPages = parseInt(totalItems / itemPerPage);
-    //totalPages += totalItems % itemPerPage !== 0 ? 1 : 0;
-    let startIndex, endIndex;
+    const boundaries = { ...getPagingBoundaries(currentPage, totalPages, defaultPageLength) };
 
-    if (totalPages <= defaultPageLength) {
-        startIndex = 1;
-        endIndex = totalPages;
-    } else if (totalPages < currentPage + 5) {
-        startIndex = totalPages - defaultPageLength;
-        endIndex = totalPages;
-    } else {
-        startIndex = currentPage;
-        endIndex = (currentPage - 1) + defaultPageLength;
+    const pagingInfo: PagingInfo = {
+        currentPage,
+        totalPages,
+        boundaries,
+        hasPrev: totalPages > 1 && boundaries.startIndex > 1,
+        hasNext: totalPages > defaultPageLength && boundaries.endIndex !== totalPages
     }
 
-    const hasPrev = totalPages > 1 && startIndex > 1;
-    const hasNext = totalPages > defaultPageLength && endIndex !== totalPages;
+    createPaginationNodes(pagingInfo);
+    updatePaginationModal(currentPage, totalPages);
+}
+
+const getPagingBoundaries = (currentPage: number, totalPages: number, defaultPageLength: number) => {
+    if (totalPages <= defaultPageLength)
+        return { startIndex: 1, endIndex: totalPages };
+
+    if (totalPages < currentPage + 5)
+        return { startIndex: totalPages - defaultPageLength, endIndex: totalPages };
+
+    return { startIndex: currentPage, endIndex: (currentPage - 1) + defaultPageLength }
+}
+
+const createPaginationNodes = (cycle: PagingInfo) => {
     const pagination = $("#pagination");
     $(pagination).empty();
 
-    if (hasPrev) {
-        const prevVal = currentPage - 1;
+    if (cycle.hasPrev) {
+        const prevVal = cycle.currentPage - 1;
         $(pagination).append(`<li class="page-item first"><a href="#" data-val="1" tabindex="${prevVal}" class="page-link page-link-item">First</a></li>`);
         $(pagination).append(`<li class="page-item previous"><a href="#" data-val="${prevVal}" tabindex="${prevVal}" class="page-link page-link-item">Previous</a></li>`);
     }
 
-    for (let i = startIndex; i <= endIndex; i++) {
-        if (currentPage === i) {
+    for (let i = cycle.boundaries.startIndex; i <= cycle.boundaries.endIndex; i++) {
+        if (cycle.currentPage === i) {
             $(pagination).append(`<li class="page-item active"><span data-val="${i}" class="page-link page-link-item disabled">${i} <span class="sr-only">(current)</span></span></li>`);
         }
         else {
@@ -39,18 +54,15 @@ export const printPagination = (totalItems, itemPerPage, currentPage) => {
         }
     }
 
-    if (hasNext) {
-        const nextVal = currentPage + 1;
-        if (endIndex < totalPages + 5) {
+    if (cycle.hasNext) {
+        const nextVal = cycle.currentPage + 1;
+        if (cycle.boundaries.endIndex < cycle.totalPages + 5) {
             $(pagination).append(`<li class="page-item page-link" data-toggle="modal" data-target="#changePageModal">&nbsp;...&nbsp;</li>`);
             $(pagination).append(`<li class="page-item next"><a href="#" data-val="${nextVal}" tabindex="${nextVal}" class="page-link page-link-item">Next</a></li>`);
-            $(pagination).append(`<li class="page-item previous"><a href="#" data-val="${totalPages}" tabindex="${nextVal}" class="page-link page-link-item">Last</a></li>`);
+            $(pagination).append(`<li class="page-item previous"><a href="#" data-val="${cycle.totalPages}" tabindex="${nextVal}" class="page-link page-link-item">Last</a></li>`);
         }
     }
-
-    updatePagingModal(currentPage, totalPages);
 }
-
 export const changePageByModalChoice = () => {
     const customPage = document.querySelector<HTMLInputElement>('#custom-pagination-choice');
     const [value, currMax] = [Number.parseInt(customPage.value), Number.parseInt(customPage.getAttribute('max'))];
@@ -60,7 +72,7 @@ export const changePageByModalChoice = () => {
     $('#changePageModal').modal('hide');
 }
 
-export const updatePagingModal = (current, totalPages) => {
+export const updatePaginationModal = (current, totalPages) => {
     document.querySelector('.custom-pagination-choice-totals').textContent = totalPages;
     const customPage = document.querySelector<HTMLInputElement>('#custom-pagination-choice');
     customPage.setAttribute('max', totalPages);
