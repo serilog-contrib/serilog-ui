@@ -1,7 +1,7 @@
 ﻿import * as $ from 'jquery'
 import { fetchLogs } from './fetch';
 
-export const paging = (totalItems, itemPerPage, currentPage) => {
+export const printPagination = (totalItems, itemPerPage, currentPage) => {
     const defaultPageLength = 5;
     const totalPages = Math.ceil(totalItems / itemPerPage);
     //let totalPages = parseInt(totalItems / itemPerPage);
@@ -52,15 +52,17 @@ export const paging = (totalItems, itemPerPage, currentPage) => {
 }
 
 export const changePageByModalChoice = () => {
-    const customPage = $('#custom-pagination-choice');
-    const [value, currMax] = [Number.parseInt(customPage.val() as string), Number.parseInt(customPage.attr('max'))];
+    const customPage = document.querySelector<HTMLInputElement>('#custom-pagination-choice');
+    const [value, currMax] = [Number.parseInt(customPage.value), Number.parseInt(customPage.getAttribute('max'))];
     if (value > currMax) return;
-    $("#page").val(value);
+    document.querySelector("#page").setAttribute("value", value.toString());
     fetchLogs(value);
-    $('.changePageModal').modal('hide');
+    $('#changePageModal').modal('hide');
 }
 
 export const updatePagingModal = (current, totalPages) => {
-    $(".custom-pagination-choice-totals").text(totalPages);
-    $('#custom-pagination-choice').attr('max', totalPages).val(current);
+    document.querySelector('.custom-pagination-choice-totals').textContent = totalPages;
+    const customPage = document.querySelector<HTMLInputElement>('#custom-pagination-choice');
+    customPage.setAttribute('max', totalPages);
+    customPage.value = current;
 }

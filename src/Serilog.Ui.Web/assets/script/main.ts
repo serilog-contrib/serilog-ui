@@ -7,11 +7,15 @@ import netStack = require('netstack.js');
 import { initTokenUi } from './authentication';
 import { formatXml } from './util';
 import { fetchLogs } from './fetch';
+import { changePageByModalChoice } from './pagination';
 
 //https://www.pico.net/kb/how-do-you-get-chrome-to-accept-a-self-signed-certificate/
 //https://github.com/parcel-bundler/parcel/issues/1746
 
 const initEventListeners = () => {
+    // print current year
+    const date = new Date().getFullYear();
+    document.getElementById('currentYearPrint').append(date.toString());
     // set full height
     const fullHeight = function () {
         $(".js-fullheight").css("height", $(window).height());
@@ -74,6 +78,9 @@ const initEventListeners = () => {
         });
     });
 
+    const modalButton = document.querySelector('.custom-pagination-submit');
+    modalButton.addEventListener('click', changePageByModalChoice);
+
     // on jwtSet
     $("#saveJwt").on("click", function () {
         const isJwtSaved = $(this).data("saved");
@@ -114,7 +121,6 @@ if (process.env.NODE_ENV === 'development') {
             console.log(err)
         }
     }
-
     setupWorker().then(() => {
         initEventListeners();
         init();

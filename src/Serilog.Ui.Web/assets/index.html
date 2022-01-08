@@ -7,8 +7,8 @@
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700,800,900" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="~/node_modules/@fortawesome/fontawesome-free/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="~/node_modules/@fortawesome/fontawesome-free/css/solid.min.css" />
-    <link rel="stylesheet" type="text/css" href="~/node_modules/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="./css/main.css">
+    <link rel="stylesheet" type="text/css" href="~/node_modules/bootstrap/dist/css/bootstrap.min.css" />
 </head>
 <body>
     <div class="wrapper d-flex align-items-stretch">
@@ -22,11 +22,10 @@
                     <a href="/"><span class="fas fa-home"></span> Home</a>
                 </li>
             </ul>
-
             <div class="footer">
                 <p>
                     &copy;
-                    <script>document.write(new Date().getFullYear());</script> Serilog UI |
+                    <span id="currentYearPrint"></span> Serilog UI |
                     <a href="https://github.com/mo-esmp/serilog-ui/">Serilog UI</a>
                 </p>
             </div>
@@ -197,26 +196,18 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="changePage()">Save changes</button>
+                    <button type="button" class="btn btn-primary custom-pagination-submit">Change Page</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!--<script src="./combined.js"></script>-->
     <script type="module" src="./script/main.ts"></script>
-    <!--<script src="./dist/netstack.min.js"></script>-->
     <script>
-        const config = '"{"routePrefix":"serilog-ui","authType":"Jwt"}"';
+        const config = '%(Configs)';
         cleanedConfig = config.substring(1, config.length - 1);
-        //const config = '%(Configs)';
-        console.log(cleanedConfig)
         const configObject = JSON.parse(cleanedConfig);
         window.config = configObject;
-        /*init(configObject);*/
-        console.log(configObject)
-            //$(function () {
-            //});
     </script>
 </body>
 </html>

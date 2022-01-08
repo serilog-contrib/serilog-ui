@@ -1,5 +1,5 @@
 ﻿import * as $ from 'jquery';
-import { paging } from './pagination';
+import { printPagination } from './pagination';
 import { cleanHtmlTags, fixedLengthMessageWithModal, formatDate, formatXml } from './util';
 import { AuthPropertiesSingleton } from './authentication';
 import { AuthType } from '../types/types';
@@ -88,7 +88,7 @@ export const fetchLogs = (identifiedPage?: number) => {
             </tr>`;
                 $(tbody).append(row);
             });
-            paging(data.total, data.count, data.currentPage);
+            printPagination(data.total, data.count, data.currentPage);
         }
     }).fail(function (error) {
         if (error.status === 403) {
