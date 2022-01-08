@@ -1,0 +1,15 @@
+﻿{
+    "compilerOptions": {
+        "noImplicitAny": false,
+        "noEmitOnError": true,
+        "removeComments": false,
+        "sourceMap": true,
+        "target": "es5",
+        "typeRoots": [ "./assets/types/", "./node_modules/@types/" ]
+    },
+    "include": [ "./**/*.ts" ],
+    "exclude": [
+        "node_modules",
+        "wwwroot"
+    ]
+}
