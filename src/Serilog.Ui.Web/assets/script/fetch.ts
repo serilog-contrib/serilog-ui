@@ -1,6 +1,6 @@
 ﻿import * as $ from 'jquery';
 import { paging } from './pagination';
-import { cleanHtmlTags, fixedLengthMessageWithModal, formatXml } from './util';
+import { cleanHtmlTags, fixedLengthMessageWithModal, formatDate, formatXml } from './util';
 import { AuthPropertiesSingleton } from './authentication';
 import { AuthType } from '../types/types';
 
@@ -20,9 +20,12 @@ const levelClass = (logLevel) => {
     }
 }
 
+// asc or desc
+// readme instr for build and dev
+
 export const fetchLogs = (identifiedPage?: number) => {
     const tbody = $("#logTable tbody");
-    const page = identifiedPage ?? $("#page").val();
+    const page = identifiedPage ?? ($("#page").val() || "1");
     const count = $("#count").children("option:selected").val();
     const level = $("#level").children("option:selected").val();
     const startDate = $("#startDate").val();
@@ -39,7 +42,7 @@ export const fetchLogs = (identifiedPage?: number) => {
 
     const searchTerm = escape($("#search").val());
     const host = process.env.NODE_ENV === "development" ? "" : location.pathname.replace("/index.html", "");
-    const url = `${host}/api/logs?page=${page}&count=${200}&level=${level}&search=${searchTerm}&startDate=${startDate}&endDate=${endDate}`;
+    const url = `${host}/api/logs?page=${page}&count=${count}&level=${level}&search=${searchTerm}&startDate=${startDate}&endDate=${endDate}`;
 
     const token = sessionStorage.getItem("serilogui_token");
     let xf = null;
