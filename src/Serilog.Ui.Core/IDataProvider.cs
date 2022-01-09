@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.Core
 {
@@ -25,7 +26,9 @@ namespace Serilog.Ui.Core
             string level = null,
             string searchCriteria = null,
             DateTime? startDate = null,
-            DateTime? endDate = null
+            DateTime? endDate = null,
+            SortProperty sortOn = SortProperty.UtcTimeStamp,
+            SortDirection sortBy = SortDirection.Desc
         );
     }
 }
