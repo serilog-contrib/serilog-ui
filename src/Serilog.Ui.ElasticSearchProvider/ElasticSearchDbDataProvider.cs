@@ -1,8 +1,11 @@
 ﻿using Nest;
+using Newtonsoft.Json;
 using Serilog.Ui.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using static Serilog.Ui.Core.Models.SearchOptions;
@@ -27,10 +30,10 @@ namespace Serilog.Ui.ElasticSearchProvider
             string searchCriteria = null,
             DateTime? startDate = null,
             DateTime? endDate = null,
-            SortProperty sortOn = SortProperty.UtcTimeStamp,
+            SortProperty sortOn = SortProperty.Timestamp,
             SortDirection sortBy = SortDirection.Desc)
         {
-            return GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
+            return GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate, sortOn, sortBy);
         }
 
         private async Task<(IEnumerable<LogModel>, int)> GetLogsAsync(
@@ -40,11 +43,15 @@ namespace Serilog.Ui.ElasticSearchProvider
             string searchCriteria,
             DateTime? startDate = null,
             DateTime? endDate = null,
+            SortProperty sortOn = SortProperty.Timestamp,
+            SortDirection sortBy = SortDirection.Desc,
             CancellationToken cancellationToken = default)
         {
+            var sortProperty = typeof(ElasticSearchDbLogModel).GetProperty(sortOn.ToString());
+            var jsonAttrName = sortProperty.GetCustomAttribute<JsonPropertyAttribute>().PropertyName;
             var descriptor = new SearchDescriptor<ElasticSearchDbLogModel>()
                 .Index(_options.IndexName)
-                .Sort(m => m.Descending(f => f.Timestamp))
+                .Sort(m => m.Field(new Field(jsonAttrName), sortBy == SortDirection.Desc ? SortOrder.Descending : SortOrder.Ascending))
                 .Size(count)
                 .Skip(page * count)
                 .Query(q =>
