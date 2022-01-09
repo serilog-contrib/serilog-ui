@@ -27,7 +27,7 @@ namespace Serilog.Ui.Core
             string searchCriteria = null,
             DateTime? startDate = null,
             DateTime? endDate = null,
-            SortProperty sortOn = SortProperty.UtcTimeStamp,
+            SortProperty sortOn = SortProperty.TimeStamp,
             SortDirection sortBy = SortDirection.Desc
         );
     }

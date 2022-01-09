@@ -76,7 +76,8 @@ const byDirection =
   (item1: EncodedSeriLogObject, item2: EncodedSeriLogObject) => {
     const first = parseJSON(item1.timestamp);
     const second = parseJSON(item2.timestamp);
-    if (on !== SearchSortParametersOptions.UtcTimeStamp) {
+
+    if (on !== SearchSortParametersOptions.Timestamp) {
       console.warn('Mock filter not implemented!');
       return 1;
     }

@@ -63,7 +63,7 @@ export type SearchResult = {
 }
 
 export enum SearchSortParametersOptions {
-    UtcTimeStamp = 'UtcTimeStamp'
+    Timestamp = 'Timestamp'
 }
 export enum SearchSortDirectionOptions {
     Asc = 'Asc',

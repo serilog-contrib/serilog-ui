@@ -28,7 +28,7 @@ namespace Serilog.Ui.MongoDbProvider
             string searchCriteria = null,
             DateTime? startDate = null,
             DateTime? endDate = null,
-            SortProperty sortOn = SortProperty.UtcTimeStamp,
+            SortProperty sortOn = SortProperty.TimeStamp,
             Core.Models.SearchOptions.SortDirection sortBy = Core.Models.SearchOptions.SortDirection.Desc)
         {
             var logsTask = await GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate, sortOn, sortBy);
@@ -46,7 +46,7 @@ namespace Serilog.Ui.MongoDbProvider
             string searchCriteria,
             DateTime? startDate,
             DateTime? endDate,
-            SortProperty sortOn = SortProperty.UtcTimeStamp,
+            SortProperty sortOn = SortProperty.TimeStamp,
             Core.Models.SearchOptions.SortDirection sortBy = Core.Models.SearchOptions.SortDirection.Desc)
         {
             try
@@ -58,6 +58,8 @@ namespace Serilog.Ui.MongoDbProvider
 
                 var isDesc = sortBy == Core.Models.SearchOptions.SortDirection.Desc;
                 var sortPropertyName = typeof(MongoDbLogModel).GetProperty(sortOn.ToString()).Name;
+                // workaround to use utctimestamp
+                if (sortPropertyName.Equals("Timestamp")) sortPropertyName = nameof(MongoDbLogModel.UtcTimeStamp);
                 SortDefinition<MongoDbLogModel> sortBuilder = isDesc ?
                     Builders<MongoDbLogModel>.Sort.Descending(sortPropertyName) :
                     Builders<MongoDbLogModel>.Sort.Ascending(sortPropertyName);
