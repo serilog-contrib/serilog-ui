@@ -84,3 +84,22 @@ Only `User1` and `User2` or users with `AdminRole` role can view logs. If you se
 
 ## Limitation
 * Additional columns are not supported and only main columns can be retrieved
+
+## serilog-ui UI frontend development
+
+The serilog-ui frontend is located inside the Serilog.Ui.Web package.
+
+Under the assets folder you can find all the relative files. 
+
+The serilog-ui frontend is written in Typescript and built through [ParcelJS](https://parceljs.org/).  
+There are two Grunt tasks you can use to build the frontend project:
+
+- **build**: it cleans wwwroot/dist/ and creates a production-ready build.
+  This build can be used to either:
+  - test the frontend development with the SampleWebApp
+  - create a new production build, by committing the entire wwwroot/dist folder changes  
+- **dev**: it cleans wwwroot/dev/ and starts a dev server to https://127.0.0.1/serilog-ui/  
+  please notice that the development build uses [msw](https://mswjs.io/) to swap any serilog-ui fetch with a mocked version.  
+  You can check details by reading ```assets/script/mocks/fetchMock.ts```.  
+  (please notice that you'll need to accept Parcel https self-signed certificate, otherwise msw service-worker won't be able to connect.  
+  [Parcel related issue](https://github.com/parcel-bundler/parcel/issues/1746), [How to do it - example](https://www.pico.net/kb/how-do-you-get-chrome-to-accept-a-self-signed-certificate/)
