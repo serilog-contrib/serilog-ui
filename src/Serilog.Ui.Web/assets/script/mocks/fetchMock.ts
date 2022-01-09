@@ -1,8 +1,4 @@
-﻿import { isAfter, parseJSON } from 'date-fns/esm';
-import compareAsc from 'date-fns/esm/fp/compareAsc/index';
-import isBefore from 'date-fns/esm/fp/isBefore/index';
-import parseISO from 'date-fns/esm/parseISO';
-import compareDesc from 'date-fns/fp/compareDesc/index';
+﻿import { isAfter, isBefore, parseJSON, compareAsc, parseISO, compareDesc } from 'date-fns';
 import { rest } from 'msw'
 import { EncodedSeriLogObject, LogLevel, SearchParameters } from '../../types/types';
 import { fakeLogs } from './samples';
@@ -52,7 +48,7 @@ const byDates = (start?: string, end?: string) => (item: EncodedSeriLogObject) =
     }
     return res;
 }
-const bySearch = (search: string) => (item: EncodedSeriLogObject) => search ? item.message.search(search) : true;
+const bySearch = (search: string) => (item: EncodedSeriLogObject) => search ? item.message.search(search) > -1 : true;
 const byDirection = (direction: string) => (item1: EncodedSeriLogObject, item2: EncodedSeriLogObject) => {
     const first = parseJSON(item1.timestamp);
     const second = parseJSON(item2.timestamp);

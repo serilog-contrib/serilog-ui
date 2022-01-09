@@ -1,8 +1,7 @@
-﻿import parseJSON from "date-fns/parseJSON";
-import format from "date-fns/format";
+﻿import { parseJSON, format } from "date-fns";
 import { LogLevel } from "../types/types";
 
-export const formatDate = (date: string) => format(parseJSON(date), 'PP hh:mm:ss.SSS', { weekStartsOn: 1 });
+export const formatDate = (date: string) => format(parseJSON(date), 'PP H:mm:ss.SSS', { weekStartsOn: 1 });
 
 export const formatXml = (xml: string, tab = "\t") => {
     let formatted = "", indent = "";
