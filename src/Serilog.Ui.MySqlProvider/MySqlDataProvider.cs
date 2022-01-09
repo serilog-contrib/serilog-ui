@@ -25,10 +25,10 @@ namespace Serilog.Ui.MySqlProvider
             string searchCriteria = null,
             DateTime? startDate = null,
             DateTime? endDate = null,
-            SortProperty sortOn = SortProperty.UtcTimeStamp,
+            SortProperty sortOn = SortProperty.TimeStamp,
             SortDirection sortBy = SortDirection.Desc)
         {
-            var logsTask = GetLogsAsync(page - 1, count, logLevel, searchCriteria, startDate, endDate);
+            var logsTask = GetLogsAsync(page - 1, count, logLevel, searchCriteria, startDate, endDate, sortOn, sortBy);
             var logCountTask = CountLogsAsync(logLevel, searchCriteria, startDate, endDate);
 
             await Task.WhenAll(logsTask, logCountTask);
@@ -42,7 +42,9 @@ namespace Serilog.Ui.MySqlProvider
             string level,
             string searchCriteria,
             DateTime? startDate,
-            DateTime? endDate)
+            DateTime? endDate,
+            SortProperty sortOn = SortProperty.TimeStamp,
+            SortDirection sortBy = SortDirection.Desc)
         {
             var queryBuilder = new StringBuilder();
             queryBuilder.Append("SELECT Id, Message, LogLevel AS `Level`, TimeStamp, Exception, Properties From `");
@@ -51,7 +53,7 @@ namespace Serilog.Ui.MySqlProvider
 
             GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
 
-            queryBuilder.Append("ORDER BY Id DESC LIMIT @Offset, @Count");
+            queryBuilder.Append($"ORDER BY {sortOn} {sortBy.ToString().ToUpper()} LIMIT @Offset, @Count");
 
             using (var connection = new MySqlConnection(_options.ConnectionString))
             {

@@ -26,10 +26,10 @@ namespace Serilog.Ui.PostgreSqlProvider
             string searchCriteria = null,
             DateTime? startDate = null,
             DateTime? endDate = null,
-            SortProperty sortOn = SortProperty.UtcTimeStamp,
+            SortProperty sortOn = SortProperty.TimeStamp,
             SortDirection sortBy = SortDirection.Desc)
         {
-            var logsTask = GetLogsAsync(page - 1, count, logLevel, searchCriteria, startDate, endDate);
+            var logsTask = GetLogsAsync(page - 1, count, logLevel, searchCriteria, startDate, endDate, sortOn, sortBy);
             var logCountTask = CountLogsAsync(logLevel, searchCriteria, startDate, endDate);
 
             await Task.WhenAll(logsTask, logCountTask);
@@ -42,7 +42,9 @@ namespace Serilog.Ui.PostgreSqlProvider
             string level,
             string searchCriteria,
             DateTime? startDate,
-            DateTime? endDate)
+            DateTime? endDate,
+            SortProperty sortOn = SortProperty.TimeStamp,
+            SortDirection sortBy = SortDirection.Desc)
         {
             var queryBuilder = new StringBuilder();
             queryBuilder.Append("SELECT message, message_template, level, timestamp, exception, log_event AS \"Properties\" FROM ");
@@ -52,7 +54,7 @@ namespace Serilog.Ui.PostgreSqlProvider
 
             GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
 
-            queryBuilder.Append(" ORDER BY timestamp DESC LIMIT @Count OFFSET @Offset ");
+            queryBuilder.Append($" ORDER BY {sortOn.ToString().ToLower()} {sortBy.ToString().ToUpper()} LIMIT @Count OFFSET @Offset ");
 
             using IDbConnection connection = new NpgsqlConnection(_options.ConnectionString);
             var logs = await connection.QueryAsync<PostgresLogModel>(queryBuilder.ToString(),
