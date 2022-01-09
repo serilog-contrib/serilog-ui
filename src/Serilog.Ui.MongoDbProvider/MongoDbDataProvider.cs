@@ -28,7 +28,7 @@ namespace Serilog.Ui.MongoDbProvider
             string searchCriteria = null,
             DateTime? startDate = null,
             DateTime? endDate = null,
-            SortProperty sortOn = SortProperty.TimeStamp,
+            SortProperty sortOn = SortProperty.Timestamp,
             Core.Models.SearchOptions.SortDirection sortBy = Core.Models.SearchOptions.SortDirection.Desc)
         {
             var logsTask = await GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate, sortOn, sortBy);
@@ -46,7 +46,7 @@ namespace Serilog.Ui.MongoDbProvider
             string searchCriteria,
             DateTime? startDate,
             DateTime? endDate,
-            SortProperty sortOn = SortProperty.TimeStamp,
+            SortProperty sortOn = SortProperty.Timestamp,
             Core.Models.SearchOptions.SortDirection sortBy = Core.Models.SearchOptions.SortDirection.Desc)
         {
             try

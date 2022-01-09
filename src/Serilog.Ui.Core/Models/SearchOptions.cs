@@ -4,7 +4,7 @@
     {
         public enum SortProperty
         {
-            TimeStamp
+            Timestamp
         }
         public enum SortDirection
         {

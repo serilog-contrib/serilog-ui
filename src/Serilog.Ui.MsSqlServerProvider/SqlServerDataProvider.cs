@@ -26,7 +26,7 @@ namespace Serilog.Ui.MsSqlServerProvider
             string searchCriteria = null,
             DateTime? startDate = null,
             DateTime? endDate = null,
-            SortProperty sortOn = SortProperty.TimeStamp,
+            SortProperty sortOn = SortProperty.Timestamp,
             SortDirection sortBy = SortDirection.Desc)
         {
             var logsTask = GetLogsAsync(page - 1, count, logLevel, searchCriteria, startDate, endDate, sortOn, sortBy);
@@ -44,7 +44,7 @@ namespace Serilog.Ui.MsSqlServerProvider
             string searchCriteria,
             DateTime? startDate,
             DateTime? endDate,
-            SortProperty sortOn = SortProperty.TimeStamp,
+            SortProperty sortOn = SortProperty.Timestamp,
             SortDirection sortBy = SortDirection.Desc)
         {
             var queryBuilder = new StringBuilder();
