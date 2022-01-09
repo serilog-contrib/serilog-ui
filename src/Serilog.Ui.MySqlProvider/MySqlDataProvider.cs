@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.MySqlProvider
 {
@@ -23,8 +24,9 @@ namespace Serilog.Ui.MySqlProvider
             string logLevel = null,
             string searchCriteria = null,
             DateTime? startDate = null,
-            DateTime? endDate = null
-        )
+            DateTime? endDate = null,
+            SortProperty sortOn = SortProperty.UtcTimeStamp,
+            SortDirection sortBy = SortDirection.Desc)
         {
             var logsTask = GetLogsAsync(page - 1, count, logLevel, searchCriteria, startDate, endDate);
             var logCountTask = CountLogsAsync(logLevel, searchCriteria, startDate, endDate);
