@@ -26,10 +26,10 @@ namespace Serilog.Ui.MsSqlServerProvider
             string searchCriteria = null,
             DateTime? startDate = null,
             DateTime? endDate = null,
-            SortProperty sortOn = SortProperty.UtcTimeStamp,
+            SortProperty sortOn = SortProperty.TimeStamp,
             SortDirection sortBy = SortDirection.Desc)
         {
-            var logsTask = GetLogsAsync(page - 1, count, logLevel, searchCriteria, startDate, endDate);
+            var logsTask = GetLogsAsync(page - 1, count, logLevel, searchCriteria, startDate, endDate, sortOn, sortBy);
             var logCountTask = CountLogsAsync(logLevel, searchCriteria, startDate, endDate);
 
             await Task.WhenAll(logsTask, logCountTask);
@@ -43,7 +43,9 @@ namespace Serilog.Ui.MsSqlServerProvider
             string level,
             string searchCriteria,
             DateTime? startDate,
-            DateTime? endDate)
+            DateTime? endDate,
+            SortProperty sortOn = SortProperty.TimeStamp,
+            SortDirection sortBy = SortDirection.Desc)
         {
             var queryBuilder = new StringBuilder();
             queryBuilder.Append("SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [");
@@ -54,7 +56,7 @@ namespace Serilog.Ui.MsSqlServerProvider
 
             GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
 
-            queryBuilder.Append("ORDER BY Id DESC OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY");
+            queryBuilder.Append($"ORDER BY {sortOn} {sortBy.ToString().ToUpper()} OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY");
 
             using (IDbConnection connection = new SqlConnection(_options.ConnectionString))
             {
