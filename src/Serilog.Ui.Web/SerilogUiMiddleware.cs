@@ -135,7 +135,7 @@ namespace Serilog.Ui.Web
         }
 
         private Func<Stream> IndexStream { get; } = () => typeof(AuthorizationOptions).GetTypeInfo().Assembly
-            .GetManifestResourceStream("Serilog.Ui.Web.wwwroot.index.html");
+            .GetManifestResourceStream("Serilog.Ui.Web.wwwroot.dist.index.html");
 
         private async Task<string> FetchLogsAsync(HttpContext httpContext)
         {
