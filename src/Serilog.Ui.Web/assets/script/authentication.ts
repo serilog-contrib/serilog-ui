@@ -7,8 +7,12 @@ class AuthProperties {
     constructor() { }
     async init() {
         let auth = "";
-        ({ authType: auth, routePrefix: this.routePrefix } = window.config);
-        this.authType = AuthType[auth];
+        if (process.env.NODE_ENV === 'development')
+            this.authType, this.routePrefix = "Jwt", "serilog-ui";
+        else {
+            ({ authType: auth, routePrefix: this.routePrefix } = window.config);
+            this.authType = AuthType[auth];
+        }
     }
 
     private static instance: AuthProperties;
