@@ -88,6 +88,17 @@
                     </div>
                 </div>
                 <div class="col col-auto">
+                    <div class="table-select" id="logSort">
+                        <label>
+                            Sort
+                            <select id="sortSerilogUi" name="sortSerilogUi" class="form-control form-control-sm">
+                                <option value="UtcTimeStamp" data-direction="Desc" selected="selected">by TimeStamp DESC</option>
+                                <option value="UtcTimeStamp" data-direction="Asc">by TimeStamp ASC</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                <div class="col col-auto">
                     <div class="table-select" id="logFilter">
                         <label>
                             Level

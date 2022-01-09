@@ -62,12 +62,21 @@ export type SearchResult = {
     currentPage: number
 }
 
+export enum SearchSortParametersOptions {
+    UtcTimeStamp = 'UtcTimeStamp'
+}
+export enum SearchSortDirectionOptions {
+    Asc = 'Asc',
+    Desc = 'Desc',
+}
+
 export enum SearchParameters {
     Count = 'count',
     Page = 'page',
     Level = 'level',
     Search = 'search',
-    StartDate = 'startDate', // wip
-    EndDate = 'endDate', // wip
-    SortDirection = 'sort' // wip
+    StartDate = 'startDate',
+    EndDate = 'endDate',
+    SortDirection = 'sortby',
+    SortParameter = 'sorton'
 }

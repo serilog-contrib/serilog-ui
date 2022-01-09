@@ -1,6 +1,6 @@
 ﻿import { isAfter, isBefore, parseJSON, compareAsc, parseISO, compareDesc } from 'date-fns';
 import { rest } from 'msw'
-import { EncodedSeriLogObject, LogLevel, SearchParameters } from '../../types/types';
+import { EncodedSeriLogObject, LogLevel, SearchParameters, SearchSortDirectionOptions, SearchSortParametersOptions } from '../../types/types';
 import { fakeLogs } from './samples';
 
 export const handlers = [
@@ -9,7 +9,7 @@ export const handlers = [
         const logs = fakeLogs.logs.filter(byLevel(LogLevel[params.level]))
             .filter(byDates(params.start, params.end))
             .filter(bySearch(params.search))
-            .sort(byDirection(params.sort));
+            .sort(byDirection(params.sorton, params.sortby));
         const sliceValues = applyLimits(params.count, params.page);
 
         const data = {
@@ -29,7 +29,8 @@ const getSearchParams = (params: URLSearchParams) => ({
     search: params.get(SearchParameters.Search),
     start: params.get(SearchParameters.StartDate),
     end: params.get(SearchParameters.EndDate),
-    sort: params.get(SearchParameters.SortDirection),
+    sorton: params.get(SearchParameters.SortParameter),
+    sortby: params.get(SearchParameters.SortDirection),
 });
 
 const byLevel = (level?: LogLevel) =>
@@ -49,9 +50,13 @@ const byDates = (start?: string, end?: string) => (item: EncodedSeriLogObject) =
     return res;
 }
 const bySearch = (search: string) => (item: EncodedSeriLogObject) => search ? item.message.search(search) > -1 : true;
-const byDirection = (direction: string) => (item1: EncodedSeriLogObject, item2: EncodedSeriLogObject) => {
+const byDirection = (on: string, direction: string) => (item1: EncodedSeriLogObject, item2: EncodedSeriLogObject) => {
     const first = parseJSON(item1.timestamp);
     const second = parseJSON(item2.timestamp);
-    return direction === 'desc' ? compareDesc(first, second) : compareAsc(first, second);
+    if (on !== SearchSortParametersOptions.UtcTimeStamp) {
+        console.warn('Mock filter not implemented!')
+        return 1;
+    }
+    return direction === SearchSortDirectionOptions.Desc ? compareDesc(first, second) : compareAsc(first, second);
 }
 const applyLimits = (limit: number, page: number) => ({ start: limit * page - limit, end: (limit * page) })

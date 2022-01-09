@@ -29,6 +29,7 @@ const initListenersAndDynamicInfo = () => {
     }
     document.querySelector("#logCount").addEventListener("change", resetLogPage);
     document.querySelector("#logFilter").addEventListener("change", resetLogPage);
+    document.querySelector("#logSort").addEventListener("change", resetLogPage);
     document.querySelector("#submit").addEventListener("click", resetLogPage);
 
     // enable changePage button

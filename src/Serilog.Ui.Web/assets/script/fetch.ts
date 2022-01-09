@@ -1,4 +1,4 @@
-import * as $ from 'jquery';
+﻿import * as $ from 'jquery';
 import { parseISO, isAfter } from 'date-fns';
 import { printPagination } from './pagination';
 import { cleanHtmlTags, fixedLengthMessageWithModal, formatDate, formatXml, getBgLogLevel } from './util';
@@ -47,10 +47,13 @@ const prepareSearchUrl = (identifiedPage?: number) => {
     const count = countSelect.options.item(countSelect.selectedIndex).value;
     const levelSelect = document.querySelector<HTMLSelectElement>("#level");
     const level = levelSelect.options.item(levelSelect.selectedIndex).value;
+    const sortSelect = document.querySelector<HTMLSelectElement>("#sortSerilogUi");
+    const sortProp = sortSelect.options.item(sortSelect.selectedIndex).value;
+    const sortDir = sortSelect.options.item(sortSelect.selectedIndex).dataset.direction;
     const searchTerm = escape(document.querySelector<HTMLInputElement>("#search").value);
     const host = process.env.NODE_ENV === "development" ? "" : location.pathname.replace("/index.html", "");
 
-    const url = `${host}/api/logs?page=${page}&count=${count}&level=${level}&search=${searchTerm}&startDate=${startDate}&endDate=${endDate}`;
+    const url = `${host}/api/logs?page=${page}&count=${count}&level=${level}&search=${searchTerm}&startDate=${startDate}&endDate=${endDate}&sorton=${sortProp}&sortby=${sortDir}`;
     return { areDatesAdmitted: true, url };
 }
 
