@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -134,7 +134,7 @@ namespace Serilog.Ui.Web
         }
 
         private Func<Stream> IndexStream { get; } = () => typeof(AuthorizationOptions).GetTypeInfo().Assembly
-            .GetManifestResourceStream("Serilog.Ui.Web.wwwroot.index.html");
+            .GetManifestResourceStream("Serilog.Ui.Web.wwwroot.dist.index.html");
 
         private async Task<string> FetchLogsAsync(HttpContext httpContext)
         {
