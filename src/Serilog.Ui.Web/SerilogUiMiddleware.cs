@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -18,6 +18,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.Web
 {
@@ -140,6 +141,8 @@ namespace Serilog.Ui.Web
         {
             httpContext.Request.Query.TryGetValue("page", out var pageStr);
             httpContext.Request.Query.TryGetValue("count", out var countStr);
+            httpContext.Request.Query.TryGetValue("sorton", out var sortStrOn);
+            httpContext.Request.Query.TryGetValue("sortby", out var sortStrBy);
             httpContext.Request.Query.TryGetValue("level", out var levelStr);
             httpContext.Request.Query.TryGetValue("search", out var searchStr);
             httpContext.Request.Query.TryGetValue("startDate", out var startDateStar);
@@ -147,6 +150,8 @@ namespace Serilog.Ui.Web
 
             int.TryParse(pageStr, out var currentPage);
             int.TryParse(countStr, out var count);
+            Enum.TryParse<SortProperty>(sortStrOn, out var sortProperty);
+            Enum.TryParse<SortDirection>(sortStrBy, out var sortDirection);
 
             DateTime.TryParse(startDateStar, out var startDate);
             DateTime.TryParse(endDateStar, out var endDate);
@@ -159,7 +164,7 @@ namespace Serilog.Ui.Web
 
             var provider = httpContext.RequestServices.GetService<IDataProvider>();
             var (logs, total) = await provider.FetchDataAsync(currentPage, count, levelStr, searchStr,
-                startDate == default ? (DateTime?)null : startDate, endDate == default ? (DateTime?)null : endDate);
+                startDate == default ? (DateTime?)null : startDate, endDate == default ? (DateTime?)null : endDate, sortProperty, sortDirection);
             //var result = JsonSerializer.Serialize(logs, _jsonSerializerOptions);
             var result = JsonConvert.SerializeObject(new { logs, total, count, currentPage }, _jsonSerializerOptions);
             return result;
