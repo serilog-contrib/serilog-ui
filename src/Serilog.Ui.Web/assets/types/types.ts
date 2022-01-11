@@ -63,7 +63,9 @@ export type SearchResult = {
 }
 
 export enum SearchSortParametersOptions {
-    Timestamp = 'Timestamp'
+    Timestamp = 'Timestamp',
+    Level = 'Level',
+    Message = 'Message'
 }
 export enum SearchSortDirectionOptions {
     Asc = 'Asc',
