@@ -69,21 +69,27 @@ const byDates =
     }
     return after && before;
   };
+
 const bySearch = (search: string) => (item: EncodedSeriLogObject) =>
-  search ? item.message.toLowerCase().search(search.toLowerCase()) > -1 : true;
+  search ? item.message.search(search) > -1 : true;
 const byDirection =
   (on: string, direction: string) =>
   (item1: EncodedSeriLogObject, item2: EncodedSeriLogObject) => {
-    const first = parseJSON(item1.timestamp);
-    const second = parseJSON(item2.timestamp);
-
-    if (on !== SearchSortParametersOptions.Timestamp) {
-      console.warn('Mock filter not implemented!');
-      return 1;
+    if (on === SearchSortParametersOptions.Timestamp) {
+      const first = parseJSON(item1.timestamp);
+      const second = parseJSON(item2.timestamp);
+      return direction === SearchSortDirectionOptions.Desc
+        ? compareDesc(first, second)
+        : compareAsc(first, second);
+    }
+    if (on === SearchSortParametersOptions.Message) {
+      return direction === SearchSortDirectionOptions.Desc
+        ? item2.message.localeCompare(item1.message)
+        : item1.message.localeCompare(item2.message);
     }
     return direction === SearchSortDirectionOptions.Desc
-      ? compareDesc(first, second)
-      : compareAsc(first, second);
+      ? item2.level.localeCompare(item1.message)
+      : item1.level.localeCompare(item2.message);
   };
 const applyLimits = (limit: number, page: number) => ({
   start: limit * page - limit,
