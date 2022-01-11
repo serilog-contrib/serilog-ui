@@ -54,7 +54,7 @@ namespace Serilog.Ui.PostgreSqlProvider
 
             GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
 
-            queryBuilder.Append($" ORDER BY {sortOn.ToString().ToLower()} {sortBy.ToString().ToUpper()} LIMIT @Count OFFSET @Offset ");
+            queryBuilder.Append($" ORDER BY @SortOn @SortBy LIMIT @Count OFFSET @Offset ");
 
             using IDbConnection connection = new NpgsqlConnection(_options.ConnectionString);
             var logs = await connection.QueryAsync<PostgresLogModel>(queryBuilder.ToString(),
@@ -65,7 +65,9 @@ namespace Serilog.Ui.PostgreSqlProvider
                     Level = LogLevelConverter.GetLevelValue(level),
                     Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
                     StartDate = startDate,
-                    EndDate = endDate
+                    EndDate = endDate,
+                    SortOn = sortOn.ToString().ToLower(),
+                    SortBy = sortBy.ToString().ToUpper()
                 });
 
             var index = 1;

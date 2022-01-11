@@ -56,7 +56,7 @@ namespace Serilog.Ui.MsSqlServerProvider
 
             GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
 
-            queryBuilder.Append($"ORDER BY {sortOn} {sortBy.ToString().ToUpper()} OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY");
+            queryBuilder.Append($"ORDER BY @SortOn @SortBy OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY");
 
             using (IDbConnection connection = new SqlConnection(_options.ConnectionString))
             {
@@ -68,7 +68,9 @@ namespace Serilog.Ui.MsSqlServerProvider
                         Level = level,
                         Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
                         StartDate = startDate,
-                        EndDate = endDate
+                        EndDate = endDate,
+                        SortOn = sortOn.ToString(),
+                        SortBy = sortBy.ToString().ToUpper()
                     });
 
                 var index = 1;

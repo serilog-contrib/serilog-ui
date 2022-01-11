@@ -53,7 +53,7 @@ namespace Serilog.Ui.MySqlProvider
 
             GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
 
-            queryBuilder.Append($"ORDER BY {sortOn} {sortBy.ToString().ToUpper()} LIMIT @Offset, @Count");
+            queryBuilder.Append($"ORDER BY @SortOn @SortBy LIMIT @Offset, @Count");
 
             using (var connection = new MySqlConnection(_options.ConnectionString))
             {
@@ -64,7 +64,9 @@ namespace Serilog.Ui.MySqlProvider
                     Level = level,
                     Search = searchCriteria != null ? $"%{searchCriteria}%" : null,
                     StartDate = startDate,
-                    EndDate = endDate
+                    EndDate = endDate,
+                    SortOn = sortOn.ToString(),
+                    SortBy = sortBy.ToString().ToUpper()
                 };
                 var logs = await connection.QueryAsync<MySqlLogModel>(queryBuilder.ToString(), param);
                 var index = 1;

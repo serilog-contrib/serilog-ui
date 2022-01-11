@@ -59,7 +59,8 @@ namespace Serilog.Ui.MongoDbProvider
                 var isDesc = sortBy == Core.Models.SearchOptions.SortDirection.Desc;
                 var sortPropertyName = typeof(MongoDbLogModel).GetProperty(sortOn.ToString()).Name;
                 // workaround to use utctimestamp
-                if (sortPropertyName.Equals("Timestamp")) sortPropertyName = nameof(MongoDbLogModel.UtcTimeStamp);
+                if (sortPropertyName.Equals(SortProperty.Timestamp.ToString())) sortPropertyName = nameof(MongoDbLogModel.UtcTimeStamp);
+                if (sortPropertyName.Equals(SortProperty.Message.ToString())) sortPropertyName = nameof(MongoDbLogModel.RenderedMessage);
                 SortDefinition<MongoDbLogModel> sortBuilder = isDesc ?
                     Builders<MongoDbLogModel>.Sort.Descending(sortPropertyName) :
                     Builders<MongoDbLogModel>.Sort.Ascending(sortPropertyName);
