@@ -4,7 +4,9 @@
     {
         public enum SortProperty
         {
-            Timestamp
+            Timestamp,
+            Level,
+            Message
         }
         public enum SortDirection
         {
