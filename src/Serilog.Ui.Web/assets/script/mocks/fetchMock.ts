@@ -36,19 +36,21 @@ const byLevel = (level?: LogLevel) =>
     (item: EncodedSeriLogObject) => level ? item.level === level : true;
 const byDates = (start?: string, end?: string) => (item: EncodedSeriLogObject) => {
     if (!start && !end) return true;
-    let res = true;
+    let after = true;
+    let before = true;
+
     const date = parseJSON(item.timestamp);
     if (start) {
         const ds = parseISO(start);
-        res = isAfter(date, ds);
+        after = isAfter(date, ds);
     }
     if (end) {
         const de = parseISO(end);
-        res = isBefore(date, de);
+        before = isBefore(date, de);
     }
-    return res;
+    return after && before;
 }
-const bySearch = (search: string) => (item: EncodedSeriLogObject) => search ? item.message.search(search) > -1 : true;
+const bySearch = (search: string) => (item: EncodedSeriLogObject) => search ? item.message.toLowerCase().search(search.toLowerCase()) > -1 : true;
 const byDirection = (direction: string) => (item1: EncodedSeriLogObject, item2: EncodedSeriLogObject) => {
     const first = parseJSON(item1.timestamp);
     const second = parseJSON(item2.timestamp);
