@@ -3,23 +3,26 @@ import { rest } from 'msw'
 import { EncodedSeriLogObject, LogLevel, SearchParameters } from '../../types/types';
 import { fakeLogs } from './samples';
 
+const developmentListenersHost = ["127.0.0.1", "localhost"];
 export const handlers = [
-    rest.get('https://127.0.0.1:1234/api/logs', (req, res, ctx) => {
-        const params = getSearchParams(req.url.searchParams);
-        const logs = fakeLogs.logs.filter(byLevel(LogLevel[params.level]))
-            .filter(byDates(params.start, params.end))
-            .filter(bySearch(params.search))
-            .sort(byDirection(params.sort));
-        const sliceValues = applyLimits(params.count, params.page);
+    ...developmentListenersHost.map(dlh =>
+        rest.get(`https://${dlh}:1234/api/logs`, (req, res, ctx) => {
+            const params = getSearchParams(req.url.searchParams);
+            const logs = fakeLogs.logs.filter(byLevel(LogLevel[params.level]))
+                .filter(byDates(params.start, params.end))
+                .filter(bySearch(params.search))
+                .sort(byDirection(params.sort));
+            const sliceValues = applyLimits(params.count, params.page);
 
-        const data = {
-            currentPage: params.page,
-            count: params.count,
-            total: logs.length,
-            logs: logs.slice(sliceValues.start, sliceValues.end)
-        };
-        return res(ctx.status(200), ctx.json(data))
-    }),
+            const data = {
+                currentPage: params.page,
+                count: params.count,
+                total: logs.length,
+                logs: logs.slice(sliceValues.start, sliceValues.end)
+            };
+            return res(ctx.status(200), ctx.json(data))
+        })
+    ),
 ];
 
 const getSearchParams = (params: URLSearchParams) => ({
