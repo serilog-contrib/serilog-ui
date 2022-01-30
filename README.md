@@ -104,17 +104,14 @@ There are two Grunt tasks you can use to build the frontend project:
 - **dev**: it cleans wwwroot/dev/ and starts a dev server to https://127.0.0.1/serilog-ui/  
   please notice that the development build uses [msw](https://mswjs.io/) to swap any serilog-ui fetch with a mocked version.  
   You can check details by reading ```assets/script/mocks/fetchMock.ts```.  
-  
-(please notice that you'll need to accept Parcel https self-signed certificate, otherwise msw service-worker won't be able to connect.  
-[Parcel related issue](https://github.com/parcel-bundler/parcel/issues/1746), [How to do it - example](https://www.pico.net/kb/how-do-you-get-chrome-to-accept-a-self-signed-certificate/)
 
 <details>
   <summary>Expand to read additional instructions</summary>
   
-  open solution with Visual Studio, to enable easier integration
+  Open solution with Visual Studio, to enable easier integration  
   right click on src/Serilog.Ui.Web/Grunfile.js => open "Task Runner Explorer"
 
-  In the Task Explorer, double click on the Alias Tasks **dev**
+  In the Task Explorer, double click on the Alias Tasks **dev**  
   You'll see the task starting Parcel task and staying in watch mode, with an output similar to:
 
   ```
@@ -128,15 +125,18 @@ There are two Grunt tasks you can use to build the frontend project:
   When developing the assets (without the Serilog Middleware), no VS start is needed; Parcel starts a dev server with all you need for the assets part.  
   All fetches are mocked with MSW to serve fake data (saved in ***mocks/samples.ts***); this helps an user develop the assets without having to worry about creating actual data.
 
-  You can open either https://localhost:1234 or https://127.0.0.1:1234.
+  You can open either https://localhost:1234 or https://127.0.0.1:1234 to work.
 </details>
 
+**please notice that you'll need to accept Parcel https self-signed certificate, otherwise msw service-worker won't be able to connect.**  
+[Parcel related issue](https://github.com/parcel-bundler/parcel/issues/1746), [How to do it - example](https://www.pico.net/kb/how-do-you-get-chrome-to-accept-a-self-signed-certificate/
+
 <details>
-  <summary>If you see an https error (untrusted certificate) while developing</summary>
+  <summary>If you see an https error (untrusted certificate) while developing with Parcel</summary>
 
   for Chrome:
   - click on Not Secure (next to the URL) => click Certificate is not valid => click Details => Copy To File => export the cert as DER Encoded Binary X.509 .cer
   - go to: chrome://settings/security => click Manage Certificates => go to Trusted Root Certification Authorities tab => import the .cer file previously exported
   - restart Chrome
-  - you should be able to run the dev environment on both localhost and 127.0.0.1 (to check if it's working fine, open the console: you'll find a message: "[MSW] Mocking enabled.")
+  - you should be able to run the dev environment on both localhost and 127.0.0.1 (to check if it's working fine, open the console: you'll find a red message: **"[MSW] Mocking enabled."**)
 </details>
