@@ -7,22 +7,22 @@
     "start": "parcel assets/index.html --dist-dir wwwroot/dev --https --host 127.0.0.1"
   },
   "devDependencies": {
-    "@types/bootstrap": "5.1.8",
-    "@types/jquery": "3.5.11",
-    "@types/node": "17.0.8",
+    "@types/bootstrap": "^5.1.9",
+    "@types/jquery": "^3.5.13",
+    "@types/node": "^17.0.13",
     "@types/parcel-bundler": "1.12.4",
     "grunt": "1.4.1",
     "grunt-contrib-clean": "2.0.0",
     "grunt-shell": "3.0.1",
     "load-grunt-tasks": "5.1.0",
-    "msw": "0.36.3",
-    "parcel": "2.1.1",
-    "typescript": "4.5.4"
+    "msw": "^0.36.8",
+    "parcel": "^2.2.1",
+    "typescript": "^4.5.5"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "5.15.4",
     "bootstrap": "4.5.3",
     "date-fns": "2.28.0",
-    "@fortawesome/fontawesome-free": "5.15.4",
     "jquery": "3.6.0",
     "netstack.js": "1.1.1",
     "popper.js": "1.16.1"
