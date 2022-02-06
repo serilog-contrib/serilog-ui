@@ -1,3 +1,4 @@
 .parcel-cache/
 wwwroot/dev/
+wwwroot/mockServiceWorker.js
 !wwwroot/dev/mockServiceWorker.js

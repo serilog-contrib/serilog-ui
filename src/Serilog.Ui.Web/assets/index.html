@@ -220,9 +220,14 @@
     <script type="module" src="./script/main.ts"></script>
     <script>
         const config = '%(Configs)';
-        cleanedConfig = config.substring(1, config.length - 1);
-        const configObject = JSON.parse(cleanedConfig);
-        window.config = configObject;
+        try {
+            const decodedConfig = decodeURIComponent(config);
+            const configObject = JSON.parse(decodedConfig);
+            window.config = configObject;
+        } catch (e) {
+            console.warn('SerilogUI Config not received correctly! Using defaults');
+            window.config = JSON.parse('{"routePrefix":"serilog-ui","authType":"Jwt"}');
+        }
     </script>
 </body>
 </html>

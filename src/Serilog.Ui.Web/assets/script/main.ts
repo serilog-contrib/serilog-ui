@@ -47,7 +47,7 @@ if (process.env.NODE_ENV === 'development') {
     const setupWorker = async () => {
         const { worker } = await import('./mocks/browser');
         try {
-            worker.start()
+            await worker.start()
         } catch (err) {
             console.log(err)
         }
