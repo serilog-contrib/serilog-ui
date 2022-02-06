@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -127,14 +127,14 @@ namespace Serilog.Ui.Web
 
             await using var stream = IndexStream();
             var htmlBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
-            htmlBuilder.Replace("%(Configs)", JsonConvert.SerializeObject(
-                new { _options.RoutePrefix, _options.AuthType }, _jsonSerializerOptions));
+            var encodeAuthOpts = Uri.EscapeDataString(JsonConvert.SerializeObject(new { _options.RoutePrefix, _options.AuthType }, _jsonSerializerOptions));
+            htmlBuilder.Replace("%(Configs)", encodeAuthOpts);
 
             await response.WriteAsync(htmlBuilder.ToString(), Encoding.UTF8);
         }
 
         private Func<Stream> IndexStream { get; } = () => typeof(AuthorizationOptions).GetTypeInfo().Assembly
-            .GetManifestResourceStream("Serilog.Ui.Web.wwwroot.index.html");
+            .GetManifestResourceStream("Serilog.Ui.Web.wwwroot.dist.index.html");
 
         private async Task<string> FetchLogsAsync(HttpContext httpContext)
         {
