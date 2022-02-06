@@ -205,9 +205,9 @@
     <script type="module" src="./script/main.ts"></script>
     <script>
         const config = '%(Configs)';
-        cleanedConfig = config.substring(1, config.length - 1);
         try {
-            const configObject = JSON.parse(cleanedConfig);
+            const decodedConfig = decodeURIComponent(config);
+            const configObject = JSON.parse(decodedConfig);
             window.config = configObject;
         } catch (e) {
             console.warn('SerilogUI Config not received correctly! Using defaults');

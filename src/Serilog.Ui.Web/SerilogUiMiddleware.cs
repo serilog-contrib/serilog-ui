@@ -8,6 +8,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Serilog.Ui.Core;
 using System;
@@ -127,9 +128,9 @@ namespace Serilog.Ui.Web
 
             await using var stream = IndexStream();
             var htmlBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
-            htmlBuilder.Replace("%(Configs)", JsonConvert.SerializeObject(
-                new { _options.RoutePrefix, _options.AuthType }, _jsonSerializerOptions));
-
+            var encodeAuthOpts = Uri.EscapeDataString(JsonConvert.SerializeObject(new { _options.RoutePrefix, _options.AuthType }, _jsonSerializerOptions));
+            htmlBuilder.Replace("%(Configs)", encodeAuthOpts);
+            
             await response.WriteAsync(htmlBuilder.ToString(), Encoding.UTF8);
         }
 
