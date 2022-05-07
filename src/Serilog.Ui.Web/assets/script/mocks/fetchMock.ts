@@ -71,7 +71,8 @@ const byDates =
   };
 
 const bySearch = (search: string) => (item: EncodedSeriLogObject) =>
-  search ? item.message.search(search) > -1 : true;
+  search ? item.message.toLowerCase().search(search.toLowerCase()) > -1 : true;
+
 const byDirection =
   (on: string, direction: string) =>
   (item1: EncodedSeriLogObject, item2: EncodedSeriLogObject) => {
