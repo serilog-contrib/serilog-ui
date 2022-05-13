@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "build": "parcel build assets/index.html --dist-dir wwwroot/dist --public-url ./",
-    "start": "parcel assets/index.html --dist-dir wwwroot/dev --https --host 127.0.0.1"
+    "start": "parcel assets/index.html --dist-dir wwwroot/dev --https --host 127.0.0.1",
+    "grunt:start": "grunt dev",
+    "grunt:build": "grunt build"
   },
   "devDependencies": {
     "@types/bootstrap": "^5.1.11",
@@ -17,6 +19,7 @@
     "load-grunt-tasks": "5.1.0",
     "msw": "^0.39.2",
     "parcel": "^2.5.0",
+    "process": "^0.11.10",
     "typescript": "^4.6.4"
   },
   "dependencies": {
