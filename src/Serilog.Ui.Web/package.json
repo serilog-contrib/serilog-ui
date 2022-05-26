@@ -11,7 +11,7 @@
     "@types/jquery": "^3.5.13",
     "@types/node": "^17.0.13",
     "@types/parcel-bundler": "1.12.4",
-    "grunt": "1.5.2",
+    "grunt": "1.5.3",
     "grunt-contrib-clean": "2.0.0",
     "grunt-shell": "3.0.1",
     "load-grunt-tasks": "5.1.0",
