@@ -28,6 +28,7 @@ export enum LogLevel {
     Information = "Information",
     Warning = "Warning",
     Error = "Error",
+    Critical = "Critical"
 }
 
 export enum LogType {
