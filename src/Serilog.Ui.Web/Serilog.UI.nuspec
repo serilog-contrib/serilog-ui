@@ -10,6 +10,7 @@
     <projectUrl>https://github.com/mo-esmp/serilog-ui</projectUrl>
     <license type="expression">MIT</license>
     <description>Simple web UI for several Serilog sinks.</description>
+	<readme>docs\README.md</readme>
     <releaseNotes></releaseNotes>
     <copyright></copyright>
     <tags>serilog serilog-ui log logui log-ui web-log</tags>
@@ -35,5 +36,6 @@
   <files>
     <file src="bin\release\netcoreapp3.1\*.dll" target="lib/netcoreapp3.1" />
     <file src="bin\release\net5.0\*.dll" target="lib/net5.0" />
+	<file src="..\..\README.md" target="docs\" />
   </files>
 </package>
