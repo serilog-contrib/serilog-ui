@@ -2,4 +2,5 @@
 wwwroot/dev/
 wwwroot/dist/
 wwwroot/mockServiceWorker.js
+!wwwroot/dist/index.html
 !wwwroot/dev/mockServiceWorker.js
