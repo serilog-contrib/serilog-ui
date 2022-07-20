@@ -48,9 +48,9 @@ export const getBgLogLevel = (logLevel: LogLevel) => {
     case LogLevel.Warning:
       return 'bg-warning';
     case LogLevel.Error:
-    case LogLevel.Critical:
+    case LogLevel.Fatal:
       return 'bg-danger';
     default:
-      return 'bg-light';
+      return 'bg-secondary';
   }
 };
