@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Serilog.Ui.Core;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -126,11 +127,15 @@ namespace Serilog.Ui.Web
             response.ContentType = "text/html;charset=utf-8";
 
             await using var stream = IndexStream();
-            var htmlBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
+            var htmlStringBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
             var encodeAuthOpts = Uri.EscapeDataString(JsonConvert.SerializeObject(new { _options.RoutePrefix, _options.AuthType, _options.HomeUrl }, _jsonSerializerOptions));
-            htmlBuilder.Replace("%(Configs)", encodeAuthOpts);
-
-            await response.WriteAsync(htmlBuilder.ToString(), Encoding.UTF8);
+            
+            htmlStringBuilder
+                .Replace("%(Configs)", encodeAuthOpts)
+                .Replace("<meta name=\"dummy\" content=\"%(HeadContent)\">", _options.HeadContent);
+            
+            var htmlString = htmlStringBuilder.ToString();
+            await response.WriteAsync(htmlString, Encoding.UTF8);
         }
 
         private Func<Stream> IndexStream { get; } = () => typeof(AuthorizationOptions).GetTypeInfo().Assembly

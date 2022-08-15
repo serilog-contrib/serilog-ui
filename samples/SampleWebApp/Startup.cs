@@ -79,7 +79,12 @@ namespace SampleWebApp
 
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseSerilogUi();
+            app.UseSerilogUi(x =>
+            {
+                x.RoutePrefix = "serilog-ui";
+                x.HomeUrl = "/#Test";
+                x.InjectJavascript("/js/serilog-ui/custom.js");
+            });
 
             app.UseEndpoints(endpoints =>
             {

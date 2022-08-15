@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
 using System;
+using System.Text;
 
 namespace Serilog.Ui.Web
 {
@@ -34,5 +35,32 @@ namespace Serilog.Ui.Web
 
             return optionsBuilder;
         }
+
+        /// <summary>
+        /// Injects additional CSS stylesheets into the index.html page
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="path">A path to the stylesheet - i.e. the link "href" attribute</param>
+        /// <param name="media">The target media - i.e. the link "media" attribute</param>
+        public static void InjectStylesheet(this UiOptions options, string path, string media = "screen")
+        {
+            var builder = new StringBuilder(options.HeadContent);
+            builder.AppendLine($"<link href='{path}' rel='stylesheet' media='{media}' type='text/css' />");
+            options.HeadContent = builder.ToString();
+        }
+
+        /// <summary>
+        /// Injects additional Javascript files into the index.html page
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="path">A path to the javascript - i.e. the script "src" attribute</param>
+        /// <param name="type">The script type - i.e. the script "type" attribute</param>
+        public static void InjectJavascript(this UiOptions options, string path, string type = "text/javascript")
+        {
+            var builder = new StringBuilder(options.HeadContent);
+            builder.AppendLine($"<script src='{path}' type='{type}'></script>");
+            options.HeadContent = builder.ToString();
+        }
+
     }
 }
