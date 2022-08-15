@@ -127,7 +127,7 @@ namespace Serilog.Ui.Web
 
             await using var stream = IndexStream();
             var htmlBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
-            var encodeAuthOpts = Uri.EscapeDataString(JsonConvert.SerializeObject(new { _options.RoutePrefix, _options.AuthType }, _jsonSerializerOptions));
+            var encodeAuthOpts = Uri.EscapeDataString(JsonConvert.SerializeObject(new { _options.RoutePrefix, _options.AuthType, _options.HomeUrl }, _jsonSerializerOptions));
             htmlBuilder.Replace("%(Configs)", encodeAuthOpts);
 
             await response.WriteAsync(htmlBuilder.ToString(), Encoding.UTF8);
@@ -167,10 +167,11 @@ namespace Serilog.Ui.Web
 
         private static bool CanAccess(HttpContext httpContext)
         {
-            if (httpContext.Request.IsLocal())
+            var authOptions = httpContext.RequestServices.GetService<AuthorizationOptions>();
+
+            if (httpContext.Request.IsLocal() && authOptions.AlwaysAllowLocalRequests)
                 return true;
 
-            var authOptions = httpContext.RequestServices.GetService<AuthorizationOptions>();
             if (!authOptions.Enabled)
                 return false;
 

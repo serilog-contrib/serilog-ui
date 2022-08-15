@@ -10,6 +10,7 @@ declare global {
         config: {
             authType?: string,
             routePrefix?: string,
+            homeUrl?: string
         }
     }
     export interface globalThis {

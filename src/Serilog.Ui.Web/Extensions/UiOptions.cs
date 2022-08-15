@@ -15,6 +15,12 @@
         public string RoutePrefix { get; set; } = "serilog-ui";
 
         /// <summary>
+        ///     Gets or sets the URL for the home button
+        /// </summary>
+        /// <value> The URL for the home button. </value>
+        public string HomeUrl { get; set; } = "/";
+
+        /// <summary>
         ///     Gets or sets the type of the authentication.
         /// </summary>
         /// <value> The type of the authentication. </value>

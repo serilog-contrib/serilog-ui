@@ -35,10 +35,20 @@ const initListenersAndDynamicInfo = () => {
     document.querySelector('.custom-pagination-submit').addEventListener('click', changePageByModalChoice);
 }
 
+const initHomeButton = () => {
+    var homeButton = document.querySelector<HTMLAnchorElement>("#homeAnchor");
+
+    if (window?.config?.homeUrl && window.config.homeUrl != homeButton.href) {
+        homeButton.href = window?.config?.homeUrl;
+    }
+}
+
 const init = () => {
     initListenersAndDynamicInfo();
     initTokenUi();
     fetchLogs();
+
+    initHomeButton();
 }
 
 if (process.env.NODE_ENV === 'development') {
