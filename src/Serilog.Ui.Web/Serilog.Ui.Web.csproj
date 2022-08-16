@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netcoreapp3.1;net5.0</TargetFrameworks>
-		<Version>2.1.1</Version>
+		<TargetFrameworks>netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
+		<Version>2.1.3</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -10,24 +10,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="wwwroot/dist/**/*" />
+		<EmbeddedResource Include="wwwroot/dist/**/*" CopyToOutputDirectory="Always" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
 
-	<Target Name="NpmInstall" Inputs="package.json" Outputs="node_modules/.install-stamp">
-		<PropertyGroup>
-          <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-        </PropertyGroup>
-    
-		<Exec Command="npm ci"      Condition="$(RestorePackagesWithLockFile) == 'true'" />
-		<Exec Command="npm install" Condition="$(RestorePackagesWithLockFile) != 'true'" />
-		<Touch Files="node_modules/.install-stamp" AlwaysCreate="true" />
-	</Target>
-
-	<Target Name="NpmRunBuild" DependsOnTargets="NpmInstall" BeforeTargets="BeforeBuild">
+	<Target Name="NpmRunBuild" BeforeTargets="BeforeBuild">
 		<Exec Command="npm run build" />
 	</Target>
 

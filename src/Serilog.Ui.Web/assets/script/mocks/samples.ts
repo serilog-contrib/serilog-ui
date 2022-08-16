@@ -916,7 +916,7 @@ export const fakeLogs: SearchResult = {
         },
         {
             "rowNo": 115,
-            "level": "Information",
+            "level": "Critical",
             "message": "Request starting HTTP/2 GET https://localhost:44377/serilog-ui/api/logs?page=10&count=10&level=&search=&startDate=&endDate= - -",
             "timestamp": "2022-01-06T14:44:59.366+01:00",
             "properties": "{\"Protocol\":\"HTTP/2\",\"Method\":\"GET\",\"ContentType\":null,\"ContentLength\":null,\"Scheme\":\"https\",\"Host\":\"localhost:44377\",\"PathBase\":\"\",\"Path\":\"/serilog-ui/api/logs\",\"QueryString\":\"?page=10&count=10&level=&search=&startDate=&endDate=\",\"HostingRequestStartingLog\":\"Request starting HTTP/2 GET https://localhost:44377/serilog-ui/api/logs?page=10&count=10&level=&search=&startDate=&endDate= - -\",\"EventId\":{\"Id\":1,\"Name\":\"RequestStarting\"},\"SourceContext\":\"Microsoft.AspNetCore.Hosting.Diagnostics\",\"RequestId\":\"8000003f-0001-fc00-b63f-84710c7967bb\",\"RequestPath\":\"/serilog-ui/api/logs\"}",
@@ -1084,7 +1084,7 @@ export const fakeLogs: SearchResult = {
         },
         {
             "rowNo": 136,
-            "level": "Information",
+            "level": "Critical",
             "message": "Request starting HTTP/2 GET https://localhost:44377/serilog-ui/netstack.min.js - -",
             "timestamp": "2022-01-06T14:45:13.366+01:00",
             "properties": "{\"Protocol\":\"HTTP/2\",\"Method\":\"GET\",\"ContentType\":null,\"ContentLength\":null,\"Scheme\":\"https\",\"Host\":\"localhost:44377\",\"PathBase\":\"\",\"Path\":\"/serilog-ui/netstack.min.js\",\"QueryString\":\"\",\"HostingRequestStartingLog\":\"Request starting HTTP/2 GET https://localhost:44377/serilog-ui/netstack.min.js - -\",\"EventId\":{\"Id\":1,\"Name\":\"RequestStarting\"},\"SourceContext\":\"Microsoft.AspNetCore.Hosting.Diagnostics\",\"RequestId\":\"80000036-0007-fa00-b63f-84710c7967bb\",\"RequestPath\":\"/serilog-ui/netstack.min.js\"}",
@@ -1420,7 +1420,7 @@ export const fakeLogs: SearchResult = {
         },
         {
             "rowNo": 178,
-            "level": "Information",
+            "level": "Critical",
             "message": "Request starting HTTP/2 GET https://localhost:44377/serilog-ui/api/logs?page=18&count=10&level=&search=&startDate=&endDate= - -",
             "timestamp": "2022-01-06T14:45:31.835+01:00",
             "properties": "{\"Protocol\":\"HTTP/2\",\"Method\":\"GET\",\"ContentType\":null,\"ContentLength\":null,\"Scheme\":\"https\",\"Host\":\"localhost:44377\",\"PathBase\":\"\",\"Path\":\"/serilog-ui/api/logs\",\"QueryString\":\"?page=18&count=10&level=&search=&startDate=&endDate=\",\"HostingRequestStartingLog\":\"Request starting HTTP/2 GET https://localhost:44377/serilog-ui/api/logs?page=18&count=10&level=&search=&startDate=&endDate= - -\",\"EventId\":{\"Id\":1,\"Name\":\"RequestStarting\"},\"SourceContext\":\"Microsoft.AspNetCore.Hosting.Diagnostics\",\"RequestId\":\"800000a7-0006-fc00-b63f-84710c7967bb\",\"RequestPath\":\"/serilog-ui/api/logs\"}",
