@@ -47,18 +47,24 @@ namespace Serilog.Ui.ElasticSearchProvider
             SortDirection sortBy = SortDirection.Desc,
             CancellationToken cancellationToken = default)
         {
+            // get the PropertyInfo for the Sorted property
             var sortProperty = typeof(ElasticSearchDbLogModel).GetProperty(sortOn.ToString());
+            // get the actual PropertyName used by Elastic, that was set in the JsonAttribute
             var jsonAttrName = sortProperty.GetCustomAttribute<JsonPropertyAttribute>().PropertyName;
+
             var descriptor = new SearchDescriptor<ElasticSearchDbLogModel>()
                 .Index(_options.IndexName)
-                .Sort(m => m.Field(new Field(jsonAttrName), sortBy == SortDirection.Desc ? SortOrder.Descending : SortOrder.Ascending))
-                .Size(count)
-                .Skip(page * count)
                 .Query(q =>
                     +q.Match(m => m.Field(f => f.Level).Query(level)) &&
                     +q.DateRange(dr => dr.Field(f => f.Timestamp).GreaterThanOrEquals(startDate).LessThanOrEquals(endDate)) &&
                     +q.Match(m => m.Field(f => f.Message).Query(searchCriteria)) ||
-                    +q.Match(m => m.Field(f => f.Exceptions).Query(searchCriteria)));
+                    +q.Match(m => m.Field(f => f.Exceptions).Query(searchCriteria)))
+                .Sort(m => m.Field(
+                    // to manage Text fields (pass throught .keyword)
+                    sortProperty.PropertyType == typeof(string) ? $"{jsonAttrName}.keyword" : jsonAttrName,
+                    sortBy == SortDirection.Desc ? SortOrder.Descending : SortOrder.Ascending))
+                .Skip(page * count)
+                .Size(count);
 
             var result = await _client.SearchAsync<ElasticSearchDbLogModel>(descriptor, cancellationToken);
 
