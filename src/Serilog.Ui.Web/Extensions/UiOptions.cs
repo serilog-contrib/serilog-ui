@@ -30,6 +30,6 @@
         ///     Gets or sets the head content, a string that will be placed in the &lt;head&gt; of the index.html
         /// </summary>
         /// <value> The head content. </value>
-        internal string HeadContent { get; set; } = "";
+        internal string HeadContent { get; set; } = string.Empty;
     }
 }
