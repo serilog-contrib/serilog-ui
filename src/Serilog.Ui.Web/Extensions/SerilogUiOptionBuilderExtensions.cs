@@ -56,13 +56,17 @@ namespace Serilog.Ui.Web
         /// </summary>
         /// <param name="options"></param>
         /// <param name="path">A path to the javascript - i.e. the script "src" attribute</param>
+        /// <param name="injectInHead">When true, injects the javascript in the &lt;head&gt; tag instead of the &lt;body&gt; tag</param>
         /// <param name="type">The script type - i.e. the script "type" attribute</param>
         /// <returns>The passed options object for chaining</returns>
-        public static UiOptions InjectJavascript(this UiOptions options, string path, string type = "text/javascript")
+        public static UiOptions InjectJavascript(this UiOptions options, string path, bool injectInHead = false, string type = "text/javascript")
         {
-            var builder = new StringBuilder(options.HeadContent);
+            var builder = new StringBuilder(injectInHead ? options.HeadContent : options.BodyContent);
             builder.AppendLine($"<script src='{path}' type='{type}'></script>");
-            options.HeadContent = builder.ToString();
+            if(injectInHead)
+                options.HeadContent = builder.ToString();
+            else
+                options.BodyContent = builder.ToString();
             return options;
         }
 

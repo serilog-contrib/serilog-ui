@@ -132,7 +132,8 @@ namespace Serilog.Ui.Web
             
             htmlStringBuilder
                 .Replace("%(Configs)", encodeAuthOpts)
-                .Replace("<meta name=\"dummy\" content=\"%(HeadContent)\">", _options.HeadContent);
+                .Replace("<meta name=\"dummy\" content=\"%(HeadContent)\">", _options.HeadContent)
+                .Replace("<meta name=\"dummy\" content=\"%(BodyContent)\">", _options.BodyContent);
             
             var htmlString = htmlStringBuilder.ToString();
             await response.WriteAsync(htmlString, Encoding.UTF8);
