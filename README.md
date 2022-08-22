@@ -33,7 +33,7 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-In the `Startup.Configure` method, enable the middleware for serving logs UI. Place a call to the `UseSerilogUi` middleware after authentication and authorization middlewares otherwise authentication may not work for you:
+In the `Startup.Configure` method, enable the middleware for serving the log UI. Place a call to the `UseSerilogUi` middleware after authentication and authorization middlewares, otherwise authentication may not work for you:
 
 ```csharp
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -58,13 +58,15 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 }
 ```
 
-Default url to view log page is `http://<your-app>/serilog-ui`. If you want to change this url path, just config route prefix:
+The default url to view the log page is `http://<your-app>/serilog-ui`. If you want to change this url path, just configure the route prefix:
 ```csharp
 app.UseSerilogUi(option => option.RoutePrefix = "logs");
 ```
+
 **Authorization configuration required**
 
-By default serilog-ui allows access to log page only for local requests. In order to give appropriate rights for production use, you need to configuring authorization. You can secure log page by allwoing specific users or roles to view logs:
+By default serilog-ui allows access to the log page only for local requests. In order to give appropriate rights for production use, you need to configure authorization. You can secure the log page by allowing specific users or roles to view logs:
+
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
@@ -80,10 +82,70 @@ public void ConfigureServices(IServiceCollection services)
     .
     .
 ```
-Only `User1` and `User2` or users with `AdminRole` role can view logs. If you set `AuthenticationType` to `Jwt`, you can set jwt token and `Authorization` header will be added to the request and for `Cookie` just login into you website and no extra step is required.
+Only `User1` and `User2` or users with `AdminRole` role can view logs. If you set `AuthenticationType` to `Jwt`, you can set a jwt token and an `Authorization` header will be added to the request and for `Cookie` just login into you website and no extra step is required.
 
-## Limitation
-* Additional columns are not supported and only main columns can be retrieved
+To disable access for local requests, (e.g. for testing authentication locally) set `AlwaysAllowLocalRequests` to `false`.
+
+``` csharp
+services.AddSerilogUi(options => options
+    .EnableAuthorization(authOption =>
+    {
+        authOption.AlwaysAllowLocalRequests = false;
+    })
+    .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs"));
+```
+
+## Limitations
+* Additional columns are not supported and only main columns can be retrieved.
+
+## Options
+Options can be found in the [UIOptions](src/Serilog.Ui.Web/Extensions/UiOptions.cs) class.
+`internal` properties can generally be set via extension methods, see [SerilogUiOptionBuilderExtensions](src/Serilog.Ui.Web/Extensions/SerilogUiOptionBuilderExtensions.cs)
+
+### Home url
+![image](https://user-images.githubusercontent.com/8641495/185874822-1d4b6f52-864c-4ffb-9064-6fc5ee9a079c.png)
+
+The home button url can be customized by setting the `HomeUrl` property.
+
+``` csharp
+app.UseSerilogUi(options =>
+{
+    options.HomeUrl = "https://example.com/example?q=example";
+});
+```
+
+### Custom Javascript and CSS
+
+For customization of the dashboard UI custom JS and CSS can be injected. 
+CSS gets injected in the `<head>` element. JS gets injected at the end of the `<body>` element by default. 
+To inject JS in the `<head>` element set `injectInHead` to `true`.
+
+``` csharp
+app.UseSerilogUi(x =>
+{
+    x.InjectJavascript(path: "/js/serilog-ui/custom.js", injectInHead: false, type: "text/javascript");
+    x.InjectStylesheet(path: "/css/serilog-ui/custom.css", media: "screen");
+});
+```
+
+Custom JS/CSS files must be served by the backend via [static file middleware](https://docs.microsoft.com/en-us/aspnet/core/fundamentals/static-files).
+
+``` csharp
+var builder = WebApplication.CreateBuilder(args);
+...
+app.UseStaticFiles();
+...
+```
+
+With the default configuration static files are served under the wwwroot folder, so in the example above the file structure should be:
+![image](https://user-images.githubusercontent.com/8641495/185877921-99aaf19a-3e62-4ad9-85c3-47994e7e6ba1.png)
+
+JS code can be ran when loading the file by wrapping the code in a function, and directly running that function like so:
+``` js
+(function () {
+    console.log("custom.js is loaded.");
+})();
+```
 
 ## serilog-ui UI frontend development
 
