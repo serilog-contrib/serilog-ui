@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="~/node_modules/@fortawesome/fontawesome-free/css/solid.min.css" />
     <link rel="stylesheet" type="text/css" href="~/node_modules/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="./css/main.css">
+    <meta name="dummy" content="%(HeadContent)">
 </head>
 <body>
     <div class="wrapper d-flex align-items-stretch">
@@ -19,7 +20,7 @@
             </h1>
             <ul class="list-unstyled components mb-5">
                 <li class="active">
-                    <a href="/"><span class="fas fa-home"></span> Home</a>
+                    <a id="homeAnchor" href="/"><span class="fas fa-home"></span> Home</a>
                 </li>
             </ul>
             <div class="footer">
@@ -215,5 +216,6 @@
             window.config = JSON.parse('{"routePrefix":"serilog-ui","authType":"Jwt"}');
         }
     </script>
+    <meta name="dummy" content="%(BodyContent)">
 </body>
 </html>
