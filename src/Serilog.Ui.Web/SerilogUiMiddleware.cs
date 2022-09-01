@@ -179,7 +179,7 @@ namespace Serilog.Ui.Web
                 return true;
 
             if (!authOptions.Enabled)
-                return false;
+                return true;
 
             if (!httpContext.User.Identity.IsAuthenticated)
                 return false;
