@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using Ardalis.GuardClauses;
+using MongoDB.Driver;
 using Serilog.Ui.Core;
 using System;
 using System.Collections.Generic;
@@ -13,14 +14,13 @@ namespace Serilog.Ui.MongoDbProvider
 
         public MongoDbDataProvider(IMongoClient client, MongoDbOptions options)
         {
-            if (client is null) throw new ArgumentNullException(nameof(client));
-            if (options is null) throw new ArgumentNullException(nameof(options));
+            Guard.Against.Null(client, nameof(client));
+            Guard.Against.Null(options, nameof(options));
 
             _collection = client.GetDatabase(options.DatabaseName).GetCollection<MongoDbLogModel>(options.CollectionName);
-            var s = _collection.CollectionNamespace;
         }
 
-        public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
+        public async Task<(IEnumerable<LogModel> Logs, int Count)> FetchDataAsync(
             int page,
             int count,
             string level = null,
@@ -28,12 +28,12 @@ namespace Serilog.Ui.MongoDbProvider
             DateTime? startDate = null,
             DateTime? endDate = null)
         {
-            var logsTask = await GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
-            var logCountTask = await CountLogsAsync(level, searchCriteria, startDate, endDate);
+            var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
+            var logCountTask = CountLogsAsync(level, searchCriteria, startDate, endDate);
 
-            //await Task.WhenAll(logsTask, logCountTask);
+            await Task.WhenAll(logsTask, logCountTask);
 
-            return (logsTask, logCountTask);
+            return (logsTask.Result, logCountTask.Result);
         }
 
         private async Task<IEnumerable<LogModel>> GetLogsAsync(

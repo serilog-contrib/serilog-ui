@@ -22,7 +22,7 @@ namespace Serilog.Ui.MongoDbProvider
         [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
         public DateTime? Timestamp { get; set; }
 
-        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
         public DateTime UtcTimeStamp { get; set; }
 
         [BsonElement("Exception")]

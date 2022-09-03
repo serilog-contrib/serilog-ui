@@ -7,5 +7,7 @@
         public string DatabaseName { get; set; }
 
         public string CollectionName { get; set; }
+
+        public bool UseLinq3 { get; set; }
     }
 }
