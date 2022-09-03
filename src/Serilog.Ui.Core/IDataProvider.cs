@@ -19,7 +19,7 @@ namespace Serilog.Ui.Core
         /// <param name="startDate">The start date to filter log.</param>
         /// <param name="endDate">The end date to filter log.</param>
         /// <returns>Task&lt;System.ValueTuple&lt;IEnumerable&lt;LogModel&gt;, System.Int32&gt;&gt;.</returns>
-        Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
+        Task<(IEnumerable<LogModel> Logs, int Count)> FetchDataAsync(
             int page,
             int count,
             string level = null,
