@@ -28,7 +28,7 @@ namespace Serilog.Ui.Web
             if (options == null)
                 throw new ArgumentNullException(nameof(options));
 
-            var authorizationOptions = new AuthorizationOptions { Enabled = true };
+            var authorizationOptions = new AuthorizationOptions();
             options(authorizationOptions);
 
             ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddSingleton(authorizationOptions);
