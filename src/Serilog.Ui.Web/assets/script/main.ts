@@ -54,7 +54,7 @@ const init = () => {
 if (process.env.NODE_ENV === 'development') {
     // mock fetch for development
     const setupWorker = async () => {
-        const { worker } = await import('./mocks/browser');
+        const { worker } = await import('../__tests__/util/mocks/msw-worker');
         try {
             await worker.start()
         } catch (err) {

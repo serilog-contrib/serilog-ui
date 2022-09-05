@@ -1,4 +1,6 @@
-﻿export { }
+﻿import { UserEvent } from "@testing-library/user-event/dist/types/setup/setup"
+
+export { }
 
 declare global {
     export interface JQuery {
@@ -11,7 +13,8 @@ declare global {
             authType?: string,
             routePrefix?: string,
             homeUrl?: string
-        }
+        },
+        userEventLibApi: UserEvent
     }
     export interface globalThis {
         $: JQueryStatic,

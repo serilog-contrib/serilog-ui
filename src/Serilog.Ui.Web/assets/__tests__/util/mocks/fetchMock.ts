@@ -1,12 +1,18 @@
 ﻿import { isAfter, isBefore, parseJSON, compareAsc, parseISO, compareDesc } from 'date-fns';
 import { rest } from 'msw'
-import { EncodedSeriLogObject, LogLevel, SearchParameters } from '../../types/types';
+import { EncodedSeriLogObject, LogLevel, SearchParameters } from '../../../types/types';
 import { fakeLogs } from './samples';
 
-const developmentListenersHost = ["127.0.0.1", "localhost"];
+const developmentListenersHost = [
+    "https://127.0.0.1:1234",
+    "https://localhost:1234",
+    "http://127.0.0.1:80", 
+    "http://localhost",
+    "http://localhost:80"];
+
 export const handlers = [
     ...developmentListenersHost.map(dlh =>
-        rest.get(`https://${dlh}:1234/api/logs`, (req, res, ctx) => {
+        rest.get(`${dlh}/api/logs`, (req, res, ctx) => {
             const params = getSearchParams(req.url.searchParams);
             const logs = fakeLogs.logs.filter(byLevel(LogLevel[params.level]))
                 .filter(byDates(params.start, params.end))
