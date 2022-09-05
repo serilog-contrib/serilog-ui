@@ -202,3 +202,34 @@ There are two Grunt tasks you can use to build the frontend project:
   - restart Chrome
   - you should be able to run the dev environment on both localhost and 127.0.0.1 (to check if it's working fine, open the console: you'll find a red message: **"[MSW] Mocking enabled."**)
 </details>
+
+## Test
+
+### .NET Serilog.UI Projects
+
+The test projects are located inside the */tests* folder.
+
+Each Serilog.Ui project has a separate test project.
+Each project is based onto the **xUnit** test framework.
+
+**Serilog.Ui.Common.Tests**: contains anything that can be shared between the tests projects.
+
+To run the tests, use Test Explorer in Visual Studio or run from the root folder:
+
+```
+dotnet test
+```
+
+### JS UI assets
+
+Tests are located inside src/Serilog.Ui.Web/assets/__tests__
+
+Tests are based onto Jest test framework, with the help of JSDOM and testing-library packages. Any HTTP request is mocked through [msw](https://mswjs.io/).
+
+Jest configuration can be found in src/Serilog.Ui.Web/jest.config.js; any additional setup item is located inside src/Serilog.Ui.Web/assets/__tests__/util (this folder is excluded from test runs).
+
+To run the tests, open a terminal in src/Serilog.Ui.Web/ and launch this command (watch-mode):
+
+```
+npm test
+```
