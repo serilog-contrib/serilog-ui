@@ -19,7 +19,7 @@ namespace Serilog.Ui.MongoDbProvider.Tests.Util.Builders
 
         public static async Task<MongoDbDataProviderBuilder> Build(bool useLinq3)
         {
-            var options = new MongoDbOptions() { CollectionName = "LogCollection", DatabaseName = DefaultDbName, UseLinq3 = useLinq3 };
+            var options = new MongoDbOptions() { CollectionName = "LogCollection", DatabaseName = DefaultDbName }; // , UseLinq3 = useLinq3 };
             var builder = new MongoDbDataProviderBuilder(options);
             await Seed(builder._mongoCollection);
             return builder;
