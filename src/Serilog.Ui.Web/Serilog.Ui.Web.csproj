@@ -17,7 +17,7 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
 
-	<Target Name="NpmRunBuild" BeforeTargets="BeforeBuild">
+	<Target Name="NpmRunBuild" BeforeTargets="BeforeBuild" Condition="'$(Configuration)'!='DEBUG'">
 		<Exec Command="npm run build" />
 	</Target>
 

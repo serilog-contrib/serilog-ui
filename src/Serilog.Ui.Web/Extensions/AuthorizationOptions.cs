@@ -29,7 +29,13 @@ namespace Serilog.Ui.Web
         ///     Gets or sets a value indicating whether this <see cref="AuthorizationOptions"/> is enabled.
         /// </summary>
         /// <value> <c> true </c> if enabled; otherwise, <c> false </c>. </value>
-        internal bool Enabled { get; set; } = false;
+        public bool Enabled { get; set; } = true;
+
+        /// <summary>
+        ///     Whether to always allow local requests, defaults to <c>true</c>.
+        /// </summary>
+        /// <value> <c> true </c> if enabled; otherwise, <c> false </c>. </value>
+        public bool AlwaysAllowLocalRequests { get; set; } = true;
     }
 
     public enum AuthenticationType
