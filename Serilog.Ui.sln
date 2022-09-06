@@ -25,9 +25,32 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.MySqlProvider", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{75F9223B-15F2-4465-B01D-2A5A49FCD000}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Ui.MongoDbProvider.Tests", "tests\Serilog.Ui.MongoDbProvider.Tests\Serilog.Ui.MongoDbProvider.Tests.csproj", "{7F66E2A5-7994-43E9-B8C4-026924273DF6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.MongoDbProvider.Tests", "tests\Serilog.Ui.MongoDbProvider.Tests\Serilog.Ui.MongoDbProvider.Tests.csproj", "{7F66E2A5-7994-43E9-B8C4-026924273DF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Ui.Common.Tests", "tests\Serilog.Ui.Common.Tests\Serilog.Ui.Common.Tests.csproj", "{96689D04-8B2F-4C06-AE1D-3483B1508D59}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.Common.Tests", "tests\Serilog.Ui.Common.Tests\Serilog.Ui.Common.Tests.csproj", "{96689D04-8B2F-4C06-AE1D-3483B1508D59}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Ui.PostgreSqlProvider.Tests", "tests\Serilog.Ui.PostgreSqlProvider.Tests\Serilog.Ui.PostgreSqlProvider.Tests.csproj", "{D1688095-7E1F-42B2-BC3F-8CB29975CAD5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.Web.Tests", "tests\Serilog.Ui.Web.Tests\Serilog.Ui.Web.Tests.csproj", "{9AD9BF6A-0CB0-467C-BB84-BE1C701C0113}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Ui.MySqlProvider.Tests", "tests\Serilog.Ui.MySqlProvider.Tests\Serilog.Ui.MySqlProvider.Tests.csproj", "{6986AD9C-3B9E-4DAF-A45F-643D964CEBD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Ui.MsSqlServerProvider.Tests", "tests\Serilog.Ui.MsSqlServerProvider.Tests\Serilog.Ui.MsSqlServerProvider.Tests.csproj", "{1F6675BC-32FC-47DE-96AB-422632AB2730}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Ui.ElastichSearchProvider.Tests", "tests\Serilog.Ui.ElastichSearchProvider.Tests\Serilog.Ui.ElastichSearchProvider.Tests.csproj", "{1AB759E4-61CD-4195-9CA9-E70B63AF28B9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{83E91BE7-19B3-4AE0-992C-9DFF30FC409E}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{04B4A8FE-0D7F-48AB-BDE5-AF934CEAD7DF}"
+	ProjectSection(SolutionItems) = preProject
+		assets\serilog-ui-2.jpg = assets\serilog-ui-2.jpg
+		assets\serilog-ui.jpg = assets\serilog-ui.jpg
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +98,26 @@ Global
 		{96689D04-8B2F-4C06-AE1D-3483B1508D59}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96689D04-8B2F-4C06-AE1D-3483B1508D59}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96689D04-8B2F-4C06-AE1D-3483B1508D59}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1688095-7E1F-42B2-BC3F-8CB29975CAD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1688095-7E1F-42B2-BC3F-8CB29975CAD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1688095-7E1F-42B2-BC3F-8CB29975CAD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1688095-7E1F-42B2-BC3F-8CB29975CAD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AD9BF6A-0CB0-467C-BB84-BE1C701C0113}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AD9BF6A-0CB0-467C-BB84-BE1C701C0113}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AD9BF6A-0CB0-467C-BB84-BE1C701C0113}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AD9BF6A-0CB0-467C-BB84-BE1C701C0113}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6986AD9C-3B9E-4DAF-A45F-643D964CEBD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6986AD9C-3B9E-4DAF-A45F-643D964CEBD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6986AD9C-3B9E-4DAF-A45F-643D964CEBD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6986AD9C-3B9E-4DAF-A45F-643D964CEBD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F6675BC-32FC-47DE-96AB-422632AB2730}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F6675BC-32FC-47DE-96AB-422632AB2730}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F6675BC-32FC-47DE-96AB-422632AB2730}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F6675BC-32FC-47DE-96AB-422632AB2730}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AB759E4-61CD-4195-9CA9-E70B63AF28B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AB759E4-61CD-4195-9CA9-E70B63AF28B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AB759E4-61CD-4195-9CA9-E70B63AF28B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AB759E4-61CD-4195-9CA9-E70B63AF28B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +133,12 @@ Global
 		{3363E5F5-54A0-413D-807C-D27DBFD52CC8} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
 		{7F66E2A5-7994-43E9-B8C4-026924273DF6} = {75F9223B-15F2-4465-B01D-2A5A49FCD000}
 		{96689D04-8B2F-4C06-AE1D-3483B1508D59} = {75F9223B-15F2-4465-B01D-2A5A49FCD000}
+		{D1688095-7E1F-42B2-BC3F-8CB29975CAD5} = {75F9223B-15F2-4465-B01D-2A5A49FCD000}
+		{9AD9BF6A-0CB0-467C-BB84-BE1C701C0113} = {75F9223B-15F2-4465-B01D-2A5A49FCD000}
+		{6986AD9C-3B9E-4DAF-A45F-643D964CEBD3} = {75F9223B-15F2-4465-B01D-2A5A49FCD000}
+		{1F6675BC-32FC-47DE-96AB-422632AB2730} = {75F9223B-15F2-4465-B01D-2A5A49FCD000}
+		{1AB759E4-61CD-4195-9CA9-E70B63AF28B9} = {75F9223B-15F2-4465-B01D-2A5A49FCD000}
+		{04B4A8FE-0D7F-48AB-BDE5-AF934CEAD7DF} = {83E91BE7-19B3-4AE0-992C-9DFF30FC409E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {88374732-FEAD-4375-9CF1-75331A37CF07}
