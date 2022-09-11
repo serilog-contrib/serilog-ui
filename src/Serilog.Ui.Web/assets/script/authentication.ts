@@ -5,7 +5,7 @@ class AuthProperties {
     authType?: AuthType;
     routePrefix?: string;
     constructor() { }
-    async init() {
+    init() {
         let auth = "";
         ({ authType: auth, routePrefix: this.routePrefix } = window.config);
         this.authType = AuthType[auth];

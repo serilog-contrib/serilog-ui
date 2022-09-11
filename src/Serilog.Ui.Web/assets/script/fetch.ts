@@ -48,8 +48,7 @@ const prepareSearchUrl = (identifiedPage?: number) => {
     const levelSelect = document.querySelector<HTMLSelectElement>("#level");
     const level = levelSelect.options.item(levelSelect.selectedIndex).value;
     const searchTerm = escape(document.querySelector<HTMLInputElement>("#search").value);
-    const host = process.env.NODE_ENV === "development" ? "" : location.pathname.replace("/index.html", "");
-
+    const host = ["development", "test"].includes(process.env.NODE_ENV) ? "" : location.pathname.replace("/index.html", "");
     const url = `${host}/api/logs?page=${page}&count=${count}&level=${level}&search=${searchTerm}&startDate=${startDate}&endDate=${endDate}`;
     return { areDatesAdmitted: true, url };
 }
