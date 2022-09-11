@@ -4,6 +4,7 @@ using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using Microsoft.Data.SqlClient;
+using MySql.Data.MySqlClient;
 using Serilog.Ui.Core;
 using Xunit;
 
@@ -18,6 +19,7 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
 
         protected TConfiguration? configuration = new() { Password = "#DockerFakePw#" };
 
+        protected virtual string Name { get;  } = nameof(TContainer);
         /// <summary>
         /// Gets or sets the Testcontainers container.
         /// </summary>
@@ -32,7 +34,7 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
         {
             Container = new TestcontainersBuilder<TContainer>()
              .WithDatabase(configuration)
-             .WithName($"IntegrationTesting_{nameof(TContainer)}_{Guid.NewGuid()}")
+             .WithName($"IntegrationTesting_{Name}_{Guid.NewGuid()}")
              .WithWaitStrategy(Wait.ForUnixContainer())
              .WithStartupCallback(async (dc, token) => await GetDbContextInstanceAsync())
              .Build();
@@ -58,7 +60,7 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
         private async Task GetDbContextInstanceAsync()
         {
             int retry = default;
-            
+
             do
             {
                 try
@@ -66,10 +68,10 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
                     await CheckDbReadinessAsync();
                     break;
                 }
-                catch (SqlException)
+                catch (Exception ex) when (ex is SqlException || ex is MySqlException)
                 {
                     retry += 1;
-                    await Task.Delay(500 * retry);
+                    await Task.Delay(1000 * retry);
                 }
 
             } while (retry < 10);
