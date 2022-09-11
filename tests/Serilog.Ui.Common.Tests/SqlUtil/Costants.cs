@@ -49,5 +49,26 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
                 $"@{nameof(LogModel.Exception)}," +
                 $"@{nameof(LogModel.Properties)}" +
             ")";
+
+        // https://github.com/b00ted/serilog-sinks-postgresql/blob/master/Serilog.Sinks.PostgreSQL/Sinks/PostgreSQL/ColumnOptions.cs
+        public const string PostgresCreateTable = "CREATE TABLE IF NOT EXISTS public.logs (" +
+            "timestamp VARCHAR(100)," +
+            "level VARCHAR(15)," +
+            "message_template TEXT," +
+            "message TEXT," +
+            "exception TEXT," +
+            "log_event TEXT" +
+            ")";
+
+        public const string PostgresInsertFakeData = "INSERT INTO public.logs" +
+            "(timestamp, level, message_template, message, exception, log_event)" +
+            "VALUES (" +
+            $"@{nameof(LogModel.Timestamp)}," +
+                $"@{nameof(LogModel.Level)}," +
+                $"@{nameof(LogModel.Message)}," +
+                $"@{nameof(LogModel.Message)}," +
+                $"@{nameof(LogModel.Exception)}," +
+                $"@{nameof(LogModel.Properties)}" +
+            ")";
     }
 }

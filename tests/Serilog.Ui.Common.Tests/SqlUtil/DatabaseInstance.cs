@@ -5,6 +5,7 @@ using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using Microsoft.Data.SqlClient;
 using MySql.Data.MySqlClient;
+using Npgsql;
 using Serilog.Ui.Core;
 using Xunit;
 
@@ -68,7 +69,7 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
                     await CheckDbReadinessAsync();
                     break;
                 }
-                catch (Exception ex) when (ex is SqlException || ex is MySqlException)
+                catch (Exception ex) when (ex is SqlException || ex is MySqlException || ex is NpgsqlException)
                 {
                     retry += 1;
                     await Task.Delay(1000 * retry);
