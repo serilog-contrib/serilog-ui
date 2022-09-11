@@ -1,14 +1,13 @@
 ﻿using FluentAssertions;
+using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.MongoDbProvider.Tests.Util;
 using Serilog.Ui.MongoDbProvider.Tests.Util.Builders;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Serilog.Ui.MongoDbProvider.Tests.DataProvider
 {
-    public class MongoDbDataProviderTest : BaseIntegrationTest<MongoDbDataProviderBuilder>, IAsyncLifetime
+    public class DataProviderSearchTest : BaseIntegrationTest<MongoDbDataProviderBuilder>, IAsyncLifetime, IIntegrationSearchTests
     {
         public Task DisposeAsync() => Task.CompletedTask;
 
@@ -24,19 +23,6 @@ namespace Serilog.Ui.MongoDbProvider.Tests.DataProvider
 
             Logs.Should().NotBeEmpty().And.HaveCount(10);
             Count.Should().Be(20);
-        }
-
-        [Fact]
-        public void It_throws_when_any_dependency_is_null()
-        {
-            var suts = new List<Func<MongoDbDataProvider>>
-            {
-                () => new MongoDbDataProvider(null, null),
-                () => new MongoDbDataProvider(_builder._client, null),
-                () => new MongoDbDataProvider(null, _builder._options),
-            };
-
-            suts.ForEach(sut => sut.Should().ThrowExactly<ArgumentNullException>());
         }
     }
 }

@@ -6,6 +6,8 @@ namespace Serilog.Ui.MongoDbProvider.Tests.Util
 {
     public class BaseServiceBuilder : IDisposable
     {
+        private bool _disposedValue;
+
         internal MongoDbRunner _runner;
         internal MongoDbOptions _options;
         internal IMongoClient _client;
@@ -18,8 +20,6 @@ namespace Serilog.Ui.MongoDbProvider.Tests.Util
             _database = _client.GetDatabase(options.DatabaseName);
         }
 
-        private bool _disposedValue;
-
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
@@ -29,13 +29,11 @@ namespace Serilog.Ui.MongoDbProvider.Tests.Util
                     _runner.Dispose();
                 }
 
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
                 _disposedValue = true;
             }
         }
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
