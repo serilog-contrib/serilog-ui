@@ -28,11 +28,14 @@ namespace Serilog.Ui.MsSqlServerProvider.Tests.Util
 
         protected override async Task InitializeAdditionalAsync()
         {
+            var logs = LogModelFaker.Logs(100);
+            Collector = new LogModelPropsCollector(logs);
+            
             using var dataContext = new SqlConnection(DbOptions.ConnectionString);
 
             await dataContext.ExecuteAsync(Costants.MsSqlCreateTable);
 
-            await dataContext.ExecuteAsync(Costants.MsSqlInsertFakeData, LogModelFaker.Logs());
+            await dataContext.ExecuteAsync(Costants.MsSqlInsertFakeData, logs);
 
             Provider = new SqlServerDataProvider(DbOptions);
         }

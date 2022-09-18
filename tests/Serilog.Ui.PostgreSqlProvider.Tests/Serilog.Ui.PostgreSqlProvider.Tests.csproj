@@ -36,5 +36,7 @@
 	  <ProjectReference Include="..\..\src\Serilog.Ui.PostgreSqlProvider\Serilog.Ui.PostgreSqlProvider.csproj" />
 	  <ProjectReference Include="..\Serilog.Ui.Common.Tests\Serilog.Ui.Common.Tests.csproj" />
 	</ItemGroup>
-
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+	</ItemGroup>
 </Project>

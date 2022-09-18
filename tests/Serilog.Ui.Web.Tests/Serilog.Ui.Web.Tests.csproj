@@ -31,5 +31,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj" />
 	</ItemGroup>
-
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
+	</ItemGroup>
 </Project>

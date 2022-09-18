@@ -38,11 +38,14 @@ namespace Serilog.Ui.MySqlProvider.Tests.Util
 
         protected override async Task InitializeAdditionalAsync()
         {
+            var logs = LogModelFaker.Logs(100);
+            Collector = new LogModelPropsCollector(logs);
+
             using var dataContext = new MySqlConnection(DbOptions.ConnectionString);
 
             await dataContext.ExecuteAsync(Costants.MySqlCreateTable);
 
-            await dataContext.ExecuteAsync(Costants.MySqlInsertFakeData, LogModelFaker.Logs());
+            await dataContext.ExecuteAsync(Costants.MySqlInsertFakeData, logs);
 
             Provider = new MySqlDataProvider(DbOptions);
         }

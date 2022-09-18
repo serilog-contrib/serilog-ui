@@ -17,7 +17,6 @@ namespace Serilog.Ui.MongoDbProvider
             if (options is null) throw new ArgumentNullException(nameof(options));
 
             _collection = client.GetDatabase(options.DatabaseName).GetCollection<MongoDbLogModel>(options.CollectionName);
-            var s = _collection.CollectionNamespace;
         }
 
         public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
