@@ -10,6 +10,7 @@ namespace Serilog.Ui.MongoDbProvider.Tests.Util.Builders
 
         internal MongoDbDataProvider _sut;
         internal IMongoCollection<MongoDbLogModel> _mongoCollection;
+        internal LogModelPropsCollector? _collector;
 
         protected MongoDbDataProviderBuilder(MongoDbOptions options) : base(options)
         {
@@ -21,14 +22,15 @@ namespace Serilog.Ui.MongoDbProvider.Tests.Util.Builders
         {
             var options = new MongoDbOptions() { CollectionName = "LogCollection", DatabaseName = DefaultDbName }; // , UseLinq3 = useLinq3 };
             var builder = new MongoDbDataProviderBuilder(options);
-            await Seed(builder._mongoCollection);
+            builder._collector = await Seed(builder._mongoCollection);
             return builder;
         }
 
-        public static Task Seed(IMongoCollection<MongoDbLogModel> collection)
+        public static async Task<LogModelPropsCollector> Seed(IMongoCollection<MongoDbLogModel> collection)
         {
-            var array = MongoDbLogModelFaker.Logs();
-            return collection.InsertManyAsync(array);
+            var (array, collector) = MongoDbLogModelFaker.Logs(100);
+            await collection.InsertManyAsync(array);
+            return collector;
         }
     }
 }

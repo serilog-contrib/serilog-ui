@@ -49,6 +49,12 @@ namespace Serilog.Ui.MongoDbProvider
                 var builder = Builders<MongoDbLogModel>.Filter.Empty;
                 GenerateWhereClause(ref builder, level, searchCriteria, startDate, endDate);
 
+                if (!string.IsNullOrWhiteSpace(searchCriteria))
+                {
+                    await _collection.Indexes.CreateOneAsync(
+                        new CreateIndexModel<MongoDbLogModel>(Builders<MongoDbLogModel>.IndexKeys.Text(p => p.RenderedMessage)));
+                }
+
                 var logs = await _collection
                     .Find(builder)
                     .Skip(count * page)
