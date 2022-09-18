@@ -5,9 +5,6 @@ using Serilog.Ui.Core;
 using Serilog.Ui.Web;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Serilog.Ui.MongoDbProvider.Tests.Extensions
@@ -47,7 +44,7 @@ namespace Serilog.Ui.MongoDbProvider.Tests.Extensions
             services.GetRequiredService<MongoDbOptions>().Should().NotBeNull();
             services.GetRequiredService<IDataProvider>().Should().NotBeNull().And.BeOfType<MongoDbDataProvider>();
             services.GetRequiredService<IMongoClient>().Should().NotBeNull();
-            services.GetRequiredService<IMongoClient>().Settings.ApplicationName.Should().BeNullOrWhiteSpace    ();
+            services.GetRequiredService<IMongoClient>().Settings.ApplicationName.Should().BeNullOrWhiteSpace();
         }
 
         [Fact]
