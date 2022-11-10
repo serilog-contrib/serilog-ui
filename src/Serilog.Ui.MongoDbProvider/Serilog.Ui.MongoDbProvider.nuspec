@@ -14,7 +14,7 @@
     <releaseNotes></releaseNotes>
     <copyright></copyright>
     <tags>serilog serilog-ui serilog.sinks.mongodb</tags>
-	  <icon>assets\icon.png</icon>
+	<icon>assets\icon.png</icon>
     <dependencies>
       <group targetFramework=".NETStandard2.0">
         <dependency id="Microsoft.CSharp" version="4.7.0" />

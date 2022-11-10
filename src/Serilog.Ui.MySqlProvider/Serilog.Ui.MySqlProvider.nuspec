@@ -13,7 +13,7 @@
     <releaseNotes></releaseNotes>
     <copyright></copyright>
     <tags>serilog serilog-ui serilog.sinks.mysql serilog.sinks.mariadb</tags>
-	  <icon>assets\icon.png</icon>
+	<icon>assets\icon.png</icon>
     <dependencies>
       <group targetFramework=".NETStandard2.0">
         <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="3.1.3" exclude="Build,Analyzers" />
