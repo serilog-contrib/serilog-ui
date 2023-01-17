@@ -79,10 +79,11 @@ namespace Serilog.Ui.PostgreSqlProvider
             DateTime? endDate = null)
         {
             var queryBuilder = new StringBuilder();
-            queryBuilder.Append("SELECT COUNT(message) FROM ");
+            queryBuilder.Append("SELECT COUNT(message) FROM \"");
             queryBuilder.Append(_options.Schema);
-            queryBuilder.Append(".");
+            queryBuilder.Append("\".\"");
             queryBuilder.Append(_options.TableName);
+            queryBuilder.Append("\"");
 
             GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
 
