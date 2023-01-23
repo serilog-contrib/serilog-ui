@@ -11,7 +11,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Serilog.Ui.Core;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -128,13 +127,14 @@ namespace Serilog.Ui.Web
 
             await using var stream = IndexStream();
             var htmlStringBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
-            var encodeAuthOpts = Uri.EscapeDataString(JsonConvert.SerializeObject(new { _options.RoutePrefix, _options.AuthType, _options.HomeUrl }, _jsonSerializerOptions));
-            
+            var authType = _options.Authorization.AuthenticationType.ToString();
+            var encodeAuthOpts = Uri.EscapeDataString(JsonConvert.SerializeObject(new { _options.RoutePrefix, authType, _options.HomeUrl }, _jsonSerializerOptions));
+
             htmlStringBuilder
                 .Replace("%(Configs)", encodeAuthOpts)
                 .Replace("<meta name=\"dummy\" content=\"%(HeadContent)\">", _options.HeadContent)
                 .Replace("<meta name=\"dummy\" content=\"%(BodyContent)\">", _options.BodyContent);
-            
+
             var htmlString = htmlStringBuilder.ToString();
             await response.WriteAsync(htmlString, Encoding.UTF8);
         }
@@ -171,29 +171,9 @@ namespace Serilog.Ui.Web
             return result;
         }
 
-        private static bool CanAccess(HttpContext httpContext)
+        private bool CanAccess(HttpContext httpContext)
         {
-            var authOptions = httpContext.RequestServices.GetService<AuthorizationOptions>();
-
-            if (httpContext.Request.IsLocal() && authOptions.AlwaysAllowLocalRequests)
-                return true;
-
-            if (!authOptions.Enabled)
-                return true;
-
-            if (!httpContext.User.Identity.IsAuthenticated)
-                return false;
-
-            var userName = httpContext.User.Identity.Name?.ToLower();
-            if (authOptions.Usernames != null &&
-                authOptions.Usernames.Any(u => u.ToLower() == userName))
-                return true;
-
-            if (authOptions.Roles != null &&
-                authOptions.Roles.Any(role => httpContext.User.IsInRole(role)))
-                return true;
-
-            return false;
+            return _options.Authorization.Filters.All(filter => filter.Authorize(httpContext));
         }
     }
 }
