@@ -38,6 +38,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Serilog.Ui.MySqlProvider\Serilog.Ui.MySqlProvider.csproj" />
+		<ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj" />
 		<ProjectReference Include="..\Serilog.Ui.Common.Tests\Serilog.Ui.Common.Tests.csproj" />
 	</ItemGroup>
 	<ItemGroup>

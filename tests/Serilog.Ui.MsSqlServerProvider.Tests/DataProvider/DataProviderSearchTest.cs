@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Serilog.Ui.MsSqlServerProvider.Tests
+namespace Serilog.Ui.MsSqlServerProvider.Tests.DataProvider
 {
     public class DataProviderSearchTest : IClassFixture<MsSqlServerTestProvider>, IIntegrationSearchTests
     {
