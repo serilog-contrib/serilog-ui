@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
@@ -6,6 +7,7 @@ using DotNet.Testcontainers.Containers;
 using Microsoft.Data.SqlClient;
 using MySql.Data.MySqlClient;
 using Npgsql;
+using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Core;
 using Xunit;
 
@@ -21,6 +23,7 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
         protected TConfiguration? configuration = new() { Password = "#DockerFakePw#" };
 
         protected virtual string Name { get;  } = nameof(TContainer);
+
         /// <summary>
         /// Gets or sets the Testcontainers container.
         /// </summary>
@@ -31,13 +34,15 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
         /// </summary>
         public IDataProvider? Provider { get; set; }
 
+        public LogModelPropsCollector? Collector { get; set; }
+
         public async Task InitializeAsync()
         {
             Container = new TestcontainersBuilder<TContainer>()
              .WithDatabase(configuration)
              .WithName($"IntegrationTesting_{Name}_{Guid.NewGuid()}")
              .WithWaitStrategy(Wait.ForUnixContainer())
-             .WithStartupCallback(async (dc, token) => await GetDbContextInstanceAsync())
+             .WithStartupCallback(async (dc, token) => await GetDbContextInstanceAsync(token))
              .Build();
 
             await Container.StartAsync();
@@ -58,7 +63,7 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
         /// <returns><see cref="Task"/></returns>
         protected abstract Task InitializeAdditionalAsync();
 
-        private async Task GetDbContextInstanceAsync()
+        private async Task GetDbContextInstanceAsync(CancellationToken token)
         {
             int retry = default;
 
@@ -72,7 +77,7 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
                 catch (Exception ex) when (ex is SqlException || ex is MySqlException || ex is NpgsqlException)
                 {
                     retry += 1;
-                    await Task.Delay(1000 * retry);
+                    await Task.Delay(1000 * retry, token);
                 }
 
             } while (retry < 10);
