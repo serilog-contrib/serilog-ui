@@ -15,6 +15,7 @@ namespace Serilog.Ui.Common.Tests.DataSamples
         private static Faker<LogModel> LogsRules()
         {
             Bogus.DataSets.Date.SystemClock = () => DateTime.Parse("8/8/2019 2:00 PM");
+
             return new Faker<LogModel>().UseSeed(1910)
              .RuleFor(p => p.RowNo, f => f.Database.Random.Int())
              .RuleFor(p => p.Level, f => f.PickRandom(LogLevels))
@@ -22,7 +23,7 @@ namespace Serilog.Ui.Common.Tests.DataSamples
              .RuleFor(p => p.Exception, (f) => JsonConvert.SerializeObject(f.System.Exception()))
              .RuleFor(p => p.Message, f => f.System.Random.Words(6))
              .RuleFor(p => p.PropertyType, f => f.System.CommonFileType())
-             .RuleFor(p => p.Timestamp, f => f.Date.Recent());
+             .RuleFor(p => p.Timestamp, f => new DateTime(f.Date.Recent().Ticks, DateTimeKind.Utc));
         }
 
         public static IEnumerable<LogModel> Logs(int generationCount) => LogsRules().Generate(generationCount);
