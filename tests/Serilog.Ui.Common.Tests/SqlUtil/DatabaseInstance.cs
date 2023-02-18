@@ -36,7 +36,7 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
 
         public LogModelPropsCollector? Collector { get; set; }
 
-        public async Task InitializeAsync()
+        public Task InitializeAsync()
         {
             Container = new TestcontainersBuilder<TContainer>()
              .WithDatabase(configuration)
@@ -45,7 +45,7 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
              .WithStartupCallback(async (dc, token) => await GetDbContextInstanceAsync(token))
              .Build();
 
-            await Container.StartAsync();
+            return Container.StartAsync();
         }
 
         /// <summary>

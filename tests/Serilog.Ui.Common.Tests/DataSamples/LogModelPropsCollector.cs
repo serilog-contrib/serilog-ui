@@ -10,8 +10,11 @@ namespace Serilog.Ui.Common.Tests.DataSamples
     {
         public LogModelPropsCollector(IEnumerable<LogModel> models)
         {
+            DataSet = models.ToList();
             Collect(models);
         }
+
+        public IReadOnlyCollection<LogModel> DataSet { get; }
         public LogModel Example { get; private set; }
         public Dictionary<string, int> CountByLevel { get; private set; }
         public IEnumerable<DateTime> TimesSamples { get; private set; }

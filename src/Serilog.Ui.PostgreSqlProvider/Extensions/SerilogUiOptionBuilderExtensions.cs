@@ -27,17 +27,17 @@ namespace Serilog.Ui.PostgreSqlProvider
             string schemaName = "public"
         )
         {
-            if (string.IsNullOrEmpty(connectionString))
+            if (string.IsNullOrWhiteSpace(connectionString))
                 throw new ArgumentNullException(nameof(connectionString));
 
-            if (string.IsNullOrEmpty(tableName))
+            if (string.IsNullOrWhiteSpace(tableName))
                 throw new ArgumentNullException(nameof(tableName));
 
             var relationProvider = new RelationalDbOptions
             {
                 ConnectionString = connectionString,
                 TableName = tableName,
-                Schema = schemaName
+                Schema = !string.IsNullOrWhiteSpace(schemaName) ? schemaName : "public"
             };
 
             ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddSingleton(relationProvider);

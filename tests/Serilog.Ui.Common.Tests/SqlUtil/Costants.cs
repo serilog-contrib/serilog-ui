@@ -52,8 +52,8 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
 
         // https://github.com/b00ted/serilog-sinks-postgresql/blob/master/Serilog.Sinks.PostgreSQL/Sinks/PostgreSQL/ColumnOptions.cs
         public const string PostgresCreateTable = "CREATE TABLE IF NOT EXISTS public.logs (" +
-            "timestamp VARCHAR(100)," +
-            "level VARCHAR(15)," +
+            "timestamp TimestampTz," +
+            "level INTEGER," +
             "message_template TEXT," +
             "message TEXT," +
             "exception TEXT," +

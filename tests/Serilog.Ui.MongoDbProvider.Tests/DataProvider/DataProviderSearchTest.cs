@@ -41,7 +41,7 @@ namespace Serilog.Ui.MongoDbProvider.Tests.DataProvider
             log.Message.Should().Be(_builder._collector.Example.Message);
             log.Level.Should().Be(_builder._collector.Example.Level);
             log.Properties.Should().Be(_builder._collector.Example.Properties);
-            log.Timestamp.Should().BeCloseTo(_builder._collector.Example.Timestamp, TimeSpan.FromMinutes(5));
+            log.Timestamp.ToUniversalTime().Should().BeCloseTo(_builder._collector.Example.Timestamp, TimeSpan.FromMinutes(5));
             Count.Should().BeCloseTo(1, 2);
         }
 
@@ -50,11 +50,13 @@ namespace Serilog.Ui.MongoDbProvider.Tests.DataProvider
         {
             var lastTimeStamp = _builder._collector?.TimesSamples
                 .ElementAt(_builder._collector!.TimesSamples.Count() - 1).AddSeconds(-50);
-            var (Logs, Count) = await _builder._sut.FetchDataAsync(1, 10, startDate: lastTimeStamp);
+            var afterTimeStampCount = _builder._collector!.DataSet.Count(p => p.Timestamp > lastTimeStamp);
+            var (Logs, Count) = await _builder._sut.FetchDataAsync(1, 1000, startDate: lastTimeStamp);
 
             Logs.Should().NotBeEmpty();
-            Logs.Should().OnlyContain(p => p.Timestamp > lastTimeStamp);
-            Count.Should().BeLessThan(100).And.BeGreaterThan(2);
+            Logs.Should().HaveCount(afterTimeStampCount);
+            Count.Should().Be(afterTimeStampCount);
+            Logs.Should().OnlyContain(p => p.Timestamp.ToUniversalTime() > lastTimeStamp);
         }
 
         [Fact]
@@ -62,11 +64,13 @@ namespace Serilog.Ui.MongoDbProvider.Tests.DataProvider
         {
             var firstTimeStamp = _builder._collector?.TimesSamples
                 .ElementAt(_builder._collector!.TimesSamples.Count() - 1).AddSeconds(50);
-            var (Logs, Count) = await _builder._sut.FetchDataAsync(1, 10, endDate: firstTimeStamp);
+            var beforeTimeStampCount = _builder._collector!.DataSet.Count(p => p.Timestamp < firstTimeStamp);
+            var (Logs, Count) = await _builder._sut.FetchDataAsync(1, 1000, endDate: firstTimeStamp);
 
             Logs.Should().NotBeEmpty();
-            Logs.Should().OnlyContain(p => p.Timestamp < firstTimeStamp);
-            Count.Should().BeLessThan(100).And.BeGreaterThan(2);
+            Logs.Should().HaveCount(beforeTimeStampCount);
+            Count.Should().Be(beforeTimeStampCount);
+            Logs.Should().OnlyContain(p => p.Timestamp.ToUniversalTime() < firstTimeStamp);
         }
 
         [Fact]
@@ -74,10 +78,15 @@ namespace Serilog.Ui.MongoDbProvider.Tests.DataProvider
         {
             var firstTimeStamp = _builder._collector?.TimesSamples.First().AddSeconds(50);
             var lastTimeStamp = _builder._collector?.TimesSamples.Last().AddSeconds(50);
-            var (Logs, Count) = await _builder._sut.FetchDataAsync(1, 10, startDate: firstTimeStamp, endDate: lastTimeStamp);
+            var inTimeStampCount = _builder._collector!.DataSet
+                .Count(p => p.Timestamp >= firstTimeStamp && p.Timestamp < lastTimeStamp); 
+            var (Logs, Count) = await _builder._sut.FetchDataAsync(1, 1000, startDate: firstTimeStamp, endDate: lastTimeStamp);
 
             Logs.Should().NotBeEmpty();
-            Logs.Should().OnlyContain(p => p.Timestamp > firstTimeStamp && p.Timestamp < lastTimeStamp);
+            Logs.Should().HaveCount(inTimeStampCount);
+            Count.Should().Be(inTimeStampCount);
+            Logs.Should().OnlyContain(p => 
+                p.Timestamp.ToUniversalTime() > firstTimeStamp && p.Timestamp.ToUniversalTime() < lastTimeStamp);
             Count.Should().BeLessThan(100).And.BeGreaterThanOrEqualTo(3);
         }
 

@@ -4,6 +4,7 @@ using Moq;
 using Serilog.Ui.Common.Tests.TestSuites;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Serilog.Ui.MongoDbProvider.Tests.DataProvider
@@ -24,18 +25,19 @@ namespace Serilog.Ui.MongoDbProvider.Tests.DataProvider
         }
 
         [Fact]
-        public void It_logs_and_throws_when_db_read_breaks_down()
+        public Task It_logs_and_throws_when_db_read_breaks_down()
         {
             var mockClient = new Mock<IMongoClient>();
             var mockDb = new Mock<IMongoDatabase>();
+            var mockColl = new Mock<IMongoCollection<MongoDbLogModel>>();
             mockClient.Setup(p => p.GetDatabase(It.IsAny<string>(), null))
                 .Returns(mockDb.Object);
-            mockDb.Setup(p => p.GetCollection<MongoDbLogModel>(It.IsAny<string>(), null)).Returns(() => null);
+            mockDb.Setup(p => p.GetCollection<MongoDbLogModel>(It.IsAny<string>(), null)).Returns(() => mockColl.Object);
 
-            var sut = new MongoDbDataProvider(mockClient.Object, new MongoDbOptions());
-
+            var sut = new MongoDbDataProvider(mockClient.Object,
+                new MongoDbOptions() { CollectionName = "coll", ConnectionString = "some", DatabaseName = "db" });
             var assert = () => sut.FetchDataAsync(1, 10);
-            assert.Should().ThrowExactlyAsync<NullReferenceException>();
+            return assert.Should().ThrowAsync<ArgumentNullException>();
         }
     }
 }

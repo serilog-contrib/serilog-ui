@@ -1,17 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <Version>2.1.0</Version>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Version>2.1.0</Version>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Npgsql" Version="4.1.3.1" />
-    <PackageReference Include="Dapper" Version="2.0.35" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Npgsql" Version="6.0.9" />
+		<PackageReference Include="Dapper" Version="2.0.35" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
+		<InternalsVisibleTo Include="Serilog.Ui.PostgreSqlProvider.Tests"/>
+	</ItemGroup>
 </Project>
