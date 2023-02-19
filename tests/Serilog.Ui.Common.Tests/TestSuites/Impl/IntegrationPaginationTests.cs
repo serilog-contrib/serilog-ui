@@ -2,7 +2,6 @@
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using FluentAssertions;
-using Microsoft.Data.SqlClient;
 using Serilog.Ui.Common.Tests.SqlUtil;
 using Serilog.Ui.Core;
 using System.Linq;
@@ -16,8 +15,8 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         where T : TestcontainerDatabase
         where T1 : TestcontainerDatabaseConfiguration, new()
     {
-        private readonly DatabaseInstance<T, T1> instance;
-        private readonly IDataProvider provider;
+        protected readonly DatabaseInstance<T, T1> instance;
+        protected readonly IDataProvider provider;
 
         protected IntegrationPaginationTests(DatabaseInstance<T, T1> instance)
         {
@@ -54,11 +53,6 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             Logs.First().Message.Should().NotBe(example.Message);
         }
 
-        [Fact]
-        public Task It_throws_when_skip_is_zero()
-        {
-            var test = () => provider.FetchDataAsync(0, 1);
-            return test.Should().ThrowAsync<SqlException>();
-        }
+        public abstract Task It_throws_when_skip_is_zero();
     }
 }
