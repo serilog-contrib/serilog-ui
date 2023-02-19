@@ -1,7 +1,8 @@
 ﻿using Mongo2Go;
 using MongoDB.Driver;
+using Serilog.Ui.MongoDbProvider;
 
-namespace Serilog.Ui.MongoDbProvider.Tests.Util
+namespace MongoDb.Tests.Util
 {
     public static class IntegrationDbGeneration
     {

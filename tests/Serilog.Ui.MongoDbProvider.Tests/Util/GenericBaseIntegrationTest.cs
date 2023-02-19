@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Serilog.Ui.MongoDbProvider.Tests.Util
+namespace MongoDb.Tests.Util
 {
     public class BaseIntegrationTest<T> : IDisposable where T : BaseServiceBuilder
     {

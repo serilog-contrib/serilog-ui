@@ -2,14 +2,14 @@
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using MySql.Data.MySqlClient;
+using MySql.Tests.Util;
 using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core;
-using Serilog.Ui.MySqlProvider.Tests.Util;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Serilog.Ui.MySqlProvider.Tests.DataProvider
+namespace MySql.Tests.DataProvider
 {
     public class DataProviderPaginationTest : IClassFixture<MySqlTestProvider>, IIntegrationPaginationTests
     {

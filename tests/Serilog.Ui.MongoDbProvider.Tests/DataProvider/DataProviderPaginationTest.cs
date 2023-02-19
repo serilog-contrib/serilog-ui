@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
+using MongoDb.Tests.Util;
+using MongoDb.Tests.Util.Builders;
 using Serilog.Ui.Common.Tests.TestSuites;
-using Serilog.Ui.MongoDbProvider.Tests.Util;
-using Serilog.Ui.MongoDbProvider.Tests.Util.Builders;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Serilog.Ui.MongoDbProvider.Tests.DataProvider
+namespace MongoDb.Tests.DataProvider
 {
     public class DataProviderPaginationTest : BaseIntegrationTest<MongoDbDataProviderBuilder>, IAsyncLifetime, IIntegrationPaginationTests
     {

@@ -24,7 +24,7 @@ namespace Serilog.Ui.ElasticSearchProvider
             if (endpoint == null)
                 throw new ArgumentNullException(nameof(endpoint));
 
-            if (string.IsNullOrEmpty(indexName))
+            if (string.IsNullOrWhiteSpace(indexName))
                 throw new ArgumentNullException(nameof(indexName));
 
             var options = new ElasticSearchDbOptions

@@ -1,8 +1,9 @@
 ﻿using Mongo2Go;
 using MongoDB.Driver;
+using Serilog.Ui.MongoDbProvider;
 using System;
 
-namespace Serilog.Ui.MongoDbProvider.Tests.Util
+namespace MongoDb.Tests.Util
 {
     public class BaseServiceBuilder : IDisposable
     {

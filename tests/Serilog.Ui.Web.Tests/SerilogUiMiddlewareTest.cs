@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace Serilog.Ui.Web.Tests
+namespace Ui.Web.Tests
 {
     public class SerilogUiMiddlewareTest
     {

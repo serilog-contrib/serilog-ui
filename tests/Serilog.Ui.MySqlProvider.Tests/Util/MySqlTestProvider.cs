@@ -6,9 +6,10 @@ using MySql.Data.MySqlClient;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
 using Serilog.Ui.Core;
+using Serilog.Ui.MySqlProvider;
 using System.Threading.Tasks;
 
-namespace Serilog.Ui.MySqlProvider.Tests.Util
+namespace MySql.Tests.Util
 {
     public sealed class MySqlTestProvider : DatabaseInstance<MySqlTestcontainer, MySqlTestcontainerConfiguration>
     {

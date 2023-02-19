@@ -1,14 +1,14 @@
 ﻿using Ardalis.GuardClauses;
 using FluentAssertions;
+using MySql.Tests.Util;
 using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core;
-using Serilog.Ui.MySqlProvider.Tests.Util;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Serilog.Ui.MySqlProvider.Tests.DataProvider
+namespace MySql.Tests.DataProvider
 {
     public class DataProviderSearchTest : IClassFixture<MySqlTestProvider>, IIntegrationSearchTests
     {

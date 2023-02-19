@@ -2,12 +2,13 @@
 using MongoDB.Driver;
 using Moq;
 using Serilog.Ui.Common.Tests.TestSuites;
+using Serilog.Ui.MongoDbProvider;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Serilog.Ui.MongoDbProvider.Tests.DataProvider
+namespace MongoDb.Tests.DataProvider
 {
     public class DataProviderBaseTest : IUnitBaseTests
     {

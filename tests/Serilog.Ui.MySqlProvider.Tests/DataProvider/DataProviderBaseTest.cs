@@ -1,12 +1,13 @@
 ﻿using FluentAssertions;
 using MySql.Data.MySqlClient;
 using Serilog.Ui.Common.Tests.TestSuites;
+using Serilog.Ui.MySqlProvider;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Serilog.Ui.MySqlProvider.Tests.DataProvider
+namespace MySql.Tests.DataProvider
 {
     public class DataProviderBaseTest : IUnitBaseTests
     {

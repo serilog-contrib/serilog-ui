@@ -1,15 +1,15 @@
 ﻿using Ardalis.GuardClauses;
 using FluentAssertions;
 using Npgsql;
+using Postgres.Tests.Util;
 using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core;
-using Serilog.Ui.PostgreSqlProvider.Tests.Util;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Serilog.Ui.PostgreSqlProvider.Tests.DataProvider
+namespace Postgres.Tests.DataProvider
 {
     public class DataProviderPaginationTest : IClassFixture<PostgresTestProvider>, IIntegrationPaginationTests
     {

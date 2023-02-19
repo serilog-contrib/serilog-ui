@@ -1,11 +1,12 @@
 ﻿using FluentAssertions;
 using Serilog.Ui.Common.Tests.TestSuites;
+using Serilog.Ui.PostgreSqlProvider;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Serilog.Ui.PostgreSqlProvider.Tests.DataProvider
+namespace Postgres.Tests.DataProvider
 {
     public class DataProviderBaseTest : IUnitBaseTests
     {

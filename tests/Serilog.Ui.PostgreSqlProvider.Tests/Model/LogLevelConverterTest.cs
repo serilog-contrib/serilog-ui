@@ -1,7 +1,8 @@
 ﻿using FluentAssertions;
+using Serilog.Ui.PostgreSqlProvider;
 using Xunit;
 
-namespace Serilog.Ui.PostgreSqlProvider.Tests.Model
+namespace Postgres.Tests.Model
 {
     public class LogLevelConverterTest
     {

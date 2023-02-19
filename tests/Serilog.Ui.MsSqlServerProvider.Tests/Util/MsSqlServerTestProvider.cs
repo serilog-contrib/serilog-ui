@@ -5,9 +5,10 @@ using Microsoft.Data.SqlClient;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
 using Serilog.Ui.Core;
+using Serilog.Ui.MsSqlServerProvider;
 using System.Threading.Tasks;
 
-namespace Serilog.Ui.MsSqlServerProvider.Tests.Util
+namespace MsSql.Tests.Util
 {
     public sealed class MsSqlServerTestProvider : DatabaseInstance<MsSqlTestcontainer, MsSqlTestcontainerConfiguration>
     {
@@ -22,7 +23,7 @@ namespace Serilog.Ui.MsSqlServerProvider.Tests.Util
             DbOptions.ConnectionString = Container?.ConnectionString + "TrustServerCertificate=True;";
 
             using var dataContext = new SqlConnection(DbOptions.ConnectionString);
-            
+
             await dataContext.ExecuteAsync("SELECT DATABASEPROPERTYEX(N'master', 'Collation')");
         }
 
@@ -30,7 +31,7 @@ namespace Serilog.Ui.MsSqlServerProvider.Tests.Util
         {
             var logs = LogModelFaker.Logs(100);
             Collector = new LogModelPropsCollector(logs);
-            
+
             using var dataContext = new SqlConnection(DbOptions.ConnectionString);
 
             await dataContext.ExecuteAsync(Costants.MsSqlCreateTable);

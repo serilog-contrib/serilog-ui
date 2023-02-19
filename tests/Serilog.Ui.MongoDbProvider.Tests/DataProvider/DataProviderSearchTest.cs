@@ -1,13 +1,13 @@
 ﻿using FluentAssertions;
+using MongoDb.Tests.Util;
+using MongoDb.Tests.Util.Builders;
 using Serilog.Ui.Common.Tests.TestSuites;
-using Serilog.Ui.MongoDbProvider.Tests.Util;
-using Serilog.Ui.MongoDbProvider.Tests.Util.Builders;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Serilog.Ui.MongoDbProvider.Tests.DataProvider
+namespace MongoDb.Tests.DataProvider
 {
     public class DataProviderSearchTest : BaseIntegrationTest<MongoDbDataProviderBuilder>, IAsyncLifetime, IIntegrationSearchTests
     {
@@ -79,13 +79,13 @@ namespace Serilog.Ui.MongoDbProvider.Tests.DataProvider
             var firstTimeStamp = _builder._collector?.TimesSamples.First().AddSeconds(50);
             var lastTimeStamp = _builder._collector?.TimesSamples.Last().AddSeconds(50);
             var inTimeStampCount = _builder._collector!.DataSet
-                .Count(p => p.Timestamp >= firstTimeStamp && p.Timestamp < lastTimeStamp); 
+                .Count(p => p.Timestamp >= firstTimeStamp && p.Timestamp < lastTimeStamp);
             var (Logs, Count) = await _builder._sut.FetchDataAsync(1, 1000, startDate: firstTimeStamp, endDate: lastTimeStamp);
 
             Logs.Should().NotBeEmpty();
             Logs.Should().HaveCount(inTimeStampCount);
             Count.Should().Be(inTimeStampCount);
-            Logs.Should().OnlyContain(p => 
+            Logs.Should().OnlyContain(p =>
                 p.Timestamp.ToUniversalTime() > firstTimeStamp && p.Timestamp.ToUniversalTime() < lastTimeStamp);
             Count.Should().BeLessThan(100).And.BeGreaterThanOrEqualTo(3);
         }
@@ -112,8 +112,8 @@ namespace Serilog.Ui.MongoDbProvider.Tests.DataProvider
             Logs.Should().NotBeEmpty();
             Logs.Should().OnlyContain(p =>
                 p.Message
-                .Split(" ", System.StringSplitOptions.None)
-                .Intersect(msg!.Split(" ", System.StringSplitOptions.None)).Any());
+                .Split(" ", StringSplitOptions.None)
+                .Intersect(msg!.Split(" ", StringSplitOptions.None)).Any());
             Count.Should().BeLessThan(100).And.BeGreaterThan(1);
         }
 

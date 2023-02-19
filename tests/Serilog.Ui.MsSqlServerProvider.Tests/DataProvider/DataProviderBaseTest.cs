@@ -1,11 +1,12 @@
 ﻿using FluentAssertions;
 using Serilog.Ui.Common.Tests.TestSuites;
+using Serilog.Ui.MsSqlServerProvider;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Serilog.Ui.MsSqlServerProvider.Tests.DataProvider
+namespace MsSql.Tests.DataProvider
 {
     public class DataProviderBaseTest : IUnitBaseTests
     {

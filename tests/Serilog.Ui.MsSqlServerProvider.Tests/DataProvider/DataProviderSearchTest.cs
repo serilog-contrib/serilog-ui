@@ -1,14 +1,14 @@
 using Ardalis.GuardClauses;
 using FluentAssertions;
+using MsSql.Tests.Util;
 using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core;
-using Serilog.Ui.MsSqlServerProvider.Tests.Util;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Serilog.Ui.MsSqlServerProvider.Tests.DataProvider
+namespace MsSql.Tests.DataProvider
 {
     public class DataProviderSearchTest : IClassFixture<MsSqlServerTestProvider>, IIntegrationSearchTests
     {

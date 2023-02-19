@@ -1,13 +1,15 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
+using Serilog.Ui.PostgreSqlProvider;
 using Serilog.Ui.Web;
 using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Serilog.Ui.PostgreSqlProvider.Tests.Extensions
+namespace Postgres.Tests.Extensions
 {
+    [Trait("DI-DataProvider", "Postgres")]
     public class SerilogUiOptionBuilderExtensionsTest
     {
         private readonly ServiceCollection serviceCollection;
@@ -20,7 +22,7 @@ namespace Serilog.Ui.PostgreSqlProvider.Tests.Extensions
         [Theory]
         [InlineData(null, "public")]
         [InlineData("schema", "schema")]
-        public void It_registers_provider_dependencies_with_connstring_and_tableName(string schemaName, string expected)
+        public void It_registers_provider_and_dependencies(string schemaName, string expected)
         {
             serviceCollection.AddSerilogUi((builder) =>
             {
@@ -37,7 +39,7 @@ namespace Serilog.Ui.PostgreSqlProvider.Tests.Extensions
         }
 
         [Fact]
-        public void It_throws_with_invalid_deps()
+        public void It_throws_on_invalid_registration()
         {
             var nullables = new List<Func<IServiceCollection>>
             {

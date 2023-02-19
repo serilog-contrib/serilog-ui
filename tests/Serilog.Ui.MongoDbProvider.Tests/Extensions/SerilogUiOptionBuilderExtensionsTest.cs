@@ -2,13 +2,15 @@
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using Serilog.Ui.Core;
+using Serilog.Ui.MongoDbProvider;
 using Serilog.Ui.Web;
 using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Serilog.Ui.MongoDbProvider.Tests.Extensions
+namespace MongoDb.Tests.Extensions
 {
+    [Trait("DI-DataProvider", "MongoDb")]
     public class SerilogUiOptionBuilderExtensionsTest
     {
         private readonly ServiceCollection serviceCollection;
@@ -19,7 +21,7 @@ namespace Serilog.Ui.MongoDbProvider.Tests.Extensions
         }
 
         [Fact]
-        public void It_registers_provider_dependencies_with_connstring_and_collection()
+        public void It_registers_provider_and_dependencies_with_connstring_and_collection()
         {
             serviceCollection.AddSerilogUi((builder) =>
             {
@@ -33,7 +35,7 @@ namespace Serilog.Ui.MongoDbProvider.Tests.Extensions
         }
 
         [Fact]
-        public void It_registers_provider_dependencies_with_connstring_collection_and_dbname()
+        public void It_registers_provider_and_dependencies_with_connstring_collection_and_dbname()
         {
             serviceCollection.AddSerilogUi((builder) =>
             {
@@ -62,7 +64,7 @@ namespace Serilog.Ui.MongoDbProvider.Tests.Extensions
         }
 
         [Fact]
-        public void It_throws_with_invalid_deps()
+        public void It_throws_on_invalid_registration()
         {
             var nullables = new List<Func<IServiceCollection>>
             {

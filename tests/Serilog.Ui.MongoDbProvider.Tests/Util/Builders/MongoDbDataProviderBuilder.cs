@@ -1,8 +1,10 @@
-﻿using MongoDB.Driver;
+﻿using MongoDb.Tests.Util;
+using MongoDB.Driver;
 using Serilog.Ui.Common.Tests.DataSamples;
+using Serilog.Ui.MongoDbProvider;
 using System.Threading.Tasks;
 
-namespace Serilog.Ui.MongoDbProvider.Tests.Util.Builders
+namespace MongoDb.Tests.Util.Builders
 {
     public class MongoDbDataProviderBuilder : BaseServiceBuilder
     {

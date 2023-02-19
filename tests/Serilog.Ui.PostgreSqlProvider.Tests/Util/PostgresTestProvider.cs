@@ -6,10 +6,11 @@ using Npgsql;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
 using Serilog.Ui.Core;
+using Serilog.Ui.PostgreSqlProvider;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Serilog.Ui.PostgreSqlProvider.Tests.Util
+namespace Postgres.Tests.Util
 {
     public sealed class PostgresTestProvider : DatabaseInstance<PostgreSqlTestcontainer, PostgreSqlTestcontainerConfiguration>
     {
@@ -40,7 +41,7 @@ namespace Serilog.Ui.PostgreSqlProvider.Tests.Util
         protected override async Task InitializeAdditionalAsync()
         {
             var logs = LogModelFaker.Logs(100);
-            
+
             // manual conversion due to current implementation, based on a INT level column
             var postgresTableLogs = logs.Select(p => new
             {
