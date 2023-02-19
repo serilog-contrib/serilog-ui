@@ -4,6 +4,7 @@ using Xunit;
 
 namespace Postgres.Tests.Model
 {
+    [Trait("Custom", "Postgres")]
     public class LogLevelConverterTest
     {
         [Theory]

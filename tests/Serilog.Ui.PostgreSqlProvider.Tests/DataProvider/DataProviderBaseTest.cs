@@ -8,6 +8,7 @@ using Xunit;
 
 namespace Postgres.Tests.DataProvider
 {
+    [Trait("Unit-Base", "Postgres")]
     public class DataProviderBaseTest : IUnitBaseTests
     {
         [Fact]

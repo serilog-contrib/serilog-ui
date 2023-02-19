@@ -10,6 +10,7 @@ using Xunit;
 
 namespace MongoDb.Tests.DataProvider
 {
+    [Trait("Unit-Base", "MongoDb")]
     public class DataProviderBaseTest : IUnitBaseTests
     {
         [Fact]

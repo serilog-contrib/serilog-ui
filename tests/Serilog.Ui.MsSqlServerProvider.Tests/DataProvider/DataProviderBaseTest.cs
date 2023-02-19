@@ -8,6 +8,7 @@ using Xunit;
 
 namespace MsSql.Tests.DataProvider
 {
+    [Trait("Unit-Base", "MsSql")]
     public class DataProviderBaseTest : IUnitBaseTests
     {
         [Fact]

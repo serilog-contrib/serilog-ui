@@ -9,6 +9,7 @@ using Xunit;
 
 namespace MySql.Tests.DataProvider
 {
+    [Trait("Unit-Base", "MySql")]
     public class DataProviderBaseTest : IUnitBaseTests
     {
         [Fact]

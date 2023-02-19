@@ -9,6 +9,7 @@ using Xunit;
 
 namespace MongoDb.Tests.DataProvider
 {
+    [Trait("Integration-Pagination", "MongoDb")]
     public class DataProviderPaginationTest : BaseIntegrationTest<MongoDbDataProviderBuilder>, IAsyncLifetime, IIntegrationPaginationTests
     {
         public Task DisposeAsync() => Task.CompletedTask;

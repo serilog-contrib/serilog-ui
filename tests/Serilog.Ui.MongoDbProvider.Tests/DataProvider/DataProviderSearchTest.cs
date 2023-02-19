@@ -9,6 +9,7 @@ using Xunit;
 
 namespace MongoDb.Tests.DataProvider
 {
+    [Trait("Integration-Search", "MongoDb")]
     public class DataProviderSearchTest : BaseIntegrationTest<MongoDbDataProviderBuilder>, IAsyncLifetime, IIntegrationSearchTests
     {
         public Task DisposeAsync() => Task.CompletedTask;
