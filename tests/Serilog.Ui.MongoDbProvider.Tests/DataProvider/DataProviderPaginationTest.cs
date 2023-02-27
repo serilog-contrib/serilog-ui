@@ -1,57 +1,28 @@
 ﻿using FluentAssertions;
 using MongoDb.Tests.Util;
-using MongoDb.Tests.Util.Builders;
-using Serilog.Ui.Common.Tests.TestSuites;
+using Serilog.Ui.Common.Tests.TestSuites.Impl;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace MongoDb.Tests.DataProvider
 {
+    [CollectionDefinition(nameof(BaseIntegrationTest))]
     [Trait("Integration-Pagination", "MongoDb")]
-    public class DataProviderPaginationTest : BaseIntegrationTest<MongoDbDataProviderBuilder>, IAsyncLifetime, IIntegrationPaginationTests
+    public class DataProviderPaginationTest : IntegrationPaginationTests<BaseIntegrationTest>
     {
-        public Task DisposeAsync() => Task.CompletedTask;
+        public DataProviderPaginationTest(BaseIntegrationTest instance) : base(instance) { }
 
-        public async Task InitializeAsync()
-        {
-            _builder = await MongoDbDataProviderBuilder.Build(false);
-        }
+        public override Task It_fetches_with_limit() => base.It_fetches_with_limit();
 
-        [Fact]
-        public async Task It_fetches_with_limit()
-        {
-            var (Logs, _) = await _builder._sut.FetchDataAsync(1, 5);
+        public override Task It_fetches_with_limit_and_skip() => base.It_fetches_with_limit_and_skip();
 
-            Logs.Should().NotBeEmpty().And.HaveCount(5);
-        }
+        public override Task It_fetches_with_skip() => base.It_fetches_with_skip();
 
         [Fact]
-        public async Task It_fetches_with_limit_and_skip()
+        public override Task It_throws_when_skip_is_zero()
         {
-            var example = _builder._collector!.Example;
-            var (Logs, _) = await _builder._sut.FetchDataAsync(2, 1, level: example.Level);
-
-            Logs.Should().NotBeEmpty().And.HaveCount(1);
-            Logs.First().Level.Should().Be(example.Level);
-            Logs.First().Message.Should().NotBe(example.Message);
-        }
-
-        [Fact]
-        public async Task It_fetches_with_skip()
-        {
-            var example = _builder._collector!.Example;
-            var (Logs, _) = await _builder._sut.FetchDataAsync(2, 1, level: example.Level);
-
-            Logs.First().Level.Should().Be(example.Level);
-            Logs.First().Message.Should().NotBe(example.Message);
-        }
-
-        [Fact]
-        public Task It_throws_when_skip_is_zero()
-        {
-            var test = () => _builder._sut.FetchDataAsync(0, 1);
+            var test = () => provider.FetchDataAsync(0, 1);
             return test.Should().ThrowAsync<ArgumentOutOfRangeException>();
         }
     }

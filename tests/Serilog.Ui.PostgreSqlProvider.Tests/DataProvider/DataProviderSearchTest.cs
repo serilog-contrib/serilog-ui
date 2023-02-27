@@ -5,6 +5,7 @@ using Xunit;
 
 namespace Postgres.Tests.DataProvider
 {
+    [CollectionDefinition(nameof(PostgresTestProvider))]
     [Trait("Integration-Search", "Postgres")]
     public class DataProviderSearchTest : IntegrationSearchTests<PostgresTestProvider>
     {

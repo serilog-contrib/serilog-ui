@@ -7,6 +7,7 @@ using Xunit;
 
 namespace MySql.Tests.DataProvider
 {
+    [CollectionDefinition(nameof(MySqlTestProvider))]
     [Trait("Integration-Pagination", "MySql")]
     public class DataProviderPaginationTest : IntegrationPaginationTests<MySqlTestProvider>
     {

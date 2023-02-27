@@ -7,6 +7,7 @@ using Xunit;
 
 namespace Postgres.Tests.DataProvider
 {
+    [CollectionDefinition(nameof(PostgresTestProvider))]
     [Trait("Integration-Pagination", "Postgres")]
     public class DataProviderPaginationTest : IntegrationPaginationTests<PostgresTestProvider>
     {

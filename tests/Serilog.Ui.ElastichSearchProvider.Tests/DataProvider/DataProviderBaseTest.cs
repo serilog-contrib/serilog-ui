@@ -6,7 +6,6 @@ using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.ElasticSearchProvider;
 using System;
 using System.Collections.Generic;
-using System.Reflection.Metadata;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;

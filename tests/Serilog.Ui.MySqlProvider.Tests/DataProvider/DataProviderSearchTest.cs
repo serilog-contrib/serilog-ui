@@ -5,6 +5,7 @@ using Xunit;
 
 namespace MySql.Tests.DataProvider
 {
+    [CollectionDefinition(nameof(MySqlTestProvider))]
     [Trait("Integration-Search", "MySql")]
     public class DataProviderSearchTest : IntegrationSearchTests<MySqlTestProvider>
     {

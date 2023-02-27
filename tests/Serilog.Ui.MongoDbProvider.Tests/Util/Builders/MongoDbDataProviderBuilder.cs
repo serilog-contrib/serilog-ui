@@ -1,5 +1,4 @@
-﻿using MongoDb.Tests.Util;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.MongoDbProvider;
 using System.Threading.Tasks;
@@ -10,9 +9,7 @@ namespace MongoDb.Tests.Util.Builders
     {
         private const string DefaultDbName = "IntegrationTests";
 
-        internal MongoDbDataProvider _sut;
         internal IMongoCollection<MongoDbLogModel> _mongoCollection;
-        internal LogModelPropsCollector? _collector;
 
         protected MongoDbDataProviderBuilder(MongoDbOptions options) : base(options)
         {

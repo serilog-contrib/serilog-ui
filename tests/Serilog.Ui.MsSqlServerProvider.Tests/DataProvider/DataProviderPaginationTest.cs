@@ -7,6 +7,7 @@ using Xunit;
 
 namespace MsSql.Tests.DataProvider
 {
+    [CollectionDefinition(nameof(MsSqlServerTestProvider))]
     [Trait("Integration-Pagination", "MsSql")]
     public class DataProviderPaginationTest : IntegrationPaginationTests<MsSqlServerTestProvider>
     {

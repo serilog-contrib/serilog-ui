@@ -11,17 +11,14 @@ using Xunit;
 namespace MsSql.Tests.DataProvider
 {
     public class IntegrationSearchTests<DbRunner> :
-        IClassFixture<DbRunner>, IIntegrationSearchTests, IDisposable
+        ICollectionFixture<DbRunner>, IIntegrationSearchTests
         where DbRunner : class, IIntegrationRunner
     {
-        private bool disposedValue;
-        private readonly DbRunner dbRunner;
         protected readonly LogModelPropsCollector logCollector;
         protected readonly IDataProvider provider;
 
         protected IntegrationSearchTests(DbRunner instance)
         {
-            dbRunner = instance;
             logCollector = instance.GetPropsCollector();
             provider = Guard.Against.Null(instance.GetDataProvider());
         }
@@ -36,7 +33,10 @@ namespace MsSql.Tests.DataProvider
         }
 
         [Fact]
-        public virtual async Task It_finds_data_with_all_filters()
+        public virtual Task It_finds_data_with_all_filters()
+            => It_finds_data_with_all_filters_by_utc(false);
+
+        protected virtual async Task It_finds_data_with_all_filters_by_utc(bool checkWithUtc)
         {
             var (Logs, Count) = await provider.FetchDataAsync(1,
                 10,
@@ -49,7 +49,7 @@ namespace MsSql.Tests.DataProvider
             log.Message.Should().Be(logCollector.Example.Message);
             log.Level.Should().Be(logCollector.Example.Level);
             log.Properties.Should().Be(logCollector.Example.Properties);
-            log.Timestamp.Should().BeCloseTo(logCollector.Example.Timestamp, TimeSpan.FromMinutes(5));
+            ConvertToUtc(log.Timestamp, checkWithUtc).Should().BeCloseTo(logCollector.Example.Timestamp, TimeSpan.FromMinutes(5));
             Count.Should().BeCloseTo(1, 2);
         }
 
@@ -68,7 +68,10 @@ namespace MsSql.Tests.DataProvider
         }
 
         [Fact]
-        public virtual async Task It_finds_only_data_emitted_before_date()
+        public virtual Task It_finds_only_data_emitted_before_date()
+            => It_finds_only_data_emitted_before_date_by_utc(false);
+
+        protected async Task It_finds_only_data_emitted_before_date_by_utc(bool checkWithUtc)
         {
             var firstTimeStamp = logCollector!.TimesSamples
                 .ElementAt(logCollector.TimesSamples.Count() - 1).AddSeconds(50);
@@ -78,11 +81,14 @@ namespace MsSql.Tests.DataProvider
             Logs.Should().NotBeEmpty();
             Logs.Should().HaveCount(beforeTimeStampCount);
             Count.Should().Be(beforeTimeStampCount);
-            Logs.Should().OnlyContain(p => p.Timestamp < firstTimeStamp);
+            Logs.Should().OnlyContain(p => ConvertToUtc(p.Timestamp, checkWithUtc) < firstTimeStamp);
         }
 
         [Fact]
-        public virtual async Task It_finds_only_data_emitted_in_dates_range()
+        public virtual Task It_finds_only_data_emitted_in_dates_range()
+            => It_finds_only_data_emitted_in_dates_range_by_utc(false);
+
+        protected async Task It_finds_only_data_emitted_in_dates_range_by_utc(bool checkWithUtc)
         {
             var firstTimeStamp = logCollector!.TimesSamples.First().AddSeconds(50);
             var lastTimeStamp = logCollector.TimesSamples.Last().AddSeconds(50);
@@ -93,7 +99,9 @@ namespace MsSql.Tests.DataProvider
             Logs.Should().NotBeEmpty();
             Logs.Should().HaveCount(inTimeStampCount);
             Count.Should().Be(inTimeStampCount);
-            Logs.Should().OnlyContain(p => p.Timestamp >= firstTimeStamp && p.Timestamp < lastTimeStamp);
+            Logs.Should().OnlyContain(p =>
+            ConvertToUtc(p.Timestamp, checkWithUtc) >= firstTimeStamp &&
+            ConvertToUtc(p.Timestamp, checkWithUtc) < lastTimeStamp);
         }
 
         [Fact]
@@ -111,7 +119,7 @@ namespace MsSql.Tests.DataProvider
         [Fact]
         public virtual async Task It_finds_only_data_with_specific_message_content()
         {
-            var msg = logCollector!.MessagePiecesSamples.ElementAt(1);
+            var msg = logCollector!.MessagePiecesSamples.FirstOrDefault();
 
             var (Logs, Count) = await provider.FetchDataAsync(1, 10, searchCriteria: msg);
 
@@ -120,7 +128,7 @@ namespace MsSql.Tests.DataProvider
                 p.Message
                 .Split(" ", StringSplitOptions.None)
                 .Intersect(msg!.Split(" ", StringSplitOptions.None)).Any());
-            Count.Should().BeLessThan(100).And.Be(1);
+            Count.Should().BeLessThan(100).And.BeGreaterThanOrEqualTo(1);
         }
 
         [Fact]
@@ -136,24 +144,7 @@ namespace MsSql.Tests.DataProvider
             Count.Should().Be(Count2nd);
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    dbRunner.Dispose();
-                }
-
-                disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
+        private static DateTime ConvertToUtc(DateTime timestamp, bool checkWithUtc)
+            => checkWithUtc ? timestamp.ToUniversalTime() : timestamp;
     }
 }

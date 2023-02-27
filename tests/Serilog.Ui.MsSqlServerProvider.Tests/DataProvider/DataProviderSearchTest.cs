@@ -4,12 +4,11 @@ using Xunit;
 
 namespace MsSql.Tests.DataProvider
 {
+    [CollectionDefinition(nameof(MsSqlServerTestProvider))]
     [Trait("Integration-Search", "MsSql")]
     public class DataProviderSearchTest : IntegrationSearchTests<MsSqlServerTestProvider>
     {
-        public DataProviderSearchTest(MsSqlServerTestProvider instance) : base(instance)
-        {
-        }
+        public DataProviderSearchTest(MsSqlServerTestProvider instance) : base(instance) { }
 
         public override Task It_finds_all_data_with_default_search()
             => base.It_finds_all_data_with_default_search();

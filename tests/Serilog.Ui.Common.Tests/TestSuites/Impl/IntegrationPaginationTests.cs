@@ -10,17 +10,14 @@ using Xunit;
 namespace Serilog.Ui.Common.Tests.TestSuites.Impl
 {
     public abstract class IntegrationPaginationTests<DbRunner> :
-        IClassFixture<DbRunner>, IIntegrationPaginationTests, IDisposable
+        IClassFixture<DbRunner>, IIntegrationPaginationTests
         where DbRunner : class, IIntegrationRunner
     {
-        private bool disposedValue;
-        private readonly DbRunner dbRunner;
         protected readonly LogModelPropsCollector logCollector;
         protected readonly IDataProvider provider;
 
         protected IntegrationPaginationTests(DbRunner instance)
         {
-            dbRunner = instance;
             logCollector = instance.GetPropsCollector();
             provider = Guard.Against.Null(instance.GetDataProvider());
         }
@@ -55,25 +52,5 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         }
 
         public abstract Task It_throws_when_skip_is_zero();
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    dbRunner.Dispose();
-                }
-
-                disposedValue = true;
-            }
-        }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
     }
 }

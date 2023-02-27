@@ -21,6 +21,8 @@
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Elastic.Elasticsearch.Xunit" Version="0.3.5" />
+		<PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
 		<PackageReference Include="FluentAssertions" Version="6.10.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
@@ -28,7 +30,6 @@
 		<PackageReference Include="Moq" Version="4.18.4" />
 		<PackageReference Include="NEST" Version="7.11.1" />
 		<PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.4.1" />
-		<PackageReference Include="Testcontainers" Version="2.2.0" />
 		<PackageReference Include="xunit" Version="2.4.2" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
