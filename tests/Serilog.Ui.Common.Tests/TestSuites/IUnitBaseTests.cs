@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Xunit;
 
 namespace Serilog.Ui.Common.Tests.TestSuites
 {

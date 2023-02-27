@@ -1,6 +1,4 @@
-﻿using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Containers;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Npgsql;
 using Postgres.Tests.Util;
 using Serilog.Ui.Common.Tests.TestSuites.Impl;
@@ -10,12 +8,17 @@ using Xunit;
 namespace Postgres.Tests.DataProvider
 {
     [Trait("Integration-Pagination", "Postgres")]
-    public class DataProviderPaginationTest :
-        IntegrationPaginationTests<PostgresTestProvider, PostgreSqlTestcontainer, PostgreSqlTestcontainerConfiguration>
+    public class DataProviderPaginationTest : IntegrationPaginationTests<PostgresTestProvider>
     {
         public DataProviderPaginationTest(PostgresTestProvider instance) : base(instance)
         {
         }
+
+        public override Task It_fetches_with_limit() => base.It_fetches_with_limit();
+
+        public override Task It_fetches_with_limit_and_skip() => base.It_fetches_with_limit_and_skip();
+
+        public override Task It_fetches_with_skip() => base.It_fetches_with_skip();
 
         [Fact]
         public override Task It_throws_when_skip_is_zero()

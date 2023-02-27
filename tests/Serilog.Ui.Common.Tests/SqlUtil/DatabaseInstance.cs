@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.GuardClauses;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
@@ -8,38 +9,42 @@ using Microsoft.Data.SqlClient;
 using MySql.Data.MySqlClient;
 using Npgsql;
 using Serilog.Ui.Common.Tests.DataSamples;
+using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core;
-using Xunit;
 
 namespace Serilog.Ui.Common.Tests.SqlUtil
 {
 #nullable enable
-    public abstract class DatabaseInstance<TContainer, TConfiguration> : IAsyncLifetime, IDisposable
+    public abstract class DatabaseInstance<TContainer, TConfiguration> : IIntegrationRunner
         where TContainer : TestcontainerDatabase
         where TConfiguration : TestcontainerDatabaseConfiguration, new()
     {
         private bool disposedValue;
 
-        protected TConfiguration? configuration = new() { Password = "#DockerFakePw#" };
+        protected TConfiguration? Configuration = new() { Password = "#DockerFakePw#" };
 
-        protected virtual string Name { get;  } = nameof(TContainer);
+        protected virtual string Name { get; } = nameof(TContainer);
 
         /// <summary>
         /// Gets or sets the Testcontainers container.
         /// </summary>
-        public TContainer? Container { get; set; }
+        protected TContainer? Container { get; set; }
 
         /// <summary>
         /// Gets or sets the IDataProvider.
         /// </summary>
-        public IDataProvider? Provider { get; set; }
+        protected IDataProvider? Provider { get; set; }
 
-        public LogModelPropsCollector? Collector { get; set; }
+        protected LogModelPropsCollector? Collector { get; set; }
+
+        public IDataProvider GetDataProvider() => Guard.Against.Null(Provider)!;
+
+        public LogModelPropsCollector GetPropsCollector() => Guard.Against.Null(Collector)!;
 
         public Task InitializeAsync()
         {
             Container = new TestcontainersBuilder<TContainer>()
-             .WithDatabase(configuration)
+             .WithDatabase(Configuration)
              .WithName($"IntegrationTesting_{Name}_{Guid.NewGuid()}")
              .WithWaitStrategy(Wait.ForUnixContainer())
              .WithStartupCallback(async (dc, token) => await GetDbContextInstanceAsync(token))
@@ -95,14 +100,6 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
             }
         }
 
-        /// <inheritdoc/>
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
         /// <summary>
         /// Dispose any additional managed dependencies.
         /// </summary>
@@ -113,11 +110,19 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
             {
                 if (disposing)
                 {
-                    configuration?.Dispose();
+                    Configuration?.Dispose();
                 }
 
                 disposedValue = true;
             }
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

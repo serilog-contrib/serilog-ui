@@ -17,9 +17,9 @@ namespace MySql.Tests.Util
 
         public MySqlTestProvider()
         {
-            Guard.Against.Null(configuration);
-            configuration.Username = "mysql-tests";
-            configuration.Database = "testdatabase";
+            Guard.Against.Null(Configuration);
+            Configuration.Username = "mysql-tests";
+            Configuration.Database = "testdatabase";
         }
 
         public RelationalDbOptions DbOptions { get; set; } = new()
