@@ -7,7 +7,6 @@ namespace Serilog.Ui.Web.Tests
         [Fact]
         public void Test1()
         {
-
         }
     }
 }

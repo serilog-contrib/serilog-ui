@@ -122,6 +122,15 @@ namespace Serilog.Ui.Web
 
         private async Task RespondWithIndexHtml(HttpResponse response)
         {
+            if (!CanAccess(response.HttpContext))
+            {
+                response.StatusCode = (int)HttpStatusCode.Forbidden;
+                response.ContentType = "text/html;charset=utf-8";
+                await response.WriteAsync("<p>You don't have enough permission to access this page!</p>", Encoding.UTF8);
+
+                return;
+            }
+
             response.StatusCode = 200;
             response.ContentType = "text/html;charset=utf-8";
 
@@ -166,8 +175,10 @@ namespace Serilog.Ui.Web
             var provider = httpContext.RequestServices.GetService<IDataProvider>();
             var (logs, total) = await provider.FetchDataAsync(currentPage, count, levelStr, searchStr,
                 startDate == default ? (DateTime?)null : startDate, endDate == default ? (DateTime?)null : endDate);
+
             //var result = JsonSerializer.Serialize(logs, _jsonSerializerOptions);
             var result = JsonConvert.SerializeObject(new { logs, total, count, currentPage }, _jsonSerializerOptions);
+
             return result;
         }
 

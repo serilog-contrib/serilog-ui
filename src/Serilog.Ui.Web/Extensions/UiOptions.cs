@@ -23,7 +23,7 @@
         ///   Gets or sets the type of the Filters.
         /// </summary>
         /// <value>The type of the authentication.</value>
-        public AuthorizationOptions Authorization { get; set; }
+        public AuthorizationOptions Authorization { get; set; } = new AuthorizationOptions();
 
         /// <summary>
         ///   Gets or sets the head content, a string that will be placed in the &lt;head&gt; of the index.html
