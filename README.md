@@ -58,45 +58,45 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 }
 ```
 
-## Authorization: configuration
-
-By default serilog-ui allows access to the log page only for local requests. In order to give appropriate rights for production use, you need to configure authorization. You can secure the log page by allowing specific users or roles to view logs:
-
-```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddSerilogUi(options => options
-        .EnableAuthorization(authOptions =>
-        {
-            authOption.AuthenticationType = AuthenticationType.Jwt; // or AuthenticationType.Cookie
-            authOptions.Usernames = new[] { "User1", "User2" };
-            authOptions.Roles = new[] { "AdminRole" };
-        })
-        .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "LogTableName"));
-    // ...
-}
-```
-Only `User1` and `User2` or users with `AdminRole` role can view logs.
-
-If you set `AuthenticationType` to `Jwt`, you can set a jwt token and an `Authorization` header will be added to the request and for `Cookie` just login into you website and no extra step is required.
-
-To disable anonymous access for local requests, (e.g. for testing authentication locally) set `AlwaysAllowLocalRequests` to `false`.
-
-To disable authorization on production, set `Enabled` to false.
-
-``` csharp
-services.AddSerilogUi(options => options
-    .EnableAuthorization(authOption =>
-    {
-        authOption.AlwaysAllowLocalRequests = false; // disable anonymous access on local
-        authOption.Enabled = false; // disable authorization access check on production
-    })
-    .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs"));
-```
-
 ## Options
 Options can be found in the [UIOptions](src/Serilog.Ui.Web/Extensions/UiOptions.cs) class.
 `internal` properties can generally be set via extension methods, see [SerilogUiOptionBuilderExtensions](src/Serilog.Ui.Web/Extensions/SerilogUiOptionBuilderExtensions.cs)
+
+### Authorization
+
+By default serilog-ui allows access to the log page only for local requests. In order to give appropriate rights for production use, you need to configure authorization. You can add your own implementations of the `IUiAuthorizationFilter` interface, whose Authorize method is used to allow or prohibit a request. The first step is to provide your own implementation.:
+
+```csharp
+public void Configure(IApplicationBuilder appBuilder)
+{
+    appBuilder.UseSerilogUi(options =>
+    {
+        options.Authorization.AuthenticationType = AuthenticationType.Jwt;
+        options.Authorization.Filters = new[]
+        {
+            new CustomAuthorizeFilter()
+        };
+    });
+    // ...
+}
+```
+
+If you set `AuthenticationType` to `Jwt`, you can set a jwt token and an `Authorization` header will be added to the request and for `Cookie` just login into you website and no extra step is required.
+
+Here is an example of how you can implement your own authentication and authorization:
+
+``` csharp
+public class CustomAuthorizeFilter : IUiAuthorizationFilter
+{
+    public bool Authorize(DashboardContext context)
+    {
+        var httpContext = context.GetHttpContext();
+
+        // Allow all authenticated users to see the Dashboard (potentially dangerous).
+        return httpContext.User.Identity?.IsAuthenticated ?? false;
+    }
+}
+```
 
 ### Log page URL
 
