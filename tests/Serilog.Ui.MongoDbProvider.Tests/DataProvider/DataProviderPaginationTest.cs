@@ -1,13 +1,14 @@
 ﻿using FluentAssertions;
 using MongoDb.Tests.Util;
 using Serilog.Ui.Common.Tests.TestSuites.Impl;
+using Serilog.Ui.MongoDbProvider;
 using System;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace MongoDb.Tests.DataProvider
 {
-    [CollectionDefinition(nameof(BaseIntegrationTest))]
+    [Collection(nameof(MongoDbDataProvider))]
     [Trait("Integration-Pagination", "MongoDb")]
     public class DataProviderPaginationTest : IntegrationPaginationTests<BaseIntegrationTest>
     {

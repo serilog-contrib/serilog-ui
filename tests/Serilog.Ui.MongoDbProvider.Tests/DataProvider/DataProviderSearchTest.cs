@@ -1,14 +1,12 @@
-﻿using FluentAssertions;
-using MongoDb.Tests.Util;
+﻿using MongoDb.Tests.Util;
 using MsSql.Tests.DataProvider;
-using System;
-using System.Linq;
+using Serilog.Ui.MongoDbProvider;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace MongoDb.Tests.DataProvider
 {
-    [CollectionDefinition(nameof(BaseIntegrationTest))]
+    [Collection(nameof(MongoDbDataProvider))]
     [Trait("Integration-Search", "MongoDb")]
     public class DataProviderSearchTest : IntegrationSearchTests<BaseIntegrationTest>
     {

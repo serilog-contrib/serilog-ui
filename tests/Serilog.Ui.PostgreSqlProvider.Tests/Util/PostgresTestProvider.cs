@@ -9,9 +9,12 @@ using Serilog.Ui.Core;
 using Serilog.Ui.PostgreSqlProvider;
 using System.Linq;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace Postgres.Tests.Util
 {
+    [CollectionDefinition(nameof(PostgresDataProvider))]
+    public class PostgresCollection : ICollectionFixture<PostgresTestProvider> { }
     public sealed class PostgresTestProvider : DatabaseInstance<PostgreSqlTestcontainer, PostgreSqlTestcontainerConfiguration>
     {
         protected override string Name => nameof(PostgreSqlTestcontainer);

@@ -3,11 +3,16 @@ using MongoDb.Tests.Util.Builders;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core;
+using Serilog.Ui.MongoDbProvider;
 using System;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace MongoDb.Tests.Util
 {
+    [CollectionDefinition(nameof(MongoDbDataProvider))]
+    public class MongoCollection : ICollectionFixture<BaseIntegrationTest> { }
+
     public class BaseIntegrationTest : IIntegrationRunner
     {
         private bool _disposedValue;

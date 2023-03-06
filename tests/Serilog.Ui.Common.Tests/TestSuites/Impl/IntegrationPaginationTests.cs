@@ -9,8 +9,7 @@ using Xunit;
 
 namespace Serilog.Ui.Common.Tests.TestSuites.Impl
 {
-    public abstract class IntegrationPaginationTests<DbRunner> :
-        IClassFixture<DbRunner>, IIntegrationPaginationTests
+    public abstract class IntegrationPaginationTests<DbRunner> : IIntegrationPaginationTests
         where DbRunner : class, IIntegrationRunner
     {
         protected readonly LogModelPropsCollector logCollector;

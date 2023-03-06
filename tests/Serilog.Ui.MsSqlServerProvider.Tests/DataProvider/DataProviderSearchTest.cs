@@ -1,10 +1,11 @@
 using MsSql.Tests.Util;
+using Serilog.Ui.MsSqlServerProvider;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace MsSql.Tests.DataProvider
 {
-    [CollectionDefinition(nameof(MsSqlServerTestProvider))]
+    [Collection(nameof(SqlServerDataProvider))]
     [Trait("Integration-Search", "MsSql")]
     public class DataProviderSearchTest : IntegrationSearchTests<MsSqlServerTestProvider>
     {

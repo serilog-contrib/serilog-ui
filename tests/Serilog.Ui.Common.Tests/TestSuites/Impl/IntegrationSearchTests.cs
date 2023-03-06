@@ -10,8 +10,7 @@ using Xunit;
 
 namespace MsSql.Tests.DataProvider
 {
-    public class IntegrationSearchTests<DbRunner> :
-        ICollectionFixture<DbRunner>, IIntegrationSearchTests
+    public class IntegrationSearchTests<DbRunner> : IIntegrationSearchTests
         where DbRunner : class, IIntegrationRunner
     {
         protected readonly LogModelPropsCollector logCollector;

@@ -8,9 +8,12 @@ using Serilog.Ui.Common.Tests.SqlUtil;
 using Serilog.Ui.Core;
 using Serilog.Ui.MySqlProvider;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace MySql.Tests.Util
 {
+    [CollectionDefinition(nameof(MySqlDataProvider))]
+    public class MySqlCollection : ICollectionFixture<MySqlTestProvider> { }
     public sealed class MySqlTestProvider : DatabaseInstance<MySqlTestcontainer, MySqlTestcontainerConfiguration>
     {
         protected override string Name => nameof(MySqlTestcontainer);

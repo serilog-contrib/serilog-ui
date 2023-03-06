@@ -2,12 +2,13 @@
 using Microsoft.Data.SqlClient;
 using MsSql.Tests.Util;
 using Serilog.Ui.Common.Tests.TestSuites.Impl;
+using Serilog.Ui.MsSqlServerProvider;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace MsSql.Tests.DataProvider
 {
-    [CollectionDefinition(nameof(MsSqlServerTestProvider))]
+    [Collection(nameof(SqlServerDataProvider))]
     [Trait("Integration-Pagination", "MsSql")]
     public class DataProviderPaginationTest : IntegrationPaginationTests<MsSqlServerTestProvider>
     {

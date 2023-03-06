@@ -1,11 +1,12 @@
 ﻿using MsSql.Tests.DataProvider;
 using MySql.Tests.Util;
+using Serilog.Ui.MySqlProvider;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace MySql.Tests.DataProvider
 {
-    [CollectionDefinition(nameof(MySqlTestProvider))]
+    [Collection(nameof(MySqlDataProvider))]
     [Trait("Integration-Search", "MySql")]
     public class DataProviderSearchTest : IntegrationSearchTests<MySqlTestProvider>
     {

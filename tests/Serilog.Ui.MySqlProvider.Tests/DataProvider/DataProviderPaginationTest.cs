@@ -2,12 +2,13 @@
 using MySql.Data.MySqlClient;
 using MySql.Tests.Util;
 using Serilog.Ui.Common.Tests.TestSuites.Impl;
+using Serilog.Ui.MySqlProvider;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace MySql.Tests.DataProvider
 {
-    [CollectionDefinition(nameof(MySqlTestProvider))]
+    [Collection(nameof(MySqlDataProvider))]
     [Trait("Integration-Pagination", "MySql")]
     public class DataProviderPaginationTest : IntegrationPaginationTests<MySqlTestProvider>
     {

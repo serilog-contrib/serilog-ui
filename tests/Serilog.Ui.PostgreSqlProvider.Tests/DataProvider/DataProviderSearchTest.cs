@@ -1,11 +1,12 @@
 ﻿using MsSql.Tests.DataProvider;
 using Postgres.Tests.Util;
+using Serilog.Ui.PostgreSqlProvider;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Postgres.Tests.DataProvider
 {
-    [CollectionDefinition(nameof(PostgresTestProvider))]
+    [Collection(nameof(PostgresDataProvider))]
     [Trait("Integration-Search", "Postgres")]
     public class DataProviderSearchTest : IntegrationSearchTests<PostgresTestProvider>
     {

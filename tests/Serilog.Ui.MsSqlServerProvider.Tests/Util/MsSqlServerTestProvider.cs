@@ -7,9 +7,13 @@ using Serilog.Ui.Common.Tests.SqlUtil;
 using Serilog.Ui.Core;
 using Serilog.Ui.MsSqlServerProvider;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace MsSql.Tests.Util
 {
+    [CollectionDefinition(nameof(SqlServerDataProvider))]
+    public class SqlServerCollection : ICollectionFixture<MsSqlServerTestProvider> { }
+
     public sealed class MsSqlServerTestProvider : DatabaseInstance<MsSqlTestcontainer, MsSqlTestcontainerConfiguration>
     {
         public RelationalDbOptions DbOptions { get; set; } = new()
@@ -17,6 +21,8 @@ namespace MsSql.Tests.Util
             TableName = "Logs",
             Schema = "dbo"
         };
+
+        protected override string Name => nameof(MsSqlTestcontainer);
 
         protected override async Task CheckDbReadinessAsync()
         {

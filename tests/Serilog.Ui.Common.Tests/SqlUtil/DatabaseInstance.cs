@@ -45,7 +45,7 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
         {
             Container = new TestcontainersBuilder<TContainer>()
              .WithDatabase(Configuration)
-             .WithName($"IntegrationTesting_{Name}_{Guid.NewGuid()}")
+             .WithName($"Testing_{Name}_{Guid.NewGuid()}")
              .WithWaitStrategy(Wait.ForUnixContainer())
              .WithStartupCallback(async (dc, token) => await GetDbContextInstanceAsync(token))
              .Build();
