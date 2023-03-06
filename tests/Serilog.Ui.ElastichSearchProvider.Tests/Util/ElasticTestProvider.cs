@@ -12,13 +12,14 @@ namespace ElasticSearch.Tests.Util
     public class ElasticTestProvider : Elasticsearch7XTestBase, IIntegrationRunner
     {
         private readonly ElasticSearchDbDataProvider provider;
+        private LogModelPropsCollector? logModelPropsCollector;
         private bool disposedValue;
 
-        public ElasticTestProvider(Elasticsearch7XCluster cluster) : base(cluster)
+        public ElasticTestProvider(Elasticsearch7XCluster cl) : base(cl)
         {
             provider = new ElasticSearchDbDataProvider(Client, new ElasticSearchDbOptions
             {
-                IndexName = $"{SetupSerilog.IndexPrefix}{DateTime.Now:yyyy.MM.dd}"
+                IndexName = $"{SetupSerilog.IndexPrefix}{DateTime.UtcNow:yyyy.MM.dd}"
             });
         }
 
@@ -29,12 +30,14 @@ namespace ElasticSearch.Tests.Util
 
         public IDataProvider GetDataProvider() => provider;
 
-        public LogModelPropsCollector GetPropsCollector() => new(Array.Empty<LogModel>());
+        public LogModelPropsCollector GetPropsCollector() => logModelPropsCollector!;
 
-        public Task InitializeAsync()
+        public async Task InitializeAsync()
         {
             var serilog = new SetupSerilog();
-            return serilog.InitializeLogsAsync();
+            logModelPropsCollector = await serilog.InitializeLogsAsync();
+
+            await Client.Indices.RefreshAsync(SetupSerilog.IndexPrefix + "*");
         }
 
         protected virtual void Dispose(bool disposing)
@@ -43,8 +46,7 @@ namespace ElasticSearch.Tests.Util
             {
                 if (disposing)
                 {
-
-                    // TODO: dispose managed state (managed objects)
+                    // dispose managed state (managed objects)
                 }
 
                 disposedValue = true;
@@ -59,7 +61,7 @@ namespace ElasticSearch.Tests.Util
         }
     }
 
-    internal sealed class SetupSerilog
+    public sealed class SetupSerilog
     {
         public const string IndexPrefix = "logs-7x-default-";
         public const string TemplateName = "serilog-logs-7x";
@@ -68,7 +70,7 @@ namespace ElasticSearch.Tests.Util
         public SetupSerilog()
         {
             loggerConfig = new LoggerConfiguration()
-                .MinimumLevel.Information()
+                .MinimumLevel.Debug()
                 .WriteTo.Elasticsearch(
                     new ElasticsearchSinkOptions(new Uri($"http://localhost:9200"))
                     {
@@ -79,16 +81,10 @@ namespace ElasticSearch.Tests.Util
                     });
         }
 
-        public Task InitializeLogsAsync()
+        public async ValueTask<LogModelPropsCollector> InitializeLogsAsync()
         {
             using var logger = loggerConfig.CreateLogger();
-            logger.Information("Hello Information");
-            logger.Debug("Hello Debug");
-            logger.Warning("Hello Warning");
-            logger.Error("Hello Error");
-            logger.Fatal("Hello Fatal");
-
-            return Task.Delay(2000);
+            return await new ValueTask<LogModelPropsCollector>(await ElasticSearchLogModelFaker.LogsAsync(logger));
         }
     }
 }

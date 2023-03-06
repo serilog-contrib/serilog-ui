@@ -28,7 +28,7 @@ namespace MsSql.Tests.DataProvider
             var res = await provider.FetchDataAsync(1, 10);
 
             res.Item1.Should().HaveCount(10);
-            res.Item2.Should().Be(100);
+            res.Item2.Should().Be(logCollector.DataSet.Count);
         }
 
         [Fact]
@@ -53,7 +53,10 @@ namespace MsSql.Tests.DataProvider
         }
 
         [Fact]
-        public virtual async Task It_finds_only_data_emitted_after_date()
+        public virtual Task It_finds_only_data_emitted_after_date()
+            => It_finds_only_data_emitted_after_date_by_utc(false);
+
+        protected async Task It_finds_only_data_emitted_after_date_by_utc(bool checkWithUtc)
         {
             var lastTimeStamp = logCollector!.TimesSamples
                 .ElementAt(logCollector.TimesSamples.Count() - 1).AddHours(-4);
@@ -63,7 +66,7 @@ namespace MsSql.Tests.DataProvider
             Logs.Should().NotBeEmpty();
             Logs.Should().HaveCount(afterTimeStampCount);
             Count.Should().Be(afterTimeStampCount);
-            Logs.Should().OnlyContain(p => p.Timestamp > lastTimeStamp);
+            Logs.Should().OnlyContain(p => ConvertToUtc(p.Timestamp, checkWithUtc) > lastTimeStamp);
         }
 
         [Fact]

@@ -5,12 +5,8 @@ using Elastic.Stack.ArtifactsApi.Products;
 
 namespace ElasticSearch.Tests.Util
 {
-    // from: https://github.com/serilog-contrib/serilog-sinks-elasticsearch/blob/dev/test/Serilog.Sinks.Elasticsearch.IntegrationTests/Bootstrap/ClientTestClusterBase.cs
-    public abstract class TestCluster : XunitClusterBase<ClientTestClusterConfiguration>
-    {
-        protected TestCluster(ClientTestClusterConfiguration configuration) : base(configuration) { }
-    }
-
+    // test cluster configurations from:
+    // https://github.com/serilog-contrib/serilog-sinks-elasticsearch/blob/dev/test/Serilog.Sinks.Elasticsearch.IntegrationTests/Bootstrap/ClientTestClusterBase.cs
     public class Elasticsearch7XCluster : TestCluster
     {
         public Elasticsearch7XCluster() : base(CreateConfiguration()) { }
@@ -26,6 +22,10 @@ namespace ElasticSearch.Tests.Util
         protected override void SeedCluster() { }
     }
 
+    public abstract class TestCluster : XunitClusterBase<ClientTestClusterConfiguration>
+    {
+        protected TestCluster(ClientTestClusterConfiguration configuration) : base(configuration) { }
+    }
 
     public class ClientTestClusterConfiguration : XunitClusterConfiguration
     {

@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using Elastic.Elasticsearch.Xunit.XunitPlumbing;
+using ElasticSearch.Tests.Util;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
 using Serilog.Ui.ElasticSearchProvider;
@@ -10,7 +12,7 @@ using Xunit;
 namespace ElasticSearch.Tests.Extensions
 {
     [Trait("DI-DataProvider", "Elastic")]
-    public class SerilogUiOptionBuilderExtensionsTest
+    public class SerilogUiOptionBuilderExtensionsTest : IClusterFixture<Elasticsearch7XCluster>
     {
         private readonly ServiceCollection serviceCollection;
 
@@ -19,7 +21,7 @@ namespace ElasticSearch.Tests.Extensions
             serviceCollection = new ServiceCollection();
         }
 
-        [Fact]
+        [U]
         public void It_registers_provider_and_dependencies()
         {
             serviceCollection.AddSerilogUi((builder) =>
@@ -34,7 +36,7 @@ namespace ElasticSearch.Tests.Extensions
             options.IndexName.Should().Be("my-index");
         }
 
-        [Fact]
+        [U]
         public void It_throws_on_invalid_registration()
         {
             var uri = new Uri("https://elastic.example.com");

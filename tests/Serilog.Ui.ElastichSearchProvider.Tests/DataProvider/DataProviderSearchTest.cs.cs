@@ -1,16 +1,24 @@
-﻿using MongoDb.Tests.Util;
+﻿using Elastic.Elasticsearch.Xunit.XunitPlumbing;
+using ElasticSearch.Tests.Util;
+using FluentAssertions;
 using MsSql.Tests.DataProvider;
-using Serilog.Ui.MongoDbProvider;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace MongoDb.Tests.DataProvider
+namespace ElasticSearch.Tests.DataProvider
 {
-    [Collection(nameof(MongoDbDataProvider))]
-    [Trait("Integration-Search", "MongoDb")]
-    public class DataProviderSearchTest : IntegrationSearchTests<BaseIntegrationTest>
+    [Trait("Integration-Search", "Elastic")]
+    public class DataProviderSearchTest : IntegrationSearchTests<ElasticTestProvider>,
+        IClassFixture<ElasticTestProvider>,
+        IClusterFixture<Elasticsearch7XCluster>
     {
-        public DataProviderSearchTest(BaseIntegrationTest instance) : base(instance) { }
+        public DataProviderSearchTest(ElasticTestProvider instance) : base(instance) { }
+        
+        [U] // we need this extra fake test to add an [I] test and help the framework recognize the others
+        public void Provider_is_not_null()
+        {
+            provider.Should().NotBeNull();
+        }
 
         public override Task It_finds_all_data_with_default_search()
             => base.It_finds_all_data_with_default_search();
