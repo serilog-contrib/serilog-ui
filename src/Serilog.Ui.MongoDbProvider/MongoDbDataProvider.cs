@@ -9,6 +9,9 @@ namespace Serilog.Ui.MongoDbProvider
 {
     public class MongoDbDataProvider : IDataProvider
     {
+
+        public string Name { get; }
+
         private readonly IMongoCollection<MongoDbLogModel> _collection;
 
         public MongoDbDataProvider(IMongoClient client, MongoDbOptions options)
@@ -16,8 +19,10 @@ namespace Serilog.Ui.MongoDbProvider
             if (client is null) throw new ArgumentNullException(nameof(client));
             if (options is null) throw new ArgumentNullException(nameof(options));
 
-            _collection = client.GetDatabase(options.DatabaseName).GetCollection<MongoDbLogModel>(options.CollectionName);
-            var s = _collection.CollectionNamespace;
+            _collection = client.GetDatabase(options.DatabaseName)
+                .GetCollection<MongoDbLogModel>(options.CollectionName);
+
+            Name = string.Join(".", "MongoDb", options.DatabaseName, options.CollectionName);
         }
 
         public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(

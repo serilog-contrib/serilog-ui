@@ -2,6 +2,8 @@
 using Serilog.Ui.Core;
 using System;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Serilog.Ui.Core.Services;
 
 namespace Serilog.Ui.Web
 {
@@ -34,6 +36,12 @@ namespace Serilog.Ui.Web
             var isAuthorizationFilterExist = services.Any(s => s.ServiceType.FullName == typeof(AuthorizationOptions).FullName);
             if (!isAuthorizationFilterExist)
                 services.AddScoped<AuthorizationOptions>();
+
+            services.TryAddScoped(typeof(AggregateDataProvider), p =>
+            {
+                var providers = p.GetServices<IDataProvider>();
+                return new AggregateDataProvider(providers);
+            });
 
             return services;
         }

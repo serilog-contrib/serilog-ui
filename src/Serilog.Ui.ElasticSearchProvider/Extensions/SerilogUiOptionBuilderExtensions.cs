@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Nest;
 using Serilog.Ui.Core;
 using System;
+using System.Linq;
 
 namespace Serilog.Ui.ElasticSearchProvider
 {
@@ -33,6 +34,11 @@ namespace Serilog.Ui.ElasticSearchProvider
             };
 
             var builder = ((ISerilogUiOptionsBuilder)optionsBuilder);
+
+            // TODO Fixup ES to allow multiple registrations.
+            //      Think about multiple ES clients (singletons) used in data providers (scoped)
+            if (builder.Services.Any(c => c.ImplementationType == typeof(ElasticSearchDbDataProvider)))
+                throw new NotSupportedException($"Adding multiple registrations of '{typeof(ElasticSearchDbDataProvider).FullName}' is not (yet) supported.");
 
             builder.Services.AddSingleton(options);
 

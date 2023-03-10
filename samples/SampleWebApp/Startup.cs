@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using SampleWebApp.Authentication.Jwt;
 using SampleWebApp.Data;
+using SampleWebApp.Services.HostedServices;
 using Serilog.Ui.MsSqlServerProvider;
 using Serilog.Ui.Web;
 
@@ -44,9 +45,14 @@ namespace SampleWebApp
                     authOption.AuthenticationType = AuthenticationType.Jwt;
                     authOption.Usernames = new[] { "mo.esmp@gmail.com" };
                 })
-                .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs"));
+                .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs")
+                .UseSqlServer(Configuration.GetConnectionString("SecondLogConnection"), "Logs2")
+            );
 
             services.AddSwaggerGen();
+
+            // Generate some dummy logs
+            services.AddHostedService<SecondLogDummyLogGeneratorBackgroundService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

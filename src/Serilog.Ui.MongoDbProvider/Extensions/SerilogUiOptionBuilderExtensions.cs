@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using MongoDB.Driver;
 using Serilog.Ui.Core;
 using System;
+using System.Linq;
 
 namespace Serilog.Ui.MongoDbProvider
 {
@@ -38,9 +39,16 @@ namespace Serilog.Ui.MongoDbProvider
                 CollectionName = collectionName
             };
 
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddSingleton(mongoProvider);
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.TryAddSingleton<IMongoClient>(o => new MongoClient(connectionString));
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddScoped<IDataProvider, MongoDbDataProvider>();
+            var builder = ((ISerilogUiOptionsBuilder)optionsBuilder);
+
+            // TODO Fixup MongoDb to allow multiple registrations.
+            //      Think about multiple ES clients (singletons) used in data providers (scoped)
+            if (builder.Services.Any(c => c.ImplementationType == typeof(MongoDbDataProvider)))
+                throw new NotSupportedException($"Adding multiple registrations of '{typeof(MongoDbDataProvider).FullName}' is not (yet) supported.");
+
+            builder.Services.AddSingleton(mongoProvider);
+            builder.Services.TryAddSingleton<IMongoClient>(o => new MongoClient(connectionString));
+            builder.Services.AddScoped<IDataProvider, MongoDbDataProvider>();
         }
 
         /// <summary>
@@ -75,6 +83,13 @@ namespace Serilog.Ui.MongoDbProvider
                 DatabaseName = databaseName,
                 CollectionName = collectionName
             };
+
+            var builder = ((ISerilogUiOptionsBuilder)optionsBuilder);
+
+            // TODO Fixup MongoDb to allow multiple registrations.
+            //      Think about multiple ES clients (singletons) used in data providers (scoped)
+            if (builder.Services.Any(c => c.ImplementationType == typeof(MongoDbDataProvider)))
+                throw new NotSupportedException($"Adding multiple registrations of '{typeof(MongoDbDataProvider).FullName}' is not (yet) supported.");
 
             ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddSingleton(mongoProvider);
             ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddSingleton<IMongoClient>(o => new MongoClient(connectionString));

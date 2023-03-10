@@ -31,6 +31,7 @@ namespace Serilog.Ui.Web
             uiOptions.AuthType = authOptions.AuthenticationType.ToString();
 
             scope.Dispose();
+            
 
             return applicationBuilder.UseMiddleware<SerilogUiMiddleware>(uiOptions);
         }

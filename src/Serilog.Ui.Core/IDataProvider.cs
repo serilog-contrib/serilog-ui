@@ -27,5 +27,13 @@ namespace Serilog.Ui.Core
             DateTime? startDate = null,
             DateTime? endDate = null
         );
+
+        /// <summary>
+        /// Name of the provider, used to identify this provider when using multiple.
+        /// </summary>
+        string Name { get; }
     }
+}
+namespace Serilog.Ui.Core.Services
+{
 }
