@@ -19,7 +19,7 @@ namespace Serilog.Ui.ElasticSearchProvider
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _options = options ?? throw new ArgumentNullException(nameof(options));
-            Name = string.Join("ES", _options.IndexName);
+            Name = string.Join(".", "ES", _options.IndexName);
         }
 
         public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
