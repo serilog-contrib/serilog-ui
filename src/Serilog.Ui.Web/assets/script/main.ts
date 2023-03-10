@@ -56,7 +56,7 @@ const initTableKey = () => {
 
         key.innerHTML = innerHTML;
 
-        if (s.length > 0) {
+        if (s.length > 1) {
             keySelect.classList.remove("d-none");
         }
     })
