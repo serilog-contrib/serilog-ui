@@ -17,7 +17,7 @@ namespace ElasticSearch.Tests.Util
     {
         protected Elasticsearch7XTestBase(Elasticsearch7XCluster cl) => Cluster = cl;
 
-        private Elasticsearch7XCluster Cluster { get; }
+        protected Elasticsearch7XCluster Cluster { get; }
 
         public IElasticClient Client => this.CreateClient();
 

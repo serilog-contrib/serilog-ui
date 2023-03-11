@@ -2,6 +2,7 @@
 using Elastic.Elasticsearch.Ephemeral;
 using Elastic.Elasticsearch.Xunit;
 using Elastic.Stack.ArtifactsApi.Products;
+using Serilog.Ui.Common.Tests.DataSamples;
 
 namespace ElasticSearch.Tests.Util
 {
@@ -9,7 +10,10 @@ namespace ElasticSearch.Tests.Util
     // https://github.com/serilog-contrib/serilog-sinks-elasticsearch/blob/dev/test/Serilog.Sinks.Elasticsearch.IntegrationTests/Bootstrap/ClientTestClusterBase.cs
     public class Elasticsearch7XCluster : TestCluster
     {
-        public Elasticsearch7XCluster() : base(CreateConfiguration()) { }
+        public LogModelPropsCollector? Collector;
+        public Elasticsearch7XCluster() : base(CreateConfiguration())
+        {
+        }
 
         private static ClientTestClusterConfiguration CreateConfiguration()
         {
@@ -20,6 +24,12 @@ namespace ElasticSearch.Tests.Util
         }
 
         protected override void SeedCluster() { }
+
+        protected override void OnAfterStarted()
+        {
+            var serilog = new SetupSerilog();
+            Collector = serilog.InitializeLogs();
+        }
     }
 
     public abstract class TestCluster : XunitClusterBase<ClientTestClusterConfiguration>

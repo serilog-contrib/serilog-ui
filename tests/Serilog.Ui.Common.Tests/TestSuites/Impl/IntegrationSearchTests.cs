@@ -33,9 +33,9 @@ namespace MsSql.Tests.DataProvider
 
         [Fact]
         public virtual Task It_finds_data_with_all_filters()
-            => It_finds_data_with_all_filters_by_utc(false);
+            => It_finds_data_with_all_filters_by_utc(false, false);
 
-        protected virtual async Task It_finds_data_with_all_filters_by_utc(bool checkWithUtc)
+        protected virtual async Task It_finds_data_with_all_filters_by_utc(bool checkWithUtc, bool excludeProps)
         {
             var (Logs, Count) = await provider.FetchDataAsync(1,
                 10,
@@ -47,7 +47,7 @@ namespace MsSql.Tests.DataProvider
             var log = Logs.First();
             log.Message.Should().Be(logCollector.Example.Message);
             log.Level.Should().Be(logCollector.Example.Level);
-            log.Properties.Should().Be(logCollector.Example.Properties);
+            if (!excludeProps) log.Properties.Should().Be(logCollector.Example.Properties);
             ConvertToUtc(log.Timestamp, checkWithUtc).Should().BeCloseTo(logCollector.Example.Timestamp, TimeSpan.FromMinutes(5));
             Count.Should().BeCloseTo(1, 2);
         }

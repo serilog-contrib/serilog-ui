@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using Elastic.Elasticsearch.Xunit.XunitPlumbing;
+using Serilog;
 using Serilog.Sinks.Elasticsearch;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.TestSuites;
@@ -6,6 +7,7 @@ using Serilog.Ui.Core;
 using Serilog.Ui.ElasticSearchProvider;
 using System;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace ElasticSearch.Tests.Util
 {
@@ -32,12 +34,11 @@ namespace ElasticSearch.Tests.Util
 
         public LogModelPropsCollector GetPropsCollector() => logModelPropsCollector!;
 
-        public async Task InitializeAsync()
+        public Task InitializeAsync()
         {
-            var serilog = new SetupSerilog();
-            logModelPropsCollector = await serilog.InitializeLogsAsync();
+            logModelPropsCollector = Cluster.Collector;
 
-            await Client.Indices.RefreshAsync(SetupSerilog.IndexPrefix + "*");
+            return Client.Indices.RefreshAsync(SetupSerilog.IndexPrefix + "*");
         }
 
         protected virtual void Dispose(bool disposing)
@@ -81,10 +82,10 @@ namespace ElasticSearch.Tests.Util
                     });
         }
 
-        public async ValueTask<LogModelPropsCollector> InitializeLogsAsync()
+        public LogModelPropsCollector InitializeLogs()
         {
             using var logger = loggerConfig.CreateLogger();
-            return await new ValueTask<LogModelPropsCollector>(await ElasticSearchLogModelFaker.LogsAsync(logger));
+            return ElasticSearchLogModelFaker.LogsAsync(logger);
         }
     }
 }

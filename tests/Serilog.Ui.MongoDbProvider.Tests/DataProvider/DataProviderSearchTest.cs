@@ -16,7 +16,7 @@ namespace MongoDb.Tests.DataProvider
             => base.It_finds_all_data_with_default_search();
 
         public override Task It_finds_data_with_all_filters()
-            => It_finds_data_with_all_filters_by_utc(true);
+            => It_finds_data_with_all_filters_by_utc(true, false);
 
         public override Task It_finds_only_data_emitted_after_date()
             => It_finds_only_data_emitted_after_date_by_utc(true);
