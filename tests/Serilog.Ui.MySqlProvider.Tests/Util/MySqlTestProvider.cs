@@ -1,28 +1,25 @@
 ﻿using Ardalis.GuardClauses;
 using Dapper;
-using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Containers;
 using MySql.Data.MySqlClient;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
 using Serilog.Ui.Core;
 using Serilog.Ui.MySqlProvider;
 using System.Threading.Tasks;
+using Testcontainers.MySql;
 using Xunit;
 
 namespace MySql.Tests.Util
 {
     [CollectionDefinition(nameof(MySqlDataProvider))]
     public class MySqlCollection : ICollectionFixture<MySqlTestProvider> { }
-    public sealed class MySqlTestProvider : DatabaseInstance<MySqlTestcontainer, MySqlTestcontainerConfiguration>
-    {
-        protected override string Name => nameof(MySqlTestcontainer);
 
-        public MySqlTestProvider()
+    public sealed class MySqlTestProvider : DatabaseInstance
+    {
+        protected override string Name => nameof(MySqlContainer);
+        public MySqlTestProvider() : base()
         {
-            Guard.Against.Null(Configuration);
-            Configuration.Username = "mysql-tests";
-            Configuration.Database = "testdatabase";
+            Container = new MySqlBuilder().Build();
         }
 
         public RelationalDbOptions DbOptions { get; set; } = new()
@@ -33,7 +30,9 @@ namespace MySql.Tests.Util
 
         protected override async Task CheckDbReadinessAsync()
         {
-            DbOptions.ConnectionString = Container?.ConnectionString;
+            Guard.Against.Null(Container);
+
+            DbOptions.ConnectionString = (Container as MySqlContainer)?.GetConnectionString();
 
             using var dataContext = new MySqlConnection(DbOptions.ConnectionString);
 

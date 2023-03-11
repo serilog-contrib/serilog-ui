@@ -1,6 +1,5 @@
 ﻿using Dapper;
-using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Containers;
+using Testcontainers.MsSql;
 using Microsoft.Data.SqlClient;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
@@ -14,19 +13,24 @@ namespace MsSql.Tests.Util
     [CollectionDefinition(nameof(SqlServerDataProvider))]
     public class SqlServerCollection : ICollectionFixture<MsSqlServerTestProvider> { }
 
-    public sealed class MsSqlServerTestProvider : DatabaseInstance<MsSqlTestcontainer, MsSqlTestcontainerConfiguration>
+    public sealed class MsSqlServerTestProvider : DatabaseInstance
     {
+        public MsSqlServerTestProvider()
+        {
+            Container = new MsSqlBuilder().Build();
+        }
+
         public RelationalDbOptions DbOptions { get; set; } = new()
         {
             TableName = "Logs",
             Schema = "dbo"
         };
 
-        protected override string Name => nameof(MsSqlTestcontainer);
+        protected override string Name => nameof(MsSqlContainer);
 
         protected override async Task CheckDbReadinessAsync()
         {
-            DbOptions.ConnectionString = Container?.ConnectionString + "TrustServerCertificate=True;";
+            DbOptions.ConnectionString = (Container as MsSqlContainer)?.GetConnectionString();
 
             using var dataContext = new SqlConnection(DbOptions.ConnectionString);
 

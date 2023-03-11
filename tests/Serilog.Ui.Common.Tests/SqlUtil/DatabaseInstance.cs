@@ -2,8 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
-using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Configurations;
 using DotNet.Testcontainers.Containers;
 using Microsoft.Data.SqlClient;
 using MySql.Data.MySqlClient;
@@ -15,20 +13,16 @@ using Serilog.Ui.Core;
 namespace Serilog.Ui.Common.Tests.SqlUtil
 {
 #nullable enable
-    public abstract class DatabaseInstance<TContainer, TConfiguration> : IIntegrationRunner
-        where TContainer : TestcontainerDatabase
-        where TConfiguration : TestcontainerDatabaseConfiguration, new()
+    public abstract class DatabaseInstance : IIntegrationRunner
     {
         private bool disposedValue;
 
-        protected TConfiguration? Configuration = new() { Password = "#DockerFakePw#" };
-
-        protected virtual string Name { get; } = nameof(TContainer);
+        protected virtual string Name { get; } = nameof(IContainer);
 
         /// <summary>
         /// Gets or sets the Testcontainers container.
         /// </summary>
-        protected TContainer? Container { get; set; }
+        protected virtual IContainer? Container { get; set; }
 
         /// <summary>
         /// Gets or sets the IDataProvider.
@@ -41,16 +35,10 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
 
         public LogModelPropsCollector GetPropsCollector() => Guard.Against.Null(Collector)!;
 
-        public Task InitializeAsync()
+        public async Task InitializeAsync()
         {
-            Container = new TestcontainersBuilder<TContainer>()
-             .WithDatabase(Configuration)
-             .WithName($"Testing_{Name}_{Guid.NewGuid()}")
-             .WithWaitStrategy(Wait.ForUnixContainer())
-             .WithStartupCallback(async (dc, token) => await GetDbContextInstanceAsync(token))
-             .Build();
-
-            return Container.StartAsync();
+            await Container!.StartAsync();
+            await GetDbContextInstanceAsync();
         }
 
         /// <summary>
@@ -68,7 +56,7 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
         /// <returns><see cref="Task"/></returns>
         protected abstract Task InitializeAdditionalAsync();
 
-        private async Task GetDbContextInstanceAsync(CancellationToken token)
+        private async Task GetDbContextInstanceAsync(CancellationToken token = default)
         {
             int retry = default;
 
@@ -110,7 +98,7 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
             {
                 if (disposing)
                 {
-                    Configuration?.Dispose();
+                    // additional dispose items
                 }
 
                 disposedValue = true;

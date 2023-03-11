@@ -1,7 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using Dapper;
-using DotNet.Testcontainers.Configurations;
-using DotNet.Testcontainers.Containers;
+//using 
 using Npgsql;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
@@ -9,21 +8,20 @@ using Serilog.Ui.Core;
 using Serilog.Ui.PostgreSqlProvider;
 using System.Linq;
 using System.Threading.Tasks;
+using Testcontainers.PostgreSql;
 using Xunit;
 
 namespace Postgres.Tests.Util
 {
     [CollectionDefinition(nameof(PostgresDataProvider))]
     public class PostgresCollection : ICollectionFixture<PostgresTestProvider> { }
-    public sealed class PostgresTestProvider : DatabaseInstance<PostgreSqlTestcontainer, PostgreSqlTestcontainerConfiguration>
+    public sealed class PostgresTestProvider : DatabaseInstance
     {
-        protected override string Name => nameof(PostgreSqlTestcontainer);
+        protected override string Name => nameof(PostgreSqlContainer);
 
         public PostgresTestProvider()
         {
-            Guard.Against.Null(Configuration);
-            Configuration.Username = "mysql-tests";
-            Configuration.Database = "testdatabase";
+            Container = new PostgreSqlBuilder().Build();
         }
 
         public RelationalDbOptions DbOptions { get; set; } = new()
@@ -34,7 +32,7 @@ namespace Postgres.Tests.Util
 
         protected override async Task CheckDbReadinessAsync()
         {
-            DbOptions.ConnectionString = Container?.ConnectionString ?? string.Empty;
+            DbOptions.ConnectionString = (Container as PostgreSqlContainer)?.GetConnectionString() ?? string.Empty;
 
             using var dataContext = new NpgsqlConnection(DbOptions.ConnectionString);
 
