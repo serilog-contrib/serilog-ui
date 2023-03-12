@@ -98,10 +98,16 @@ namespace Serilog.Ui.MongoDbProvider
                 builder &= Builders<MongoDbLogModel>.Filter.Text(searchCriteria);
 
             if (startDate != null)
-                builder &= Builders<MongoDbLogModel>.Filter.Gte(entry => entry.Timestamp, startDate);
+            {
+                var utcStart = startDate.Value.ToUniversalTime();
+                builder &= Builders<MongoDbLogModel>.Filter.Gte(entry => entry.UtcTimeStamp, utcStart);
+            }
 
             if (endDate != null)
-                builder &= Builders<MongoDbLogModel>.Filter.Lte(entry => entry.Timestamp, endDate);
+            {
+                var utcEnd = endDate.Value.ToUniversalTime();
+                builder &= Builders<MongoDbLogModel>.Filter.Lte(entry => entry.UtcTimeStamp, utcEnd);
+            }
         }
     }
 }
