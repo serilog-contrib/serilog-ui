@@ -23,10 +23,10 @@ namespace Serilog.Ui.MySqlProvider
             string tableName
         )
         {
-            if (string.IsNullOrEmpty(connectionString))
+            if (string.IsNullOrWhiteSpace(connectionString))
                 throw new ArgumentNullException(nameof(connectionString));
 
-            if (string.IsNullOrEmpty(tableName))
+            if (string.IsNullOrWhiteSpace(tableName))
                 throw new ArgumentNullException(nameof(tableName));
 
             var relationProvider = new RelationalDbOptions
