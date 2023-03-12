@@ -13,6 +13,7 @@
     <releaseNotes></releaseNotes>
     <copyright></copyright>
     <tags>serilog serilog-ui serilog.sinks.elasticsearch</tags>
+	<icon>assets\icon.png</icon>
     <dependencies>
       <group targetFramework=".NETStandard2.0">
         <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="3.1.3" exclude="Build,Analyzers" />
@@ -25,5 +26,6 @@
   </metadata>
   <files>
     <file src="bin\Release\netstandard2.0\*.dll" target="lib/netstandard2.0" />
+    <file src="..\..\assets\icon.png" target="assets\" />
   </files>
 </package>
