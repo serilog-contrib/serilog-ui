@@ -27,7 +27,7 @@ public class AuthorizationFilterTests : IClassFixture<WebApplicationFactory<Prog
     }
 }
 
-public class AuthorizationFilterTests2 : IClassFixture<CustomWebApplicationFactory>
+public class AuthorizationFilterTests2 : IClassFixture<AuthorizationFilterTests2.CustomWebApplicationFactory>
 {
     private readonly HttpClient _client;
 
@@ -45,22 +45,22 @@ public class AuthorizationFilterTests2 : IClassFixture<CustomWebApplicationFacto
         // Assert
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
-}
 
-public class CustomWebApplicationFactory : WebApplicationFactory<Program1>
-{
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    public class CustomWebApplicationFactory : WebApplicationFactory<Program1>
     {
-        builder.Configure(appBuilder =>
+        protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            appBuilder.UseSerilogUi(options =>
+            builder.Configure(appBuilder =>
             {
-                options.Authorization.AuthenticationType = AuthenticationType.Jwt;
-                options.Authorization.Filters = new[]
+                appBuilder.UseSerilogUi(options =>
                 {
-                    new ForbidLocalRequestFilter()
-                };
+                    options.Authorization.AuthenticationType = AuthenticationType.Jwt;
+                    options.Authorization.Filters = new[]
+                    {
+                        new ForbidLocalRequestFilter()
+                    };
+                });
             });
-        });
+        }
     }
 }
