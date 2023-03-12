@@ -1,4 +1,6 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Driver;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.MongoDbProvider;
 using System.Threading.Tasks;
@@ -28,6 +30,15 @@ namespace MongoDb.Tests.Util.Builders
         public static async Task<LogModelPropsCollector> Seed(IMongoCollection<MongoDbLogModel> collection)
         {
             var (array, collector) = MongoDbLogModelFaker.Logs(100);
+
+            // https://stackoverflow.com/a/75637412/15129749
+            var objectSerializer = new ObjectSerializer(type => ObjectSerializer.DefaultAllowedTypes(type) || 
+                type.FullName.StartsWith("Serilog.Ui.Common.Tests") ||
+                type.FullName.StartsWith("MongoDB.Bson.BsonDocument")
+
+                );
+            BsonSerializer.RegisterSerializer(objectSerializer);
+
             await collection.InsertManyAsync(array);
             return collector;
         }
