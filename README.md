@@ -232,6 +232,9 @@ To run the tests, use Test Explorer in Visual Studio or run from the root folder
 dotnet test
 ```
 
+Please notice: to run the tests, you'll need a running Docker instance on your sistem.  
+Integration tests (identified by traits) on MS Sql, MySql, Postgres, use Docker to spin the integration database.
+
 ## JS UI assets
 
 Tests are located inside src/Serilog.Ui.Web/assets/__tests__

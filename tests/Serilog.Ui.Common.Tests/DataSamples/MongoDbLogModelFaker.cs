@@ -10,8 +10,11 @@ namespace Serilog.Ui.Common.Tests.DataSamples
 {
     public static class MongoDbLogModelFaker
     {
-        public static IEnumerable<MongoDbLogModel> Logs(int generationCount)
-            => LogModelFaker.Logs(generationCount).Select(p => new MongoDbLogModel
+        public static (IEnumerable<MongoDbLogModel> logs, LogModelPropsCollector collector) Logs(int generationCount)
+        {
+            var originalLogs = LogModelFaker.Logs(generationCount);
+            var modelCollector = new LogModelPropsCollector(originalLogs);
+            return (originalLogs.Select(p => new MongoDbLogModel
             {
                 Id = p.RowNo,
                 Level = p.Level,
@@ -20,8 +23,9 @@ namespace Serilog.Ui.Common.Tests.DataSamples
                 UtcTimeStamp = p.Timestamp.ToUniversalTime(),
                 Properties = JsonConvert.DeserializeObject<Properties>(p.Properties),
                 Exception = JsonConvert.DeserializeObject<Exception>(p.Exception).ToBsonDocument(),
-            });
+            }), modelCollector);
+        }
 
-        public static IEnumerable<MongoDbLogModel> Logs() => Logs(20);
+        public static (IEnumerable<MongoDbLogModel> logs, LogModelPropsCollector collector) Logs() => Logs(20);
     }
 }

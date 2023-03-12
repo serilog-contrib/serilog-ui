@@ -25,16 +25,20 @@ namespace Serilog.Ui.MongoDbProvider
             string collectionName
         )
         {
-            if (string.IsNullOrEmpty(connectionString))
+            if (string.IsNullOrWhiteSpace(connectionString))
                 throw new ArgumentNullException(nameof(connectionString));
 
-            if (string.IsNullOrEmpty(collectionName))
+            if (string.IsNullOrWhiteSpace(collectionName))
                 throw new ArgumentNullException(nameof(collectionName));
+
+            var databaseName = MongoUrl.Create(connectionString).DatabaseName;
+
+            if (string.IsNullOrWhiteSpace(databaseName)) throw new ArgumentException(nameof(MongoUrl.DatabaseName));
 
             var mongoProvider = new MongoDbOptions
             {
                 ConnectionString = connectionString,
-                DatabaseName = MongoUrl.Create(connectionString).DatabaseName,
+                DatabaseName = databaseName,
                 CollectionName = collectionName
             };
 
@@ -60,13 +64,13 @@ namespace Serilog.Ui.MongoDbProvider
             string collectionName
         )
         {
-            if (string.IsNullOrEmpty(connectionString))
+            if (string.IsNullOrWhiteSpace(connectionString))
                 throw new ArgumentNullException(nameof(connectionString));
 
-            if (string.IsNullOrEmpty(databaseName))
+            if (string.IsNullOrWhiteSpace(databaseName))
                 throw new ArgumentNullException(nameof(databaseName));
 
-            if (string.IsNullOrEmpty(collectionName))
+            if (string.IsNullOrWhiteSpace(collectionName))
                 throw new ArgumentNullException(nameof(collectionName));
 
             var mongoProvider = new MongoDbOptions
@@ -77,7 +81,7 @@ namespace Serilog.Ui.MongoDbProvider
             };
 
             ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddSingleton(mongoProvider);
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddSingleton<IMongoClient>(o => new MongoClient(connectionString));
+            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.TryAddSingleton<IMongoClient>(o => new MongoClient(connectionString));
             ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddScoped<IDataProvider, MongoDbDataProvider>();
         }
     }

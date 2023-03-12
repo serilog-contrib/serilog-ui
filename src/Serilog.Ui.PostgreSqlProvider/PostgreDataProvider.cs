@@ -59,7 +59,9 @@ namespace Serilog.Ui.PostgreSqlProvider
                 {
                     Offset = page * count,
                     Count = count,
-                    Level = LogLevelConverter.GetLevelValue(level),
+                    // TODO: this level could be a text column, to be passed as parameter:
+                    // https://github.com/b00ted/serilog-sinks-postgresql/blob/ce73c7423383d91ddc3823fe350c1c71fc23bab9/Serilog.Sinks.PostgreSQL/Sinks/PostgreSQL/ColumnWriters.cs#L97
+                    Level = LogLevelConverter.GetLevelValue(level), 
                     Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
                     StartDate = startDate,
                     EndDate = endDate
