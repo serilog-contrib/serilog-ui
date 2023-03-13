@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Serilog.Ui.Core;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -163,11 +164,8 @@ namespace Serilog.Ui.Web
             int.TryParse(pageStr, out var currentPage);
             int.TryParse(countStr, out var count);
 
-            DateTime.TryParse(startDateStar, out var startDate);
-            DateTime.TryParse(endDateStar, out var endDate);
-
-            if (endDate != default)
-                endDate = new DateTime(endDate.Year, endDate.Month, endDate.Day, 23, 59, 59);
+            DateTime.TryParse(startDateStar, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var startDate);
+            DateTime.TryParse(endDateStar, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var endDate);
 
             currentPage = currentPage == default ? 1 : currentPage;
             count = count == default ? 10 : count;
@@ -175,8 +173,6 @@ namespace Serilog.Ui.Web
             var provider = httpContext.RequestServices.GetService<IDataProvider>();
             var (logs, total) = await provider.FetchDataAsync(currentPage, count, levelStr, searchStr,
                 startDate == default ? (DateTime?)null : startDate, endDate == default ? (DateTime?)null : endDate);
-
-            //var result = JsonSerializer.Serialize(logs, _jsonSerializerOptions);
             var result = JsonConvert.SerializeObject(new { logs, total, count, currentPage }, _jsonSerializerOptions);
 
             return result;
