@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using SampleWebApp.Authentication;
 using SampleWebApp.Authentication.Jwt;
 using SampleWebApp.Data;
 using Serilog.Ui.MsSqlServerProvider;
@@ -81,11 +80,11 @@ namespace SampleWebApp
                 options.RoutePrefix = "serilog-ui";
                 options.HomeUrl = "/#Test";
                 options.InjectJavascript("/js/serilog-ui/custom.js");
-                options.Authorization = new AuthorizationOptions
-                {
-                    AuthenticationType = AuthenticationType.Jwt,
-                    Filters = new[] { new SerilogUiCustomAuthFilter() }
-                };
+                //options.Authorization = new AuthorizationOptions
+                //{
+                //    AuthenticationType = AuthenticationType.Jwt,
+                //    Filters = new[] { new SerilogUiCustomAuthFilter() }
+                //};
             });
 
             app.UseEndpoints(endpoints =>
