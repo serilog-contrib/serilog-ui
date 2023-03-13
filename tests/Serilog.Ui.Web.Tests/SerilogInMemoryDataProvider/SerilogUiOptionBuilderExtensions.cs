@@ -12,7 +12,7 @@ namespace Serilog.Ui.Web.Tests.SerilogInMemoryDataProvider
         ///   Configures the SerilogUi to connect to a InMemory sink.
         /// </summary>
         /// <param name="optionsBuilder">The options builder.</param>
-        public static void UseImMemory(this SerilogUiOptionsBuilder optionsBuilder)
+        public static void UseInMemory(this SerilogUiOptionsBuilder optionsBuilder)
         {
             ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddScoped<IDataProvider, SerilogInMemoryDataProvider>();
         }
