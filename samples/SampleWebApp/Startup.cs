@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using SampleWebApp.Authentication;
 using SampleWebApp.Authentication.Jwt;
 using SampleWebApp.Data;
 using SampleWebApp.Services.HostedServices;
@@ -40,11 +41,6 @@ namespace SampleWebApp
             services.AddRazorPages();
 
             services.AddSerilogUi(options => options
-                .EnableAuthorization(authOption =>
-                {
-                    authOption.AuthenticationType = AuthenticationType.Jwt;
-                    authOption.Usernames = new[] { "mo.esmp@gmail.com" };
-                })
                 .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs")
                 .UseSqlServer(Configuration.GetConnectionString("SecondLogConnection"), "Logs2")
             );
@@ -66,7 +62,8 @@ namespace SampleWebApp
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                // The default HSTS value is 30 days. You may want to change this for production
+                // scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
@@ -74,8 +71,8 @@ namespace SampleWebApp
 
             app.UseSwagger();
 
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // specifying the Swagger JSON endpoint.
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger
+            // JSON endpoint.
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
@@ -85,11 +82,16 @@ namespace SampleWebApp
 
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseSerilogUi(x =>
+            app.UseSerilogUi(options =>
             {
-                x.RoutePrefix = "serilog-ui";
-                x.HomeUrl = "/#Test";
-                x.InjectJavascript("/js/serilog-ui/custom.js");
+                options.RoutePrefix = "serilog-ui";
+                options.HomeUrl = "/#Test";
+                options.InjectJavascript("/js/serilog-ui/custom.js");
+                options.Authorization = new AuthorizationOptions
+                {
+                    AuthenticationType = AuthenticationType.Jwt,
+                    Filters = new[] { new SerilogUiCustomAuthFilter() }
+                };
             });
 
             app.UseEndpoints(endpoints =>

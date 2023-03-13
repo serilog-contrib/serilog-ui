@@ -1,26 +1,32 @@
 ﻿using Bogus;
 using Newtonsoft.Json;
 using Serilog.Ui.Core;
+using System;
 using System.Collections.Generic;
 
 namespace Serilog.Ui.Common.Tests.DataSamples
 {
     public static class LogModelFaker
     {
-        private static readonly IEnumerable<string> LogLevels = new List<string>
+        internal static readonly IEnumerable<string> LogLevels = new List<string>
         {
             "Verbose", "Debug", "Information", "Warning", "Error", "Fatal"
         };
-        private static readonly Faker<LogModel> logsRules = new Faker<LogModel>()
-            .RuleFor(p => p.Level, f => f.PickRandom(LogLevels))
-            .RuleFor(p => p.Properties, PropertiesFaker.SerializedProperties)
-            .RuleFor(p => p.Exception, (f) => JsonConvert.SerializeObject(f.System.Exception()))
-            .RuleFor(p => p.Message, f => f.System.Random.Words(5))
-            .RuleFor(p => p.PropertyType, f => f.System.CommonFileType())
-            .RuleFor(p => p.Timestamp, f => f.Date.Recent())
-            .RuleFor(p => p.RowNo, f => f.Database.Random.Int());
+        private static Faker<LogModel> LogsRules()
+        {
+            Bogus.DataSets.Date.SystemClock = () => DateTime.Parse("8/8/2019 2:00 PM");
 
-        public static IEnumerable<LogModel> Logs(int generationCount) => logsRules.Generate(generationCount);
+            return new Faker<LogModel>().UseSeed(1910)
+             .RuleFor(p => p.RowNo, f => f.Database.Random.Int())
+             .RuleFor(p => p.Level, f => f.PickRandom(LogLevels))
+             .RuleFor(p => p.Properties, PropertiesFaker.SerializedProperties)
+             .RuleFor(p => p.Exception, (f) => JsonConvert.SerializeObject(f.System.Exception()))
+             .RuleFor(p => p.Message, f => f.System.Random.Words(6))
+             .RuleFor(p => p.PropertyType, f => f.System.CommonFileType())
+             .RuleFor(p => p.Timestamp, f => new DateTime(f.Date.Recent().Ticks, DateTimeKind.Utc));
+        }
+
+        public static IEnumerable<LogModel> Logs(int generationCount) => LogsRules().Generate(generationCount);
         public static IEnumerable<LogModel> Logs() => Logs(20);
     }
 }

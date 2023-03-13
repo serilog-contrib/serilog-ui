@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -166,12 +167,22 @@ namespace Serilog.Ui.Web
 
         private async Task RespondWithIndexHtml(HttpResponse response)
         {
+            if (!CanAccess(response.HttpContext))
+            {
+                response.StatusCode = (int)HttpStatusCode.Forbidden;
+                response.ContentType = "text/html;charset=utf-8";
+                await response.WriteAsync("<p>You don't have enough permission to access this page!</p>", Encoding.UTF8);
+
+                return;
+            }
+
             response.StatusCode = 200;
             response.ContentType = "text/html;charset=utf-8";
 
             await using var stream = IndexStream();
             var htmlStringBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
-            var encodeAuthOpts = Uri.EscapeDataString(JsonConvert.SerializeObject(new { _options.RoutePrefix, _options.AuthType, _options.HomeUrl }, _jsonSerializerOptions));
+            var authType = _options.Authorization.AuthenticationType.ToString();
+            var encodeAuthOpts = Uri.EscapeDataString(JsonConvert.SerializeObject(new { _options.RoutePrefix, authType, _options.HomeUrl }, _jsonSerializerOptions));
 
             htmlStringBuilder
                 .Replace("%(Configs)", encodeAuthOpts)
@@ -198,11 +209,8 @@ namespace Serilog.Ui.Web
             int.TryParse(pageStr, out var currentPage);
             int.TryParse(countStr, out var count);
 
-            DateTime.TryParse(startDateStar, out var startDate);
-            DateTime.TryParse(endDateStar, out var endDate);
-
-            if (endDate != default)
-                endDate = new DateTime(endDate.Year, endDate.Month, endDate.Day, 23, 59, 59);
+            DateTime.TryParse(startDateStar, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var startDate);
+            DateTime.TryParse(endDateStar, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var endDate);
 
             currentPage = currentPage == default ? 1 : currentPage;
             count = count == default ? 10 : count;
@@ -217,34 +225,14 @@ namespace Serilog.Ui.Web
 
             var (logs, total) = await provider.FetchDataAsync(currentPage, count, levelStr, searchStr,
                 startDate == default ? (DateTime?)null : startDate, endDate == default ? (DateTime?)null : endDate);
-            //var result = JsonSerializer.Serialize(logs, _jsonSerializerOptions);
             var result = JsonConvert.SerializeObject(new { logs, total, count, currentPage }, _jsonSerializerOptions);
+
             return result;
         }
 
-        private static bool CanAccess(HttpContext httpContext)
+        private bool CanAccess(HttpContext httpContext)
         {
-            var authOptions = httpContext.RequestServices.GetService<AuthorizationOptions>();
-
-            if (httpContext.Request.IsLocal() && authOptions.AlwaysAllowLocalRequests)
-                return true;
-
-            if (!authOptions.Enabled)
-                return true;
-
-            if (!httpContext.User.Identity.IsAuthenticated)
-                return false;
-
-            var userName = httpContext.User.Identity.Name?.ToLower();
-            if (authOptions.Usernames != null &&
-                authOptions.Usernames.Any(u => u.ToLower() == userName))
-                return true;
-
-            if (authOptions.Roles != null &&
-                authOptions.Roles.Any(role => httpContext.User.IsInRole(role)))
-                return true;
-
-            return false;
+            return _options.Authorization.Filters.All(filter => filter.Authorize(httpContext));
         }
     }
 }

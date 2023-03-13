@@ -21,6 +21,9 @@
                 case "4":
                     return "Error";
 
+                case "5":
+                    return "Fatal";
+
                 default:
                     return "";
             }
@@ -44,6 +47,9 @@
 
                 case "Error":
                     return 4;
+
+                case "Fatal":
+                    return 5;
 
                 default:
                     return 100;

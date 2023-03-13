@@ -1,14 +1,16 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Driver;
 using Serilog.Ui.Common.Tests.DataSamples;
+using Serilog.Ui.MongoDbProvider;
 using System.Threading.Tasks;
 
-namespace Serilog.Ui.MongoDbProvider.Tests.Util.Builders
+namespace MongoDb.Tests.Util.Builders
 {
     public class MongoDbDataProviderBuilder : BaseServiceBuilder
     {
         private const string DefaultDbName = "IntegrationTests";
 
-        internal MongoDbDataProvider _sut;
         internal IMongoCollection<MongoDbLogModel> _mongoCollection;
 
         protected MongoDbDataProviderBuilder(MongoDbOptions options) : base(options)
@@ -21,14 +23,24 @@ namespace Serilog.Ui.MongoDbProvider.Tests.Util.Builders
         {
             var options = new MongoDbOptions() { CollectionName = "LogCollection", DatabaseName = DefaultDbName }; // , UseLinq3 = useLinq3 };
             var builder = new MongoDbDataProviderBuilder(options);
-            await Seed(builder._mongoCollection);
+            builder._collector = await Seed(builder._mongoCollection);
             return builder;
         }
 
-        public static Task Seed(IMongoCollection<MongoDbLogModel> collection)
+        public static async Task<LogModelPropsCollector> Seed(IMongoCollection<MongoDbLogModel> collection)
         {
-            var array = MongoDbLogModelFaker.Logs();
-            return collection.InsertManyAsync(array);
+            var (array, collector) = MongoDbLogModelFaker.Logs(100);
+
+            // https://stackoverflow.com/a/75637412/15129749
+            var objectSerializer = new ObjectSerializer(type => ObjectSerializer.DefaultAllowedTypes(type) || 
+                type.FullName.StartsWith("Serilog.Ui.Common.Tests") ||
+                type.FullName.StartsWith("MongoDB.Bson.BsonDocument")
+
+                );
+            BsonSerializer.RegisterSerializer(objectSerializer);
+
+            await collection.InsertManyAsync(array);
+            return collector;
         }
     }
 }
