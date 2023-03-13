@@ -9,7 +9,7 @@ using Serilog.Ui.Web.Tests.Authorization;
 using Serilog.Ui.Web.Tests.SerilogInMemoryDataProvider;
 using System.IO;
 
-namespace Ui.Web.Tests.Util;
+namespace Ui.Web.Tests.Utilities;
 
 public class WebSampleProgram
 {
