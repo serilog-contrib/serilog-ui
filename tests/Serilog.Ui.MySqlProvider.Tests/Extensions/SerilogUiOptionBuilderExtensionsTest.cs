@@ -5,6 +5,7 @@ using Serilog.Ui.MySqlProvider;
 using Serilog.Ui.Web;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using Xunit;
 
 namespace MySql.Tests.Extensions
@@ -28,8 +29,17 @@ namespace MySql.Tests.Extensions
             });
             var services = serviceCollection.BuildServiceProvider();
 
-            services.GetRequiredService<IDataProvider>().Should().NotBeNull().And.BeOfType<MySqlDataProvider>();
-            var options = services.GetRequiredService<RelationalDbOptions>();
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            using var scope = serviceProvider.CreateScope();
+
+            var provider = scope.ServiceProvider.GetService<IDataProvider>();
+            provider.Should().NotBeNull().And.BeOfType<MySqlDataProvider>();
+
+            var optionsField = typeof(MySqlDataProvider)
+                                   .GetField("_options", BindingFlags.NonPublic | BindingFlags.Instance)
+                               ?? throw new InvalidOperationException("_options field is missing.");
+            var options = (RelationalDbOptions)optionsField.GetValue(provider) ?? throw new InvalidOperationException("optionsField.GetValue(provider) returned null");
+            
             options.Should().NotBeNull();
             options.ConnectionString.Should().Be("https://mysqlserver.example.com");
             options.TableName.Should().Be("my-table");
