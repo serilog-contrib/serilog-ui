@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
 using System;
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog.Ui.Core.Services;
 

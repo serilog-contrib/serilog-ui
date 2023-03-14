@@ -1,5 +1,4 @@
-﻿using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Serilog;
+﻿using Serilog;
 using Serilog.Sinks.Elasticsearch;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.TestSuites;
@@ -7,7 +6,6 @@ using Serilog.Ui.Core;
 using Serilog.Ui.ElasticSearchProvider;
 using System;
 using System.Threading.Tasks;
-using Xunit;
 
 namespace ElasticSearch.Tests.Util
 {

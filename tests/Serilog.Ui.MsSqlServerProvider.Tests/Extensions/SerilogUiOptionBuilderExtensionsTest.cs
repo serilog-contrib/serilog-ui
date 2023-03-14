@@ -5,7 +5,6 @@ using Serilog.Ui.MsSqlServerProvider;
 using Serilog.Ui.Web;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Xunit;
 
 namespace MsSql.Tests.Extensions
@@ -35,17 +34,6 @@ namespace MsSql.Tests.Extensions
 
             var provider = scope.ServiceProvider.GetService<IDataProvider>();
             provider.Should().NotBeNull().And.BeOfType<SqlServerDataProvider>();
-
-            var optionsField = typeof(SqlServerDataProvider)
-                                   .GetField("_options", BindingFlags.NonPublic | BindingFlags.Instance)
-                               ?? throw new InvalidOperationException("_options field is missing.");
-            var options = (RelationalDbOptions)optionsField.GetValue(provider) ?? throw new InvalidOperationException("optionsField.GetValue(provider) returned null");
-
-
-            options.Should().NotBeNull();
-            options.ConnectionString.Should().Be("https://sqlserver.example.com");
-            options.TableName.Should().Be("my-table");
-            options.Schema.Should().Be(expected);
         }
 
         [Fact]

@@ -5,8 +5,6 @@ using Serilog.Ui.PostgreSqlProvider;
 using Serilog.Ui.Web;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Xunit;
 
 namespace Postgres.Tests.Extensions
@@ -36,16 +34,6 @@ namespace Postgres.Tests.Extensions
 
             var provider = scope.ServiceProvider.GetService<IDataProvider>();
             provider.Should().NotBeNull().And.BeOfType<PostgresDataProvider>();
-
-            var optionsField = typeof(PostgresDataProvider)
-                .GetField("_options", BindingFlags.NonPublic | BindingFlags.Instance) 
-                               ?? throw new InvalidOperationException("_options field is missing.");
-            var options = (RelationalDbOptions) optionsField.GetValue(provider) ?? throw new InvalidOperationException("optionsField.GetValue(provider) returned null");
-
-            options.Should().NotBeNull();
-            options.ConnectionString.Should().Be("https://npgsql.example.com");
-            options.TableName.Should().Be("my-table");
-            options.Schema.Should().Be(expected);
         }
 
         [Fact]

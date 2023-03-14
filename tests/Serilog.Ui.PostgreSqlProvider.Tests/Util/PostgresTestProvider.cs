@@ -1,5 +1,4 @@
-﻿using Ardalis.GuardClauses;
-using Dapper;
+﻿using Dapper;
 //using 
 using Npgsql;
 using Serilog.Ui.Common.Tests.DataSamples;
