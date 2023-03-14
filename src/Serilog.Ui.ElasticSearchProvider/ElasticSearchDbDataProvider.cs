@@ -10,7 +10,7 @@ namespace Serilog.Ui.ElasticSearchProvider
 {
     public class ElasticSearchDbDataProvider : IDataProvider
     {
-        public string Name { get; set; }
+        public string Name => string.Join(".", "ES", _options.IndexName);
 
         private readonly IElasticClient _client;
         private readonly ElasticSearchDbOptions _options;
@@ -19,7 +19,6 @@ namespace Serilog.Ui.ElasticSearchProvider
         {
             _client = client ?? throw new ArgumentNullException(nameof(client));
             _options = options ?? throw new ArgumentNullException(nameof(options));
-            Name = string.Join(".", "ES", _options.IndexName);
         }
 
         public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(

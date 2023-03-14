@@ -33,11 +33,7 @@ namespace Serilog.Ui.Web
             var builder = new SerilogUiOptionsBuilder(services);
             optionsBuilder.Invoke(builder);
 
-            services.TryAddScoped(typeof(AggregateDataProvider), p =>
-            {
-                var providers = p.GetServices<IDataProvider>();
-                return new AggregateDataProvider(providers);
-            });
+            services.TryAddScoped(typeof(AggregateDataProvider));
 
             return services;
         }

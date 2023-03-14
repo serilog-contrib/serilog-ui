@@ -34,6 +34,3 @@ namespace Serilog.Ui.Core
         string Name { get; }
     }
 }
-namespace Serilog.Ui.Core.Services
-{
-}
