@@ -1,4 +1,4 @@
-﻿namespace Serilog.Ui.Core.Extensions
+﻿namespace Serilog.Ui.Core
 {
     public static class RelationalDbOptionsExtensions
     {

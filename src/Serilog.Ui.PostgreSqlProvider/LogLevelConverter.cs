@@ -2,58 +2,26 @@
 {
     internal class LogLevelConverter
     {
-        public static string GetLevelName(string value)
+        public static string GetLevelName(string value) => value switch
         {
-            switch (value)
-            {
-                case "0":
-                    return "Verbose";
+            "0" => "Verbose",
+            "1" => "Debug",
+            "2" => "Information",
+            "3" => "Warning",
+            "4" => "Error",
+            "5" => "Fatal",
+            _ => ""
+        };
 
-                case "1":
-                    return "Debug";
-
-                case "2":
-                    return "Information";
-
-                case "3":
-                    return "Warning";
-
-                case "4":
-                    return "Error";
-
-                case "5":
-                    return "Fatal";
-
-                default:
-                    return "";
-            }
-        }
-
-        public static int GetLevelValue(string name)
+        public static int GetLevelValue(string name) => name switch
         {
-            switch (name)
-            {
-                case "Verbose":
-                    return 0;
-
-                case "Debug":
-                    return 1;
-
-                case "Information":
-                    return 2;
-
-                case "Warning":
-                    return 3;
-
-                case "Error":
-                    return 4;
-
-                case "Fatal":
-                    return 5;
-
-                default:
-                    return 100;
-            }
-        }
+            "Verbose" => 0,
+            "Debug" => 1,
+            "Information" => 2,
+            "Warning" => 3,
+            "Error" => 4,
+            "Fatal" => 5,
+            _ => 100
+        };
     }
 }

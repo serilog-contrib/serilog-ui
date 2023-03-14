@@ -6,14 +6,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Threading.Tasks;
-using Serilog.Ui.Core.Extensions;
 
 namespace Serilog.Ui.PostgreSqlProvider
 {
     public class PostgresDataProvider : IDataProvider
     {
-        public string Name => _options.ToDataProviderName("NPGSQL");
-
         private readonly RelationalDbOptions _options;
 
         public PostgresDataProvider(RelationalDbOptions options)
@@ -37,6 +34,8 @@ namespace Serilog.Ui.PostgreSqlProvider
 
             return (await logsTask, await logCountTask);
         }
+
+        public string Name => _options.ToDataProviderName("NPGSQL");
 
         private async Task<IEnumerable<LogModel>> GetLogsAsync(int page,
             int count,
@@ -62,9 +61,8 @@ namespace Serilog.Ui.PostgreSqlProvider
                 {
                     Offset = page * count,
                     Count = count,
-                    // TODO: this level could be a text column, to be passed as parameter:
-                    // https://github.com/b00ted/serilog-sinks-postgresql/blob/ce73c7423383d91ddc3823fe350c1c71fc23bab9/Serilog.Sinks.PostgreSQL/Sinks/PostgreSQL/ColumnWriters.cs#L97
-                    Level = LogLevelConverter.GetLevelValue(level), 
+                    // TODO: this level could be a text column, to be passed as parameter: https://github.com/b00ted/serilog-sinks-postgresql/blob/ce73c7423383d91ddc3823fe350c1c71fc23bab9/Serilog.Sinks.PostgreSQL/Sinks/PostgreSQL/ColumnWriters.cs#L97
+                    Level = LogLevelConverter.GetLevelValue(level),
                     Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
                     StartDate = startDate,
                     EndDate = endDate

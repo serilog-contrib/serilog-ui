@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Serilog.Ui.Core;
 using System;
 using System.Globalization;
 using System.IO;
@@ -18,7 +19,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Serilog.Ui.Core.Services;
 
 namespace Serilog.Ui.Web
 {
