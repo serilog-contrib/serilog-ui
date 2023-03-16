@@ -28,11 +28,11 @@ namespace MySql.Tests.Extensions
             });
             var services = serviceCollection.BuildServiceProvider();
 
-            services.GetRequiredService<IDataProvider>().Should().NotBeNull().And.BeOfType<MySqlDataProvider>();
-            var options = services.GetRequiredService<RelationalDbOptions>();
-            options.Should().NotBeNull();
-            options.ConnectionString.Should().Be("https://mysqlserver.example.com");
-            options.TableName.Should().Be("my-table");
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            using var scope = serviceProvider.CreateScope();
+
+            var provider = scope.ServiceProvider.GetService<IDataProvider>();
+            provider.Should().NotBeNull().And.BeOfType<MySqlDataProvider>();
         }
 
         [Fact]

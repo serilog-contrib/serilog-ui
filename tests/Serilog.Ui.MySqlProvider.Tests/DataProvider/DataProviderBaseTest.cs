@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using MySql.Data.MySqlClient;
 using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.MySqlProvider;
 using System;

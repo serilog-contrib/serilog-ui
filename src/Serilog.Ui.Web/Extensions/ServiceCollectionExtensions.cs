@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
 using System;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Serilog.Ui.Core.Services;
 
 namespace Serilog.Ui.Web
 {
@@ -29,6 +31,8 @@ namespace Serilog.Ui.Web
 
             var builder = new SerilogUiOptionsBuilder(services);
             optionsBuilder.Invoke(builder);
+
+            services.TryAddScoped(typeof(AggregateDataProvider));
 
             return services;
         }

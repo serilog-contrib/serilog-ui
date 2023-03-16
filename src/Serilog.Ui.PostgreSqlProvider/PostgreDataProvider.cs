@@ -6,11 +6,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog.Ui.Core.Extensions;
 
 namespace Serilog.Ui.PostgreSqlProvider
 {
     public class PostgresDataProvider : IDataProvider
     {
+        public string Name => _options.ToDataProviderName("NPGSQL");
+
         private readonly RelationalDbOptions _options;
 
         public PostgresDataProvider(RelationalDbOptions options)

@@ -20,7 +20,7 @@ namespace Serilog.Ui.MsSqlServerProvider
         /// </param>
         /// <exception cref="ArgumentNullException"> throw if connectionString is null </exception>
         /// <exception cref="ArgumentNullException"> throw is tableName is null </exception>
-        public static void UseSqlServer(
+        public static SerilogUiOptionsBuilder UseSqlServer(
             this SerilogUiOptionsBuilder optionsBuilder,
             string connectionString,
             string tableName,
@@ -40,8 +40,10 @@ namespace Serilog.Ui.MsSqlServerProvider
                 Schema = !string.IsNullOrWhiteSpace(schemaName) ? schemaName : "dbo"
             };
 
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddSingleton(relationProvider);
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddScoped<IDataProvider, SqlServerDataProvider>();
+            ((ISerilogUiOptionsBuilder)optionsBuilder).Services
+                .AddScoped<IDataProvider, SqlServerDataProvider>(p => ActivatorUtilities.CreateInstance<SqlServerDataProvider>(p, relationProvider));
+            
+            return optionsBuilder;
         }
     }
 }

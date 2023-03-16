@@ -11,6 +11,8 @@ namespace Serilog.Ui.Web.Tests.SerilogInMemoryDataProvider;
 
 public class SerilogInMemoryDataProvider : IDataProvider
 {
+    public string Name => nameof(SerilogInMemoryDataProvider);
+
     public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page, int count, string level = null, string searchCriteria = null, DateTime? startDate = null,
         DateTime? endDate = null)
     {

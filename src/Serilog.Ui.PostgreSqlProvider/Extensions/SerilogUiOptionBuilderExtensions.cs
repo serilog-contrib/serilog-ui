@@ -40,8 +40,8 @@ namespace Serilog.Ui.PostgreSqlProvider
                 Schema = !string.IsNullOrWhiteSpace(schemaName) ? schemaName : "public"
             };
 
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddSingleton(relationProvider);
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddScoped<IDataProvider, PostgresDataProvider>();
+            ((ISerilogUiOptionsBuilder)optionsBuilder).Services
+                .AddScoped<IDataProvider, PostgresDataProvider>(p => ActivatorUtilities.CreateInstance<PostgresDataProvider>(p, relationProvider));
         }
     }
 }

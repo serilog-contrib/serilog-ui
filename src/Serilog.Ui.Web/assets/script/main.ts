@@ -4,7 +4,7 @@ import 'popper.js';
 import 'bootstrap';
 import netStack = require('netstack.js'); // global require for netstack
 import { initTokenUi, updateJwtToken } from './authentication';
-import { fetchLogs } from './fetch';
+import { fetchKeys, fetchLogs } from './fetch';
 import { changePageByModalChoice } from './pagination';
 
 const initListenersAndDynamicInfo = () => {
@@ -30,6 +30,7 @@ const initListenersAndDynamicInfo = () => {
     document.querySelector("#logCount").addEventListener("change", resetLogPage);
     document.querySelector("#logFilter").addEventListener("change", resetLogPage);
     document.querySelector("#submit").addEventListener("click", resetLogPage);
+    document.querySelector("#key").addEventListener("change", resetLogPage);
 
     // enable changePage button
     document.querySelector('.custom-pagination-submit').addEventListener('click', changePageByModalChoice);
@@ -43,11 +44,30 @@ const initHomeButton = () => {
     }
 }
 
+const initTableKey = () => {
+    var keySelect = document.querySelector<HTMLAnchorElement>("#key-select");
+    var key = document.querySelector<HTMLAnchorElement>("#key");
+
+    fetchKeys(s => {
+
+        var innerHTML = '';
+
+        s.forEach((x, i) => innerHTML += `<option value="${x}" ${i === 0 ? `selected="selected"` : null}>${x}</option>`)
+
+        key.innerHTML = innerHTML;
+
+        if (s.length > 1) {
+            keySelect.classList.remove("d-none");
+        }
+    })
+
+}
+
 const init = () => {
     initListenersAndDynamicInfo();
     initTokenUi();
     fetchLogs();
-
+    initTableKey();
     initHomeButton();
 }
 

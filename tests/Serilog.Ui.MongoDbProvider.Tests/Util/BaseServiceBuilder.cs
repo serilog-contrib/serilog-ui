@@ -3,7 +3,6 @@ using MongoDB.Driver;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Core;
 using Serilog.Ui.MongoDbProvider;
-using System;
 
 namespace MongoDb.Tests.Util
 {

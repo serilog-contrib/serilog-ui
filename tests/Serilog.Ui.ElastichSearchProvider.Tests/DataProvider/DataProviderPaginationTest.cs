@@ -1,5 +1,4 @@
 ﻿using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
 using ElasticSearch.Tests.Util;
 using FluentAssertions;
 using Serilog.Ui.Common.Tests.TestSuites.Impl;

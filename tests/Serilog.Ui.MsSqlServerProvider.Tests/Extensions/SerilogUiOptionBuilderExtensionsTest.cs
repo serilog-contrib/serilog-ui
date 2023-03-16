@@ -28,14 +28,12 @@ namespace MsSql.Tests.Extensions
             {
                 builder.UseSqlServer("https://sqlserver.example.com", "my-table", schemaName);
             });
-            var services = serviceCollection.BuildServiceProvider();
 
-            services.GetRequiredService<IDataProvider>().Should().NotBeNull().And.BeOfType<SqlServerDataProvider>();
-            var options = services.GetRequiredService<RelationalDbOptions>();
-            options.Should().NotBeNull();
-            options.ConnectionString.Should().Be("https://sqlserver.example.com");
-            options.TableName.Should().Be("my-table");
-            options.Schema.Should().Be(expected);
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            using var scope = serviceProvider.CreateScope();
+
+            var provider = scope.ServiceProvider.GetService<IDataProvider>();
+            provider.Should().NotBeNull().And.BeOfType<SqlServerDataProvider>();
         }
 
         [Fact]

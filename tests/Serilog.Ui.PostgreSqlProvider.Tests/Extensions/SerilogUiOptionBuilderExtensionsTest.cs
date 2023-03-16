@@ -28,14 +28,12 @@ namespace Postgres.Tests.Extensions
             {
                 builder.UseNpgSql("https://npgsql.example.com", "my-table", schemaName);
             });
-            var services = serviceCollection.BuildServiceProvider();
 
-            services.GetRequiredService<IDataProvider>().Should().NotBeNull().And.BeOfType<PostgresDataProvider>();
-            var options = services.GetRequiredService<RelationalDbOptions>();
-            options.Should().NotBeNull();
-            options.ConnectionString.Should().Be("https://npgsql.example.com");
-            options.TableName.Should().Be("my-table");
-            options.Schema.Should().Be(expected);
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            using var scope = serviceProvider.CreateScope();
+
+            var provider = scope.ServiceProvider.GetService<IDataProvider>();
+            provider.Should().NotBeNull().And.BeOfType<PostgresDataProvider>();
         }
 
         [Fact]

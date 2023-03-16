@@ -2,7 +2,6 @@
 using FluentAssertions;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Core;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;

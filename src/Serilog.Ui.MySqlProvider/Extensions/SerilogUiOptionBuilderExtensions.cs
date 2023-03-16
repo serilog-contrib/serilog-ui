@@ -34,9 +34,10 @@ namespace Serilog.Ui.MySqlProvider
                 ConnectionString = connectionString,
                 TableName = tableName
             };
+            
+            ((ISerilogUiOptionsBuilder)optionsBuilder).Services
+                .AddScoped<IDataProvider, MySqlDataProvider>(p => ActivatorUtilities.CreateInstance<MySqlDataProvider>(p, relationProvider));
 
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddSingleton(relationProvider);
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddScoped<IDataProvider, MySqlDataProvider>();
         }
     }
 }
