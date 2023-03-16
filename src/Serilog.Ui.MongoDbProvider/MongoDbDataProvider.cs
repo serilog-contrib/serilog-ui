@@ -9,9 +9,6 @@ namespace Serilog.Ui.MongoDbProvider
 {
     public class MongoDbDataProvider : IDataProvider
     {
-
-        public string Name => string.Join(".", "MongoDb", _options.DatabaseName, _options.CollectionName);
-
         private readonly IMongoCollection<MongoDbLogModel> _collection;
         private readonly MongoDbOptions _options;
 
@@ -40,6 +37,8 @@ namespace Serilog.Ui.MongoDbProvider
 
             return (logsTask, logCountTask);
         }
+
+        public string Name => string.Join(".", "MongoDb", _options.DatabaseName, _options.CollectionName);
 
         private async Task<IEnumerable<LogModel>> GetLogsAsync(
             int page,
@@ -80,7 +79,11 @@ namespace Serilog.Ui.MongoDbProvider
             }
         }
 
-        private async Task<int> CountLogsAsync(string level, string searchCriteria, DateTime? startDate, DateTime? endDate)
+        private async Task<int> CountLogsAsync(
+            string level,
+            string searchCriteria,
+            DateTime? startDate,
+            DateTime? endDate)
         {
             var builder = Builders<MongoDbLogModel>.Filter.Empty;
             GenerateWhereClause(ref builder, level, searchCriteria, startDate, endDate);

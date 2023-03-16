@@ -8,12 +8,12 @@ using System.Linq;
 namespace Serilog.Ui.MongoDbProvider
 {
     /// <summary>
-    /// MongoDB data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
+    ///   MongoDB data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
     /// </summary>
     public static class SerilogUiOptionBuilderExtensions
     {
         /// <summary>
-        /// Configures the SerilogUi to connect to a MongoDB database.
+        ///   Configures the SerilogUi to connect to a MongoDB database.
         /// </summary>
         /// <param name="optionsBuilder">The options builder.</param>
         /// <param name="connectionString">The connection string.</param>
@@ -34,7 +34,8 @@ namespace Serilog.Ui.MongoDbProvider
 
             var databaseName = MongoUrl.Create(connectionString).DatabaseName;
 
-            if (string.IsNullOrWhiteSpace(databaseName)) throw new ArgumentException(nameof(MongoUrl.DatabaseName));
+            if (string.IsNullOrWhiteSpace(databaseName))
+                throw new ArgumentException(nameof(MongoUrl.DatabaseName));
 
             var mongoProvider = new MongoDbOptions
             {
@@ -45,8 +46,8 @@ namespace Serilog.Ui.MongoDbProvider
 
             var builder = ((ISerilogUiOptionsBuilder)optionsBuilder);
 
-            // TODO Fixup MongoDb to allow multiple registrations.
-            //      Think about multiple ES clients (singletons) used in data providers (scoped)
+            // TODO Fixup MongoDb to allow multiple registrations. Think about multiple ES clients
+            // (singletons) used in data providers (scoped)
             if (builder.Services.Any(c => c.ImplementationType == typeof(MongoDbDataProvider)))
                 throw new NotSupportedException($"Adding multiple registrations of '{typeof(MongoDbDataProvider).FullName}' is not (yet) supported.");
 
@@ -56,7 +57,7 @@ namespace Serilog.Ui.MongoDbProvider
         }
 
         /// <summary>
-        /// Configures the SerilogUi to connect to a MongoDB database.
+        ///   Configures the SerilogUi to connect to a MongoDB database.
         /// </summary>
         /// <param name="optionsBuilder">The options builder.</param>
         /// <param name="connectionString">The connection string.</param>
@@ -90,8 +91,8 @@ namespace Serilog.Ui.MongoDbProvider
 
             var builder = ((ISerilogUiOptionsBuilder)optionsBuilder);
 
-            // TODO Fixup MongoDb to allow multiple registrations.
-            //      Think about multiple ES clients (singletons) used in data providers (scoped)
+            // TODO Fixup MongoDb to allow multiple registrations. Think about multiple ES clients
+            // (singletons) used in data providers (scoped)
             if (builder.Services.Any(c => c.ImplementationType == typeof(MongoDbDataProvider)))
                 throw new NotSupportedException($"Adding multiple registrations of '{typeof(MongoDbDataProvider).FullName}' is not (yet) supported.");
 

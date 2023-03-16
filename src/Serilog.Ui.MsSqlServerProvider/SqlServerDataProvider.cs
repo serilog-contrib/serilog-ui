@@ -6,16 +6,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Threading.Tasks;
-using Serilog.Ui.Core.Extensions;
 
 namespace Serilog.Ui.MsSqlServerProvider
 {
     public class SqlServerDataProvider : IDataProvider
     {
-        public string Name => _options.ToDataProviderName("MsSQL");
-
         private readonly RelationalDbOptions _options;
-        
+
         public SqlServerDataProvider(RelationalDbOptions options)
         {
             _options = options ?? throw new ArgumentNullException(nameof(options));
@@ -37,6 +34,8 @@ namespace Serilog.Ui.MsSqlServerProvider
 
             return (await logsTask, await logCountTask);
         }
+
+        public string Name => _options.ToDataProviderName("MsSQL");
 
         private async Task<IEnumerable<LogModel>> GetLogsAsync(
             int page,

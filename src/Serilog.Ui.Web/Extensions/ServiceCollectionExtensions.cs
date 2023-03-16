@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog.Ui.Core;
 using System;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Serilog.Ui.Core.Services;
 
 namespace Serilog.Ui.Web
 {

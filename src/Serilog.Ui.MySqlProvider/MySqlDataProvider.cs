@@ -5,14 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Serilog.Ui.Core.Extensions;
 
 namespace Serilog.Ui.MySqlProvider
 {
     public class MySqlDataProvider : IDataProvider
     {
-        public string Name => _options.ToDataProviderName("MySQL");
-
         private readonly RelationalDbOptions _options;
 
         public MySqlDataProvider(RelationalDbOptions options)
@@ -36,6 +33,8 @@ namespace Serilog.Ui.MySqlProvider
 
             return (await logsTask, await logCountTask);
         }
+
+        public string Name => _options.ToDataProviderName("MySQL");
 
         private async Task<IEnumerable<LogModel>> GetLogsAsync(
             int page,
