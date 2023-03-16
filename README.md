@@ -33,6 +33,18 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
+If you have more than one log table on the database, you add them:
+```csharp
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddSerilogUi(options => options
+        .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs")
+        .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs2")
+    );
+}
+```
+This feature is not supported by NoSQL data providers and limited to `MsSqlServerProvider`, `MySqlProvider` and `PostgreSqlProvider`.
+
 In the `Startup.Configure` method, enable the middleware for serving the log UI. Place a call to the `UseSerilogUi` middleware after authentication and authorization middlewares, otherwise authentication may not work for you:
 
 ```csharp

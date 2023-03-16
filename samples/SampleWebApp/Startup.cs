@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using SampleWebApp.Authentication.Jwt;
 using SampleWebApp.Data;
 using SampleWebApp.Services.HostedServices;

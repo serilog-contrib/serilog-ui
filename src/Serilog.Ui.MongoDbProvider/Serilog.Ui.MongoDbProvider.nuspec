@@ -10,7 +10,6 @@
 		<license type="expression">MIT</license>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>MongoDB data provider for Serilog UI.</description>
-		<readme>docs\README.md</readme>
 		<releaseNotes></releaseNotes>
 		<copyright></copyright>
 		<tags>serilog serilog-ui serilog.sinks.mongodb</tags>
