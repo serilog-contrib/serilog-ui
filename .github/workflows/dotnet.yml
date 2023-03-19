@@ -4,10 +4,12 @@
 name: .NET
 
 on:
-  push:
-    branches: [ "master" ]
+  workflow_dispatch:
+  
+  push:    
+    branches: [ "master", 'dev' ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", 'dev' ]
 
 jobs:
   build:
@@ -45,12 +47,6 @@ jobs:
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-      - name: Build and analyze
-    
-    # - name: Setup .NET
-    #  uses: actions/setup-dotnet@v3
-    #  with:
-    #    dotnet-version: 6.0.x
 
       - name: Restore dependencies
         run: dotnet restore
@@ -66,4 +62,13 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
 
       - name: Test
-        run: dotnet test --no-build --verbosity normal
+        run: dotnet test --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx" || true
+
+      - name: Test Reporter
+        uses: dorny/test-reporter@v1.6.0
+        if: always()
+        with:
+          name: DotNET Tests
+          path: "**/test-results.trx"                            
+          reporter: dotnet-trx
+          fail-on-error: true
