@@ -1,0 +1,19 @@
+name: CI/CD
+
+on:
+  workflow_dispatch:
+
+  push:
+    branches: ['master', 'dev']
+  pull_request:
+    branches: ['master', 'dev']
+
+jobs:
+  DotNET_Build:
+    if: ${{ false}}
+    secrets: inherit
+    uses: './.github/workflows/DotNET.yml'
+
+  Assets_Build:
+    secrets: inherit
+    uses: './.github/workflows/Assets.yml'

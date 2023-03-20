@@ -350,3 +350,6 @@ MigrationBackup/
 .ionide/
 nuget.exe
 .vshistory/
+
+coverage.xml
+coverage/
