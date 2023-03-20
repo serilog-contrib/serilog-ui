@@ -21,10 +21,10 @@ jobs:
           java-version: 11
           distribution: 'zulu' # Alternative distribution options are available.
 
-      - name: Install SonarCloud scanner
+      - name: Install dotnet tools
         run: |
-          mkdir .\.sonar\scanner
           dotnet tool install dotnet-sonarscanner -g
+          dotnet tool install --global dotnet-coverage
 
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -55,7 +55,7 @@ jobs:
 
       - name: DotNET Test
         continue-on-error: true
-        run: dotnet test --no-build --logger "trx;LogFileName=test-results.trx" --collect "Code Coverage"
+        run: dotnet-coverage collect "dotnet test --no-build --logger 'trx;LogFileName=test-results.trx'" -f xml -o "coverage.xml"
 
       - name: Assets Test
         continue-on-error: true
