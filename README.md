@@ -100,12 +100,10 @@ Here is an example of how you can implement your own authentication and authoriz
 ``` csharp
 public class CustomAuthorizeFilter : IUiAuthorizationFilter
 {
-    public bool Authorize(DashboardContext context)
+    public bool Authorize(HttpContext httpContext)
     {
-        var httpContext = context.GetHttpContext();
-
         // Allow all authenticated users to see the Dashboard (potentially dangerous).
-        return httpContext.User.Identity?.IsAuthenticated ?? false;
+        return httpContext.User.Identity is { IsAuthenticated: true };
     }
 }
 ```
