@@ -43,7 +43,7 @@ public void ConfigureServices(IServiceCollection services)
     );
 }
 ```
-This feature is not supported by NoSQL data providers and limited to `MsSqlServerProvider`, `MySqlProvider` and `PostgreSqlProvider`.
+This feature is not supported by NoSQL data providers and is limited to `MsSqlServerProvider`, `MySqlProvider` and `PostgreSqlProvider`.
 
 In the `Startup.Configure` method, enable the middleware for serving the log UI. Place a call to the `UseSerilogUi` middleware after authentication and authorization middlewares, otherwise authentication may not work for you:
 
@@ -76,7 +76,7 @@ Options can be found in the [UIOptions](src/Serilog.Ui.Web/Extensions/UiOptions.
 
 ### Authorization
 
-By default serilog-ui allows access to the log page only for local requests. In order to give appropriate rights for production use, you need to configure authorization. You can add your own implementations of the `IUiAuthorizationFilter` interface, whose Authorize method is used to allow or prohibit a request. The first step is to provide your own implementation.:
+By default serilog-ui allows access to the log page only for local requests. In order to give appropriate rights for production use, you need to configure authorization. You can add your own implementations of the `IUiAuthorizationFilter` interface, whose Authorize method is used to allow or prohibit a request. The first step is to provide your own implementation:
 
 ```csharp
 public void Configure(IApplicationBuilder appBuilder)
@@ -93,7 +93,7 @@ public void Configure(IApplicationBuilder appBuilder)
 }
 ```
 
-If you set `AuthenticationType` to `Jwt`, you can set a jwt token and an `Authorization` header will be added to the request and for `Cookie` just login into you website and no extra step is required.
+If you set `AuthenticationType` to `Jwt`, you can set a JWT token and an `Authorization` header will be added to the request and for `Cookie` just login into your website and no extra step is required.
 
 Here is an example of how you can implement your own authentication and authorization:
 
