@@ -1,4 +1,4 @@
-﻿using Mongo2Go;
+﻿using EphemeralMongo;
 using MongoDB.Driver;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Core;
@@ -8,7 +8,7 @@ namespace MongoDb.Tests.Util
 {
     public class BaseServiceBuilder
     {
-        internal MongoDbRunner _runner;
+        internal IMongoRunner _runner;
         internal MongoDbOptions _options;
         internal IMongoClient _client;
         internal IMongoDatabase _database;
