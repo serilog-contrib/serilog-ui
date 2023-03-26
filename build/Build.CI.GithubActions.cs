@@ -14,16 +14,15 @@ using System.Collections.Generic;
     InvokedTargets = new[] { nameof(Backend_Reporter) },
     OnPushBranches = new[] { "master", "dev" }
 )]
-//[GitHubActions("JS-build",
-//    GitHubActionsImage.UbuntuLatest,
-//    AutoGenerate = true,
-//    EnableGitHubToken = true,
-//    ImportSecrets = new[] { nameof(SonarTokenUi) },
-//    InvokedTargets = new[] { nameof(Frontend_Reporter) },
-//    On = new[] { GitHubActionsTrigger.PullRequest, GitHubActionsTrigger.Push },
-//    OnPushBranches = new[] { "master", "dev" },
-//    OnPullRequestBranches = new[] { "master", "dev" }
-//)]
+[GitHubActions("JS-build",
+    GitHubActionsImage.UbuntuLatest,
+    AutoGenerate = true,
+    EnableGitHubToken = true,
+    ImportSecrets = new[] { nameof(SonarTokenUi) },
+    InvokedTargets = new[] { nameof(Frontend_Reporter) },
+    OnPushBranches = new[] { "master", "dev" },
+    OnPullRequestBranches = new[] { "master", "dev" }
+)]
 partial class Build : NukeBuild
 {
     [PathExecutable("dotnet-sonarscanner")]

@@ -9,7 +9,7 @@ using static Nuke.Common.IO.PathConstruction;
 
 partial class Build : NukeBuild
 {
-    static Target Frontend_Clean => _ => _
+    Target Frontend_Clean => _ => _
         .Executes(() =>
         {
             FrontendWorkingDirectory

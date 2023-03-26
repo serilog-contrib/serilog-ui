@@ -36,6 +36,6 @@ partial class Build : NukeBuild
     static AbsolutePath TestsFrontendDirectory => RootDirectory / "src/Serilog.Ui.Web/__tests__";
 
     Target Clean => _ => _
-        .DependsOn(Backend_Clean)//, Frontend_Clean)
+        .DependsOn(Backend_Clean, Frontend_Clean)
         .Executes(() => { });
 }
