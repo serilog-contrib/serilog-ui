@@ -353,3 +353,5 @@ nuget.exe
 
 coverage.xml
 coverage/
+
+.nuke/temp/
