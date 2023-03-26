@@ -3,10 +3,10 @@ name: CI/CD
 on:
   workflow_dispatch:
 
-  push:
-    branches: ['master', 'dev']
-  pull_request:
-    branches: ['master', 'dev']
+  # push:
+  #   branches: ['master', 'dev']
+  # pull_request:
+  #   branches: ['master', 'dev']
 
 jobs:
   DotNET_Build:

@@ -1,23 +1,29 @@
 using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.Tooling;
-using Nuke.Common.Tools.Docker;
-using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Tools.SonarScanner;
 using System.Collections.Generic;
 
+/**
+ * Interesting ref to make the build script executable on server:
+ * https://blog.dangl.me/archive/executing-nuke-build-scripts-on-linux-machines-with-correct-file-permissions/
+ * https://stackoverflow.com/a/40979016/15129749
+ */
 [GitHubActions("DotNET-build",
     GitHubActionsImage.UbuntuLatest,
     AutoGenerate = true,
     EnableGitHubToken = true,
+    FetchDepth = 0,
     ImportSecrets = new[] { nameof(DockerhubUsername), nameof(DockerhubPassword), nameof(SonarToken) },
     InvokedTargets = new[] { nameof(Backend_Reporter) },
-    OnPushBranches = new[] { "master", "dev" }
+    OnPushBranches = new[] { "master", "dev" },
+    OnPullRequestBranches = new[] { "master", "dev" }
 )]
 [GitHubActions("JS-build",
     GitHubActionsImage.UbuntuLatest,
     AutoGenerate = true,
     EnableGitHubToken = true,
+    FetchDepth = 0,
     ImportSecrets = new[] { nameof(SonarTokenUi) },
     InvokedTargets = new[] { nameof(Frontend_Reporter) },
     OnPushBranches = new[] { "master", "dev" },
@@ -25,8 +31,13 @@ using System.Collections.Generic;
 )]
 partial class Build : NukeBuild
 {
-    [PathExecutable("dotnet-sonarscanner")]
-    readonly Tool SonarScanner;
+    //[PackageExecutable(
+    //    packageId: "dotnet-sonarscanner",
+    //    packageExecutable: "SonarScanner.MSBuild.dll",
+    //    // Must be set for tools shipping multiple versions
+    //    Framework = "net5.0"
+    //)]
+    //readonly Tool SonarScanner;
 
     [Parameter][Secret] readonly string DockerhubUsername;
     [Parameter][Secret] readonly string DockerhubPassword;
@@ -36,28 +47,13 @@ partial class Build : NukeBuild
     public bool OnGithubActionRun = GitHubActions.Instance != null &&
             !string.IsNullOrWhiteSpace(GitHubActions.Instance.RunId.ToString());
 
-    Target Backend_Setup => _ => _
-        .OnlyWhenStatic(() => OnGithubActionRun)
-        .Executes(() =>
-        {
-            DotNetTasks.DotNetToolInstall(new DotNetToolInstallSettings()
-                .SetPackageName("dotnet-sonarscanner")
-                .SetGlobal(true)
-            );
-            DotNetTasks.DotNetToolInstall(new DotNetToolInstallSettings()
-                .SetPackageName("dotnet-coverage")
-                .SetGlobal(true)
-            );
-        });
-
     Target Docker_Setup => _ => _
-        .DependsOn(Backend_Setup)
         .OnlyWhenStatic(() => OnGithubActionRun)
         .Executes(() =>
         {
-            DockerTasks.DockerLogin(new DockerLoginSettings()
-                .SetUsername(DockerhubUsername)
-                .SetPassword(DockerhubPassword));
+            //DockerTasks.DockerLogin(new DockerLoginSettings()
+            //    .SetUsername(DockerhubUsername)
+            //    .SetPassword(DockerhubPassword));
         });
 
     Target Backend_SonarScan_Start => _ => _
@@ -65,25 +61,37 @@ partial class Build : NukeBuild
         .OnlyWhenStatic(() => OnGithubActionRun)
         .Executes(() =>
         {
-            SonarScanner(@$"dotnet sonarscanner begin \
-                /k:""followynne_serilog-ui\"" \
-                /o:""followynne"" \
-                /d:sonar.login=""{SonarToken}"" \
-                /d:sonar.host.url=""https://sonarcloud.io"" \  
-                /d:sonar.sources=src/ \
-                /d:sonar.exclusions=src/Serilog.Ui.Web/assets/**/*,src/Serilog.Ui.Web/wwwroot/**/*,src/Serilog.Ui.Web/node_modules/**/*,src/Serilog.Ui.Web/*.js,src/Serilog.Ui.Web/*.json \
-                /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml",
-                environmentVariables: new Dictionary<string, string> { ["GITHUB_TOKEN"] = GitHubActions.Instance.Token, ["SONAR_TOKEN"] = SonarToken });
+            SonarScannerTasks.SonarScannerBegin(new SonarScannerBeginSettings()
+                .SetFramework("net5.0")
+                .SetProjectKey("followynne_serilog-ui")
+                .SetOrganization("followynne")
+                .SetLogin(SonarToken)
+                .SetServer("https://sonarcloud.io")
+                .SetVisualStudioCoveragePaths("coverage.xml")
+                .SetSourceInclusions("src/")
+                .SetExcludeTestProjects(true)
+                .SetSourceExclusions(
+                    "src/Serilog.Ui.Web/assets/**/*",
+                    "src/Serilog.Ui.Web/wwwroot/**/*",
+                    "src/Serilog.Ui.Web/node_modules/**/*",
+                    "src/Serilog.Ui.Web/*.js",
+                    "src/Serilog.Ui.Web/*.json")
+                .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
+                .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken)
+            );
         });
 
     Target Backend_SonarScan_End => _ => _
-    .DependsOn(Backend_Test_Ci)
-    .OnlyWhenStatic(() => OnGithubActionRun)
-    .Executes(() =>
-    {
-        SonarScanner($"dotnet sonarscanner end /d:sonar.login=\"{SonarToken}\"",
-            environmentVariables: new Dictionary<string, string> { ["GITHUB_TOKEN"] = GitHubActions.Instance.Token, ["SONAR_TOKEN"] = SonarToken });
-    });
+        .DependsOn(Backend_Test_Ci)
+        .OnlyWhenStatic(() => OnGithubActionRun)
+        .Executes(() =>
+        {
+            SonarScannerTasks.SonarScannerEnd(new SonarScannerEndSettings()
+                .SetFramework("net5.0")
+                .SetLogin(SonarToken)
+                .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
+                .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken));            
+        });
 
     Target Frontend_SonarScan => _ => _
         .DependsOn(Frontend_Tests_Ci)
