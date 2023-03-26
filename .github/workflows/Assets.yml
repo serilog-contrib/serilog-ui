@@ -43,7 +43,7 @@ jobs:
         uses: dorny/test-reporter@v1.6.0
         if: always()
         with:
-          name: Assets Tests
+          name: JS - Tests
           path: '**/jest-*.xml'
           reporter: jest-junit
           fail-on-error: false

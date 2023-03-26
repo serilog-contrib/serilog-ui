@@ -10,10 +10,11 @@ on:
 
 jobs:
   DotNET_Build:
-    if: ${{ false}}
     secrets: inherit
+    name: DotNET - Build
     uses: './.github/workflows/DotNET.yml'
 
-  Assets_Build:
+  JS_Build:
+    name: JS - Build
     secrets: inherit
     uses: './.github/workflows/Assets.yml'
