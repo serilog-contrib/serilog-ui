@@ -31,6 +31,6 @@ partial class Build : NukeBuild
         .Executes(() =>
         {
             DotnetCoverage?.Invoke(
-                @"collect -f xml -o ""coverage.xml"" dotnet test --configuration Release --logger GitHubActions");
+                @"collect -f xml -o ""coverage.xml"" dotnet test --configuration Release --logger=""GitHubActions""");
         });
 }
