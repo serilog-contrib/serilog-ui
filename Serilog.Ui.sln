@@ -42,6 +42,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{83E91BE7-19B3-4AE0-992C-9DFF30FC409E}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		Directory.Build.Props = Directory.Build.Props
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
@@ -54,14 +55,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{04B4A8
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{5D0F29B0-11F4-4FEA-8D90-FD917F680D6D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests-related", "tests-related", "{DCB452AD-2E0E-4D6A-B46D-72D0AF247381}"
+	ProjectSection(SolutionItems) = preProject
+		tests\Directory.Build.Props = tests\Directory.Build.Props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5D0F29B0-11F4-4FEA-8D90-FD917F680D6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5D0F29B0-11F4-4FEA-8D90-FD917F680D6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BF751F9-67CA-47F2-84E0-068344A8F306}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3BF751F9-67CA-47F2-84E0-068344A8F306}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BF751F9-67CA-47F2-84E0-068344A8F306}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -122,6 +126,8 @@ Global
 		{1AB759E4-61CD-4195-9CA9-E70B63AF28B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AB759E4-61CD-4195-9CA9-E70B63AF28B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AB759E4-61CD-4195-9CA9-E70B63AF28B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D0F29B0-11F4-4FEA-8D90-FD917F680D6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D0F29B0-11F4-4FEA-8D90-FD917F680D6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -143,6 +149,7 @@ Global
 		{1F6675BC-32FC-47DE-96AB-422632AB2730} = {75F9223B-15F2-4465-B01D-2A5A49FCD000}
 		{1AB759E4-61CD-4195-9CA9-E70B63AF28B9} = {75F9223B-15F2-4465-B01D-2A5A49FCD000}
 		{04B4A8FE-0D7F-48AB-BDE5-AF934CEAD7DF} = {83E91BE7-19B3-4AE0-992C-9DFF30FC409E}
+		{DCB452AD-2E0E-4D6A-B46D-72D0AF247381} = {83E91BE7-19B3-4AE0-992C-9DFF30FC409E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {88374732-FEAD-4375-9CF1-75331A37CF07}

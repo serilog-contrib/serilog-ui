@@ -117,7 +117,7 @@ class GithubActionReporter : GitHubActionsStep
             using (writer.Indent())
             {
                 writer.WriteLine($"name: {name}");
-                writer.WriteLine($"output-to: step-summary");
+                writer.WriteLine($"output-to: checks");
                 writer.WriteLine($"path: {path}");
                 writer.WriteLine($"reporter: {reporter}");
                 writer.WriteLine("fail-on-error: false");

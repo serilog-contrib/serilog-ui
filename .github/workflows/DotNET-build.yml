@@ -53,7 +53,7 @@ jobs:
         if: always()
         with:
           name: DotNET - Tests
-          output-to: step-summary
+          output-to: checks
           path: '**/test-results.trx'
           reporter: dotnet-trx
           fail-on-error: false
