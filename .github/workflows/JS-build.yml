@@ -5,7 +5,7 @@
 #
 #     - To turn off auto-generation set:
 #
-#         [GitHubActions (AutoGenerate = false)]
+#         [CustomGithubActions (AutoGenerate = false)]
 #
 #     - To trigger manual generation invoke:
 #
@@ -46,3 +46,26 @@ jobs:
         env:
           SonarTokenUi: ${{ secrets.SONAR_TOKEN_UI }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: SonarCloud run
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_UI }}
+        with:
+          args: >
+            -Dsonar.organization=followynne
+            -Dsonar.projectKey=followynne_serilog-ui_assets
+            -Dsonar.sources=src/Serilog.Ui.Web/assets/
+            -Dsonar.tests=src/Serilog.Ui.Web/assets/
+            -Dsonar.exclusions=src/Serilog.Ui.Web/assets/__tests__/**/*
+            -Dsonar.test.inclusions=src/Serilog.Ui.Web/assets/__tests__/**/*
+            -Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/coverage/lcov.info
+
+      - uses: dorny/test-reporter@v1.6.0
+        if: always()
+        with:
+          name: JS - Tests
+          path: '**/jest-*.xml'
+          reporter: jest-junit
+          fail-on-error: false

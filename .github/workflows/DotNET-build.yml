@@ -5,7 +5,7 @@
 #
 #     - To turn off auto-generation set:
 #
-#         [GitHubActions (AutoGenerate = false)]
+#         [CustomGithubActions (AutoGenerate = false)]
 #
 #     - To trigger manual generation invoke:
 #
@@ -48,3 +48,11 @@ jobs:
           DockerhubPassword: ${{ secrets.DOCKERHUB_PASSWORD }}
           SonarToken: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: dorny/test-reporter@v1.6.0
+        if: always()
+        with:
+          name: DotNET - Tests
+          path: '**/test-results.trx'
+          reporter: dotnet-trx
+          fail-on-error: false

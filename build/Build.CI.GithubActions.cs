@@ -3,14 +3,16 @@ using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.SonarScanner;
 using System.Collections.Generic;
+using static CustomGithubActionsAttribute;
 
 /**
  * Interesting ref to make the build script executable on server:
  * https://blog.dangl.me/archive/executing-nuke-build-scripts-on-linux-machines-with-correct-file-permissions/
  * https://stackoverflow.com/a/40979016/15129749
  */
-[GitHubActions("DotNET-build",
+[CustomGithubActions("DotNET-build",
     GitHubActionsImage.UbuntuLatest,
+    AddGithubActions = new[] { GithubAction.BackendReporter },
     AutoGenerate = true,
     EnableGitHubToken = true,
     FetchDepth = 0,
@@ -19,8 +21,9 @@ using System.Collections.Generic;
     OnPushBranches = new[] { "master", "dev" },
     OnPullRequestBranches = new[] { "master", "dev" }
 )]
-[GitHubActions("JS-build",
+[CustomGithubActions("JS-build",
     GitHubActionsImage.UbuntuLatest,
+    AddGithubActions = new[] { GithubAction.SonarScanTask, GithubAction.FrontendReporter },
     AutoGenerate = true,
     EnableGitHubToken = true,
     FetchDepth = 0,
@@ -90,7 +93,7 @@ partial class Build : NukeBuild
                 .SetFramework("net5.0")
                 .SetLogin(SonarToken)
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
-                .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken));            
+                .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken));
         });
 
     Target Frontend_SonarScan => _ => _
