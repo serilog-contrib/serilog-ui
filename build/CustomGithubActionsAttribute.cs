@@ -106,7 +106,8 @@ class GithubActionReporter : GitHubActionsStep
     {
         writer.WriteLine(); // empty line to separate tasks
 
-        writer.WriteLine("- uses: dorny/test-reporter@v1.6.0");
+        // dorny/test-reporter@v1.6.0 => using fork to overcome issue #67
+        writer.WriteLine("- uses: phoenix-actions/test-reporting@v9");
 
         using (writer.Indent())
         {
@@ -116,6 +117,7 @@ class GithubActionReporter : GitHubActionsStep
             using (writer.Indent())
             {
                 writer.WriteLine($"name: {name}");
+                writer.WriteLine($"output-to: step-summary");
                 writer.WriteLine($"path: {path}");
                 writer.WriteLine($"reporter: {reporter}");
                 writer.WriteLine("fail-on-error: false");

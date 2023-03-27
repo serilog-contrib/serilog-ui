@@ -9,7 +9,6 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 partial class Build : NukeBuild
 {
     Target Backend_Clean => _ => _
-        .DependsOn(Docker_Setup)
         .Executes(() =>
         {
             SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(DeleteDirectory);

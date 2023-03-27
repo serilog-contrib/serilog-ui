@@ -41,8 +41,8 @@ jobs:
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
-      - name: Run './build.cmd Frontend_Reporter'
-        run: ./build.cmd Frontend_Reporter
+      - name: Run './build.cmd Frontend_Tests_Ci'
+        run: ./build.cmd Frontend_Tests_Ci
         env:
           SonarTokenUi: ${{ secrets.SONAR_TOKEN_UI }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -62,10 +62,11 @@ jobs:
             -Dsonar.test.inclusions=src/Serilog.Ui.Web/assets/__tests__/**/*
             -Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/coverage/lcov.info
 
-      - uses: dorny/test-reporter@v1.6.0
+      - uses: phoenix-actions/test-reporting@v9
         if: always()
         with:
           name: JS - Tests
+          output-to: step-summary
           path: '**/jest-*.xml'
           reporter: jest-junit
           fail-on-error: false

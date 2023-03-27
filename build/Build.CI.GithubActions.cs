@@ -2,7 +2,6 @@ using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.SonarScanner;
-using System.Collections.Generic;
 using static CustomGithubActionsAttribute;
 
 /**
@@ -17,7 +16,7 @@ using static CustomGithubActionsAttribute;
     EnableGitHubToken = true,
     FetchDepth = 0,
     ImportSecrets = new[] { nameof(DockerhubUsername), nameof(DockerhubPassword), nameof(SonarToken) },
-    InvokedTargets = new[] { nameof(Backend_Reporter) },
+    InvokedTargets = new[] { nameof(Backend_Test_Ci) },
     OnPushBranches = new[] { "master", "dev" },
     OnPullRequestBranches = new[] { "master", "dev" }
 )]
@@ -28,20 +27,12 @@ using static CustomGithubActionsAttribute;
     EnableGitHubToken = true,
     FetchDepth = 0,
     ImportSecrets = new[] { nameof(SonarTokenUi) },
-    InvokedTargets = new[] { nameof(Frontend_Reporter) },
+    InvokedTargets = new[] { nameof(Frontend_Tests_Ci) },
     OnPushBranches = new[] { "master", "dev" },
     OnPullRequestBranches = new[] { "master", "dev" }
 )]
 partial class Build : NukeBuild
 {
-    //[PackageExecutable(
-    //    packageId: "dotnet-sonarscanner",
-    //    packageExecutable: "SonarScanner.MSBuild.dll",
-    //    // Must be set for tools shipping multiple versions
-    //    Framework = "net5.0"
-    //)]
-    //readonly Tool SonarScanner;
-
     [Parameter][Secret] readonly string DockerhubUsername;
     [Parameter][Secret] readonly string DockerhubPassword;
     [Parameter][Secret] readonly string SonarToken;
@@ -49,15 +40,6 @@ partial class Build : NukeBuild
 
     public bool OnGithubActionRun = GitHubActions.Instance != null &&
             !string.IsNullOrWhiteSpace(GitHubActions.Instance.RunId.ToString());
-
-    Target Docker_Setup => _ => _
-        .OnlyWhenStatic(() => OnGithubActionRun)
-        .Executes(() =>
-        {
-            //DockerTasks.DockerLogin(new DockerLoginSettings()
-            //    .SetUsername(DockerhubUsername)
-            //    .SetPassword(DockerhubPassword));
-        });
 
     Target Backend_SonarScan_Start => _ => _
         .DependsOn(Backend_Restore)
@@ -94,29 +76,5 @@ partial class Build : NukeBuild
                 .SetLogin(SonarToken)
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
                 .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken));
-        });
-
-    Target Frontend_SonarScan => _ => _
-        .DependsOn(Frontend_Tests_Ci)
-        .OnlyWhenStatic(() => OnGithubActionRun)
-        .Executes(() =>
-        {
-            // TODO: Action
-        });
-
-    Target Frontend_Reporter => _ => _
-        .DependsOn(Frontend_SonarScan)
-        .OnlyWhenStatic(() => OnGithubActionRun)
-        .Executes(() =>
-        {
-            // TODO: action
-        });
-
-    Target Backend_Reporter => _ => _
-        .DependsOn(Backend_SonarScan_End)
-        .OnlyWhenStatic(() => OnGithubActionRun)
-        .Executes(() =>
-        {
-            // TODO: action
         });
 }

@@ -82,19 +82,15 @@
             "enum": [
               "Backend_Clean",
               "Backend_Compile",
-              "Backend_Reporter",
               "Backend_Restore",
               "Backend_SonarScan_End",
               "Backend_SonarScan_Start",
               "Backend_Test",
               "Backend_Test_Ci",
               "Clean",
-              "Docker_Setup",
               "Frontend_Build",
               "Frontend_Clean",
-              "Frontend_Reporter",
               "Frontend_Restore",
-              "Frontend_SonarScan",
               "Frontend_Tests",
               "Frontend_Tests_Ci"
             ]
@@ -120,19 +116,15 @@
             "enum": [
               "Backend_Clean",
               "Backend_Compile",
-              "Backend_Reporter",
               "Backend_Restore",
               "Backend_SonarScan_End",
               "Backend_SonarScan_Start",
               "Backend_Test",
               "Backend_Test_Ci",
               "Clean",
-              "Docker_Setup",
               "Frontend_Build",
               "Frontend_Clean",
-              "Frontend_Reporter",
               "Frontend_Restore",
-              "Frontend_SonarScan",
               "Frontend_Tests",
               "Frontend_Tests_Ci"
             ]
