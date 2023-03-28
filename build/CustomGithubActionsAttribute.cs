@@ -6,7 +6,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-// https://github.com/RicoSuter/NSwag/blob/master/build/Build.CI.GitHubActions.cs
+/// <summary>
+/// from: https://github.com/RicoSuter/NSwag/blob/master/build/Build.CI.GitHubActions.cs
+/// </summary>
 [SuppressMessage("Major Bug", "S3903:Types should be defined in named namespaces", Justification = "As per standard creation")]
 class CustomGithubActionsAttribute : GitHubActionsAttribute
 {
@@ -39,7 +41,7 @@ class CustomGithubActionsAttribute : GitHubActionsAttribute
                     newSteps.Add(new GithubActionReporter("JS - Tests", "'**/jest-*.xml'", "jest-junit"));
                     break;
                 case GithubAction.BackendReporter:
-                    newSteps.Add(new GithubActionReporter("DotNET - Tests", "'**/test-results.trx'", "dotnet-trx"));
+                    newSteps.Add(new ReportGeneratorAction());
                     break;
                 default:
                     break;
@@ -51,6 +53,9 @@ class CustomGithubActionsAttribute : GitHubActionsAttribute
     }
 }
 
+/// <summary>
+/// using: https://github.com/SonarSource/sonarcloud-github-action
+/// </summary>
 [SuppressMessage("Major Bug", "S3903:Types should be defined in named namespaces", Justification = "As per standard creation")]
 class GithubActionSonarCloud : GitHubActionsStep
 {
@@ -89,6 +94,10 @@ class GithubActionSonarCloud : GitHubActionsStep
     }
 }
 
+/// <summary>
+/// using: https://github.com/phoenix-actions/test-reporting
+/// from dorny/test-reporter@v1.6.0 => using fork to overcome issue #67
+/// </summary>
 [SuppressMessage("Major Bug", "S3903:Types should be defined in named namespaces", Justification = "As per standard creation")]
 class GithubActionReporter : GitHubActionsStep
 {
@@ -106,7 +115,6 @@ class GithubActionReporter : GitHubActionsStep
     {
         writer.WriteLine(); // empty line to separate tasks
 
-        // dorny/test-reporter@v1.6.0 => using fork to overcome issue #67
         writer.WriteLine("- uses: phoenix-actions/test-reporting@v9");
 
         using (writer.Indent())
@@ -121,6 +129,51 @@ class GithubActionReporter : GitHubActionsStep
                 writer.WriteLine($"path: {path}");
                 writer.WriteLine($"reporter: {reporter}");
                 writer.WriteLine("fail-on-error: false");
+            }
+        }
+    }
+}
+
+/// <summary>
+/// using: https://github.com/danielpalme/ReportGenerator-GitHub-Action
+/// </summary>
+[SuppressMessage("Major Bug", "S3903:Types should be defined in named namespaces", Justification = "As per standard creation")]
+class ReportGeneratorAction : GitHubActionsStep
+{
+    public override void Write(CustomFileWriter writer)
+    {
+        writer.WriteLine(); // empty line to separate tasks
+
+        writer.WriteLine("- name: ReportGenerator");
+
+        using (writer.Indent())
+        {
+            writer.WriteLine("uses: danielpalme/ReportGenerator-GitHub-Action@5.1.19");
+            writer.WriteLine("if: always()");
+
+            writer.WriteLine("with:");
+            using (writer.Indent())
+            {
+                writer.WriteLine($"reports: 'coverage.xml'");
+                writer.WriteLine($"targetdir: 'coveragereport'");
+                writer.WriteLine($"reporttypes: 'HtmlInline;Cobertura'");
+            }
+        }
+
+        writer.WriteLine(); // empty line to separate tasks
+
+        writer.WriteLine("- name: Upload coverage report artifact");
+        using (writer.Indent())
+        {
+            writer.WriteLine("uses: actions/upload-artifact@v2.2.3");
+            writer.WriteLine("if: always()"); // TODO: if ReporterGen succeded
+
+            writer.WriteLine("with:");
+            using (writer.Indent())
+            {
+                writer.WriteLine($"name: CoverageReport");
+                writer.WriteLine($"path: coveragereport");
+                writer.WriteLine($"reporttypes: 'HtmlInline;Cobertura'");
             }
         }
     }

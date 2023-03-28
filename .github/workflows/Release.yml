@@ -9,22 +9,19 @@
 #
 #     - To trigger manual generation invoke:
 #
-#         nuke --generate-configuration GitHubActions_JS-build --host GitHubActions
+#         nuke --generate-configuration GitHubActions_Release --host GitHubActions
 #
 # </auto-generated>
 # ------------------------------------------------------------------------------
 
-name: JS-build
+name: Release
 
 on:
-  push:
-    branches:
-      - master
-      - dev
-  pull_request:
-    branches:
-      - master
-      - dev
+  workflow_dispatch:
+    inputs:
+      IncludeMsSql:
+        description: "Include Ms Sql"
+        required: true
 
 jobs:
   ubuntu-latest:
@@ -41,11 +38,22 @@ jobs:
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
-      - name: Run './build.cmd Frontend_Tests_Ci'
-        run: ./build.cmd Frontend_Tests_Ci
+      - name: Run './build.cmd Publish'
+        run: ./build.cmd Publish
         env:
+          IncludeMsSql: ${{ github.event.inputs.IncludeMsSql }}
           SonarTokenUi: ${{ secrets.SONAR_TOKEN_UI }}
+          SonarToken: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: phoenix-actions/test-reporting@v9
+        if: always()
+        with:
+          name: DotNET - Tests
+          output-to: step-summary
+          path: '**/test-results.trx'
+          reporter: dotnet-trx
+          fail-on-error: false
 
       - name: SonarCloud run
         uses: SonarSource/sonarcloud-github-action@master

@@ -18,14 +18,6 @@
           "type": "boolean",
           "description": "Indicates to continue a previously failed build attempt"
         },
-        "DockerhubPassword": {
-          "type": "string",
-          "default": "Secrets must be entered via 'nuke :secrets [profile]'"
-        },
-        "DockerhubUsername": {
-          "type": "string",
-          "default": "Secrets must be entered via 'nuke :secrets [profile]'"
-        },
         "Help": {
           "type": "boolean",
           "description": "Shows the help text for this build assembly"
@@ -50,6 +42,9 @@
             "VisualStudio",
             "VSCode"
           ]
+        },
+        "IncludeMsSql": {
+          "type": "string"
         },
         "NoLogo": {
           "type": "boolean",
@@ -92,7 +87,9 @@
               "Frontend_Clean",
               "Frontend_Restore",
               "Frontend_Tests",
-              "Frontend_Tests_Ci"
+              "Frontend_Tests_Ci",
+              "Pack",
+              "Publish"
             ]
           }
         },
@@ -126,7 +123,9 @@
               "Frontend_Clean",
               "Frontend_Restore",
               "Frontend_Tests",
-              "Frontend_Tests_Ci"
+              "Frontend_Tests_Ci",
+              "Pack",
+              "Publish"
             ]
           }
         },

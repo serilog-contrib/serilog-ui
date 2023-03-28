@@ -15,8 +15,8 @@ using static CustomGithubActionsAttribute;
     AutoGenerate = true,
     EnableGitHubToken = true,
     FetchDepth = 0,
-    ImportSecrets = new[] { nameof(DockerhubUsername), nameof(DockerhubPassword), nameof(SonarToken) },
-    InvokedTargets = new[] { nameof(Backend_Test_Ci) },
+    ImportSecrets = new[] { nameof(SonarToken) },
+    InvokedTargets = new[] { nameof(Backend_SonarScan_End) },
     OnPushBranches = new[] { "master", "dev" },
     OnPullRequestBranches = new[] { "master", "dev" }
 )]
@@ -31,15 +31,24 @@ using static CustomGithubActionsAttribute;
     OnPushBranches = new[] { "master", "dev" },
     OnPullRequestBranches = new[] { "master", "dev" }
 )]
+[CustomGithubActions("Release",
+    GitHubActionsImage.UbuntuLatest,
+    AddGithubActions = new[] { GithubAction.BackendReporter, GithubAction.SonarScanTask, GithubAction.FrontendReporter },
+    AutoGenerate = true,
+    EnableGitHubToken = true,
+    FetchDepth = 0,
+    ImportSecrets = new[] { nameof(SonarTokenUi), nameof(SonarToken) },
+    InvokedTargets = new[] { nameof(Publish) },
+    OnWorkflowDispatchRequiredInputs = new[] { nameof(IncludeMsSql) }
+)]
 partial class Build : NukeBuild
 {
-    [Parameter][Secret] readonly string DockerhubUsername;
-    [Parameter][Secret] readonly string DockerhubPassword;
     [Parameter][Secret] readonly string SonarToken;
     [Parameter][Secret] readonly string SonarTokenUi;
+    [Parameter] readonly string IncludeMsSql;
 
     public bool OnGithubActionRun = GitHubActions.Instance != null &&
-            !string.IsNullOrWhiteSpace(GitHubActions.Instance.RunId.ToString());
+            !string.IsNullOrWhiteSpace(GitHubActions.Instance.RunId.ToString()); 
 
     Target Backend_SonarScan_Start => _ => _
         .DependsOn(Backend_Restore)
