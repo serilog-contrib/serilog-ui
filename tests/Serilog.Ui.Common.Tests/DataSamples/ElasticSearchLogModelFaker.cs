@@ -7,14 +7,14 @@ namespace Serilog.Ui.Common.Tests.DataSamples
 {
     public static class ElasticSearchLogModelFaker
     {
-        public static LogModelPropsCollector LogsAsync(ILogger logger)
+        public static LogModelPropsCollector Logs(ILogger logger)
         {
             var logs = new List<LogModel>();
-            logger.Information("90 Information");
-            logs.Add(Spawn("Information", 90));
+            logger.Information("90 MyTestSearchItem");
+            logs.Add(Spawn("MyTestSearchItem", 90));
             Task.Delay(2000).Wait();
-            logger.Information("91 Information");
-            logs.Add(Spawn("Information", 91));
+            logger.Information("91 AnotherProp");
+            logs.Add(Spawn("AnotherProp", 91));
             Task.Delay(1000).Wait();
             logger.Information("92 Information");
             logs.Add(Spawn("Information", 92));

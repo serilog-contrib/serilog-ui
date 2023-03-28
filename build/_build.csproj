@@ -11,6 +11,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Include="Directory.Build.props">
+	    <Generator>SettingsSingleFileGenerator</Generator>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Nuke.Common" Version="6.3.0" />
 	</ItemGroup>
 
@@ -18,5 +24,4 @@
 		<PackageDownload Include="dotnet-coverage" Version="[17.6.11]" />
 		<PackageDownload Include="dotnet-sonarscanner" Version="[5.12.0]" />
 	</ItemGroup>
-
 </Project>
