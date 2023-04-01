@@ -84,8 +84,8 @@ partial class Build : NukeBuild
                 .SetOrganization("followynne")
                 .SetLogin(SonarToken)
                 .SetServer("https://sonarcloud.io")
-                .SetVisualStudioCoveragePaths("coverage.xml")
-                .SetSourceInclusions("src/")
+                .SetVisualStudioCoveragePaths("**/coverage.xml")
+                .SetSourceInclusions("src/**/*")
                 .SetExcludeTestProjects(true)
                 .SetSourceExclusions(
                     "src/Serilog.Ui.Web/assets/**/*",

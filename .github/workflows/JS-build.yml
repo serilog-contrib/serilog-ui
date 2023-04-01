@@ -66,7 +66,7 @@ jobs:
         if: always()
         with:
           name: JS - Tests
-          output-to: step-summary
+          output-to: checks
           path: '**/jest-*.xml'
           reporter: jest-junit
           fail-on-error: false

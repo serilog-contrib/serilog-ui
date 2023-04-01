@@ -71,7 +71,7 @@ jobs:
         if: always()
         with:
           name: DotNET - Tests
-          output-to: step-summary
+          output-to: checks
           path: '**/test-results.trx'
           reporter: dotnet-trx
           fail-on-error: false
@@ -95,7 +95,7 @@ jobs:
         if: always()
         with:
           name: JS - Tests
-          output-to: step-summary
+          output-to: checks
           path: '**/jest-*.xml'
           reporter: jest-junit
           fail-on-error: false
