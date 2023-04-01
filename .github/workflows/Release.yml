@@ -19,8 +19,23 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      IncludeMsSql:
-        description: "Include Ms Sql"
+      ElasticProvider:
+        description: "Elastic Provider"
+        required: true
+      MongoProvider:
+        description: "Mongo Provider"
+        required: true
+      MsSqlProvider:
+        description: "Ms Sql Provider"
+        required: true
+      MySqlProvider:
+        description: "My Sql Provider"
+        required: true
+      PostgresProvider:
+        description: "Postgres Provider"
+        required: true
+      Ui:
+        description: "Ui"
         required: true
 
 jobs:
@@ -41,9 +56,15 @@ jobs:
       - name: Run './build.cmd Publish'
         run: ./build.cmd Publish
         env:
-          IncludeMsSql: ${{ github.event.inputs.IncludeMsSql }}
+          ElasticProvider: ${{ github.event.inputs.ElasticProvider }}
+          MongoProvider: ${{ github.event.inputs.MongoProvider }}
+          MsSqlProvider: ${{ github.event.inputs.MsSqlProvider }}
+          MySqlProvider: ${{ github.event.inputs.MySqlProvider }}
+          PostgresProvider: ${{ github.event.inputs.PostgresProvider }}
+          Ui: ${{ github.event.inputs.Ui }}
           SonarTokenUi: ${{ secrets.SONAR_TOKEN_UI }}
           SonarToken: ${{ secrets.SONAR_TOKEN }}
+          NugetApiKey: ${{ secrets.NUGET_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: phoenix-actions/test-reporting@v9

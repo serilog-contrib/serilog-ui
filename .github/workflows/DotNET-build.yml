@@ -47,18 +47,11 @@ jobs:
           SonarToken: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: ReportGenerator
-        uses: danielpalme/ReportGenerator-GitHub-Action@5.1.19
+      - uses: phoenix-actions/test-reporting@v9
         if: always()
         with:
-          reports: 'coverage.xml'
-          targetdir: 'coveragereport'
-          reporttypes: 'HtmlInline;Cobertura'
-
-      - name: Upload coverage report artifact
-        uses: actions/upload-artifact@v2.2.3
-        if: always()
-        with:
-          name: CoverageReport
-          path: coveragereport
-          reporttypes: 'HtmlInline;Cobertura'
+          name: DotNET - Tests
+          output-to: step-summary
+          path: '**/test-results.trx'
+          reporter: dotnet-trx
+          fail-on-error: false

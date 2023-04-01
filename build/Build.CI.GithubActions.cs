@@ -37,18 +37,41 @@ using static CustomGithubActionsAttribute;
     AutoGenerate = true,
     EnableGitHubToken = true,
     FetchDepth = 0,
-    ImportSecrets = new[] { nameof(SonarTokenUi), nameof(SonarToken) },
+    ImportSecrets = new[] { nameof(SonarTokenUi), nameof(SonarToken), nameof(NugetApiKey) },
     InvokedTargets = new[] { nameof(Publish) },
-    OnWorkflowDispatchRequiredInputs = new[] { nameof(IncludeMsSql) }
+    OnWorkflowDispatchRequiredInputs = new[] {
+        nameof(ElasticProvider),
+        nameof(MongoProvider),
+        nameof(MsSqlProvider),
+        nameof(MySqlProvider),
+        nameof(PostgresProvider),
+        nameof(Ui),
+    }
 )]
 partial class Build : NukeBuild
 {
     [Parameter][Secret] readonly string SonarToken;
     [Parameter][Secret] readonly string SonarTokenUi;
-    [Parameter] readonly string IncludeMsSql;
+    [Parameter][Secret] readonly string NugetApiKey;
+    [Parameter] readonly string ElasticProvider = string.Empty;
+    [Parameter] readonly string MongoProvider = string.Empty;
+    [Parameter] readonly string MsSqlProvider = string.Empty;
+    [Parameter] readonly string MySqlProvider = string.Empty;
+    [Parameter] readonly string PostgresProvider = string.Empty;
+    [Parameter] readonly string Ui = string.Empty;
+
+    public ReleaseParams[] ReleaseInfos() => new ReleaseParams[]
+    {
+        new(nameof(ElasticProvider), ElasticProvider, "Serilog.Ui.ElasticSearchProvider"),
+        new(nameof(MongoProvider), MongoProvider, "Serilog.Ui.MongoDbProvider"),
+        new(nameof(MsSqlProvider), MsSqlProvider, "Serilog.Ui.MsSqlServerProvider"),
+        new(nameof(MySqlProvider), MySqlProvider, "Serilog.Ui.MySqlProvider"),
+        new(nameof(PostgresProvider), PostgresProvider, "Serilog.Ui.PostgreSqlProvider"),
+        new(nameof(Ui), Ui, "Serilog.Ui.Web"),
+    };
 
     public bool OnGithubActionRun = GitHubActions.Instance != null &&
-            !string.IsNullOrWhiteSpace(GitHubActions.Instance.RunId.ToString()); 
+            !string.IsNullOrWhiteSpace(GitHubActions.Instance.RunId.ToString());
 
     Target Backend_SonarScan_Start => _ => _
         .DependsOn(Backend_Restore)
@@ -86,4 +109,9 @@ partial class Build : NukeBuild
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
                 .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken));
         });
+}
+
+public readonly record struct ReleaseParams(string Key, string ShouldPublish, string Project)
+{
+    public bool Publish() => ShouldPublish.Equals("true");
 }

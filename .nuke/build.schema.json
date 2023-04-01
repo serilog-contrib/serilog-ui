@@ -18,6 +18,9 @@
           "type": "boolean",
           "description": "Indicates to continue a previously failed build attempt"
         },
+        "ElasticProvider": {
+          "type": "string"
+        },
         "Help": {
           "type": "boolean",
           "description": "Shows the help text for this build assembly"
@@ -43,12 +46,22 @@
             "VSCode"
           ]
         },
-        "IncludeMsSql": {
+        "MongoProvider": {
+          "type": "string"
+        },
+        "MsSqlProvider": {
+          "type": "string"
+        },
+        "MySqlProvider": {
           "type": "string"
         },
         "NoLogo": {
           "type": "boolean",
           "description": "Disables displaying the NUKE logo"
+        },
+        "NugetApiKey": {
+          "type": "string",
+          "default": "Secrets must be entered via 'nuke :secrets [profile]'"
         },
         "Partition": {
           "type": "string",
@@ -57,6 +70,9 @@
         "Plan": {
           "type": "boolean",
           "description": "Shows the execution plan (HTML)"
+        },
+        "PostgresProvider": {
+          "type": "string"
         },
         "Profile": {
           "type": "array",
@@ -128,6 +144,9 @@
               "Publish"
             ]
           }
+        },
+        "Ui": {
+          "type": "string"
         },
         "Verbosity": {
           "type": "string",

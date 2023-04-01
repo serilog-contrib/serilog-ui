@@ -30,7 +30,9 @@ partial class Build : NukeBuild
         );
     });
 
-    // from https://dev.to/damikun/the-cross-platform-build-automation-with-nuke-1kmc
+    /// <summary>
+    /// from: https://dev.to/damikun/the-cross-platform-build-automation-with-nuke-1kmc
+    /// </summary>
     public static void CustomLogger(OutputType type, string output)
     {
         switch (type)
@@ -39,16 +41,16 @@ partial class Build : NukeBuild
                 Serilog.Log.Debug(output);
                 break;
             case OutputType.Err:
-            { 
-                if (
-                    output.Contains(
-                        "npmWARN",
-                        StringComparison.OrdinalIgnoreCase
-                    ) ||
-                    output.Contains(
-                        "npm WARN",
-                        StringComparison.OrdinalIgnoreCase
-                    ))
+                {
+                    if (
+                        output.Contains(
+                            "npmWARN",
+                            StringComparison.OrdinalIgnoreCase
+                        ) ||
+                        output.Contains(
+                            "npm WARN",
+                            StringComparison.OrdinalIgnoreCase
+                        ))
                         Serilog.Log.Warning(output);
                     else
                         Serilog.Log.Error(output);
