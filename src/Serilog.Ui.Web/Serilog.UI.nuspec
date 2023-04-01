@@ -7,7 +7,7 @@
 		<authors>Mohsen Esmailpour</authors>
 		<owners>mo.esmp</owners>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<projectUrl>https://github.com/mo-esmp/serilog-ui</projectUrl>
+		<projectUrl>https://github.com/serilog-contrib/serilog-ui</projectUrl>
 		<license type="expression">MIT</license>
 		<description>Simple web UI for several Serilog sinks.</description>
 		<readme>docs\README.md</readme>
@@ -19,18 +19,22 @@
 		<icon>assets\icon.png</icon>
 		<dependencies>
 			<group targetFramework=".NETCoreApp3.1">
+				<dependency id="Ardalis.GuardClauses" version="4.0.1" exclude="Build,Analyzers" />
 				<dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="3.1.3" exclude="Build,Analyzers" />
 				<dependency id="Newtonsoft.Json" version="13.0.2" exclude="Build,Analyzers" />
 			</group>
 			<group targetFramework=".NET5.0">
+				<dependency id="Ardalis.GuardClauses" version="4.0.1" exclude="Build,Analyzers" />
 				<dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="5.0.0" exclude="Build,Analyzers" />
 				<dependency id="Newtonsoft.Json" version="13.0.2" exclude="Build,Analyzers" />
 			</group>
 			<group targetFramework=".NET6.0">
+				<dependency id="Ardalis.GuardClauses" version="4.0.1" exclude="Build,Analyzers" />
 				<dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="6.0.0" exclude="Build,Analyzers" />
 				<dependency id="Newtonsoft.Json" version="13.0.2" exclude="Build,Analyzers" />
 			</group>
 			<group targetFramework=".NET7.0">
+				<dependency id="Ardalis.GuardClauses" version="4.0.1" exclude="Build,Analyzers" />
 				<dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="7.0.0" exclude="Build,Analyzers" />
 				<dependency id="Newtonsoft.Json" version="13.0.2" exclude="Build,Analyzers" />
 			</group>
