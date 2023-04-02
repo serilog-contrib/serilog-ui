@@ -11,7 +11,7 @@ using static CustomGithubActionsAttribute;
  */
 [CustomGithubActions("DotNET-build",
     GitHubActionsImage.UbuntuLatest,
-    AddGithubActions = new[] { GithubAction.BackendReporter },
+    AddGithubActions = new[] { GithubAction.Backend_Reporter },
     AutoGenerate = true,
     EnableGitHubToken = true,
     FetchDepth = 0,
@@ -22,7 +22,7 @@ using static CustomGithubActionsAttribute;
 )]
 [CustomGithubActions("JS-build",
     GitHubActionsImage.UbuntuLatest,
-    AddGithubActions = new[] { GithubAction.SonarScanTask, GithubAction.FrontendReporter },
+    AddGithubActions = new[] { GithubAction.Frontend_SonarScan_Task, GithubAction.Frontend_Reporter },
     AutoGenerate = true,
     EnableGitHubToken = true,
     FetchDepth = 0,
@@ -33,7 +33,7 @@ using static CustomGithubActionsAttribute;
 )]
 [CustomGithubActions("Release",
     GitHubActionsImage.UbuntuLatest,
-    AddGithubActions = new[] { GithubAction.BackendReporter, GithubAction.SonarScanTask, GithubAction.FrontendReporter },
+    AddGithubActions = new[] { GithubAction.Backend_Reporter, GithubAction.Frontend_SonarScan_Task, GithubAction.Frontend_Reporter },
     AutoGenerate = true,
     EnableGitHubToken = true,
     FetchDepth = 0,
@@ -75,24 +75,27 @@ partial class Build : NukeBuild
 
     Target Backend_SonarScan_Start => _ => _
         .DependsOn(Backend_Restore)
-        .OnlyWhenStatic(() => OnGithubActionRun)
+        .OnlyWhenStatic(() => OnGithubActionRun &&
+            !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
+            !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
+        )
         .Executes(() =>
         {
             SonarScannerTasks.SonarScannerBegin(new SonarScannerBeginSettings()
-                .SetFramework("net5.0")
-                .SetProjectKey("followynne_serilog-ui")
-                .SetOrganization("followynne")
-                .SetLogin(SonarToken)
-                .SetServer("https://sonarcloud.io")
-                .SetVisualStudioCoveragePaths("**/coverage.xml")
-                .SetSourceInclusions("src/**/*")
                 .SetExcludeTestProjects(true)
+                .SetFramework("net5.0")
+                .SetLogin(SonarToken)
+                .SetOrganization(SonarCloudInfo.Organization)
+                .SetProjectKey(SonarCloudInfo.BackendProjectKey)
+                .SetServer("https://sonarcloud.io")
+                .SetSourceInclusions("src/**/*")
                 .SetSourceExclusions(
                     "src/Serilog.Ui.Web/assets/**/*",
                     "src/Serilog.Ui.Web/wwwroot/**/*",
                     "src/Serilog.Ui.Web/node_modules/**/*",
                     "src/Serilog.Ui.Web/*.js",
                     "src/Serilog.Ui.Web/*.json")
+                .SetVisualStudioCoveragePaths("**/coverage.xml")
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
                 .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken)
             );
@@ -100,7 +103,10 @@ partial class Build : NukeBuild
 
     Target Backend_SonarScan_End => _ => _
         .DependsOn(Backend_Test_Ci)
-        .OnlyWhenStatic(() => OnGithubActionRun)
+        .OnlyWhenStatic(() => OnGithubActionRun &&
+            !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
+            !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
+        )
         .Executes(() =>
         {
             SonarScannerTasks.SonarScannerEnd(new SonarScannerEndSettings()

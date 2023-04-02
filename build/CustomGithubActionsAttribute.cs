@@ -4,7 +4,6 @@ using Nuke.Common.Execution;
 using Nuke.Common.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 /// <summary>
 /// from: https://github.com/RicoSuter/NSwag/blob/master/build/Build.CI.GitHubActions.cs
@@ -19,9 +18,9 @@ class CustomGithubActionsAttribute : GitHubActionsAttribute
 
     public enum GithubAction
     {
-        SonarScanTask,
-        FrontendReporter,
-        BackendReporter
+        Frontend_SonarScan_Task,
+        Frontend_Reporter,
+        Backend_Reporter
     }
 
     protected override GitHubActionsJob GetJobs(GitHubActionsImage image, IReadOnlyCollection<ExecutableTarget> relevantTargets)
@@ -33,13 +32,13 @@ class CustomGithubActionsAttribute : GitHubActionsAttribute
         {
             switch (act)
             {
-                case GithubAction.SonarScanTask:
+                case GithubAction.Frontend_SonarScan_Task:
                     newSteps.Add(new GithubActionSonarCloud());
                     break;
-                case GithubAction.FrontendReporter:
+                case GithubAction.Frontend_Reporter:
                     newSteps.Add(new GithubActionReporter("JS - Tests", "'**/jest-*.xml'", "jest-junit"));
                     break;
-                case GithubAction.BackendReporter:
+                case GithubAction.Backend_Reporter:
                     newSteps.Add(new GithubActionReporter("DotNET - Tests", "'**/test-results.trx'", "dotnet-trx"));
                     break;
                 default:
@@ -66,6 +65,12 @@ class GithubActionSonarCloud : GitHubActionsStep
         using (writer.Indent())
         {
             writer.WriteLine("uses: SonarSource/sonarcloud-github-action@master");
+
+            if (string.IsNullOrWhiteSpace(SonarCloudInfo.FrontendProjectKey))
+            {
+                writer.WriteLine("if: ${{ false }}");
+            }
+
             writer.WriteLine("env:");
             using (writer.Indent())
             {
@@ -79,8 +84,8 @@ class GithubActionSonarCloud : GitHubActionsStep
                 writer.WriteLine($"args: >");
                 using (writer.Indent())
                 {
-                    writer.WriteLine($"-Dsonar.organization=followynne");
-                    writer.WriteLine("-Dsonar.projectKey=followynne_serilog-ui_assets");
+                    writer.WriteLine($"-Dsonar.organization={SonarCloudInfo.Organization}");
+                    writer.WriteLine($"-Dsonar.projectKey={SonarCloudInfo.FrontendProjectKey}");
                     writer.WriteLine("-Dsonar.sources=src/Serilog.Ui.Web/assets/");
                     writer.WriteLine($"-Dsonar.tests=src/Serilog.Ui.Web/assets/");
                     writer.WriteLine($"-Dsonar.exclusions=src/Serilog.Ui.Web/assets/__tests__/**/*");
