@@ -18,7 +18,7 @@ internal class Configuration : Enumeration
 /// </summary>
 internal static class SonarCloudInfo
 {
-    internal const string Organization = "";
-    internal const string BackendProjectKey = "";
-    internal const string FrontendProjectKey = "";
+    internal const string Organization = "followynne";
+    internal const string BackendProjectKey = "followynne_serilog-ui";
+    internal const string FrontendProjectKey = "followynne_serilog-ui_assets";
 }
