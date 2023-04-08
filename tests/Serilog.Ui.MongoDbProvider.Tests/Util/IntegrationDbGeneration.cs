@@ -1,4 +1,4 @@
-﻿using Mongo2Go;
+﻿using EphemeralMongo;
 using MongoDB.Driver;
 using Serilog.Ui.MongoDbProvider;
 using System;
@@ -7,9 +7,13 @@ namespace MongoDb.Tests.Util
 {
     public static class IntegrationDbGeneration
     {
-        public static (MongoDbRunner runner, IMongoClient client) Generate(MongoDbOptions options)
+        public static (IMongoRunner runner, IMongoClient client) Generate(MongoDbOptions options)
         {
-            var runner = MongoDbRunner.Start(singleNodeReplSet: true, additionalMongodArguments: "--quiet");
+            var runner = MongoRunner.Run(new MongoRunnerOptions
+            {
+                UseSingleNodeReplicaSet = true,
+                AdditionalArguments = "--quiet"
+            });
             var settings = MongoClientSettings.FromConnectionString(runner.ConnectionString);
             settings.ServerSelectionTimeout = TimeSpan.FromSeconds(10);
             var client = new MongoClient(settings);

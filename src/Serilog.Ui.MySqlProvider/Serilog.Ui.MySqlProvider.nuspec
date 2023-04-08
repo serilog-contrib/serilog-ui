@@ -6,7 +6,7 @@
     <title>Serilog.UI.MySqlProvider</title>
     <authors>Mohsen Esmailpour</authors>
     <owners>mo.esmp</owners>
-    <projectUrl>https://github.com/mo-esmp/serilog-ui</projectUrl>
+    <projectUrl>https://github.com/serilog-contrib/serilog-ui</projectUrl>
     <license type="expression">MIT</license>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>MySQL and MariaDB data provider for Serilog UI.</description>
@@ -16,6 +16,7 @@
 	<icon>assets\icon.png</icon>
     <dependencies>
       <group targetFramework=".NETStandard2.0">
+				<dependency id="Ardalis.GuardClauses" version="4.0.1" exclude="Build,Analyzers" />
         <dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="3.1.3" exclude="Build,Analyzers" />
         <dependency id="Dapper" version="2.0.35" exclude="Build,Analyzers" />
         <dependency id="MySql.Data" version="8.0.23" exclude="Build,Analyzers" />

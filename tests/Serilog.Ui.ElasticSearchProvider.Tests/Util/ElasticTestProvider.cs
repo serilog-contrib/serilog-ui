@@ -83,7 +83,7 @@ namespace ElasticSearch.Tests.Util
         public LogModelPropsCollector InitializeLogs()
         {
             using var logger = loggerConfig.CreateLogger();
-            return ElasticSearchLogModelFaker.LogsAsync(logger);
+            return ElasticSearchLogModelFaker.Logs(logger);
         }
     }
 }

@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+		<RootNamespace></RootNamespace>
+		<NoWarn>CS0649;CS0169</NoWarn>
+		<NukeRootDirectory>..</NukeRootDirectory>
+		<NukeScriptDirectory>..</NukeScriptDirectory>
+		<NukeTelemetryVersion>1</NukeTelemetryVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="Directory.Build.props">
+	    <Generator>SettingsSingleFileGenerator</Generator>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Nuke.Common" Version="6.3.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageDownload Include="dotnet-coverage" Version="[17.6.11]" />
+		<PackageDownload Include="dotnet-sonarscanner" Version="[5.12.0]" />
+	</ItemGroup>
+</Project>

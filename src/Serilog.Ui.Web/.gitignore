@@ -3,3 +3,5 @@ wwwroot/dev/
 wwwroot/dist/
 wwwroot/mockServiceWorker.js
 !wwwroot/dev/mockServiceWorker.js
+
+**/jest-*.xml

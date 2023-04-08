@@ -21,14 +21,14 @@ namespace Serilog.Ui.MsSqlServerProvider
         public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
             int page,
             int count,
-            string logLevel = null,
+            string level = null,
             string searchCriteria = null,
             DateTime? startDate = null,
             DateTime? endDate = null
         )
         {
-            var logsTask = GetLogsAsync(page - 1, count, logLevel, searchCriteria, startDate, endDate);
-            var logCountTask = CountLogsAsync(logLevel, searchCriteria, startDate, endDate);
+            var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
+            var logCountTask = CountLogsAsync(level, searchCriteria, startDate, endDate);
 
             await Task.WhenAll(logsTask, logCountTask);
 
