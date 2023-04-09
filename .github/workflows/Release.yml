@@ -78,14 +78,13 @@ jobs:
 
       - name: SonarCloud run
         uses: SonarSource/sonarcloud-github-action@master
-        if: ${{ false }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_UI }}
         with:
           args: >
-            -Dsonar.organization=
-            -Dsonar.projectKey=
+            -Dsonar.organization=followynne
+            -Dsonar.projectKey=followynne_serilog-ui_assets
             -Dsonar.sources=src/Serilog.Ui.Web/assets/
             -Dsonar.tests=src/Serilog.Ui.Web/assets/
             -Dsonar.exclusions=src/Serilog.Ui.Web/assets/__tests__/**/*

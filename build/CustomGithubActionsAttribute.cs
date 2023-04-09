@@ -66,11 +66,6 @@ class GithubActionSonarCloud : GitHubActionsStep
         {
             writer.WriteLine("uses: SonarSource/sonarcloud-github-action@master");
 
-            if (string.IsNullOrWhiteSpace(SonarCloudInfo.FrontendProjectKey))
-            {
-                writer.WriteLine("if: ${{ false }}");
-            }
-
             writer.WriteLine("env:");
             using (writer.Indent())
             {
