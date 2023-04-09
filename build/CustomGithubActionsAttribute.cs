@@ -20,7 +20,9 @@ class CustomGithubActionsAttribute : GitHubActionsAttribute
     {
         Frontend_SonarScan_Task,
         Frontend_Reporter,
-        Backend_Reporter
+        Frontend_Artifact,
+        Backend_Reporter,
+        Backend_Artifact,
     }
 
     protected override GitHubActionsJob GetJobs(GitHubActionsImage image, IReadOnlyCollection<ExecutableTarget> relevantTargets)
@@ -35,8 +37,14 @@ class CustomGithubActionsAttribute : GitHubActionsAttribute
                 case GithubAction.Frontend_SonarScan_Task:
                     newSteps.Add(new GithubActionSonarCloud());
                     break;
+                case GithubAction.Frontend_Artifact:
+                    newSteps.Add(new GithubActionUploadArtifact("'**/jest-*.xml'"));
+                    break;
                 case GithubAction.Frontend_Reporter:
                     newSteps.Add(new GithubActionReporter("JS - Tests", "'**/jest-*.xml'", "jest-junit"));
+                    break;
+                case GithubAction.Backend_Artifact:
+                    newSteps.Add(new GithubActionUploadArtifact("'**/test-results.trx'"));
                     break;
                 case GithubAction.Backend_Reporter:
                     newSteps.Add(new GithubActionReporter("DotNET - Tests", "'**/test-results.trx'", "dotnet-trx"));
@@ -48,6 +56,35 @@ class CustomGithubActionsAttribute : GitHubActionsAttribute
 
         job.Steps = newSteps.ToArray();
         return job;
+    }
+}
+
+class GithubActionUploadArtifact : GitHubActionsStep
+{
+    readonly string Path;
+
+    public GithubActionUploadArtifact(string path)
+    {
+        Path = path;
+    }
+
+    public override void Write(CustomFileWriter writer)
+    {
+        writer.WriteLine(); // empty line to separate tasks
+
+        writer.WriteLine("- uses: actions/upload-artifact@v2");
+
+        using (writer.Indent())
+        {
+            writer.WriteLine("if: always()");
+
+            writer.WriteLine("with:");
+            using (writer.Indent())
+            {
+                writer.WriteLine($"name: test-results");
+                writer.WriteLine($"path: {Path}");
+            }
+        }
     }
 }
 
@@ -65,6 +102,8 @@ class GithubActionSonarCloud : GitHubActionsStep
         using (writer.Indent())
         {
             writer.WriteLine("uses: SonarSource/sonarcloud-github-action@master");
+
+            writer.WriteLine("if: needs.pr-check.outputs.number == 'null'");
 
             writer.WriteLine("env:");
             using (writer.Indent())
