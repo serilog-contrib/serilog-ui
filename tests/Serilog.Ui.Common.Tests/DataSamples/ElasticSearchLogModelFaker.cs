@@ -7,14 +7,14 @@ namespace Serilog.Ui.Common.Tests.DataSamples
 {
     public static class ElasticSearchLogModelFaker
     {
-        public static LogModelPropsCollector LogsAsync(ILogger logger)
+        public static LogModelPropsCollector Logs(ILogger logger)
         {
             var logs = new List<LogModel>();
-            logger.Information("90 Information");
-            logs.Add(Spawn("Information", 90));
+            logger.Information("90 MyTestSearchItem");
+            logs.Add(Spawn("Information", 90, "MyTestSearchItem"));
             Task.Delay(2000).Wait();
-            logger.Information("91 Information");
-            logs.Add(Spawn("Information", 91));
+            logger.Information("91 AnotherProp");
+            logs.Add(Spawn("Information", 91, "AnotherProp"));
             Task.Delay(1000).Wait();
             logger.Information("92 Information");
             logs.Add(Spawn("Information", 92));
@@ -38,12 +38,12 @@ namespace Serilog.Ui.Common.Tests.DataSamples
             return new LogModelPropsCollector(logs);
         }
 
-        private static LogModel Spawn(string level, int rowNum)
+        private static LogModel Spawn(string level, int rowNum, string messageOverride = null)
             => new()
             {
                 Exception = null,
                 Level = level,
-                Message = $"{rowNum} {level}",
+                Message = $"{rowNum} {messageOverride ?? level}",
                 Properties = PropertiesFaker.SerializedProperties,
                 PropertyType = "json",
                 RowNo = rowNum,

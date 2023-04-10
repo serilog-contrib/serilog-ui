@@ -17,17 +17,13 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
 	</ItemGroup>
 
-	<Target Name="NpmRunBuild" BeforeTargets="BeforeBuild" Condition="'$(Configuration)'!='DEBUG'">
-		<Exec Command="npm run build" />
-	</Target>
-
 	<ItemGroup>
 		<ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Update="wwwroot\dist\index.html">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </EmbeddedResource>
+		<EmbeddedResource Update="wwwroot\dist\index.html">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</EmbeddedResource>
 	</ItemGroup>
 </Project>

@@ -16,27 +16,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Ardalis.GuardClauses" Version="4.0.1" />
-		<PackageReference Include="AsyncFixer" Version="1.6.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="Dapper" Version="2.0.35" />
-		<PackageReference Include="FluentAssertions" Version="6.10.0" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
 		<PackageReference Include="Npgsql" Version="6.0.9" />
-		<PackageReference Include="Testcontainers" Version="3.0.0" />
 		<PackageReference Include="Testcontainers.PostgreSql" Version="3.0.0" />
-		<PackageReference Include="xunit" Version="2.4.2" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
-		<PackageReference Include="coverlet.collector" Version="3.2.0">
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>
