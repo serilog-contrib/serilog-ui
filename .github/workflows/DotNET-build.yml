@@ -47,11 +47,8 @@ jobs:
           SonarToken: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: phoenix-actions/test-reporting@v9
+      - uses: actions/upload-artifact@v2
         if: always()
         with:
-          name: DotNET - Tests
-          output-to: checks
+          name: test-results
           path: '**/test-results.trx'
-          reporter: dotnet-trx
-          fail-on-error: false

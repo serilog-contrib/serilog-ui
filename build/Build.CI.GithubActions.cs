@@ -1,6 +1,7 @@
 using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.Tooling;
+using Nuke.Common.Tools.GitHub;
 using Nuke.Common.Tools.SonarScanner;
 using static CustomGithubActionsAttribute;
 
@@ -11,7 +12,7 @@ using static CustomGithubActionsAttribute;
  */
 [CustomGithubActions("DotNET-build",
     GitHubActionsImage.UbuntuLatest,
-    AddGithubActions = new[] { GithubAction.Backend_Reporter },
+    AddGithubActions = new[] { GithubAction.Backend_Artifact },
     AutoGenerate = true,
     EnableGitHubToken = true,
     FetchDepth = 0,
@@ -22,7 +23,7 @@ using static CustomGithubActionsAttribute;
 )]
 [CustomGithubActions("JS-build",
     GitHubActionsImage.UbuntuLatest,
-    AddGithubActions = new[] { GithubAction.Frontend_SonarScan_Task, GithubAction.Frontend_Reporter },
+    AddGithubActions = new[] { GithubAction.Frontend_SonarScan_Task, GithubAction.Frontend_Artifact },
     AutoGenerate = true,
     EnableGitHubToken = true,
     FetchDepth = 0,
@@ -73,9 +74,12 @@ partial class Build : NukeBuild
     public bool OnGithubActionRun = GitHubActions.Instance != null &&
             !string.IsNullOrWhiteSpace(GitHubActions.Instance.RunId.ToString());
 
+    public bool IsPr = GitHubActions.Instance != null &&
+        GitHubActions.Instance.IsPullRequest;
+
     Target Backend_SonarScan_Start => _ => _
         .DependsOn(Backend_Restore)
-        .OnlyWhenStatic(() => OnGithubActionRun &&
+        .OnlyWhenStatic(() => OnGithubActionRun && !IsPr &&
             !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
             !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
         )
@@ -103,7 +107,7 @@ partial class Build : NukeBuild
 
     Target Backend_SonarScan_End => _ => _
         .DependsOn(Backend_Test_Ci)
-        .OnlyWhenStatic(() => OnGithubActionRun &&
+        .OnlyWhenStatic(() => OnGithubActionRun && !IsPr &&
             !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
             !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
         )

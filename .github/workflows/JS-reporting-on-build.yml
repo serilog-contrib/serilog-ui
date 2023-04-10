@@ -1,0 +1,24 @@
+name: JS Test Reporting
+
+# read-write repo token
+# access to secrets
+on:
+  workflow_run:
+    workflows: ['JS-build']
+    types:
+      - completed
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    if: >
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success'
+    steps:
+    - uses: phoenix-actions/test-reporting@v9
+      with:
+        artifact: test-results            # artifact name
+        name: JS - Tests                  # Name of the check run which will be created
+        path: '**/jest-*.xml'             # Path to test results (inside artifact .zip)
+        reporter: jest-junit              # Format of test results
+        output-to: checks

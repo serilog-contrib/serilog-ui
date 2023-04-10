@@ -49,25 +49,22 @@ jobs:
 
       - name: SonarCloud run
         uses: SonarSource/sonarcloud-github-action@master
-        if: ${{ false }}
+        if: needs.pr-check.outputs.number == 'null'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_UI }}
         with:
           args: >
-            -Dsonar.organization=
-            -Dsonar.projectKey=
+            -Dsonar.organization=followynne
+            -Dsonar.projectKey=followynne_serilog-ui_assets
             -Dsonar.sources=src/Serilog.Ui.Web/assets/
             -Dsonar.tests=src/Serilog.Ui.Web/assets/
             -Dsonar.exclusions=src/Serilog.Ui.Web/assets/__tests__/**/*
             -Dsonar.test.inclusions=src/Serilog.Ui.Web/assets/__tests__/**/*
             -Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/coverage/lcov.info
 
-      - uses: phoenix-actions/test-reporting@v9
+      - uses: actions/upload-artifact@v2
         if: always()
         with:
-          name: JS - Tests
-          output-to: checks
+          name: test-results
           path: '**/jest-*.xml'
-          reporter: jest-junit
-          fail-on-error: false
