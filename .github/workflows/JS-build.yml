@@ -49,7 +49,7 @@ jobs:
 
       - name: SonarCloud run
         uses: SonarSource/sonarcloud-github-action@master
-        if: needs.pr-check.outputs.number == 'null'
+        if: github.event_name != 'pull_request'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_UI }}

@@ -103,7 +103,7 @@ class GithubActionSonarCloud : GitHubActionsStep
         {
             writer.WriteLine("uses: SonarSource/sonarcloud-github-action@master");
 
-            writer.WriteLine("if: needs.pr-check.outputs.number == 'null'");
+            writer.WriteLine("if: github.event_name != 'pull_request'");
 
             writer.WriteLine("env:");
             using (writer.Indent())
