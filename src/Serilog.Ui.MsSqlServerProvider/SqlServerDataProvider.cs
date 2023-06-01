@@ -18,6 +18,13 @@ namespace Serilog.Ui.MsSqlServerProvider
             _options = options ?? throw new ArgumentNullException(nameof(options));
         }
 
+        static SqlServerDataProvider()
+        {
+            SqlMapper.AddTypeHandler(new DapperDateTimeHandler());
+        }
+
+        public string Name => _options.ToDataProviderName("MsSQL");
+
         public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
             int page,
             int count,
@@ -34,8 +41,6 @@ namespace Serilog.Ui.MsSqlServerProvider
 
             return (await logsTask, await logCountTask);
         }
-
-        public string Name => _options.ToDataProviderName("MsSQL");
 
         private async Task<IEnumerable<LogModel>> GetLogsAsync(
             int page,
