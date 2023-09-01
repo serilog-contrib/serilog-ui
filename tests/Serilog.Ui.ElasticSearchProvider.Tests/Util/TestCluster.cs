@@ -47,7 +47,6 @@ namespace ElasticSearch.Tests.Util
         )
             : base(elasticsearchVersion, features, new ElasticsearchPlugins(plugins), numberOfNodes)
         {
-            HttpFiddlerAware = true;
             CacheEsHomeInstallation = true;
 
             Add(AttributeKey("testingcluster"), "true");

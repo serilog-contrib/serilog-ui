@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
+using Serilog.Settings.Configuration;
 
 namespace SampleWebApp.Services.HostedServices;
 
@@ -26,14 +27,14 @@ public class SecondLogDummyLogGeneratorBackgroundService : BackgroundService
         // Create the logger
         var logger = new LoggerConfiguration()
             .ReadFrom
-            .Configuration(_configuration, "Serilog2")
+            .Configuration(_configuration, new ConfigurationReaderOptions() { SectionName = "Serilog2" })
             .CreateLogger()
             .ForContext<SecondLogDummyLogGeneratorBackgroundService>();
 
         var rand = new Random();
 
         // Lets not generate too much data per run.
-        const int limit = 10; 
+        const int limit = 10;
 
         var count = 0;
         while (++count <= limit)
@@ -42,7 +43,7 @@ public class SecondLogDummyLogGeneratorBackgroundService : BackgroundService
             stoppingToken.ThrowIfCancellationRequested();
 
             // Get a random level
-            var level = (LogEventLevel) rand.NextInt64((long)LogEventLevel.Fatal + 1L);
+            var level = (LogEventLevel)rand.NextInt64((long)LogEventLevel.Fatal + 1L);
 
             // Get a random number
             var n = rand.NextInt64(0, 101);
@@ -79,7 +80,7 @@ public class SecondLogDummyLogGeneratorBackgroundService : BackgroundService
     /// </summary>
     private class TestException : Exception
     {
-        public TestException() 
+        public TestException()
             : base("This is a test exception.")
         {
         }

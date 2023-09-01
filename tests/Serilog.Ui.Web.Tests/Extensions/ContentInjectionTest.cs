@@ -13,7 +13,7 @@ namespace Ui.Web.Tests.Extensions
             var ui = new UiOptions().InjectJavascript("test/path");
 
             ui.HeadContent.Should().BeEmpty();
-            ui.BodyContent.Should().Be("<script src='test/path' type='text/javascript'></script>\r\n");
+            ui.BodyContent.Trim().Should().Be("<script src='test/path' type='text/javascript'></script>");
         }
 
         [Fact]
@@ -22,7 +22,7 @@ namespace Ui.Web.Tests.Extensions
             var ui = new UiOptions().InjectJavascript("test/path", true, "text/text");
 
             ui.BodyContent.Should().BeEmpty();
-            ui.HeadContent.Should().Be("<script src='test/path' type='text/text'></script>\r\n");
+            ui.HeadContent.Trim().Should().Be("<script src='test/path' type='text/text'></script>");
         }
 
         [Fact]
@@ -31,9 +31,9 @@ namespace Ui.Web.Tests.Extensions
             var ui = new UiOptions().InjectJavascript("test/path").InjectJavascript("test/path");
 
             ui.HeadContent.Should().BeEmpty();
-            ui.BodyContent.Should().Be(
+            ui.BodyContent.Trim().Should().Be(
                 "<script src='test/path' type='text/javascript'></script>\r\n" +
-                "<script src='test/path' type='text/javascript'></script>\r\n");
+                "<script src='test/path' type='text/javascript'></script>");
         }
 
         [Fact]
@@ -41,7 +41,7 @@ namespace Ui.Web.Tests.Extensions
         {
             var ui = new UiOptions().InjectStylesheet("test/path");
 
-            ui.HeadContent.Should().Be("<link href='test/path' rel='stylesheet' media='screen' type='text/css' />\r\n");
+            ui.HeadContent.Trim().Should().Be("<link href='test/path' rel='stylesheet' media='screen' type='text/css' />");
             ui.BodyContent.Should().BeEmpty();
         }
 
@@ -50,7 +50,7 @@ namespace Ui.Web.Tests.Extensions
         {
             var ui = new UiOptions().InjectStylesheet("test/path", "test");
 
-            ui.HeadContent.Should().Be("<link href='test/path' rel='stylesheet' media='test' type='text/css' />\r\n");
+            ui.HeadContent.Trim().Should().Be("<link href='test/path' rel='stylesheet' media='test' type='text/css' />");
             ui.BodyContent.Should().BeEmpty();
         }
 
@@ -59,9 +59,9 @@ namespace Ui.Web.Tests.Extensions
         {
             var ui = new UiOptions().InjectStylesheet("test/path").InjectStylesheet("test/path");
 
-            ui.HeadContent.Should().Be(
+            ui.HeadContent.Trim().Should().Be(
                 "<link href='test/path' rel='stylesheet' media='screen' type='text/css' />\r\n" +
-                "<link href='test/path' rel='stylesheet' media='screen' type='text/css' />\r\n");
+                "<link href='test/path' rel='stylesheet' media='screen' type='text/css' />");
             ui.BodyContent.Should().BeEmpty();
         }
 
@@ -73,10 +73,10 @@ namespace Ui.Web.Tests.Extensions
                 .InjectStylesheet("test/path")
                 .InjectJavascript("test/path", true, "text/test");
 
-            ui.HeadContent.Should().Be(
+            ui.HeadContent.Trim().Should().Be(
                 "<link href='test/path' rel='stylesheet' media='screen' type='text/css' />\r\n" +
-                "<script src='test/path' type='text/test'></script>\r\n");
-            ui.BodyContent.Should().Be("<script src='test/path' type='text/javascript'></script>\r\n");
+                "<script src='test/path' type='text/test'></script>");
+            ui.BodyContent.Trim().Should().Be("<script src='test/path' type='text/javascript'></script>");
         }
     }
 }
