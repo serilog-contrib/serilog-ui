@@ -7,7 +7,7 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 partial class Build : NukeBuild
 {
-    [PackageExecutable(
+    [NuGetPackage(
         packageId: "dotnet-coverage",
         packageExecutable: "dotnet-coverage.dll"
     )]
