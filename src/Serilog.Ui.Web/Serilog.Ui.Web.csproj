@@ -1,29 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFrameworks>netcoreapp3.1;net5.0;net6.0;net7.0</TargetFrameworks>
-		<Version>2.4.0</Version>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1;net5.0;net6.0;net7.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Version>2.4.0</Version>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-	</ItemGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<EmbeddedResource Include="wwwroot/dist/**/*" CopyToOutputDirectory="Always" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="Scrutor" Version="4.2.2" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="wwwroot/dist/**/*" CopyToOutputDirectory="Always" />
+    <EmbeddedResource Update="wwwroot\dist\index.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
 
-	<ItemGroup>
-		<EmbeddedResource Update="wwwroot\dist\index.html">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</EmbeddedResource>
-	</ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Ui.Web.Tests" />
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 </Project>

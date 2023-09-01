@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Ardalis.GuardClauses;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog.Ui.Core;
+using Serilog.Ui.Web.Authorization;
+using Serilog.Ui.Web.Endpoints;
 using System;
 
 namespace Serilog.Ui.Web
@@ -22,15 +25,26 @@ namespace Serilog.Ui.Web
         /// <returns>The same service collection so that multiple calls can be chained.</returns>
         public static IServiceCollection AddSerilogUi(this IServiceCollection services, Action<SerilogUiOptionsBuilder> optionsBuilder)
         {
-            if (services == null)
-                throw new ArgumentNullException(nameof(services));
-
-            if (optionsBuilder == null)
-                throw new ArgumentNullException(nameof(optionsBuilder));
+#if NET6_0_OR_GREATER
+            Guard.Against.Null(services);
+            Guard.Against.Null(optionsBuilder);
+#else
+            Guard.Against.Null(services, nameof(services));
+            Guard.Against.Null(optionsBuilder, nameof(optionsBuilder));
+#endif
 
             var builder = new SerilogUiOptionsBuilder(services);
             optionsBuilder.Invoke(builder);
 
+            services.AddScoped<IAuthorizationFilterService, AuthorizationFilterService>();
+            services.AddSingleton<IAppStreamLoader, AppStreamLoader>();
+
+            services.AddScoped<ISerilogUiEndpoints, SerilogUiEndpoints>();
+            services.Decorate<ISerilogUiEndpoints, SerilogUiEndpointsDecorator>();
+
+            services.AddScoped<ISerilogUiAppRoutes, SerilogUiAppRoutes>();
+            services.Decorate<ISerilogUiAppRoutes, SerilogUiAppRoutesDecorator>();
+            
             services.TryAddScoped(typeof(AggregateDataProvider));
 
             return services;
