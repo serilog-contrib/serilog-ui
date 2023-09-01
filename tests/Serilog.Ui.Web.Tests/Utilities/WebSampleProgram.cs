@@ -83,6 +83,7 @@ public class WebAppFactory
                 builder.UseSerilogUi(options =>
                 {
                     options.Authorization.AuthenticationType = AuthenticationType.Jwt;
+                    options.Authorization.RunAuthorizationFilterOnAppRoutes = true;
                     options.Authorization.Filters = new IUiAuthorizationFilter[]
                     {
                         new ForbidLocalRequestFilter(),
@@ -103,19 +104,16 @@ public class WebAppFactory
                 builder.UseSerilogUi(options =>
                 {
                     options.Authorization.AuthenticationType = AuthenticationType.Jwt;
-                    builder.UseSerilogUi(options =>
+                    options.Authorization.RunAuthorizationFilterOnAppRoutes = true;
+                    options.Authorization.Filters = new[]
                     {
-                        options.Authorization.AuthenticationType = AuthenticationType.Jwt;
-                        options.Authorization.Filters = new[]
-                        {
                         new AdmitRequestFilter()
                     };
-                        options.Authorization.AsyncFilters = new IUiAsyncAuthorizationFilter[]
-                        {
+                    options.Authorization.AsyncFilters = new IUiAsyncAuthorizationFilter[]
+                    {
                         new ForbidLocalRequestAsyncFilter(),
                         new AdmitRequestAsyncFilter()
                     };
-                    });
                 });
             }
         }

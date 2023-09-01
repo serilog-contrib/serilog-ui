@@ -35,26 +35,32 @@ namespace Ui.Web.Tests.Endpoints
         }
 
         [Fact]
-        public async Task It_forward_the_call_on_success_authentication()
+        public async Task It_forwards_the_call_to_app_endpoints_on_success_authentication()
         {
-            sutRoutesDecorator.SetOptions(new());
             sutEndpointsDecorator.SetOptions(new());
 
-            await sutRoutesDecorator.GetHome(new DefaultHttpContext());
-            await sutRoutesDecorator.RedirectHome(new DefaultHttpContext());
             await sutEndpointsDecorator.GetLogs(new DefaultHttpContext());
             await sutEndpointsDecorator.GetApiKeys(new DefaultHttpContext());
 
-            appRoutesMock.Verify(p => p.GetHome(It.IsAny<HttpContext>()), Times.Once);
-            appRoutesMock.Verify(p => p.RedirectHome(It.IsAny<HttpContext>()), Times.Once);
             endpointMock.Verify(p => p.GetLogs(It.IsAny<HttpContext>()), Times.Once);
             endpointMock.Verify(p => p.GetApiKeys(It.IsAny<HttpContext>()), Times.Once);
         }
 
         [Fact]
+        public async Task It_forwards_the_call_to_app_routes_when_unauth_page_access_is_enabled()
+        {
+            sutRoutesDecorator.SetOptions(new() { });
+            await sutRoutesDecorator.GetHome(new DefaultHttpContext());
+            await sutRoutesDecorator.RedirectHome(new DefaultHttpContext());
+
+            appRoutesMock.Verify(p => p.GetHome(It.IsAny<HttpContext>()), Times.Once);
+            appRoutesMock.Verify(p => p.RedirectHome(It.IsAny<HttpContext>()), Times.Once);
+        }
+
+        [Fact]
         public async Task It_blocks_the_call_on_failed_authentication()
         {
-            var uiOpts = new UiOptions();
+            var uiOpts = new UiOptions() { Authorization = new() { RunAuthorizationFilterOnAppRoutes = true } };
             uiOpts.Authorization.Filters = new IUiAuthorizationFilter[] { new ForbidLocalRequestFilter() };
             sutRoutesDecorator.SetOptions(uiOpts);
             sutEndpointsDecorator.SetOptions(uiOpts);
@@ -78,7 +84,7 @@ namespace Ui.Web.Tests.Endpoints
         [Fact]
         public async Task It_blocks_the_GetHome_on_failed_authentication_with_custom_delegate()
         {
-            var uiOpts = new UiOptions();
+            var uiOpts = new UiOptions() { Authorization = new() { RunAuthorizationFilterOnAppRoutes = true } };
             uiOpts.Authorization.Filters = new IUiAuthorizationFilter[] { new ForbidLocalRequestFilter() };
             sutRoutesDecorator.SetOptions(uiOpts);
             sutEndpointsDecorator.SetOptions(uiOpts);
