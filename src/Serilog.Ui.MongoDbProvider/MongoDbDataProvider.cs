@@ -30,12 +30,12 @@ namespace Serilog.Ui.MongoDbProvider
             DateTime? startDate = null,
             DateTime? endDate = null)
         {
-            var logsTask = await GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
-            var logCountTask = await CountLogsAsync(level, searchCriteria, startDate, endDate);
+            var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
+            var logCountTask = CountLogsAsync(level, searchCriteria, startDate, endDate);
 
-            //await Task.WhenAll(logsTask, logCountTask);
+            await Task.WhenAll(logsTask, logCountTask);
 
-            return (logsTask, logCountTask);
+            return (await logsTask, await logCountTask);
         }
 
         public string Name => string.Join(".", "MongoDb", _options.DatabaseName, _options.CollectionName);

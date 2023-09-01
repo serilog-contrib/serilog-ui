@@ -40,7 +40,7 @@ namespace Serilog.Ui.Web.Authorization
             var syncFilterResult = options.Authorization.Filters.Any(filter => !filter.Authorize(httpContext));
 
             var asyncFilter = await Task.WhenAll(options.Authorization.AsyncFilters.Select(filter => filter.AuthorizeAsync(httpContext)));
-            var asyncFilterResult = asyncFilter.Any(filter => !filter);
+            var asyncFilterResult = Array.Exists(asyncFilter, filter => !filter);
 
             return !syncFilterResult && !asyncFilterResult;
         }

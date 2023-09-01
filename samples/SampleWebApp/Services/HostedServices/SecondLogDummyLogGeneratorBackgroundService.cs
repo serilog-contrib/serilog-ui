@@ -78,7 +78,7 @@ public class SecondLogDummyLogGeneratorBackgroundService : BackgroundService
     /// <summary>
     /// Feel free to disable breaking on this exception in your debugger settings.
     /// </summary>
-    private class TestException : Exception
+    public sealed class TestException : Exception
     {
         public TestException()
             : base("This is a test exception.")

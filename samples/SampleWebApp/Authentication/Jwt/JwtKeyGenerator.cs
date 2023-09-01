@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SampleWebApp.Authentication.Jwt
 {
-    public class JwtKeyGenerator
+    public static class JwtKeyGenerator
     {
         public static SymmetricSecurityKey Generate(string secret)
         {

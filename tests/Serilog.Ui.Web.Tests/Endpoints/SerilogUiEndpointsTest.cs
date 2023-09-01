@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Logging;
-using Moq;
+using NSubstitute;
 using Newtonsoft.Json;
 using Serilog.Ui.Core;
 using Serilog.Ui.Web.Endpoints;
@@ -17,17 +17,17 @@ namespace Ui.Web.Tests.Endpoints
     [Trait("Ui-Api-Endpoints", "Web")]
     public class SerilogUiEndpointsTest
     {
-        private readonly Mock<ILogger<SerilogUiEndpoints>> loggerMock;
+        private readonly ILogger<SerilogUiEndpoints> loggerMock;
         private readonly DefaultHttpContext testContext;
         private readonly SerilogUiEndpoints sut;
 
         public SerilogUiEndpointsTest()
         {
-            loggerMock = new Mock<ILogger<SerilogUiEndpoints>>();
+            loggerMock = Substitute.For<ILogger<SerilogUiEndpoints>>();
             testContext = new DefaultHttpContext();
             testContext.Request.Host = new HostString("test.dev");
             testContext.Request.Scheme = "https";
-            sut = new SerilogUiEndpoints(loggerMock.Object);
+            sut = new SerilogUiEndpoints(loggerMock);
         }
 
         [Fact]
@@ -73,18 +73,18 @@ namespace Ui.Web.Tests.Endpoints
 
         private async Task<T> HappyPath<T>(Func<HttpContext, Task> call)
         {
-            var mockProvider = new Mock<IServiceProvider>();
+            var mockProvider = Substitute.For<IServiceProvider>();
             mockProvider
-                .Setup(mp => mp.GetService(typeof(AggregateDataProvider)))
+                .GetService(typeof(AggregateDataProvider))
                 .Returns(new AggregateDataProvider(new IDataProvider[] { new FakeProvider(), new FakeSecondProvider() }));
-            testContext.RequestServices = mockProvider.Object;
+            testContext.RequestServices = mockProvider;
             testContext.Response.Body = new MemoryStream();
 
             await call(testContext);
 
             testContext.Response.ContentType.Should().Be("application/json;charset=utf-8");
             testContext.Response.StatusCode.Should().Be(200);
-            mockProvider.Verify(mp => mp.GetService(typeof(AggregateDataProvider)), Times.Once);
+            mockProvider.Received().GetService(typeof(AggregateDataProvider));
             testContext.Response.Body.Seek(0, SeekOrigin.Begin);
             var result = await new StreamReader(testContext.Response.Body).ReadToEndAsync();
             return JsonConvert.DeserializeObject<T>(result)!;

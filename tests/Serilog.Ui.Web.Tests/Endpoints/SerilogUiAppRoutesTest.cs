@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using Moq;
+using NSubstitute;
 using Serilog.Ui.Web;
 using Serilog.Ui.Web.Endpoints;
 using System;
@@ -15,7 +15,7 @@ namespace Ui.Web.Tests.Endpoints
     [Trait("Ui-Api-Routes", "Web")]
     public class SerilogUiAppRoutesTest
     {
-        private readonly Mock<IAppStreamLoader> streamLoaderMock;
+        private readonly IAppStreamLoader streamLoaderMock;
         private readonly SerilogUiAppRoutes sut;
         private readonly DefaultHttpContext testContext;
 
@@ -24,8 +24,8 @@ namespace Ui.Web.Tests.Endpoints
             testContext = new DefaultHttpContext();
             testContext.Request.Host = new HostString("test.dev");
             testContext.Request.Scheme = "https";
-            streamLoaderMock = new Mock<IAppStreamLoader>();
-            sut = new SerilogUiAppRoutes(streamLoaderMock.Object);
+            streamLoaderMock = Substitute.For<IAppStreamLoader>();
+            sut = new SerilogUiAppRoutes(streamLoaderMock);
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace Ui.Web.Tests.Endpoints
                 "<!DOCTYPE html><html lang=\"en\"><head><meta name=\"dummy\" content=\"%(HeadContent)\"></head>" +
                 "<body><div id=\"serilog-ui-app\"></div><script>const config = '%(Configs)';</script>" +
                 "<meta name=\"dummy\" content=\"%(BodyContent)\"></body></html>"));
-            streamLoaderMock.Setup(sm => sm.GetIndex()).Returns(stream);
+            streamLoaderMock.GetIndex().Returns(stream);
 
             await sut.GetHome(testContext);
 
@@ -69,7 +69,7 @@ namespace Ui.Web.Tests.Endpoints
             sut.SetOptions(new());
             testContext.Request.Path = "/serilog-ui-url/index.html";
             testContext.Response.Body = new MemoryStream();
-            streamLoaderMock.Setup(sm => sm.GetIndex()).Returns<Stream>(null);
+            streamLoaderMock.GetIndex().Returns((Stream)null!);
 
             await sut.GetHome(testContext);
 
@@ -87,7 +87,7 @@ namespace Ui.Web.Tests.Endpoints
             await sut.RedirectHome(testContext);
 
             testContext.Response.StatusCode.Should().Be(301);
-            testContext.Response.Headers.Location.First().Should().Be("https://test.dev/serilog-ui-url/index.html");
+            testContext.Response.Headers.Location[0].Should().Be("https://test.dev/serilog-ui-url/index.html");
         }
 
         [Fact]
