@@ -6,6 +6,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Serilog.Ui.Web.Endpoints;
+using System;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -63,6 +64,6 @@ namespace Serilog.Ui.Web
         }
 
         private bool CheckPath(string currentPath, string OnPath)
-            => Regex.IsMatch(currentPath, $"^/{Regex.Escape(_options.RoutePrefix)}{OnPath}$", RegexOptions.IgnoreCase);
+            => Regex.IsMatch(currentPath, $"^/{Regex.Escape(_options.RoutePrefix)}{OnPath}$", RegexOptions.IgnoreCase, TimeSpan.FromSeconds(5));
     }
 }
