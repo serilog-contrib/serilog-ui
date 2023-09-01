@@ -20,7 +20,7 @@
 		<PackageReference Include="EphemeralMongo6.runtime.linux-x64" Version="1.0.0" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
 		<PackageReference Include="EphemeralMongo6.runtime.osx-x64" Version="1.0.0" Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
 		<PackageReference Include="EphemeralMongo6.runtime.win-x64" Version="1.0.0" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
