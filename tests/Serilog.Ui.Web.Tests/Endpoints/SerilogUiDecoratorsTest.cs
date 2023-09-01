@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using Moq;
+using NSubstitute;
 using Serilog.Ui.Web;
 using Serilog.Ui.Web.Authorization;
 using Serilog.Ui.Web.Endpoints;
@@ -15,23 +15,23 @@ namespace Ui.Web.Tests.Endpoints
     public class SerilogUiDecoratorsTest
     {
         private readonly AuthorizationFilterService authMock;
-        private readonly Mock<ISerilogUiAppRoutes> appRoutesMock;
-        private readonly Mock<ISerilogUiEndpoints> endpointMock;
+        private readonly ISerilogUiAppRoutes appRoutesMock;
+        private readonly ISerilogUiEndpoints endpointMock;
         private readonly SerilogUiAppRoutesDecorator sutRoutesDecorator;
         private readonly SerilogUiEndpointsDecorator sutEndpointsDecorator;
 
         public SerilogUiDecoratorsTest()
         {
             authMock = new AuthorizationFilterService();
-            appRoutesMock = new Mock<ISerilogUiAppRoutes>();
-            endpointMock = new Mock<ISerilogUiEndpoints>();
-            appRoutesMock.Setup(p => p.GetHome(It.IsAny<HttpContext>()));
-            appRoutesMock.Setup(p => p.RedirectHome(It.IsAny<HttpContext>()));
-            endpointMock.Setup(p => p.GetLogs(It.IsAny<HttpContext>()));
-            endpointMock.Setup(p => p.GetApiKeys(It.IsAny<HttpContext>()));
+            appRoutesMock = Substitute.For<ISerilogUiAppRoutes>();
+            endpointMock = Substitute.For<ISerilogUiEndpoints>();
+            appRoutesMock.GetHome(Arg.Any<HttpContext>());
+            appRoutesMock.RedirectHome(Arg.Any<HttpContext>());
+            endpointMock.GetLogs(Arg.Any<HttpContext>());
+            endpointMock.GetApiKeys(Arg.Any<HttpContext>());
 
-            sutRoutesDecorator = new SerilogUiAppRoutesDecorator(appRoutesMock.Object, authMock);
-            sutEndpointsDecorator = new SerilogUiEndpointsDecorator(endpointMock.Object, authMock);
+            sutRoutesDecorator = new SerilogUiAppRoutesDecorator(appRoutesMock, authMock);
+            sutEndpointsDecorator = new SerilogUiEndpointsDecorator(endpointMock, authMock);
         }
 
         [Fact]
@@ -42,8 +42,8 @@ namespace Ui.Web.Tests.Endpoints
             await sutEndpointsDecorator.GetLogs(new DefaultHttpContext());
             await sutEndpointsDecorator.GetApiKeys(new DefaultHttpContext());
 
-            endpointMock.Verify(p => p.GetLogs(It.IsAny<HttpContext>()), Times.Once);
-            endpointMock.Verify(p => p.GetApiKeys(It.IsAny<HttpContext>()), Times.Once);
+            await endpointMock.Received().GetLogs(Arg.Any<HttpContext>());
+            await endpointMock.Received().GetApiKeys(Arg.Any<HttpContext>());
         }
 
         [Fact]
@@ -53,8 +53,8 @@ namespace Ui.Web.Tests.Endpoints
             await sutRoutesDecorator.GetHome(new DefaultHttpContext());
             await sutRoutesDecorator.RedirectHome(new DefaultHttpContext());
 
-            appRoutesMock.Verify(p => p.GetHome(It.IsAny<HttpContext>()), Times.Once);
-            appRoutesMock.Verify(p => p.RedirectHome(It.IsAny<HttpContext>()), Times.Once);
+            await appRoutesMock.Received().GetHome(Arg.Any<HttpContext>());
+            await appRoutesMock.Received().RedirectHome(Arg.Any<HttpContext>());
         }
 
         [Fact]
@@ -68,17 +68,17 @@ namespace Ui.Web.Tests.Endpoints
             var defaultHttp = new DefaultHttpContext();
             await sutRoutesDecorator.RedirectHome(defaultHttp);
             defaultHttp.Response.StatusCode.Should().Be(403);
-            appRoutesMock.Verify(p => p.RedirectHome(It.IsAny<HttpContext>()), Times.Never);
+            await appRoutesMock.DidNotReceive().RedirectHome(Arg.Any<HttpContext>());
 
             var defaultHttp2 = new DefaultHttpContext();
             await sutEndpointsDecorator.GetLogs(defaultHttp2);
             defaultHttp2.Response.StatusCode.Should().Be(403);
-            endpointMock.Verify(p => p.GetLogs(It.IsAny<HttpContext>()), Times.Never);
+            await endpointMock.DidNotReceive().GetLogs(Arg.Any<HttpContext>());
 
             var defaultHttp3 = new DefaultHttpContext();
             await sutEndpointsDecorator.GetApiKeys(defaultHttp3);
             defaultHttp3.Response.StatusCode.Should().Be(403);
-            endpointMock.Verify(p => p.GetApiKeys(It.IsAny<HttpContext>()), Times.Never);
+            await endpointMock.DidNotReceive().GetApiKeys(Arg.Any<HttpContext>());
         }
 
         [Fact]
@@ -94,7 +94,7 @@ namespace Ui.Web.Tests.Endpoints
             await sutRoutesDecorator.GetHome(defaultHttp);
 
             defaultHttp.Response.StatusCode.Should().Be(403);
-            appRoutesMock.Verify(p => p.GetHome(It.IsAny<HttpContext>()), Times.Never);
+            await appRoutesMock.DidNotReceive().GetHome(Arg.Any<HttpContext>());
 
             defaultHttp.Response.Body.Seek(0, SeekOrigin.Begin);
             var bodyWrite = await new StreamReader(defaultHttp.Response.Body).ReadToEndAsync();
