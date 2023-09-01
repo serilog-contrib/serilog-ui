@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Serilog.Ui.Web;
+using System;
 using Xunit;
 
 namespace Ui.Web.Tests.Extensions
@@ -32,7 +33,7 @@ namespace Ui.Web.Tests.Extensions
 
             ui.HeadContent.Should().BeEmpty();
             ui.BodyContent.Trim().Should().Be(
-                "<script src='test/path' type='text/javascript'></script>" +
+                $"<script src='test/path' type='text/javascript'></script>{Environment.NewLine}" +
                 "<script src='test/path' type='text/javascript'></script>");
         }
 
@@ -60,7 +61,7 @@ namespace Ui.Web.Tests.Extensions
             var ui = new UiOptions().InjectStylesheet("test/path").InjectStylesheet("test/path");
 
             ui.HeadContent.Trim().Should().Be(
-                "<link href='test/path' rel='stylesheet' media='screen' type='text/css' />" +
+                $"<link href='test/path' rel='stylesheet' media='screen' type='text/css' />{Environment.NewLine}" +
                 "<link href='test/path' rel='stylesheet' media='screen' type='text/css' />");
             ui.BodyContent.Should().BeEmpty();
         }
@@ -74,7 +75,7 @@ namespace Ui.Web.Tests.Extensions
                 .InjectJavascript("test/path", true, "text/test");
 
             ui.HeadContent.Trim().Should().Be(
-                "<link href='test/path' rel='stylesheet' media='screen' type='text/css' />" +
+                $"<link href='test/path' rel='stylesheet' media='screen' type='text/css' />{Environment.NewLine}" +
                 "<script src='test/path' type='text/test'></script>");
             ui.BodyContent.Trim().Should().Be("<script src='test/path' type='text/javascript'></script>");
         }
