@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using MongoDB.Driver;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.MongoDbProvider;
 using System;
@@ -36,11 +37,12 @@ namespace MongoDb.Tests.DataProvider
                 .GetDatabase(Arg.Any<string>(), null)
                 .Returns(mockDb);
             mockDb.GetCollection<MongoDbLogModel>(Arg.Any<string>(), null).Returns(mockColl);
+            mockColl.Indexes.Throws(new ArithmeticException());
 
             var sut = new MongoDbDataProvider(mockClient,
                 new MongoDbOptions() { CollectionName = "coll", ConnectionString = "some", DatabaseName = "db" });
-            var assert = () => sut.FetchDataAsync(1, 10);
-            return assert.Should().ThrowAsync<ArgumentNullException>();
+            var assert = () => sut.FetchDataAsync(1, 10, searchCriteria: "break-db");
+            return assert.Should().ThrowAsync<ArithmeticException>();
         }
     }
 }
