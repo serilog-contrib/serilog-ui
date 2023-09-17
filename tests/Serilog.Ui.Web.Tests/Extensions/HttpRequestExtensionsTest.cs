@@ -16,83 +16,83 @@ namespace Ui.Web.Tests.Extensions
         [Fact]
         public void It_is_local_when_remote_ip_address_equals_local_ip_address()
         {
-            var mock = Substitute.For<HttpRequest>();
-            var context = Substitute.For<HttpContext>();
+            var requestMock = Substitute.For<HttpRequest>();
+            var httpContextMock = Substitute.For<HttpContext>();
             var dic = new HeaderDictionary { };
 
-            context.Connection.Returns(new ConnectionInfoMock()
+            httpContextMock.Connection.Returns(new ConnectionInfoMock()
                 .WithRemoteIp(IPAddress.Parse("20.100.30.10"))
                 .WithLocalIp(IPAddress.Parse("20.100.30.10")));
-            mock.Headers.Returns(dic);
-            mock.HttpContext.Returns(context);
+            requestMock.Headers.Returns(dic);
+            requestMock.HttpContext.Returns(httpContextMock);
 
-            mock.IsLocal().Should().BeTrue();
+            requestMock.IsLocal().Should().BeTrue();
         }
 
         [Fact]
         public void It_is_local_when_remote_ip_address_is_loopback()
         {
-            var mock = Substitute.For<HttpRequest>();
-            var context = Substitute.For<HttpContext>();
+            var requestMock = Substitute.For<HttpRequest>();
+            var httpContextMock = Substitute.For<HttpContext>();
             var dic = new HeaderDictionary { };
-            mock.Headers.Returns(dic);
-            mock.HttpContext.Returns(context);
+            requestMock.Headers.Returns(dic);
+            requestMock.HttpContext.Returns(httpContextMock);
 
-            context.Connection.Returns(new ConnectionInfoMock()
+            httpContextMock.Connection.Returns(new ConnectionInfoMock()
                 .WithRemoteIp(IPAddress.Loopback));
-            mock.IsLocal().Should().BeTrue();
+            requestMock.IsLocal().Should().BeTrue();
 
-            context.Connection.Returns(new ConnectionInfoMock()
+            httpContextMock.Connection.Returns(new ConnectionInfoMock()
                 .WithRemoteIp(IPAddress.IPv6Loopback));
-            mock.IsLocal().Should().BeTrue();
+            requestMock.IsLocal().Should().BeTrue();
         }
 
         [Fact]
         public void It_is_local_when_no_xforwarded_and_remote_ip_address_is_null()
         {
-            var mock = Substitute.For<HttpRequest>();
-            var context = Substitute.For<HttpContext>();
+            var requestMock = Substitute.For<HttpRequest>();
+            var httpContextMock = Substitute.For<HttpContext>();
             var dic = new HeaderDictionary { };
 
-            context.Connection.Returns(new ConnectionInfoMock()
+            httpContextMock.Connection.Returns(new ConnectionInfoMock()
                 .WithRemoteIp(null)
                 .WithLocalIp(null));
-            mock.Headers.Returns(dic);
-            mock.HttpContext.Returns(context);
+            requestMock.Headers.Returns(dic);
+            requestMock.HttpContext.Returns(httpContextMock);
 
-            mock.IsLocal().Should().BeTrue();
+            requestMock.IsLocal().Should().BeTrue();
         }
 
         [Fact]
         public void It_is_not_local_when_xforwarded()
         {
-            var mock = Substitute.For<HttpRequest>();
+            var requestMock = Substitute.For<HttpRequest>();
             var dic = new HeaderDictionary { ["X-forwarded-for"] = "test" };
-            mock.Headers.Returns(dic);
+            requestMock.Headers.Returns(dic);
 
-            mock.IsLocal().Should().BeFalse();
+            requestMock.IsLocal().Should().BeFalse();
         }
 
         [Fact]
         public void It_is_not_local_when_remote_ip_address_is_not_local_nor_loopback()
         {
-            var mock = Substitute.For<HttpRequest>();
-            var context = Substitute.For<HttpContext>();
+            var requestMock = Substitute.For<HttpRequest>();
+            var httpContextMock = Substitute.For<HttpContext>();
             var dic = new HeaderDictionary { };
 
-            mock.Headers.Returns(dic);
-            mock.HttpContext.Returns(context);
+            requestMock.Headers.Returns(dic);
+            requestMock.HttpContext.Returns(httpContextMock);
 
-            context.Connection.Returns(
+            httpContextMock.Connection.Returns(
                 new ConnectionInfoMock().WithRemoteIp(IPAddress.Parse("20.100.30.10")));
-            mock.IsLocal().Should().BeFalse();
+            requestMock.IsLocal().Should().BeFalse();
 
-            context.Connection.Returns(
+            httpContextMock.Connection.Returns(
                 new ConnectionInfoMock()
                 .WithRemoteIp(IPAddress.Parse("20.100.30.10"))
                 .WithLocalIp(IPAddress.Parse("231.228.97.51"))
                 );
-            mock.IsLocal().Should().BeFalse();
+            requestMock.IsLocal().Should().BeFalse();
         }
 
         private class ConnectionInfoMock : ConnectionInfo

@@ -33,12 +33,12 @@ namespace ElasticSearch.Tests.DataProvider
         [U]
         public Task It_logs_and_throws_when_db_read_breaks_down()
         {
-            var mockClient = Substitute.For<IElasticClient>();
-            mockClient
+            var elasticClientMock = Substitute.For<IElasticClient>();
+            elasticClientMock
                 .SearchAsync<ElasticSearchDbLogModel>(Arg.Any<ISearchRequest>(), Arg.Any<CancellationToken>())
                 .ThrowsAsync(new ElasticsearchClientException("no connection to db"));
 
-            var sut = new ElasticSearchDbDataProvider(mockClient, new());
+            var sut = new ElasticSearchDbDataProvider(elasticClientMock, new());
             var assert = () => sut.FetchDataAsync(1, 10);
 
             return assert.Should().ThrowExactlyAsync<ElasticsearchClientException>().WithMessage("no connection to db");
