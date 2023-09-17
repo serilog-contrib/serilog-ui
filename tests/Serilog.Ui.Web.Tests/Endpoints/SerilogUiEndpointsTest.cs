@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using Newtonsoft.Json;
@@ -17,30 +16,30 @@ namespace Ui.Web.Tests.Endpoints
     [Trait("Ui-Api-Endpoints", "Web")]
     public class SerilogUiEndpointsTest
     {
-        private readonly ILogger<SerilogUiEndpoints> loggerMock;
-        private readonly DefaultHttpContext testContext;
-        private readonly SerilogUiEndpoints sut;
+        private readonly ILogger<SerilogUiEndpoints> _loggerMock;
+        private readonly SerilogUiEndpoints _sut;
+        private readonly DefaultHttpContext _testContext;
 
         public SerilogUiEndpointsTest()
         {
-            loggerMock = Substitute.For<ILogger<SerilogUiEndpoints>>();
-            testContext = new DefaultHttpContext();
-            testContext.Request.Host = new HostString("test.dev");
-            testContext.Request.Scheme = "https";
-            sut = new SerilogUiEndpoints(loggerMock);
+            _loggerMock = Substitute.For<ILogger<SerilogUiEndpoints>>();
+            _testContext = new DefaultHttpContext();
+            _testContext.Request.Host = new HostString("test.dev");
+            _testContext.Request.Scheme = "https";
+            _sut = new SerilogUiEndpoints(_loggerMock);
         }
 
         [Fact]
         public async Task It_gets_logs_keys()
         {
-            var result = await HappyPath<IEnumerable<string>>(sut.GetApiKeys);
+            var result = await HappyPath<IEnumerable<string>>(_sut.GetApiKeys);
             result.Should().ContainInOrder("FakeFirstProvider", "FakeSecondProvider");
         }
 
         [Fact]
         public async Task It_gets_logs()
         {
-            var result = await HappyPath<AnonymousObject>(sut.GetLogs);
+            var result = await HappyPath<AnonymousObject>(_sut.GetLogs);
             result.Count.Should().Be(10);
             result.CurrentPage.Should().Be(1);
             result.Total.Should().Be(100);
@@ -50,9 +49,9 @@ namespace Ui.Web.Tests.Endpoints
         [Fact]
         public async Task It_gets_logs_with_search_parameters()
         {
-            testContext.Request.QueryString = new QueryString("?page=2&count=30&level=Verbose" +
+            _testContext.Request.QueryString = new QueryString("?page=2&count=30&level=Verbose" +
                 "&search=test&startDate=2020-01-02%2018:00:00&endDate=2020-02-02%2018:00:00&key=FakeSecondProvider");
-            var result = await HappyPath<AnonymousObject>(sut.GetLogs);
+            var result = await HappyPath<AnonymousObject>(_sut.GetLogs);
             result.Count.Should().Be(30);
             result.CurrentPage.Should().Be(2);
             result.Total.Should().Be(50);
@@ -62,12 +61,12 @@ namespace Ui.Web.Tests.Endpoints
         [Fact]
         public async Task It_serializes_an_error_on_exception()
         {
-            testContext.Response.Body = new MemoryStream();
-            await sut.GetLogs(testContext);
+            _testContext.Response.Body = new MemoryStream();
+            await _sut.GetLogs(_testContext);
 
-            testContext.Response.StatusCode.Should().Be(500);
-            testContext.Response.Body.Seek(0, SeekOrigin.Begin);
-            var result = await new StreamReader(testContext.Response.Body).ReadToEndAsync();
+            _testContext.Response.StatusCode.Should().Be(500);
+            _testContext.Response.Body.Seek(0, SeekOrigin.Begin);
+            var result = await new StreamReader(_testContext.Response.Body).ReadToEndAsync();
             result.Should().Be("{\"errorMessage\":\"{\\\"errorMessage\\\":\\\"Value cannot be null. (Parameter 'provider')\\\"}\"}");
         }
 
@@ -77,16 +76,16 @@ namespace Ui.Web.Tests.Endpoints
             mockProvider
                 .GetService(typeof(AggregateDataProvider))
                 .Returns(new AggregateDataProvider(new IDataProvider[] { new FakeProvider(), new FakeSecondProvider() }));
-            testContext.RequestServices = mockProvider;
-            testContext.Response.Body = new MemoryStream();
+            _testContext.RequestServices = mockProvider;
+            _testContext.Response.Body = new MemoryStream();
 
-            await call(testContext);
+            await call(_testContext);
 
-            testContext.Response.ContentType.Should().Be("application/json;charset=utf-8");
-            testContext.Response.StatusCode.Should().Be(200);
+            _testContext.Response.ContentType.Should().Be("application/json;charset=utf-8");
+            _testContext.Response.StatusCode.Should().Be(200);
             mockProvider.Received().GetService(typeof(AggregateDataProvider));
-            testContext.Response.Body.Seek(0, SeekOrigin.Begin);
-            var result = await new StreamReader(testContext.Response.Body).ReadToEndAsync();
+            _testContext.Response.Body.Seek(0, SeekOrigin.Begin);
+            var result = await new StreamReader(_testContext.Response.Body).ReadToEndAsync();
             return JsonConvert.DeserializeObject<T>(result)!;
         }
 

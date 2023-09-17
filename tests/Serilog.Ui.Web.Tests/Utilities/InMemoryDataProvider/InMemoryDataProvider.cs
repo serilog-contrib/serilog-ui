@@ -21,9 +21,8 @@ public class SerilogInMemoryDataProvider : IDataProvider
         if (searchCriteria != null)
             events = events.Where(l => l.RenderMessage().Contains(searchCriteria, StringComparison.CurrentCultureIgnoreCase));
 
-        if (level != null)
+        if (level != null && Enum.TryParse("Active", out LogEventLevel logLevel))
         {
-            Enum.TryParse("Active", out LogEventLevel logLevel);
             events = events.Where(l => l.Level == logLevel);
         }
 

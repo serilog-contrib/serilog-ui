@@ -12,13 +12,13 @@ namespace Ui.Web.Tests
         IClassFixture<WebAppFactory.WithMocks>,
         IClassFixture<WebAppFactory.WithMocks.AndCustomOptions>
     {
-        private readonly HttpClient httpClient;
-        private readonly HttpClient httpClientWithCustomOpts;
+        private readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClientWithCustomOpts;
 
         public SerilogUiMiddlewareTest(WebAppFactory.WithMocks program, WebAppFactory.WithMocks.AndCustomOptions programOpts)
         {
-            httpClient = program.CreateClient();
-            httpClientWithCustomOpts = programOpts.CreateClient();
+            _httpClient = program.CreateClient();
+            _httpClientWithCustomOpts = programOpts.CreateClient();
         }
 
         [Theory]
@@ -28,7 +28,7 @@ namespace Ui.Web.Tests
         [InlineData("/serilog-ui/index.html", 418)]
         public async Task It_hits_ui_endpoint_when_request_matches_method_and_options_prefix(string pathReq, int statusCode)
         {
-            var send = await httpClient.GetAsync(pathReq);
+            var send = await _httpClient.GetAsync(pathReq);
 
             send.StatusCode.Should().Be((HttpStatusCode)statusCode);
         }
@@ -40,7 +40,7 @@ namespace Ui.Web.Tests
         [InlineData("/test/index.html", 418)]
         public async Task It_hits_ui_endpoint_when_request_matches_method_and_custom_options_prefix(string pathReq, int statusCode)
         {
-            var send = await httpClientWithCustomOpts.GetAsync(pathReq);
+            var send = await _httpClientWithCustomOpts.GetAsync(pathReq);
 
             send.StatusCode.Should().Be((HttpStatusCode)statusCode);
         }
@@ -52,7 +52,7 @@ namespace Ui.Web.Tests
         [InlineData("/fake-prefix/index.html", 418)]
         public async Task It_proceeds_onwards_when_request_does_not_match_options_prefix(string pathReq, int statusCode)
         {
-            var send = await httpClient.GetAsync(pathReq);
+            var send = await _httpClient.GetAsync(pathReq);
 
             send.StatusCode.Should().NotBe((HttpStatusCode)statusCode);
         }
@@ -72,7 +72,7 @@ namespace Ui.Web.Tests
             foreach (var method in methods)
             {
                 var requestMsg = new HttpRequestMessage(method, pathReq);
-                var send = await httpClient.SendAsync(requestMsg);
+                var send = await _httpClient.SendAsync(requestMsg);
 
                 send.StatusCode.Should().NotBe((HttpStatusCode)statusCode);
             }

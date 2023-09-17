@@ -12,17 +12,17 @@ namespace Ui.Web.Tests.Extensions
     [Trait("Ui-ApplicationBuilder", "Web")]
     public class ApplicationBuilderExtensionsTest : IClassFixture<WebAppFactory.WithMocks>
     {
-        private readonly HttpClient client;
+        private readonly HttpClient _client;
 
         public ApplicationBuilderExtensionsTest(WebAppFactory.WithMocks program)
         {
-            client = program.CreateClient();
+            _client = program.CreateClient();
         }
 
         [Fact]
         public async Task It_register_ui_middleware()
         {
-            var middlewareResponse = await client.GetAsync("/serilog-ui/index.html");
+            var middlewareResponse = await _client.GetAsync("/serilog-ui/index.html");
 
             middlewareResponse.StatusCode.Should().Be((System.Net.HttpStatusCode)418, "because that means that the middleware isn't intercepting the request");
         }
