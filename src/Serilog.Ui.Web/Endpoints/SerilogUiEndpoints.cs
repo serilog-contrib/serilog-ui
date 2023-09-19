@@ -15,18 +15,17 @@ namespace Serilog.Ui.Web.Endpoints
     internal class SerilogUiEndpoints : ISerilogUiEndpoints
     {
         private readonly ILogger<SerilogUiEndpoints> _logger;
-        private readonly JsonSerializerSettings _jsonSerializerOptions;
+        private static readonly JsonSerializerSettings _jsonSerializerOptions = new()
+        {
+            NullValueHandling = NullValueHandling.Ignore,
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            Formatting = Formatting.None
+        };
         private string[] _providerKeys;
 
         public SerilogUiEndpoints(ILogger<SerilogUiEndpoints> logger)
         {
             _logger = logger;
-            _jsonSerializerOptions = new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Formatting = Formatting.None
-            };
         }
 
         public UiOptions Options { get; private set; }
