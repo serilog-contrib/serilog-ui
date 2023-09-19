@@ -4,9 +4,9 @@ using NSubstitute;
 using Serilog.Ui.Web;
 using Serilog.Ui.Web.Authorization;
 using Serilog.Ui.Web.Endpoints;
-using Serilog.Ui.Web.Tests.Authorization;
 using System.IO;
 using System.Threading.Tasks;
+using Ui.Web.Tests.Utilities.Authorization;
 using Xunit;
 
 namespace Ui.Web.Tests.Endpoints
