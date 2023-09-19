@@ -79,10 +79,9 @@ namespace Serilog.Ui.Web.Endpoints
 
             var provider = httpContext.RequestServices.GetService<AggregateDataProvider>();
 
-            string key = dbKey;
-            if (!string.IsNullOrWhiteSpace(key))
+            if (!string.IsNullOrWhiteSpace(dbKey))
             {
-                provider.SwitchToProvider(key);
+                provider.SwitchToProvider(dbKey);
             }
 
             var (logs, total) = await provider.FetchDataAsync(currentPage, count, level, textSearch, start, end);
