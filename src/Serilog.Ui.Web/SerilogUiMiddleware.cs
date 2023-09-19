@@ -35,16 +35,18 @@ namespace Serilog.Ui.Web
             var httpMethod = httpContext.Request.Method;
             var isGet = httpMethod == "GET";
 
-            if (isGet)
+            if (!isGet)
             {
-                uiAppRoutes.SetOptions(_options);
-                uiEndpoints.SetOptions(_options);
-
-                if (CheckPath(path, "/api/keys/?")) return uiEndpoints.GetApiKeys(httpContext);
-                if (CheckPath(path, "/api/logs/?")) return uiEndpoints.GetLogs(httpContext);
-                if (CheckPath(path, "/?")) return uiAppRoutes.RedirectHome(httpContext);
-                if (CheckPath(path, "/?index.html")) return uiAppRoutes.GetHome(httpContext);
+                return _staticFileMiddleware.Invoke(httpContext);
             }
+
+            uiAppRoutes.SetOptions(_options);
+            uiEndpoints.SetOptions(_options);
+
+            if (CheckPath(path, "/api/keys/?")) return uiEndpoints.GetApiKeys(httpContext);
+            if (CheckPath(path, "/api/logs/?")) return uiEndpoints.GetLogs(httpContext);
+            if (CheckPath(path, "/?")) return uiAppRoutes.RedirectHome(httpContext);
+            if (CheckPath(path, "/?index.html")) return uiAppRoutes.GetHome(httpContext);
 
             return _staticFileMiddleware.Invoke(httpContext);
         }
