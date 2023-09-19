@@ -28,8 +28,10 @@ namespace Ui.Web.Tests
         [InlineData("/serilog-ui/index.html", 418)]
         public async Task It_hits_ui_endpoint_when_request_matches_method_and_options_prefix(string pathReq, int statusCode)
         {
+            // Act
             var send = await _httpClient.GetAsync(pathReq);
 
+            // Assert
             send.StatusCode.Should().Be((HttpStatusCode)statusCode);
         }
 
@@ -40,8 +42,10 @@ namespace Ui.Web.Tests
         [InlineData("/test/index.html", 418)]
         public async Task It_hits_ui_endpoint_when_request_matches_method_and_custom_options_prefix(string pathReq, int statusCode)
         {
+            // Act
             var send = await _httpClientWithCustomOpts.GetAsync(pathReq);
 
+            // Assert
             send.StatusCode.Should().Be((HttpStatusCode)statusCode);
         }
 
@@ -52,8 +56,10 @@ namespace Ui.Web.Tests
         [InlineData("/fake-prefix/index.html", 418)]
         public async Task It_proceeds_onwards_when_request_does_not_match_options_prefix(string pathReq, int statusCode)
         {
+            // Act
             var send = await _httpClient.GetAsync(pathReq);
 
+            // Assert
             send.StatusCode.Should().NotBe((HttpStatusCode)statusCode);
         }
 
@@ -64,6 +70,7 @@ namespace Ui.Web.Tests
         [InlineData("/serilog-ui/index.html", 418)]
         public async Task It_proceeds_onwards_when_request_is_not_a_get(string pathReq, int statusCode)
         {
+            // Arrange
             var methods = new HttpMethod[] {
                 HttpMethod.Connect, HttpMethod.Delete, HttpMethod.Head, HttpMethod.Options,
                 HttpMethod.Patch, HttpMethod.Post, HttpMethod.Put, HttpMethod.Trace,
@@ -71,9 +78,11 @@ namespace Ui.Web.Tests
 
             foreach (var method in methods)
             {
+                // Act
                 var requestMsg = new HttpRequestMessage(method, pathReq);
                 var send = await _httpClient.SendAsync(requestMsg);
 
+                // Assert
                 send.StatusCode.Should().NotBe((HttpStatusCode)statusCode);
             }
         }

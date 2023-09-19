@@ -22,28 +22,36 @@ namespace Ui.Web.Tests.Extensions
         [Fact]
         public async Task It_register_ui_middleware()
         {
+            // Act
             var middlewareResponse = await _client.GetAsync("/serilog-ui/index.html");
 
+            // Assert
             middlewareResponse.StatusCode.Should().Be((System.Net.HttpStatusCode)418, "because that means that the middleware isn't intercepting the request");
         }
 
         [Fact]
         public void It_throws_on_null_deps()
         {
+            // Arrange
             IApplicationBuilder builder = null!;
 
+            // Act
             var fail = () => builder.UseSerilogUi(null);
 
+            // Assert
             fail.Should().ThrowExactly<ArgumentNullException>();
         }
 
         [Fact]
         public void It_not_throws_on_null_parameters()
         {
+            // Arrange
             var webApp = WebApplication.CreateBuilder().Build();
 
+            // Act
             var fail = () => webApp.UseSerilogUi(null);
 
+            // Assert
             fail.Should().NotThrow();
         }
     }

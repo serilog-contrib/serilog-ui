@@ -16,6 +16,7 @@ namespace Ui.Web.Tests.Extensions
         [Fact]
         public void It_is_local_when_remote_ip_address_equals_local_ip_address()
         {
+            // Arrange
             var requestMock = Substitute.For<HttpRequest>();
             var httpContextMock = Substitute.For<HttpContext>();
             var dic = new HeaderDictionary { };
@@ -26,12 +27,17 @@ namespace Ui.Web.Tests.Extensions
             requestMock.Headers.Returns(dic);
             requestMock.HttpContext.Returns(httpContextMock);
 
-            requestMock.IsLocal().Should().BeTrue();
+            requestMock
+                // Act
+                .IsLocal()
+                // Assert
+                .Should().BeTrue();
         }
 
         [Fact]
         public void It_is_local_when_remote_ip_address_is_loopback()
         {
+            // Arrange
             var requestMock = Substitute.For<HttpRequest>();
             var httpContextMock = Substitute.For<HttpContext>();
             var dic = new HeaderDictionary { };
@@ -40,16 +46,25 @@ namespace Ui.Web.Tests.Extensions
 
             httpContextMock.Connection.Returns(new ConnectionInfoMock()
                 .WithRemoteIp(IPAddress.Loopback));
-            requestMock.IsLocal().Should().BeTrue();
+            requestMock
+                // Act
+                .IsLocal()
+                // Assert
+                .Should().BeTrue();
 
             httpContextMock.Connection.Returns(new ConnectionInfoMock()
                 .WithRemoteIp(IPAddress.IPv6Loopback));
-            requestMock.IsLocal().Should().BeTrue();
+            requestMock
+                // Act
+                .IsLocal()
+                // Assert
+                .Should().BeTrue();
         }
 
         [Fact]
         public void It_is_local_when_no_xforwarded_and_remote_ip_address_is_null()
         {
+            // Arrange
             var requestMock = Substitute.For<HttpRequest>();
             var httpContextMock = Substitute.For<HttpContext>();
             var dic = new HeaderDictionary { };
@@ -60,22 +75,32 @@ namespace Ui.Web.Tests.Extensions
             requestMock.Headers.Returns(dic);
             requestMock.HttpContext.Returns(httpContextMock);
 
-            requestMock.IsLocal().Should().BeTrue();
+            requestMock
+                // Act
+                .IsLocal()
+                // Assert
+                .Should().BeTrue();
         }
 
         [Fact]
         public void It_is_not_local_when_xforwarded()
         {
+            // Arrange
             var requestMock = Substitute.For<HttpRequest>();
             var dic = new HeaderDictionary { ["X-forwarded-for"] = "test" };
             requestMock.Headers.Returns(dic);
 
-            requestMock.IsLocal().Should().BeFalse();
+            requestMock
+                // Act
+                .IsLocal()
+                // Assert
+                .Should().BeFalse();
         }
 
         [Fact]
         public void It_is_not_local_when_remote_ip_address_is_not_local_nor_loopback()
         {
+            // Arrange
             var requestMock = Substitute.For<HttpRequest>();
             var httpContextMock = Substitute.For<HttpContext>();
             var dic = new HeaderDictionary { };
@@ -85,14 +110,22 @@ namespace Ui.Web.Tests.Extensions
 
             httpContextMock.Connection.Returns(
                 new ConnectionInfoMock().WithRemoteIp(IPAddress.Parse("20.100.30.10")));
-            requestMock.IsLocal().Should().BeFalse();
+            requestMock
+                // Act
+                .IsLocal()
+                // Assert
+                .Should().BeFalse();
 
             httpContextMock.Connection.Returns(
                 new ConnectionInfoMock()
                 .WithRemoteIp(IPAddress.Parse("20.100.30.10"))
                 .WithLocalIp(IPAddress.Parse("231.228.97.51"))
                 );
-            requestMock.IsLocal().Should().BeFalse();
+            requestMock
+                // Act
+                .IsLocal()
+                // Assert
+                .Should().BeFalse();
         }
 
         private class ConnectionInfoMock : ConnectionInfo

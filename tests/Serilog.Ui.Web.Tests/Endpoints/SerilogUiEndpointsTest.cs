@@ -32,14 +32,20 @@ namespace Ui.Web.Tests.Endpoints
         [Fact]
         public async Task It_gets_logs_keys()
         {
+            // Act
             var result = await HappyPath<IEnumerable<string>>(_sut.GetApiKeys);
+
+            // Assert
             result.Should().ContainInOrder("FakeFirstProvider", "FakeSecondProvider");
         }
 
         [Fact]
         public async Task It_gets_logs()
         {
+            // Act
             var result = await HappyPath<AnonymousObject>(_sut.GetLogs);
+
+            // Assert
             result.Count.Should().Be(10);
             result.CurrentPage.Should().Be(1);
             result.Total.Should().Be(100);
@@ -49,9 +55,14 @@ namespace Ui.Web.Tests.Endpoints
         [Fact]
         public async Task It_gets_logs_with_search_parameters()
         {
+            // Arrange
             _testContext.Request.QueryString = new QueryString("?page=2&count=30&level=Verbose" +
                 "&search=test&startDate=2020-01-02%2018:00:00&endDate=2020-02-02%2018:00:00&key=FakeSecondProvider");
+
+            // Act
             var result = await HappyPath<AnonymousObject>(_sut.GetLogs);
+
+            // Assert
             result.Count.Should().Be(30);
             result.CurrentPage.Should().Be(2);
             result.Total.Should().Be(50);
@@ -61,9 +72,13 @@ namespace Ui.Web.Tests.Endpoints
         [Fact]
         public async Task It_serializes_an_error_on_exception()
         {
+            // Arrange
             _testContext.Response.Body = new MemoryStream();
+
+            // Act
             await _sut.GetLogs(_testContext);
 
+            // Assert
             _testContext.Response.StatusCode.Should().Be(500);
             _testContext.Response.Body.Seek(0, SeekOrigin.Begin);
             var result = await new StreamReader(_testContext.Response.Body).ReadToEndAsync();
@@ -72,6 +87,7 @@ namespace Ui.Web.Tests.Endpoints
 
         private async Task<T> HappyPath<T>(Func<HttpContext, Task> call)
         {
+            // Arrange
             var mockProvider = Substitute.For<IServiceProvider>();
             mockProvider
                 .GetService(typeof(AggregateDataProvider))
@@ -79,8 +95,10 @@ namespace Ui.Web.Tests.Endpoints
             _testContext.RequestServices = mockProvider;
             _testContext.Response.Body = new MemoryStream();
 
+            // Act
             await call(_testContext);
 
+            // Assert
             _testContext.Response.ContentType.Should().Be("application/json;charset=utf-8");
             _testContext.Response.StatusCode.Should().Be(200);
             mockProvider.Received().GetService(typeof(AggregateDataProvider));

@@ -5,7 +5,6 @@ using Serilog.Ui.Web;
 using Serilog.Ui.Web.Endpoints;
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -31,6 +30,7 @@ namespace Ui.Web.Tests.Endpoints
         [Fact]
         public async Task It_gets_app_home()
         {
+            // Arrange
             _sut.SetOptions(new()
             {
                 BodyContent = "<div>body-test</div>",
@@ -48,8 +48,10 @@ namespace Ui.Web.Tests.Endpoints
                 "<meta name=\"dummy\" content=\"%(BodyContent)\"></body></html>"));
             _streamLoaderMock.GetIndex().Returns(stream);
 
+            // Act
             await _sut.GetHome(_testContext);
 
+            // Assert
             _testContext.Response.StatusCode.Should().Be(200);
             _testContext.Response.ContentType.Should().Be("text/html;charset=utf-8");
 
@@ -66,13 +68,16 @@ namespace Ui.Web.Tests.Endpoints
         [Fact]
         public async Task It_returns_page_error_when_stream_cannot_load_app_home()
         {
+            // Arrange
             _sut.SetOptions(new());
             _testContext.Request.Path = "/serilog-ui-url/index.html";
             _testContext.Response.Body = new MemoryStream();
             _streamLoaderMock.GetIndex().Returns((Stream)null!);
 
+            // Act
             await _sut.GetHome(_testContext);
 
+            // Assert
             _testContext.Response.StatusCode.Should().Be(500);
 
             _testContext.Response.Body.Seek(0, SeekOrigin.Begin);
@@ -83,9 +88,13 @@ namespace Ui.Web.Tests.Endpoints
         [Fact]
         public async Task It_redirects_app_home()
         {
+            // Arrange
             _testContext.Request.Path = "/serilog-ui-url/";
+
+            // Act
             await _sut.RedirectHome(_testContext);
 
+            // Assert
             _testContext.Response.StatusCode.Should().Be(301);
             _testContext.Response.Headers.Location[0].Should().Be("https://test.dev/serilog-ui-url/index.html");
         }
@@ -93,8 +102,10 @@ namespace Ui.Web.Tests.Endpoints
         [Fact]
         public Task It_throws_on_app_home_if_ui_options_were_not_set()
         {
+            // Act
             var result = () => _sut.GetHome(new DefaultHttpContext());
 
+            // Assert
             return result.Should().ThrowAsync<ArgumentNullException>();
         }
     }
