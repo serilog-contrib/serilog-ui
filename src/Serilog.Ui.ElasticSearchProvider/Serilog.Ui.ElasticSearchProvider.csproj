@@ -1,18 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-	  <LangVersion>latest</LangVersion>
-    <Version>2.2.0</Version>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Version>2.2.0</Version>
+	</PropertyGroup>
 
-  <ItemGroup>
-	  <PackageReference Include="NEST" Version="7.11.1" />
-    <PackageReference Include="NEST.JsonNetSerializer" Version="7.11.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="NEST" Version="7.11.1" />
+		<PackageReference Include="NEST.JsonNetSerializer" Version="7.11.1" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
+	</ItemGroup>
 </Project>

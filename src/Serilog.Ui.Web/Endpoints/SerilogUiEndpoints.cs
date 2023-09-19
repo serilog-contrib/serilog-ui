@@ -72,7 +72,7 @@ namespace Serilog.Ui.Web.Endpoints
             Options = options;
         }
 
-        private async Task<string> FetchLogsAsync(HttpContext httpContext)
+        private static async Task<string> FetchLogsAsync(HttpContext httpContext)
         {
             var (currentPage, count, dbKey, level, textSearch, start, end) = ParseQuery(httpContext.Request.Query);
 
