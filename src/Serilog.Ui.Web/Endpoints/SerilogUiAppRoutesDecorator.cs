@@ -18,7 +18,7 @@ namespace Serilog.Ui.Web.Endpoints
         }
         public UiOptions Options { get; private set; }
 
-        public Task GetHome(HttpContext httpContext)
+        public Task GetHomeAsync(HttpContext httpContext)
         {
             Guard.Against.Null(Options, nameof(Options));
 
@@ -29,21 +29,17 @@ namespace Serilog.Ui.Web.Endpoints
             }
 
             return Options.Authorization.RunAuthorizationFilterOnAppRoutes ?
-                _authFilterService.CheckAccess(httpContext, Options, _decoratedService.GetHome, ChangeResponseAsync) :
-                _decoratedService.GetHome(httpContext);
+                _authFilterService.CheckAccessAsync(httpContext, Options, _decoratedService.GetHomeAsync, ChangeResponseAsync) :
+                _decoratedService.GetHomeAsync(httpContext);
         }
 
-        public Task RedirectHome(HttpContext httpContext)
+        public Task RedirectHomeAsync(HttpContext httpContext)
         {
-#if NET6_0_OR_GREATER
-            Guard.Against.Null(Options);
-#else
             Guard.Against.Null(Options, nameof(Options));
-#endif
 
             return Options.Authorization.RunAuthorizationFilterOnAppRoutes ?
-                _authFilterService.CheckAccess(httpContext, Options, _decoratedService.RedirectHome) :
-                _decoratedService.RedirectHome(httpContext);
+                _authFilterService.CheckAccessAsync(httpContext, Options, _decoratedService.RedirectHomeAsync) :
+                _decoratedService.RedirectHomeAsync(httpContext);
         }
 
         public void SetOptions(UiOptions options)

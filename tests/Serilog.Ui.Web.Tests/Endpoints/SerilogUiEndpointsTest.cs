@@ -33,7 +33,7 @@ namespace Ui.Web.Tests.Endpoints
         public async Task It_gets_logs_keys()
         {
             // Act
-            var result = await HappyPath<IEnumerable<string>>(_sut.GetApiKeys);
+            var result = await HappyPath<IEnumerable<string>>(_sut.GetApiKeysAsync);
 
             // Assert
             result.Should().ContainInOrder("FakeFirstProvider", "FakeSecondProvider");
@@ -43,7 +43,7 @@ namespace Ui.Web.Tests.Endpoints
         public async Task It_gets_logs()
         {
             // Act
-            var result = await HappyPath<AnonymousObject>(_sut.GetLogs);
+            var result = await HappyPath<AnonymousObject>(_sut.GetLogsAsync);
 
             // Assert
             result.Count.Should().Be(10);
@@ -60,7 +60,7 @@ namespace Ui.Web.Tests.Endpoints
                 "&search=test&startDate=2020-01-02%2018:00:00&endDate=2020-02-02%2018:00:00&key=FakeSecondProvider");
 
             // Act
-            var result = await HappyPath<AnonymousObject>(_sut.GetLogs);
+            var result = await HappyPath<AnonymousObject>(_sut.GetLogsAsync);
 
             // Assert
             result.Count.Should().Be(30);
@@ -76,7 +76,7 @@ namespace Ui.Web.Tests.Endpoints
             _testContext.Response.Body = new MemoryStream();
 
             // Act
-            await _sut.GetLogs(_testContext);
+            await _sut.GetLogsAsync(_testContext);
 
             // Assert
             _testContext.Response.StatusCode.Should().Be(500);

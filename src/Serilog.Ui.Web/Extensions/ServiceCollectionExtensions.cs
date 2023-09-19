@@ -25,13 +25,8 @@ namespace Serilog.Ui.Web
         /// <returns>The same service collection so that multiple calls can be chained.</returns>
         public static IServiceCollection AddSerilogUi(this IServiceCollection services, Action<SerilogUiOptionsBuilder> optionsBuilder)
         {
-#if NET6_0_OR_GREATER
-            Guard.Against.Null(services);
-            Guard.Against.Null(optionsBuilder);
-#else
             Guard.Against.Null(services, nameof(services));
             Guard.Against.Null(optionsBuilder, nameof(optionsBuilder));
-#endif
 
             var builder = new SerilogUiOptionsBuilder(services);
             optionsBuilder.Invoke(builder);

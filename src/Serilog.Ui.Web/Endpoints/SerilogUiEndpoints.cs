@@ -30,7 +30,7 @@ namespace Serilog.Ui.Web.Endpoints
 
         public UiOptions Options { get; private set; }
 
-        public async Task GetApiKeys(HttpContext httpContext)
+        public async Task GetApiKeysAsync(HttpContext httpContext)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace Serilog.Ui.Web.Endpoints
             }
         }
 
-        public async Task GetLogs(HttpContext httpContext)
+        public async Task GetLogsAsync(HttpContext httpContext)
         {
             try
             {

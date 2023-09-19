@@ -17,14 +17,14 @@ namespace Serilog.Ui.Web.Endpoints
 
         public UiOptions Options { get; private set; }
 
-        public Task GetApiKeys(HttpContext httpContext)
+        public Task GetApiKeysAsync(HttpContext httpContext)
         {
-            return _authFilterService.CheckAccess(httpContext, Options, _decoratedService.GetApiKeys);
+            return _authFilterService.CheckAccessAsync(httpContext, Options, _decoratedService.GetApiKeysAsync);
         }
 
-        public Task GetLogs(HttpContext httpContext)
+        public Task GetLogsAsync(HttpContext httpContext)
         {
-            return _authFilterService.CheckAccess(httpContext, Options, _decoratedService.GetLogs);
+            return _authFilterService.CheckAccessAsync(httpContext, Options, _decoratedService.GetLogsAsync);
         }
 
         public void SetOptions(UiOptions options)

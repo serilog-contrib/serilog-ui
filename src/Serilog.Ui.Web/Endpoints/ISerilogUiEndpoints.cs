@@ -5,8 +5,8 @@ namespace Serilog.Ui.Web.Endpoints
 {
     public interface ISerilogUiEndpoints : ISerilogUiOptionsSetter
     {
-        Task GetApiKeys(HttpContext httpContext);
+        Task GetApiKeysAsync(HttpContext httpContext);
 
-        Task GetLogs(HttpContext httpContext);
+        Task GetLogsAsync(HttpContext httpContext);
     }
 }

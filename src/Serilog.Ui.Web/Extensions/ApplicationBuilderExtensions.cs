@@ -20,11 +20,7 @@ namespace Serilog.Ui.Web
         /// <exception cref="ArgumentNullException">throw if applicationBuilder if null</exception>
         public static IApplicationBuilder UseSerilogUi(this IApplicationBuilder applicationBuilder, Action<UiOptions> options = null)
         {
-#if NET6_0_OR_GREATER
-            Guard.Against.Null(applicationBuilder);
-#else
             Guard.Against.Null(applicationBuilder, nameof(applicationBuilder));
-#endif
 
             var uiOptions = new UiOptions();
             options?.Invoke(uiOptions);

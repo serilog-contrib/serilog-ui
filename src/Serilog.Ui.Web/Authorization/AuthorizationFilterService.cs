@@ -6,22 +6,14 @@ using System.Threading.Tasks;
 
 namespace Serilog.Ui.Web.Authorization
 {
-    internal interface IAuthorizationFilterService
-    {
-        Task CheckAccess(HttpContext httpContext,
-            UiOptions options,
-            Func<HttpContext, Task> onSuccess,
-            Func<HttpResponse, Task> onFailure = null);
-    }
-
     internal class AuthorizationFilterService : IAuthorizationFilterService
     {
-        public async Task CheckAccess(HttpContext httpContext,
+        public async Task CheckAccessAsync(HttpContext httpContext,
             UiOptions options,
             Func<HttpContext, Task> onSuccess,
             Func<HttpResponse, Task> onFailure = null)
         {
-            var accessCheck = await CanAccess(httpContext, options);
+            var accessCheck = await CanAccessAsync(httpContext, options);
             if (!accessCheck)
             {
                 httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
@@ -35,7 +27,7 @@ namespace Serilog.Ui.Web.Authorization
             await onSuccess(httpContext);
         }
 
-        private static async Task<bool> CanAccess(HttpContext httpContext, UiOptions options)
+        private static async Task<bool> CanAccessAsync(HttpContext httpContext, UiOptions options)
         {
             var syncFilterResult = options.Authorization.Filters.Any(filter => !filter.Authorize(httpContext));
 

@@ -53,10 +53,10 @@ public class WebAppFactory
         private class FakeAppRoutes : ISerilogUiAppRoutes, ISerilogUiEndpoints
         {
             public UiOptions? Options { get; set; }
-            public Task GetApiKeys(HttpContext httpContext) => Oper(httpContext, 417);
-            public Task GetHome(HttpContext httpContext) => Oper(httpContext, 418);
-            public Task GetLogs(HttpContext httpContext) => Oper(httpContext, 409);
-            public Task RedirectHome(HttpContext httpContext) => Oper(httpContext, 400);
+            public Task GetApiKeysAsync(HttpContext httpContext) => Oper(httpContext, 417);
+            public Task GetHomeAsync(HttpContext httpContext) => Oper(httpContext, 418);
+            public Task GetLogsAsync(HttpContext httpContext) => Oper(httpContext, 409);
+            public Task RedirectHomeAsync(HttpContext httpContext) => Oper(httpContext, 400);
             public void SetOptions(UiOptions options) => Options = options;
             private static Task Oper(HttpContext httpContext, int statusCode)
             {

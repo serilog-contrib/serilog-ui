@@ -49,7 +49,7 @@ namespace Ui.Web.Tests.Endpoints
             _streamLoaderMock.GetIndex().Returns(stream);
 
             // Act
-            await _sut.GetHome(_testContext);
+            await _sut.GetHomeAsync(_testContext);
 
             // Assert
             _testContext.Response.StatusCode.Should().Be(200);
@@ -75,7 +75,7 @@ namespace Ui.Web.Tests.Endpoints
             _streamLoaderMock.GetIndex().Returns((Stream)null!);
 
             // Act
-            await _sut.GetHome(_testContext);
+            await _sut.GetHomeAsync(_testContext);
 
             // Assert
             _testContext.Response.StatusCode.Should().Be(500);
@@ -92,7 +92,7 @@ namespace Ui.Web.Tests.Endpoints
             _testContext.Request.Path = "/serilog-ui-url/";
 
             // Act
-            await _sut.RedirectHome(_testContext);
+            await _sut.RedirectHomeAsync(_testContext);
 
             // Assert
             _testContext.Response.StatusCode.Should().Be(301);
@@ -103,7 +103,7 @@ namespace Ui.Web.Tests.Endpoints
         public Task It_throws_on_app_home_if_ui_options_were_not_set()
         {
             // Act
-            var result = () => _sut.GetHome(new DefaultHttpContext());
+            var result = () => _sut.GetHomeAsync(new DefaultHttpContext());
 
             // Assert
             return result.Should().ThrowAsync<ArgumentNullException>();

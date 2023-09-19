@@ -43,10 +43,10 @@ namespace Serilog.Ui.Web
             uiAppRoutes.SetOptions(_options);
             uiEndpoints.SetOptions(_options);
 
-            if (CheckPath(path, "/api/keys/?")) return uiEndpoints.GetApiKeys(httpContext);
-            if (CheckPath(path, "/api/logs/?")) return uiEndpoints.GetLogs(httpContext);
-            if (CheckPath(path, "/?")) return uiAppRoutes.RedirectHome(httpContext);
-            if (CheckPath(path, "/?index.html")) return uiAppRoutes.GetHome(httpContext);
+            if (CheckPath(path, "/api/keys/?")) return uiEndpoints.GetApiKeysAsync(httpContext);
+            if (CheckPath(path, "/api/logs/?")) return uiEndpoints.GetLogsAsync(httpContext);
+            if (CheckPath(path, "/?")) return uiAppRoutes.RedirectHomeAsync(httpContext);
+            if (CheckPath(path, "/?index.html")) return uiAppRoutes.GetHomeAsync(httpContext);
 
             return _staticFileMiddleware.Invoke(httpContext);
         }

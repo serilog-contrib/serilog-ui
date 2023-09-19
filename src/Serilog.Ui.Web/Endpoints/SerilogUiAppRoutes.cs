@@ -12,32 +12,28 @@ namespace Serilog.Ui.Web.Endpoints
 {
     internal class SerilogUiAppRoutes : ISerilogUiAppRoutes
     {
-        private readonly JsonSerializerSettings _jsonSerializerOptions;
-        private readonly IAppStreamLoader streamLoader;
-
-        public SerilogUiAppRoutes(IAppStreamLoader streamLoader)
+        private static readonly JsonSerializerSettings _jsonSerializerOptions = new()
         {
-            _jsonSerializerOptions = new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Formatting = Formatting.None
-            };
-            this.streamLoader = streamLoader;
+            NullValueHandling = NullValueHandling.Ignore,
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            Formatting = Formatting.None
+        };
+        private readonly IAppStreamLoader _streamLoader;
+
+        public SerilogUiAppRoutes(IAppStreamLoader appStreamLoader)
+        {
+            _streamLoader = appStreamLoader;
         }
 
         public UiOptions Options { get; private set; }
 
-        public async Task GetHome(HttpContext httpContext)
+        public async Task GetHomeAsync(HttpContext httpContext)
         {
-#if NET6_0_OR_GREATER
-            Guard.Against.Null(Options);
-#else
             Guard.Against.Null(Options, nameof(Options));
-#endif
+
             var response = httpContext.Response;
 
-            using var stream = streamLoader.GetIndex();
+            using var stream = _streamLoader.GetIndex();
             if (stream is null)
             {
                 response.StatusCode = 500;
@@ -52,7 +48,7 @@ namespace Serilog.Ui.Web.Endpoints
             await response.WriteAsync(htmlString, Encoding.UTF8);
         }
 
-        public Task RedirectHome(HttpContext httpContext)
+        public Task RedirectHomeAsync(HttpContext httpContext)
         {
             var indexUrl = httpContext.Request.GetEncodedUrl().TrimEnd('/') + "/index.html";
 
@@ -67,7 +63,7 @@ namespace Serilog.Ui.Web.Endpoints
             Options = options;
         }
 
-        private async Task<string> LoadStream(Stream stream, UiOptions options)
+        private static async Task<string> LoadStream(Stream stream, UiOptions options)
         {
             var htmlStringBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
             var authType = options.Authorization.AuthenticationType.ToString();
