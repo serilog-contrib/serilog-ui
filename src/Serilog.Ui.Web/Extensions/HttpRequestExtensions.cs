@@ -10,7 +10,9 @@ namespace Serilog.Ui.Web
         {
             var ipAddress = request.Headers["X-forwarded-for"].FirstOrDefault();
             if (!string.IsNullOrWhiteSpace(ipAddress))
+            {
                 return false;
+            }
 
             var connection = request.HttpContext.Connection;
             if (connection.RemoteIpAddress != null)
