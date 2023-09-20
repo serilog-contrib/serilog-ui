@@ -64,7 +64,7 @@ partial class Build : NukeBuild
         .Executes(() =>
         {
             var localOutput = RootDirectory / "nugets-output";
-            if (IsLocalBuild) FileSystemTasks.EnsureExistingDirectory(localOutput);
+            if (IsLocalBuild) AbsolutePathExtensions.CreateDirectory(localOutput);
 
             OutputDirectory.GlobFiles("*.nupkg")
             .ForEach(filePath =>

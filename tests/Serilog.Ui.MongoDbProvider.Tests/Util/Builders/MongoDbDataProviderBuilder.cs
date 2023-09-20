@@ -32,10 +32,9 @@ namespace MongoDb.Tests.Util.Builders
             var (array, collector) = MongoDbLogModelFaker.Logs(100);
 
             // https://stackoverflow.com/a/75637412/15129749
-            var objectSerializer = new ObjectSerializer(type => ObjectSerializer.DefaultAllowedTypes(type) || 
-                type.FullName.StartsWith("Serilog.Ui.Common.Tests") ||
-                type.FullName.StartsWith("MongoDB.Bson.BsonDocument")
-
+            var objectSerializer = new ObjectSerializer(type => ObjectSerializer.DefaultAllowedTypes(type) ||
+                (type.FullName?.StartsWith("Serilog.Ui.Common.Tests") ?? false) ||
+                (type.FullName?.StartsWith("MongoDB.Bson.BsonDocument") ?? false)
                 );
             BsonSerializer.RegisterSerializer(objectSerializer);
 

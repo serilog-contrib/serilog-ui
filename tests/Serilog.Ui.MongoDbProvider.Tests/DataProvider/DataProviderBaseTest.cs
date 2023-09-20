@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using MongoDB.Driver;
-using Moq;
+using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.MongoDbProvider;
 using System;
@@ -29,17 +30,19 @@ namespace MongoDb.Tests.DataProvider
         [Fact]
         public Task It_logs_and_throws_when_db_read_breaks_down()
         {
-            var mockClient = new Mock<IMongoClient>();
-            var mockDb = new Mock<IMongoDatabase>();
-            var mockColl = new Mock<IMongoCollection<MongoDbLogModel>>();
-            mockClient.Setup(p => p.GetDatabase(It.IsAny<string>(), null))
-                .Returns(mockDb.Object);
-            mockDb.Setup(p => p.GetCollection<MongoDbLogModel>(It.IsAny<string>(), null)).Returns(() => mockColl.Object);
+            var mongoClientMock = Substitute.For<IMongoClient>();
+            var mongoDbMock = Substitute.For<IMongoDatabase>();
+            var mongoCollectionMock = Substitute.For<IMongoCollection<MongoDbLogModel>>();
+            mongoClientMock
+                .GetDatabase(Arg.Any<string>(), null)
+                .Returns(mongoDbMock);
+            mongoDbMock.GetCollection<MongoDbLogModel>(Arg.Any<string>(), null).Returns(mongoCollectionMock);
+            mongoCollectionMock.Indexes.Throws(new ArithmeticException());
 
-            var sut = new MongoDbDataProvider(mockClient.Object,
+            var sut = new MongoDbDataProvider(mongoClientMock,
                 new MongoDbOptions() { CollectionName = "coll", ConnectionString = "some", DatabaseName = "db" });
-            var assert = () => sut.FetchDataAsync(1, 10);
-            return assert.Should().ThrowAsync<ArgumentNullException>();
+            var assert = () => sut.FetchDataAsync(1, 10, searchCriteria: "break-db");
+            return assert.Should().ThrowAsync<ArithmeticException>();
         }
     }
 }

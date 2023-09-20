@@ -1,3 +1,4 @@
+using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Builder;
 using System;
 
@@ -19,8 +20,7 @@ namespace Serilog.Ui.Web
         /// <exception cref="ArgumentNullException">throw if applicationBuilder if null</exception>
         public static IApplicationBuilder UseSerilogUi(this IApplicationBuilder applicationBuilder, Action<UiOptions> options = null)
         {
-            if (applicationBuilder == null)
-                throw new ArgumentNullException(nameof(applicationBuilder));
+            Guard.Against.Null(applicationBuilder, nameof(applicationBuilder));
 
             var uiOptions = new UiOptions();
             options?.Invoke(uiOptions);
