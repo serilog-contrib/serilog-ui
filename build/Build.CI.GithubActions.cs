@@ -1,8 +1,10 @@
 using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
+using Nuke.Common.IO;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.GitHub;
 using Nuke.Common.Tools.SonarScanner;
+using Serilog;
 using static CustomGithubActionsAttribute;
 
 /**
@@ -85,9 +87,14 @@ partial class Build : NukeBuild
         )
         .Executes(() =>
         {
+            var res = OutputDirectory.GlobFiles("*.coverage.xml", "coverage.xml");
+            foreach(var p in res){
+                Log.Warning("my @Path", p);
+            }
             SonarScannerTasks.SonarScannerBegin(new SonarScannerBeginSettings()
                 .SetExcludeTestProjects(true)
                 .SetFramework("net5.0")
+                .SetAdditionalParameter("token", SonarToken)
                 .SetLogin(SonarToken)
                 .SetOrganization(SonarCloudInfo.Organization)
                 .SetProjectKey(SonarCloudInfo.BackendProjectKey)
@@ -99,7 +106,8 @@ partial class Build : NukeBuild
                     "src/Serilog.Ui.Web/node_modules/**/*",
                     "src/Serilog.Ui.Web/*.js",
                     "src/Serilog.Ui.Web/*.json")
-                .SetVisualStudioCoveragePaths("**/coverage.xml", "coverage.xml")
+                .SetVisualStudioCoveragePaths("**/coverage.xml", "coverage.xml", "**/*.coverage.xml", "**/*.xml")
+                .SetVerbose(true)
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
                 .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken)
             );
