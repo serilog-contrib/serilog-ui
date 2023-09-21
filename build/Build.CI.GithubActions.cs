@@ -87,10 +87,6 @@ partial class Build : NukeBuild
         )
         .Executes(() =>
         {
-            var res = OutputDirectory.GlobFiles("*.coverage.xml", "coverage.xml");
-            foreach(var p in res){
-                Log.Warning("my @Path", p);
-            }
             SonarScannerTasks.SonarScannerBegin(new SonarScannerBeginSettings()
                 .SetExcludeTestProjects(true)
                 .SetFramework("net5.0")
@@ -99,14 +95,15 @@ partial class Build : NukeBuild
                 .SetOrganization(SonarCloudInfo.Organization)
                 .SetProjectKey(SonarCloudInfo.BackendProjectKey)
                 .SetServer("https://sonarcloud.io")
-                .SetSourceInclusions("src/**/*", "coverage.xml", "**/coverage.xml")
+                .SetSourceInclusions("src/**/*", "src/coverage.xml")
                 .SetSourceExclusions(
                     "src/Serilog.Ui.Web/assets/**/*",
                     "src/Serilog.Ui.Web/wwwroot/**/*",
                     "src/Serilog.Ui.Web/node_modules/**/*",
                     "src/Serilog.Ui.Web/*.js",
                     "src/Serilog.Ui.Web/*.json")
-                .SetVisualStudioCoveragePaths("**/coverage.xml", "coverage.xml", "**/*.coverage.xml", "**/*.xml")
+                .SetVisualStudioCoveragePaths("**/coverage.xml", "coverage.xml")
+                .SetGenericCoveragePaths("**/coverage.xml", "coverage.xml")
                 .SetVerbose(true)
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
                 .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken)
