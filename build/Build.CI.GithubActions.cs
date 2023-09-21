@@ -114,7 +114,7 @@ partial class Build : NukeBuild
         {
             SonarScannerTasks.SonarScannerEnd(new SonarScannerEndSettings()
                 .SetFramework("net5.0")
-                .SetLogin(SonarToken)
+                .SetProcessArgumentConfigurator(_ => _.Add("/d:sonar.token={value}", SonarToken, secret: true))
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
                 .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken));
         });
