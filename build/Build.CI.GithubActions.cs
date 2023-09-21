@@ -92,7 +92,7 @@ partial class Build : NukeBuild
                 .SetOrganization(SonarCloudInfo.Organization)
                 .SetProjectKey(SonarCloudInfo.BackendProjectKey)
                 .SetServer("https://sonarcloud.io")
-                .SetSourceInclusions("src/**/*")
+                .SetSourceInclusions("src/**/*", "coverage.xml", "**/coverage.xml")
                 .SetSourceExclusions(
                     "src/Serilog.Ui.Web/assets/**/*",
                     "src/Serilog.Ui.Web/wwwroot/**/*",
