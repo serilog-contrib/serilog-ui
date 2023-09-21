@@ -90,19 +90,19 @@ partial class Build : NukeBuild
             SonarScannerTasks.SonarScannerBegin(new SonarScannerBeginSettings()
                 .SetExcludeTestProjects(true)
                 .SetFramework("net5.0")
-                .SetAdditionalParameter("token", SonarToken)
+                .SetAdditionalParameter("sonar.token", SonarToken)
                 .SetLogin(SonarToken)
                 .SetOrganization(SonarCloudInfo.Organization)
                 .SetProjectKey(SonarCloudInfo.BackendProjectKey)
                 .SetServer("https://sonarcloud.io")
-                .SetSourceInclusions("src/**/*", "src/coverage.xml")
+                .SetSourceInclusions("src/**/*")
                 .SetSourceExclusions(
                     "src/Serilog.Ui.Web/assets/**/*",
                     "src/Serilog.Ui.Web/wwwroot/**/*",
                     "src/Serilog.Ui.Web/node_modules/**/*",
                     "src/Serilog.Ui.Web/*.js",
                     "src/Serilog.Ui.Web/*.json")
-                .SetVisualStudioCoveragePaths("**/coverage.xml", "coverage.xml")
+                .SetVisualStudioCoveragePaths("coverage.xml")
                 .SetVerbose(true)
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
                 .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken)
