@@ -1,3 +1,4 @@
+using NuGet.Common;
 using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.IO;
@@ -102,7 +103,7 @@ partial class Build : NukeBuild
                     "src/Serilog.Ui.Web/node_modules/**/*",
                     "src/Serilog.Ui.Web/*.js",
                     "src/Serilog.Ui.Web/*.json")
-                .SetVisualStudioCoveragePaths("coverage.xml")
+                .SetVisualStudioCoveragePaths("coverage.xml", "**/coverage.xml", "/**/coverage.xml", "./**/coverage.xml",  "serilog-ui/**/coverage.xml")
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
                 .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken)
             );
