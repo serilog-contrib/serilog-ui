@@ -103,7 +103,6 @@ partial class Build : NukeBuild
                     "src/Serilog.Ui.Web/*.js",
                     "src/Serilog.Ui.Web/*.json")
                 .SetVisualStudioCoveragePaths("**/coverage.xml", "coverage.xml")
-                .SetGenericCoveragePaths("**/coverage.xml", "coverage.xml")
                 .SetVerbose(true)
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
                 .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken)
