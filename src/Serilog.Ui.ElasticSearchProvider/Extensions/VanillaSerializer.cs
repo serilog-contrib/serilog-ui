@@ -28,7 +28,7 @@ namespace Serilog.Ui.ElasticSearchProvider
         public Task<object> DeserializeAsync(Type type, Stream stream, CancellationToken cancellationToken = default) =>
             Task.FromResult(Deserialize(type, stream));
 
-        public void Serialize<T>(T data, Stream stream, SerializationFormatting formatting = SerializationFormatting.Indented)
+        public void Serialize<T>(T data, Stream stream, SerializationFormatting formatting = SerializationFormatting.None)
         {
             var writer = new StreamWriter(stream);
 
@@ -45,7 +45,7 @@ namespace Serilog.Ui.ElasticSearchProvider
         public Task SerializeAsync<T>(
             T data,
             Stream stream,
-            SerializationFormatting formatting = SerializationFormatting.Indented,
+            SerializationFormatting formatting = SerializationFormatting.None,
             CancellationToken cancellationToken = default)
         {
             Serialize(data, stream, formatting);
