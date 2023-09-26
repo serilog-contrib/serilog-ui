@@ -31,6 +31,11 @@ jobs:
     name: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
@@ -47,7 +52,7 @@ jobs:
           SonarToken: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: test-results
