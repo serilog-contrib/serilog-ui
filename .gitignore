@@ -355,3 +355,5 @@ coverage.xml
 coverage/
 
 .nuke/temp/
+
+**/eslint-results.html

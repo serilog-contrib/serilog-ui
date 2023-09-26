@@ -59,7 +59,7 @@ const byLevel = (level?: LogLevel) => (item: EncodedSeriLogObject) =>
   level ? item.level === level : true;
 const byDates =
   (start?: string, end?: string) => (item: EncodedSeriLogObject) => {
-    if (!start && !end) return true;
+    if (!start && !end) return true; // TODO: check that are valid dates
     let after = true;
     let before = true;
 

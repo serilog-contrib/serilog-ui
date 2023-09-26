@@ -1,0 +1,6 @@
+# /node_modules/* and /bower_components/* in the project root are ignored by default
+
+obj/*
+wwwroot/*
+coverage/*
+.parcel-cache/
