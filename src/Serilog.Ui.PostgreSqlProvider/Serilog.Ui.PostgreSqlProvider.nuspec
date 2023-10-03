@@ -17,10 +17,9 @@
 		<icon>assets\icon.png</icon>
 		<dependencies>
 			<group targetFramework=".NETStandard2.0">
-				<dependency id="Ardalis.GuardClauses" version="4.0.1" exclude="Build,Analyzers" />
-				<dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="3.1.3" exclude="Build,Analyzers" />
-				<dependency id="Dapper" version="2.0.35" exclude="Build,Analyzers" />
-				<dependency id="Npgsql" version="6.0.9" exclude="Build,Analyzers" />
+				<dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="7.0.0" exclude="Build,Analyzers" />
+				<dependency id="Dapper" version="2.1.4" exclude="Build,Analyzers" />
+				<dependency id="Npgsql" version="7.0.6" exclude="Build,Analyzers" />
 			</group>
 		</dependencies>
 	</metadata>

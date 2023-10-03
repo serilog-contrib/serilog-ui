@@ -14,18 +14,19 @@
 		<copyright></copyright>
 		<tags>serilog serilog-ui serilog.sinks.elasticsearch</tags>
 		<icon>assets\icon.png</icon>
+		<readme>docs\README.md</readme>
 		<dependencies>
 			<group targetFramework=".NETStandard2.0">
-				<dependency id="Ardalis.GuardClauses" version="4.0.1" exclude="Build,Analyzers" />
-				<dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="3.1.3" exclude="Build,Analyzers" />
-				<dependency id="NEST" version="7.11.1" exclude="Build,Analyzers" />
-				<dependency id="NEST.JsonNetSerializer" version="7.11.1" exclude="Build,Analyzers" />
-				<dependency id="Newtonsoft.Json" version="13.0.2" exclude="Build,Analyzers" />
+				<dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="7.0.0" exclude="Build,Analyzers" />
+				<dependency id="NEST" version="7.17.5" exclude="Build,Analyzers" />
+				<dependency id="NEST.JsonNetSerializer" version="7.17.5" exclude="Build,Analyzers" />
+				<dependency id="Newtonsoft.Json" version="13.0.3" exclude="Build,Analyzers" />
 			</group>
 		</dependencies>
 	</metadata>
 	<files>
 		<file src="bin\Release\netstandard2.0\*.dll" target="lib/netstandard2.0" />
+		<file src="..\..\README.md" target="docs\" />
 		<file src="..\..\assets\icon.png" target="assets\" />
 	</files>
 </package>
