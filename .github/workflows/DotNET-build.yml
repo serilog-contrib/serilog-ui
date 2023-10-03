@@ -31,23 +31,28 @@ jobs:
     name: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Cache .nuke/temp, ~/.nuget/packages
+      - name: 'Cache: .nuke/temp, ~/.nuget/packages'
         uses: actions/cache@v3
         with:
           path: |
             .nuke/temp
             ~/.nuget/packages
-          key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
-      - name: Run './build.cmd Backend_SonarScan_End'
+          key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
+      - name: 'Run: Backend_SonarScan_End'
         run: ./build.cmd Backend_SonarScan_End
         env:
           SonarToken: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: test-results

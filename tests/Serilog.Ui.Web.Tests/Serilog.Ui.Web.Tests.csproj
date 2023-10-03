@@ -10,6 +10,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.10" />
+		<PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
+		<PackageReference Include="Serilog.Sinks.InMemory" Version="0.11.0" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Content Include="./../Serilog.Ui.Common.Tests/xunit.runner.json">
 			<Link>%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -17,15 +23,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.3" />
-		<PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
-		<PackageReference Include="Serilog.Sinks.InMemory" Version="0.11.0" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-		<AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
-	</ItemGroup>
+
 </Project>

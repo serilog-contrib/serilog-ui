@@ -20,9 +20,9 @@ namespace MsSql.Tests.Extensions
         }
 
         [Theory]
-        [InlineData(null, "dbo")]
-        [InlineData("schema", "schema")]
-        public void It_registers_provider_and_dependencies(string schemaName, string expected)
+        [InlineData(null)]
+        [InlineData("schema")]
+        public void It_registers_provider_and_dependencies(string schemaName)
         {
             serviceCollection.AddSerilogUi((builder) =>
             {

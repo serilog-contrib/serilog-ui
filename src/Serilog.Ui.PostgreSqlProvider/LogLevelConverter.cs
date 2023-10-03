@@ -1,6 +1,6 @@
 ﻿namespace Serilog.Ui.PostgreSqlProvider
 {
-    internal class LogLevelConverter
+    internal static class LogLevelConverter
     {
         public static string GetLevelName(string value) => value switch
         {

@@ -58,7 +58,7 @@ namespace Serilog.Ui.Core
 
         public IEnumerable<string> Keys => _dataProviders.Keys;
 
-        public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
+        public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
             int page,
             int count,
             string level = null,
@@ -66,7 +66,7 @@ namespace Serilog.Ui.Core
             DateTime? startDate = null,
             DateTime? endDate = null)
         {
-            return await SelectedDataProvider.FetchDataAsync(page, count, level, searchCriteria, startDate, endDate);
+            return SelectedDataProvider.FetchDataAsync(page, count, level, searchCriteria, startDate, endDate);
         }
     }
 }

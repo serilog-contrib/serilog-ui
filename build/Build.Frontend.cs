@@ -4,19 +4,15 @@ using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Docker;
 using Nuke.Common.Tools.Npm;
 using Nuke.Common.Utilities.Collections;
-using System.Diagnostics.CodeAnalysis;
-using static Nuke.Common.IO.FileSystemTasks;
-using static Nuke.Common.IO.PathConstruction;
 
 partial class Build : NukeBuild
 {
-    [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Not necessary")]
     Target Frontend_Clean => _ => _
         .Executes(() =>
         {
             FrontendWorkingDirectory
                 .GlobDirectories("**/node_modules", "**/.parcel-cache", "**/coverage")
-                .ForEach(DeleteDirectory);
+                .ForEach(AbsolutePathExtensions.DeleteDirectory);
         });
 
     Target Frontend_Restore => _ => _
