@@ -31,17 +31,22 @@ jobs:
     name: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Cache .nuke/temp, ~/.nuget/packages
+      - name: 'Cache: .nuke/temp, ~/.nuget/packages'
         uses: actions/cache@v3
         with:
           path: |
             .nuke/temp
             ~/.nuget/packages
-          key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj') }}
-      - name: Run './build.cmd Frontend_Tests_Ci'
+          key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
+      - name: 'Run: Frontend_Tests_Ci'
         run: ./build.cmd Frontend_Tests_Ci
         env:
           SonarTokenUi: ${{ secrets.SONAR_TOKEN_UI }}
@@ -63,7 +68,7 @@ jobs:
             -Dsonar.test.inclusions=src/Serilog.Ui.Web/assets/__tests__/**/*
             -Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/coverage/lcov.info
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         if: always()
         with:
           name: test-results

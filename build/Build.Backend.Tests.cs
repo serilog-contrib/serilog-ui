@@ -7,7 +7,7 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 partial class Build : NukeBuild
 {
-    [PackageExecutable(
+    [NuGetPackage(
         packageId: "dotnet-coverage",
         packageExecutable: "dotnet-coverage.dll"
     )]
@@ -31,6 +31,6 @@ partial class Build : NukeBuild
         .Executes(() =>
         {
             DotnetCoverage?.Invoke(
-                @"collect -f xml -o ""coverage.xml"" dotnet test --configuration Release --no-build --logger=""trx;LogFileName=test-results.trx""");
+                @"collect -f xml -o coverage.xml dotnet test --configuration Release --no-build --logger=""trx;LogFileName=test-results.trx""");
         });
 }

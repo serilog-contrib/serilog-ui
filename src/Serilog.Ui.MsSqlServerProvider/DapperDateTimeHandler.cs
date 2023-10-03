@@ -7,7 +7,7 @@ namespace Serilog.Ui.MsSqlServerProvider;
 
 public class DapperDateTimeHandler : SqlMapper.TypeHandler<DateTime>
 {
-    private static string[] Formats = new[] {
+    private static readonly string[] Formats = new[] {
         "M/d/yyyy h:mm:ss tt zzz",
         "M/dd/yyyy h:mm:ss tt zzz",
         "M/d/yyyy h:mm:ss tt",
@@ -27,7 +27,7 @@ public class DapperDateTimeHandler : SqlMapper.TypeHandler<DateTime>
     public override DateTime Parse(object value)
     {
         var valueStr = value.ToString();
-        DateTime.TryParse(valueStr, out var timeStamp);
+        DateTime.TryParse(valueStr, CultureInfo.InvariantCulture, DateTimeStyles.None, out var timeStamp);
 
         if (timeStamp == default)
             DateTime.TryParseExact(valueStr, Formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out timeStamp);

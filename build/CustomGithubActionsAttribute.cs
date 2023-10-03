@@ -4,6 +4,7 @@ using Nuke.Common.Execution;
 using Nuke.Common.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 /// from: https://github.com/RicoSuter/NSwag/blob/master/build/Build.CI.GitHubActions.cs
@@ -28,7 +29,7 @@ class CustomGithubActionsAttribute : GitHubActionsAttribute
     protected override GitHubActionsJob GetJobs(GitHubActionsImage image, IReadOnlyCollection<ExecutableTarget> relevantTargets)
     {
         var job = base.GetJobs(image, relevantTargets);
-        var newSteps = new List<GitHubActionsStep>(job.Steps);
+        var newSteps = new List<GitHubActionsStep>(new GitHubActionsStep[] { new GitHubActionSetupJava17() }.Concat(job.Steps));
 
         foreach (var act in AddGithubActions)
         {
@@ -59,6 +60,30 @@ class CustomGithubActionsAttribute : GitHubActionsAttribute
     }
 }
 
+/// <summary>
+/// using: https://github.com/actions/setup-java
+/// </summary>
+class GitHubActionSetupJava17 : GitHubActionsStep
+{
+    public override void Write(CustomFileWriter writer)
+    {
+        writer.WriteLine(); // empty line to separate tasks
+
+        writer.WriteLine("- uses: actions/setup-java@v3");
+
+        using (writer.Indent())
+        {
+            writer.WriteLine("with:");
+
+            using (writer.Indent())
+            {
+                writer.WriteLine($"distribution: 'temurin'");
+                writer.WriteLine($"java-version: '17'");
+            }
+        }
+    }
+}
+
 class GithubActionUploadArtifact : GitHubActionsStep
 {
     readonly string Path;
@@ -72,7 +97,7 @@ class GithubActionUploadArtifact : GitHubActionsStep
     {
         writer.WriteLine(); // empty line to separate tasks
 
-        writer.WriteLine("- uses: actions/upload-artifact@v2");
+        writer.WriteLine("- uses: actions/upload-artifact@v3");
 
         using (writer.Indent())
         {

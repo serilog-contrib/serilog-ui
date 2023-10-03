@@ -60,7 +60,7 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-In the `Startup.Configure` method, enable the middleware to serve the log UI pagee. 
+In the `Startup.Configure` method, enable the middleware to serve the log UI page. 
 Note: call to the `UseSerilogUi` middleware must be placed **_after_** any Authentication and Authorization middleware, otherwise the authentication may not work:
 
 ```csharp

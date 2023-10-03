@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Serilog.Ui.Core;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Serilog.Ui.Common.Tests.DataSamples
 {
@@ -14,7 +15,7 @@ namespace Serilog.Ui.Common.Tests.DataSamples
         };
         private static Faker<LogModel> LogsRules()
         {
-            Bogus.DataSets.Date.SystemClock = () => DateTime.Parse("8/8/2019 2:00 PM");
+            Bogus.DataSets.Date.SystemClock = () => DateTime.Parse("8/8/2019 2:00 PM", CultureInfo.InvariantCulture);
 
             return new Faker<LogModel>().UseSeed(1910)
              .RuleFor(p => p.RowNo, f => f.Database.Random.Int())

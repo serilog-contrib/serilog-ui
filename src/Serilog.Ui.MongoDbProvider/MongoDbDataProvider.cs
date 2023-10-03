@@ -33,8 +33,6 @@ namespace Serilog.Ui.MongoDbProvider
             var logsTask = await GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
             var logCountTask = await CountLogsAsync(level, searchCriteria, startDate, endDate);
 
-            //await Task.WhenAll(logsTask, logCountTask);
-
             return (logsTask, logCountTask);
         }
 

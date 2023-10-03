@@ -2,22 +2,25 @@
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
+		<IsTestProject>false</IsTestProject>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Bogus" Version="34.0.2" />
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.3" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.1" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
 		<PackageReference Include="MySql.Data" Version="8.0.23" />
 		<PackageReference Include="Npgsql" Version="6.0.9" />
-		<PackageReference Include="Serilog" Version="2.12.0" />
+		<PackageReference Include="Serilog" Version="3.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
 		<ProjectReference Include="..\..\src\Serilog.Ui.MongoDbProvider\Serilog.Ui.MongoDbProvider.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-		<AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
-	</ItemGroup>
+	
 </Project>
