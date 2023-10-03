@@ -9,6 +9,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Testcontainers.MySql" Version="3.4.0" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Content Include="./../Serilog.Ui.Common.Tests/xunit.runner.json">
 			<Link>%(Filename)%(Extension)</Link>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -16,17 +20,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Dapper" Version="2.0.35" />
-		<PackageReference Include="MySql.Data" Version="8.0.23" />
-		<PackageReference Include="Testcontainers.MySql" Version="3.4.0" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\..\src\Serilog.Ui.MySqlProvider\Serilog.Ui.MySqlProvider.csproj" />
 		<ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj" />
 		<ProjectReference Include="..\Serilog.Ui.Common.Tests\Serilog.Ui.Common.Tests.csproj" />
 	</ItemGroup>
-	<ItemGroup>
-		<AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
-	</ItemGroup>
+
 </Project>

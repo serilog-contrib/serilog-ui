@@ -7,6 +7,14 @@
 		<AssemblyName>ElasticSearch.Tests</AssemblyName>
 		<RootNamespace>ElasticSearch.Tests</RootNamespace>
 	</PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Elastic.Elasticsearch.Xunit" Version="0.4.3" />
+		<PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
+		<PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.4.1" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="./../Serilog.Ui.Common.Tests/xunit.runner.json">
@@ -14,22 +22,10 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
-	
-	<ItemGroup>
-		<PackageReference Include="Elastic.Elasticsearch.Xunit" Version="0.4.3" />
-		<PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
-		<PackageReference Include="NEST" Version="7.11.1" />
-		<PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.4.1" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Serilog.Ui.ElasticSearchProvider\Serilog.Ui.ElasticSearchProvider.csproj" />
 		<ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj" />
 		<ProjectReference Include="..\Serilog.Ui.Common.Tests\Serilog.Ui.Common.Tests.csproj" />
-	</ItemGroup>
-	<ItemGroup>
-		<AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute" />
 	</ItemGroup>
 </Project>
