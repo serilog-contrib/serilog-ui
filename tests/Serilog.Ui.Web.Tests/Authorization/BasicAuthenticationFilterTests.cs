@@ -1,3 +1,4 @@
+using System.Linq;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
@@ -23,9 +24,11 @@ public class BasicAuthenticationFilterTests
 
         // Act
         var result = filter.Authorize(httpContext);
+        var authCookie = httpContext.Response.GetTypedHeaders().SetCookie.FirstOrDefault(sc => sc.Name == BasicAuthenticationFilter.AuthenticationCookieName);
 
         // Assert
         result.Should().BeTrue();
+        authCookie.Should().NotBeNull();
     }
 
     [Fact]
@@ -66,6 +69,6 @@ public class BasicAuthenticationFilterTests
         // Assert
         result.Should().BeFalse();
         httpContext.Response.StatusCode.Should().Be(401);
-        httpContext.Response.Headers[HeaderNames.WWWAuthenticate].Should().Contain("Basic realm=\"Hangfire Dashboard\"");
+        httpContext.Response.Headers[HeaderNames.WWWAuthenticate].Should().Contain("Basic realm=\"Serilog UI\"");
     }
 }

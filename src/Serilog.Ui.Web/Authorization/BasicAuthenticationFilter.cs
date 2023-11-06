@@ -12,7 +12,7 @@ public class BasicAuthenticationFilter : IUiAuthorizationFilter
     public string Pass { get; set; }
 
     private const string AuthenticationScheme = "Basic";
-    private const string AuthenticationCookieName = "SerilogAuth";
+    internal const string AuthenticationCookieName = "SerilogAuth";
 
     public bool Authorize(HttpContext httpContext)
     {
@@ -25,7 +25,7 @@ public class BasicAuthenticationFilter : IUiAuthorizationFilter
             if (!string.IsNullOrWhiteSpace(authCookie))
             {
                 var hashedCredentials = EncryptCredentials(User, Pass);
-                isAuthenticated = string.Equals(authCookie, hashedCredentials, StringComparison.OrdinalIgnoreCase);
+                isAuthenticated = authCookie.Equals(hashedCredentials, StringComparison.OrdinalIgnoreCase);
             }
         }
         else
@@ -53,9 +53,9 @@ public class BasicAuthenticationFilter : IUiAuthorizationFilter
         return isAuthenticated;
     }
 
-    public string EncryptCredentials(string user, string pass)
+    private string EncryptCredentials(string user, string pass)
     {
-        var sha256 = SHA256.Create();
+        using var sha256 = SHA256.Create();
         var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes($"{user}:{pass}"));
         var hashedCredentials = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
         return hashedCredentials;
@@ -81,7 +81,7 @@ public class BasicAuthenticationFilter : IUiAuthorizationFilter
     private void SetChallengeResponse(HttpContext httpContext)
     {
         httpContext.Response.StatusCode = 401;
-        httpContext.Response.Headers.Append("WWW-Authenticate", "Basic realm=\"SeriLog Ui\"");
+        httpContext.Response.Headers.Append("WWW-Authenticate", "Basic realm=\"Serilog UI\"");
         httpContext.Response.WriteAsync("Authentication is required.");
     }
 }
