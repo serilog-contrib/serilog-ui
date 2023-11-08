@@ -15,8 +15,8 @@ public class BasicAuthenticationFilterTests
         // Arrange
         var filter = new BasicAuthenticationFilter
         {
-            User = "User",
-            Pass = "P@ss"
+            UserName = "User",
+            Password = "P@ss"
         };
 
         var httpContext = new DefaultHttpContext();
@@ -37,8 +37,8 @@ public class BasicAuthenticationFilterTests
         // Arrange
         var filter = new BasicAuthenticationFilter
         {
-            User = "User",
-            Pass = "P@ss"
+            UserName = "User",
+            Password = "P@ss"
         };
 
         var httpContext = new DefaultHttpContext();
@@ -57,8 +57,8 @@ public class BasicAuthenticationFilterTests
         // Arrange
         var filter = new BasicAuthenticationFilter
         {
-            User = "User",
-            Pass = "P@ss"
+            UserName = "User",
+            Password = "P@ss"
         };
 
         var httpContext = new DefaultHttpContext();

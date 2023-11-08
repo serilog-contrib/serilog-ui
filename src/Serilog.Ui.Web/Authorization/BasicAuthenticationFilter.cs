@@ -1,18 +1,19 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.Http;
 
 namespace Serilog.Ui.Web.Authorization;
 
 public class BasicAuthenticationFilter : IUiAuthorizationFilter
 {
-    public string User { get; set; }
-    public string Pass { get; set; }
-
     private const string AuthenticationScheme = "Basic";
     internal const string AuthenticationCookieName = "SerilogAuth";
+
+    public string UserName { get; set; }
+
+    public string Password { get; set; }
 
     public bool Authorize(HttpContext httpContext)
     {
@@ -24,7 +25,7 @@ public class BasicAuthenticationFilter : IUiAuthorizationFilter
             var authCookie = httpContext.Request.Cookies[AuthenticationCookieName];
             if (!string.IsNullOrWhiteSpace(authCookie))
             {
-                var hashedCredentials = EncryptCredentials(User, Pass);
+                var hashedCredentials = EncryptCredentials(UserName, Password);
                 isAuthenticated = authCookie.Equals(hashedCredentials, StringComparison.OrdinalIgnoreCase);
             }
         }
@@ -39,7 +40,7 @@ public class BasicAuthenticationFilter : IUiAuthorizationFilter
                 if (CredentialsMatch(tokens))
                 {
                     isAuthenticated = true;
-                    var hashedCredentials = EncryptCredentials(User, Pass);
+                    var hashedCredentials = EncryptCredentials(UserName, Password);
                     httpContext.Response.Cookies.Append(AuthenticationCookieName, hashedCredentials);
                 }
             }
@@ -75,7 +76,7 @@ public class BasicAuthenticationFilter : IUiAuthorizationFilter
 
     private bool CredentialsMatch((string Username, string Password) tokens)
     {
-        return tokens.Username == User && tokens.Password == Pass;
+        return tokens.Username == UserName && tokens.Password == Password;
     }
 
     private void SetChallengeResponse(HttpContext httpContext)
