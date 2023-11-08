@@ -97,3 +97,8 @@ See [LICENSE](https://github.com/serilog-contrib/serilog-ui/blob/master/LICENSE)
 ## Issues and Contribution
 
 Everything is welcome! :trophy: See the [contribution guidelines](https://github.com/serilog-contrib/serilog-ui/blob/master/CONTRIBUTING.md) for details.
+
+## Support
+Thank you [JetBrains](https://www.jetbrains.com/community/opensource/#support) for supporting this project.
+
+![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)
