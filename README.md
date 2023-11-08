@@ -86,21 +86,6 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 }
 ```
 
-## Basic Authentication
-
-If you need to add basic authentication to your serilog-ui instance, you can use the `BasicAuthenticationFilter`. Here's how to configure it in your `Startup.Configure` method:
-
-```csharp
-app.UseSerilogUi(options =>
-{
-    options.Authorization.Filters = new IUiAuthorizationFilter[]
-    {
-        new BasicAuthenticationFilter { User = "User", Pass = "P@ss" }
-    };
-    options.Authorization.RunAuthorizationFilterOnAppRoutes = true;
-});
-```
-
 ### For further configuration: [:fast_forward:](https://github.com/serilog-contrib/serilog-ui/wiki/Install:-Configuration-Options)
 
 ## Running the Tests: [:test_tube:](https://github.com/serilog-contrib/serilog-ui/wiki/Development:-Testing)
