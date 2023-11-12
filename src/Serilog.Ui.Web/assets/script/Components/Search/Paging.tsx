@@ -26,12 +26,13 @@ const Paging = () => {
   const form = useSearchFormContext();
   const [opened, { open, close }] = useDisclosure(false);
   const [pageToChange, changePage] = useState<number | ''>(1);
-  
+
   // TODO Object guard
   if (isFetching || data == null) return null;
   const totalPages = Math.ceil(data.total / data.count);
 
   const setPage = (_: MouseEvent<HTMLButtonElement>) => {
+    console.log('todo', _);
     if (!isStringGuard(pageToChange)) {
       form.setFieldValue('page', pageToChange);
       close();

@@ -1,4 +1,4 @@
-﻿import type userEvent from '@testing-library/user-event';
+﻿import { UserEvent } from '@testing-library/user-event';
 
 export {};
 
@@ -9,7 +9,7 @@ declare global {
       routePrefix?: string;
       homeUrl?: string;
     };
-    userEventLibApi: typeof userEvent;
+    userEventLibApi: UserEvent;
   }
 }
 

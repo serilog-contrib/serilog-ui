@@ -39,9 +39,9 @@
     "@vitest/ui": "^0.34.6",
     "eslint": "^8.53.0",
     "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-import": "^2.29.0",
     "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-testing-library": "^6.1.2",
@@ -52,7 +52,7 @@
     "grunt-shell": "^4.0.0",
     "jsdom": "^22.1.0",
     "load-grunt-tasks": "5.1.0",
-    "msw": "^1.2.1",
+    "msw": "^2.0.5",
     "parcel": "2.8.3",
     "prettier": "^2.8.8",
     "process": "^0.11.10",
@@ -96,6 +96,6 @@
     "titleTemplate": "{title}"
   },
   "msw": {
-    "workerDirectory": "wwwroot"
+    "workerDirectory": "assets"
   }
 }

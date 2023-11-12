@@ -9,7 +9,9 @@ interface AuthProps {
 
 const AuthPropertiesContext = createContext<AuthProps>({
   authProps: new AuthProperties(),
-  updateBearerToken(_) {},
+  updateBearerToken(_: string) {
+    console.log(_);
+  },
 });
 
 export const AuthPropertiesProvider = ({

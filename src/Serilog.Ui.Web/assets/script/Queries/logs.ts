@@ -15,19 +15,20 @@ export const fetchLogs = async (values: SearchForm) => {
   try {
     // TODO: test auth
     const req = await fetch(prepareUrl.url, createAuthHeaders(authProps));
-    console.log(req)
+    console.log(req);
     if (req.ok) return (await req.json()) as SearchResult;
 
     return await Promise.reject(new Error('Failed to fetch.'));
-  } catch (error) {
+  } catch (error: unknown) {
     console.warn(error);
-    if (error.status === 403) {
+    const err = error as Error & { status?: number; message?: string };
+    if (err?.status === 403) {
       alert(
         "You are not authorized you to access logs.\r\nYou are not logged in or you don't have enough permissions to perform the requested operation.",
       );
       return;
     }
-    alert(error.message);
+    alert(err?.message);
   }
 };
 

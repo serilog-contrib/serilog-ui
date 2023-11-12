@@ -8,7 +8,7 @@ import mkcert from 'vite-plugin-mkcert';
 import { checker } from 'vite-plugin-checker';
 
 // https://vitejs.dev/config/
-export default defineConfig((env) => ({
+export default defineConfig({
   root: './assets',
   build: {
     outDir: './wwwroot/dist',
@@ -20,7 +20,7 @@ export default defineConfig((env) => ({
   plugins: [
     react(),
     viteTsconfigPaths(),
-    env.mode !== 'test' && eslint(),
+    eslint(),
     mkcert(),
     checker({
       typescript: true,
@@ -46,4 +46,4 @@ export default defineConfig((env) => ({
       reportOnFailure: true,
     },
   },
-}));
+});

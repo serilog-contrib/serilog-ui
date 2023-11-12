@@ -7,7 +7,7 @@ export class AuthProperties {
 
   authType?: AuthType;
   routePrefix?: string;
-  private _bearerToken: string | null;
+  private _bearerToken?: string | null;
 
   public get bearerToken() {
     return this._bearerToken ?? sessionStorage.getItem('serilogui_token') ?? '';

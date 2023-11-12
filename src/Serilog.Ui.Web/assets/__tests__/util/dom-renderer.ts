@@ -12,5 +12,5 @@ export const renderSerilogUiDom = async (config?: Window['config']) => {
     authType: config?.authType ?? 'Jwt',
     homeUrl: config?.homeUrl,
   };
-  await import('../../script/main');
+  await import('../../script/main-react');
 };

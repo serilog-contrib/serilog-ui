@@ -1,4 +1,5 @@
-import './jest-mocks'
+import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
+import './jest-mocks';
 import 'whatwg-fetch';
 import '@testing-library/jest-dom';
 import { server } from './mocks/msw-server';

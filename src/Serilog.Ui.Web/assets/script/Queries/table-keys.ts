@@ -17,13 +17,15 @@ export const fetchKeys = async (authProps: AuthProperties) => {
     return await Promise.reject(new Error('Failed to fetch.'));
   } catch (error) {
     console.warn(error);
-    if (error.status === 403) {
+    const err = error as Error & { status?: number; message?: string };
+
+    if (err?.status === 403) {
       alert(
         "You are not authorized you to access logs.\r\nYou are not logged in or you don't have enough permissions to perform the requested operation.",
       );
       return [] as string[];
     }
-    alert(error.message);
+    alert(err?.message);
     return [] as string[];
   }
 };

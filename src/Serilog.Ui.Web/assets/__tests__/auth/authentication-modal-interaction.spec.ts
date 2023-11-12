@@ -1,5 +1,6 @@
-import { screen } from '@testing-library/dom';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+import { screen } from '@testing-library/react';
+import { UserEvent } from '@testing-library/user-event';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('interactions with the Auth JWT Modal', () => {
   let user: UserEvent;
@@ -9,7 +10,8 @@ describe('interactions with the Auth JWT Modal', () => {
     });
 
   beforeEach(() => {
-    user = window.userEventLibApi;
+    // TODO
+    user = window.userEventLibApi as unknown as UserEvent;
   });
 
   it('opens the modal', async () => {

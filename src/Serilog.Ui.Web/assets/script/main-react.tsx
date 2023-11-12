@@ -12,7 +12,7 @@ const main = async () => {
   const root = createRoot(rootItem);
 
   // attach msw on development
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.MODE === 'development') {
     const { worker } = await import('../__tests__/util/mocks/msw-worker');
     try {
       await worker.start();
