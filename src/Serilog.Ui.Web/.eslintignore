@@ -3,4 +3,4 @@
 obj/*
 wwwroot/*
 coverage/*
-.parcel-cache/
+*.html

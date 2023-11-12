@@ -9,9 +9,9 @@ import { checker } from 'vite-plugin-checker';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  root: './assets',
+  root: './src',
   build: {
-    outDir: './wwwroot/dist',
+    outDir: '../wwwroot/dist',
     sourcemap: false,
     rollupOptions: {
       external: ['**/__tests__/**/*', '**/*.{spec,test}.*', '**/mocks/**/*.*'],
@@ -35,14 +35,14 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     restoreMocks: true,
-    setupFiles: './src/setupTests.ts',
+    setupFiles: './src/__tests__/setupTests.ts',
     outputFile: {
-      'vitest-sonar-reporter': './app/test-report.xml',
+      'vitest-sonar-reporter': './reports/test-report.xml',
     },
     coverage: {
       provider: 'istanbul',
       reporter: 'lcov',
-      reportsDirectory: './app/coverage/',
+      reportsDirectory: './reports/coverage/',
       reportOnFailure: true,
     },
   },

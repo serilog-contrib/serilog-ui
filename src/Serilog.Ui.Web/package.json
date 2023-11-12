@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "3.0.0",
   "name": "serilog-ui",
   "private": true,
   "type": "module",
@@ -18,9 +18,25 @@
     "test": "vitest",
     "test:coverage": "vitest run --reporter=default --reporter=vitest-sonar-reporter --coverage",
     "test:ui": "vitest --ui --reporter=default",
-    "grunt:start": "grunt dev",
-    "grunt:build": "grunt build",
     "make-me-pretty": "prettier --write .\\assets\\"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@mantine/core": "^6.0.13",
+    "@mantine/dates": "^6.0.13",
+    "@mantine/form": "^6.0.13",
+    "@mantine/hooks": "^6.0.13",
+    "@mantine/prism": "^6.0.13",
+    "@tabler/icons-react": "^2.22.0",
+    "@tanstack/react-query": "^4.29.12",
+    "date-fns": "^2.30.0",
+    "immer": "^10.0.2",
+    "jose": "^4.14.4",
+    "prism-react-renderer": "^2.0.5",
+    "prismjs": "^1.29.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "use-immer": "^0.9.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.2.0",
@@ -47,16 +63,10 @@
     "eslint-plugin-testing-library": "^6.1.2",
     "eslint-plugin-vitest": "^0.3.9",
     "eslint-plugin-vitest-globals": "^1.4.0",
-    "grunt": "^1.6.1",
-    "grunt-contrib-clean": "^2.0.1",
-    "grunt-shell": "^4.0.0",
     "jsdom": "^22.1.0",
-    "load-grunt-tasks": "5.1.0",
     "msw": "^2.0.5",
-    "parcel": "2.8.3",
-    "prettier": "^2.8.8",
-    "process": "^0.11.10",
-    "ts-jest": "^29.1.0",
+    "prettier": "^3.0.3",
+    "prettier-plugin-organize-imports": "^3.2.4",
     "typescript": "^5.0.4",
     "vite": "^4.5.0",
     "vite-plugin-checker": "^0.6.2",
@@ -64,38 +74,9 @@
     "vite-plugin-mkcert": "^1.16.0",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^0.34.6",
-    "vitest-sonar-reporter": "^0.5.0",
-    "whatwg-fetch": "^3.6.2"
-  },
-  "dependencies": {
-    "@emotion/react": "^11.11.0",
-    "@mantine/core": "^6.0.13",
-    "@mantine/dates": "^6.0.13",
-    "@mantine/form": "^6.0.13",
-    "@mantine/hooks": "^6.0.13",
-    "@mantine/prism": "^6.0.13",
-    "@tabler/icons-react": "^2.22.0",
-    "@tanstack/react-query": "^4.29.12",
-    "date-fns": "^2.30.0",
-    "dayjs": "^1.11.8",
-    "immer": "^10.0.2",
-    "jose": "^4.14.4",
-    "prism-react-renderer": "^2.0.5",
-    "prismjs": "^1.29.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "use-immer": "^0.9.0"
-  },
-  "jest-junit": {
-    "outputDirectory": "reports",
-    "outputName": "jest-junit.xml",
-    "ancestorSeparator": " › ",
-    "uniqueOutputName": "false",
-    "suiteNameTemplate": "{filepath}",
-    "classNameTemplate": "{classname}",
-    "titleTemplate": "{title}"
+    "vitest-sonar-reporter": "^0.5.0"
   },
   "msw": {
-    "workerDirectory": "assets"
+    "workerDirectory": "src"
   }
 }
