@@ -1,19 +1,28 @@
 ﻿{
   "compilerOptions": {
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "esModuleInterop": true,
-    "jsx": "react-jsx",
+    "baseUrl": "./assets",
+    "target": "ES6",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
-    "moduleResolution": "node",
+    "skipLibCheck": true,
+    /* bundler */
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    /* linting opts */
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false,
-    "noEmitOnError": true,
-    "removeComments": false,
-    "sourceMap": true,
-    "strictNullChecks": true,
-    "target": "ESNext",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "typeRoots": ["./assets/types/", "./node_modules/@types/"]
   },
   "include": ["./**/*.ts", "./**/*.tsx"],
-  "exclude": ["node_modules", "wwwroot"]
+  "exclude": ["node_modules", "wwwroot"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
