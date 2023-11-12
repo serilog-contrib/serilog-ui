@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom';
 import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
 import { renderSerilogUiDom as setupSerilogUiDom } from './__setup__/dom-renderer';
+import './__setup__/mocks/globals';
 import { server } from './__setup__/msw-server';
-import './util/jest-mocks';
 
 // Establish API mocking before all tests.
 beforeAll(() => {

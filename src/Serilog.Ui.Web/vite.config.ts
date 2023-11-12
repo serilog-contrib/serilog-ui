@@ -1,14 +1,14 @@
 /// <reference types="vitest" />
 
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
-import viteTsconfigPaths from 'vite-tsconfig-paths';
+import { defineConfig } from 'vite';
+import { checker } from 'vite-plugin-checker';
 import eslint from 'vite-plugin-eslint';
 import mkcert from 'vite-plugin-mkcert';
-import { checker } from 'vite-plugin-checker';
+import viteTsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig((env) => ({
   root: './src',
   build: {
     outDir: '../wwwroot/dist',
@@ -20,7 +20,7 @@ export default defineConfig({
   plugins: [
     react(),
     viteTsconfigPaths(),
-    eslint(),
+    env.mode !== 'test' && eslint(),
     mkcert(),
     checker({
       typescript: true,
@@ -35,7 +35,7 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     restoreMocks: true,
-    setupFiles: './src/__tests__/setupTests.ts',
+    setupFiles: './__tests__/setupTests.ts',
     outputFile: {
       'vitest-sonar-reporter': './reports/test-report.xml',
     },
@@ -46,4 +46,4 @@ export default defineConfig({
       reportOnFailure: true,
     },
   },
-});
+}));

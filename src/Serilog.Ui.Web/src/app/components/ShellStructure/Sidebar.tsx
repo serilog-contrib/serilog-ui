@@ -10,7 +10,7 @@ import {
 } from '@mantine/core';
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
 import { isStringGuard } from '../../util/guards';
-import AuthorizeButton from '../authorization/AuthorizeButton';
+import AuthorizeButton from '../Authorization/AuthorizeButton';
 
 const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();

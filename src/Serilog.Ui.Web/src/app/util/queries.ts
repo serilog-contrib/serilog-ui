@@ -1,4 +1,4 @@
-import { AuthProperties } from 'app/Authorization/AuthProperties';
+import { AuthProperties } from 'app/authorization/AuthProperties';
 import { AuthType } from '../../types/types';
 
 export const determineHost = ['development', 'test'].includes(import.meta.env.MODE ?? '')

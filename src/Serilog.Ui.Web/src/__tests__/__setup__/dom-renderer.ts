@@ -3,7 +3,7 @@ import { JSDOM } from 'jsdom';
 
 export const renderSerilogUiDom = async (config?: Window['config']) => {
   const user = userEvent.setup();
-  const dom = await JSDOM.fromFile('assets/index.html');
+  const dom = await JSDOM.fromFile('src/index.html');
 
   document.body.innerHTML = dom.window.document.body.innerHTML;
   window.userEventLibApi = user;

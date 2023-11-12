@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchLogs } from '../Queries/logs';
-import { useAuthProperties } from './useAuthProperties';
-import { useSearchFormContext } from './SearchFormContext';
+import { fetchLogs } from '../queries/logs';
 import { isObjectGuard } from '../util/guards';
+import { useSearchFormContext } from './SearchFormContext';
+import { useAuthProperties } from './useAuthProperties';
 
 const useQueryLogsHook = () => {
   const { authProps } = useAuthProperties();
@@ -11,9 +11,7 @@ const useQueryLogsHook = () => {
   return useQuery({
     queryKey: ['get-logs', authProps.bearerToken, form.values],
     queryFn: async () =>
-      isObjectGuard(form.values)
-        ? await fetchLogs(form.values)
-        : null,
+      isObjectGuard(form.values) ? await fetchLogs(form.values) : null,
     keepPreviousData: true,
     // TODO? fetch pre-post page on data fetch
     onError: (err) => {
