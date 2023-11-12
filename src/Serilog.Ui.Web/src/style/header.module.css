@@ -1,0 +1,11 @@
+.sidebarGroupNavlink {
+  display: 'block';
+  width: '100%';
+  padding: var(--mantine-spacing-xs);
+  border-radius: var(--mantine-radius-sm);
+  color: var(--mantine-color-dark-0);
+
+  &:hover {
+    background-color: var(--mantine-color-gray-6);
+  }
+}
