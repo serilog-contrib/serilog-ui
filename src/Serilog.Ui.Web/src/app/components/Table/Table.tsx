@@ -17,31 +17,31 @@ const SerilogResults = () => {
 
   return (
     <div style={{ overflowX: 'auto' }}>
-      <Table highlightOnHover withBorder withColumnBorders>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Level</th>
-            <th>Date</th>
-            <th>Message</th>
-            <th>Exception</th>
-            <th>Properties</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table highlightOnHover withTableBorder withColumnBorders>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>#</Table.Th>
+            <Table.Th>Level</Table.Th>
+            <Table.Th>Date</Table.Th>
+            <Table.Th>Message</Table.Th>
+            <Table.Th>Exception</Table.Th>
+            <Table.Th>Properties</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
           {!isFetching &&
             isObjectGuard(data) &&
             isArrayGuard(data.logs) &&
             data.logs.map((log) => (
               // TODO: all styles and modals
-              <tr key={log.rowNo} className={log.level}>
-                <td>{log.rowNo}</td>
-                <td style={{ backgroundColor: getCellColor(log.level) }}>
+              <Table.Tr key={log.rowNo} className={log.level}>
+                <Table.Td>{log.rowNo}</Table.Td>
+                <Table.Td style={{ backgroundColor: getCellColor(log.level) }}>
                   {log.level} TODO Color
-                </td>
-                <td>{printDate(log.timestamp)}</td>
-                <td>{log.message}</td>
-                <td>
+                </Table.Td>
+                <Table.Td>{printDate(log.timestamp)}</Table.Td>
+                <Table.Td>{log.message}</Table.Td>
+                <Table.Td>
                   {isStringGuard(log.exception) ? (
                     <DetailsModal
                       modalContent={log.exception}
@@ -49,8 +49,8 @@ const SerilogResults = () => {
                       contentType={log.propertyType}
                     />
                   ) : null}
-                </td>
-                <td>
+                </Table.Td>
+                <Table.Td>
                   {isStringGuard(log.properties) ? (
                     <DetailsModal
                       modalContent={log.properties}
@@ -58,10 +58,10 @@ const SerilogResults = () => {
                       contentType="json"
                     />
                   ) : null}
-                </td>
-              </tr>
+                </Table.Td>
+              </Table.Tr>
             ))}
-        </tbody>
+        </Table.Tbody>
       </Table>
       {isFetching && (
         <Loader
