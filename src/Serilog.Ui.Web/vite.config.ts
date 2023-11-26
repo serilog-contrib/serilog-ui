@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
 
 import react from '@vitejs/plugin-react-swc';
-import { defineConfig } from 'vite';
+import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import { checker } from 'vite-plugin-checker';
 import eslint from 'vite-plugin-eslint';
 import mkcert from 'vite-plugin-mkcert';
@@ -21,13 +21,13 @@ export default defineConfig((env) => ({
     react(),
     viteTsconfigPaths(),
     env.mode !== 'test' && eslint(),
+    env.mode === 'production' && splitVendorChunkPlugin(), // TODO chunking and lazy load
     mkcert(),
     checker({
       typescript: true,
     }),
   ],
   server: {
-    https: true,
     open: false,
     port: 3001,
   },

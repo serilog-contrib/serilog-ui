@@ -18,22 +18,12 @@ const levelsArray = Object.keys(LogLevel).map((p) => ({
 const Search = () => {
   const { authProps } = useAuthProperties();
   const form = useSearchFormContext();
-  const queryTableKeys = useQuery({
+  const queryTableKeys = useQuery<string[]>({
     queryKey: ['get-keys'],
     queryFn: async () => {
       return await fetchKeys(authProps);
     },
     staleTime: Infinity,
-    onSuccess: (data) => {
-      const tableKeysDefaultValue = isArrayGuard(data) && data.at(0);
-      form.setFieldValue(
-        'table',
-        isStringGuard(tableKeysDefaultValue) ? tableKeysDefaultValue : '',
-      );
-    },
-    onError: (err) => {
-      console.error(err);
-    },
   });
 
   const { refetch } = useQueryLogsHook();
@@ -41,8 +31,17 @@ const Search = () => {
   useEffect(() => {
     const refetchLogs = async () => await refetch();
 
-    void refetchLogs();
+    refetchLogs();
   }, [refetch]);
+
+  useEffect(() => {
+    const tableKeysDefaultValue =
+      isArrayGuard(queryTableKeys.data) && queryTableKeys.data.at(0);
+    form.setFieldValue(
+      'table',
+      isStringGuard(tableKeysDefaultValue) ? tableKeysDefaultValue : '',
+    );
+  }, [form, queryTableKeys.data]);
 
   return (
     <form
@@ -53,21 +52,21 @@ const Search = () => {
       })}
     >
       <Grid w="100%" justify="space-between" align="flex-end">
-        <Grid.Col xs={6} sm={8} md={4} lg={3} orderSm={1} orderMd={1}>
+        <Grid.Col span={{ xs: 6, sm: 8, md: 4, lg: 3 }} order={{ sm: 1, md: 1 }}>
           <Select
             label="Table"
             data={queryTableKeys.data?.map((d) => ({ value: d, label: d })) ?? []}
             {...form.getInputProps('table')}
           ></Select>
         </Grid.Col>
-        <Grid.Col xs={6} sm={4} md={3} lg={3} orderSm={2} orderMd={4}>
+        <Grid.Col span={{ xs: 6, sm: 4, md: 3, lg: 3 }} order={{ sm: 2, md: 4 }}>
           <Select
             label="Level"
             data={levelsArray}
             {...form.getInputProps('level')}
           ></Select>
         </Grid.Col>{' '}
-        <Grid.Col xs={6} sm={6} md={4} lg={3} orderSm={3} orderMd={2}>
+        <Grid.Col span={{ xs: 6, sm: 6, md: 4, lg: 3 }} order={{ sm: 3, md: 2 }}>
           <DateTimePicker
             label="Start date:"
             withSeconds={true}
@@ -75,7 +74,7 @@ const Search = () => {
             {...form.getInputProps('startDate')}
           />
         </Grid.Col>{' '}
-        <Grid.Col xs={6} sm={6} md={4} lg={3} orderSm={4} orderMd={3}>
+        <Grid.Col span={{ xs: 6, sm: 6, md: 4, lg: 3 }} order={{ sm: 4, md: 3 }}>
           <DateTimePicker
             label="End date:"
             withSeconds={true}
@@ -83,7 +82,7 @@ const Search = () => {
             {...form.getInputProps('endDate')}
           />
         </Grid.Col>{' '}
-        <Grid.Col xs={6} sm={6} md={5} lg={3} orderSm={6} orderMd={6}>
+        <Grid.Col span={{ xs: 6, sm: 6, md: 5, lg: 3 }} order={{ sm: 6, md: 6 }}>
           <TextInput
             withAsterisk
             label="Search"
@@ -91,7 +90,7 @@ const Search = () => {
             {...form.getInputProps('search')}
           />
         </Grid.Col>{' '}
-        <Grid.Col xs={3} sm={3} md={2} lg={3} orderSm={7}>
+        <Grid.Col span={{ xs: 3, sm: 3, md: 2, lg: 3 }} order={{ sm: 7 }}>
           <Button type="submit">Submit</Button>
         </Grid.Col>
       </Grid>

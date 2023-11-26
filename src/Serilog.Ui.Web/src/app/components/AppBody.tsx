@@ -1,4 +1,3 @@
-import { AppShell } from '@mantine/core';
 import { type SearchForm } from '../../types/types';
 import { SearchFormProvider, useSearchForm } from '../hooks/SearchFormContext';
 import Paging from './Search/Paging';
@@ -22,13 +21,11 @@ const AppBody = () => {
     // TODO: fix form input changes that doesn't reset page to 1 (as it happens on submit button)
   });
   return (
-    <AppShell.Main>
-      <SearchFormProvider form={methods}>
-        <Search />
-        <SerilogResults />
-        <Paging />
-      </SearchFormProvider>
-    </AppShell.Main>
+    <SearchFormProvider form={methods}>
+      <Search />
+      <SerilogResults />
+      <Paging />
+    </SearchFormProvider>
   );
 };
 

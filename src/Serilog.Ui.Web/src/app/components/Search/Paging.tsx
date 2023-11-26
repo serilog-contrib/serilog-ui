@@ -25,7 +25,7 @@ const Paging = () => {
   const { data, isFetching } = useQueryLogsHook();
   const form = useSearchFormContext();
   const [opened, { open, close }] = useDisclosure(false);
-  const [pageToChange, changePage] = useState<number | ''>(1);
+  const [pageToChange, changePage] = useState<number | string>(1);
 
   // TODO Object guard
   if (isFetching || data == null) return null;
@@ -41,19 +41,19 @@ const Paging = () => {
 
   return (
     <>
-      <Group position="left">
+      <Group justify="left">
         <Select
           label="entries"
           data={entriesOptions}
           {...form.getInputProps('entriesPerPage')}
         ></Select>
       </Group>
-      <Group position="right">
+      <Group justify="right">
         <ActionIcon onClick={open}>
           <IconListNumbers size={48} strokeWidth={2} />
         </ActionIcon>
         <Dialog opened={opened} withCloseButton onClose={close} size="lg" radius="md">
-          <Text size="sm" mb="xs" weight={500}>
+          <Text size="sm" mb="xs" w={500}>
             Select page
           </Text>
           <Group align="flex-end">
@@ -64,14 +64,14 @@ const Paging = () => {
               min={1}
               hideControls
               placeholder={`${form.values.page}`}
-              sx={{ flex: 1 }}
+              style={{ flex: 1 }}
             />
             /{`${totalPages}`}
             <Button onClick={setPage}>set</Button>
           </Group>
         </Dialog>
         <Pagination
-          position="right"
+          style={{ justifyContent: 'right' }}
           withEdges
           total={totalPages}
           siblings={3}

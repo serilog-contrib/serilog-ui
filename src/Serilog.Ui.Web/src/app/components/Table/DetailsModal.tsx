@@ -1,6 +1,13 @@
-import { Button, Group, Modal, useMantineTheme } from '@mantine/core';
+import { CodeHighlight } from '@mantine/code-highlight';
+import '@mantine/code-highlight/styles.css';
+import {
+  Button,
+  Group,
+  Modal,
+  useMantineColorScheme,
+  useMantineTheme,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Prism as PrismComponent } from '@mantine/prism';
 import { useMemo } from 'react';
 import { printXmlCode } from '../../util/prettyPrints';
 
@@ -15,6 +22,7 @@ const DetailsModal = ({
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const theme = useMantineTheme();
+  const { colorScheme } = useMantineColorScheme();
 
   const renderContent = useMemo(() => {
     if (contentType === 'xml') return printXmlCode(contentType);
@@ -38,24 +46,20 @@ const DetailsModal = ({
         size="xl"
         title={modalTitle}
         overlayProps={{
-          color:
-            theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
+          color: colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
           opacity: 0.55,
           blur: 3,
         }}
       >
-        <PrismComponent
-          withLineNumbers
-          trim={false}
+        <CodeHighlight
+          code={renderContent}
           language={
             contentType === 'xml' ? 'markup' : contentType === 'json' ? 'json' : 'bash'
           }
-        >
-          {renderContent}
-        </PrismComponent>
+        />
       </Modal>
 
-      <Group position="center">
+      <Group>
         <Button onClick={open}>Click to view</Button>
       </Group>
     </>
