@@ -53,7 +53,7 @@ const Head = ({ isMobileOpen, toggleMobile }: IProps) => {
   return (
     <Group
       display="grid"
-      bg={theme.colors.gray[1]}
+      bg={colorScheme === 'dark' ? theme.colors.gray[8] : theme.colors.gray[3]}
       style={isMobileSize ? styles.mobileGrid : styles.desktopGrid}
       w="100%"
       h="100%"

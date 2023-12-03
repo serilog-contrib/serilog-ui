@@ -21,7 +21,11 @@ const AuthorizeButton = () => {
         size={isSmallish ? 'compact-xs' : 'compact-md'}
         onClick={open}
       >
-        {isStringGuard(authProps.bearerToken) ? <IconLockCheck /> : <IconLockOpen />}
+        {isStringGuard(authProps.bearerToken) ? (
+          <IconLockCheck size={isSmallish ? '18px' : '24px'} />
+        ) : (
+          <IconLockOpen size={isSmallish ? '18px' : '24px'} />
+        )}
         Authorize
       </Button>
       <Modal opened={opened} onClose={close} title="JWT Authorization" centered>
