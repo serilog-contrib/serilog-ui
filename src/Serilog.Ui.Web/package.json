@@ -30,7 +30,7 @@
     "jsdom": "^21.1.1",
     "load-grunt-tasks": "5.1.0",
     "msw": "^1.2.1",
-    "parcel": "^2.8.3",
+    "parcel": "2.8.3",
     "process": "^0.11.10",
     "ts-jest": "^29.1.0",
     "typescript": "^5.0.4",
@@ -42,7 +42,8 @@
     "date-fns": "^2.29.3",
     "jquery": "^3.6.4",
     "netstack.js": "^1.1.2",
-    "popper.js": "1.16.1"
+    "popper.js": "1.16.1",
+    "xml-formatter": "^3.6.0"
   },
   "jest-junit": {
     "outputDirectory": "reports",
