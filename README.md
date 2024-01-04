@@ -11,7 +11,7 @@
 A simple Serilog log viewer for the following sinks:
 
 - Serilog.Sinks.**MSSqlServer** ([Nuget](https://github.com/serilog/serilog-sinks-mssqlserver))
-- Serilog.Sinks.**MySql** ([Nuget](https://github.com/TeleSoftas/serilog-sinks-mariadb))
+- Serilog.Sinks.**MySql** ([Nuget](https://github.com/TeleSoftas/serilog-sinks-mariadb)) and Serilog.Sinks.**MariaDB** [Nuget](https://github.com/TeleSoftas/serilog-sinks-mariadb)
 - Serilog.Sinks.**Postgresql** ([Nuget](https://github.com/b00ted/serilog-sinks-postgresql))
 - Serilog.Sinks.**MongoDB** ([Nuget](https://github.com/serilog/serilog-sinks-mongodb))
 - Serilog.Sinks.**ElasticSearch** ([Nuget](https://github.com/serilog/serilog-sinks-elasticsearch))
@@ -97,3 +97,8 @@ See [LICENSE](https://github.com/serilog-contrib/serilog-ui/blob/master/LICENSE)
 ## Issues and Contribution
 
 Everything is welcome! :trophy: See the [contribution guidelines](https://github.com/serilog-contrib/serilog-ui/blob/master/CONTRIBUTING.md) for details.
+
+## Support
+Thank you [JetBrains](https://www.jetbrains.com/community/opensource/#support) for supporting this project.
+
+![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg)
