@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
 using System;
+using Dapper;
 
 namespace Serilog.Ui.MsSqlServerProvider
+#nullable enable
 {
     /// <summary>
     ///     SQL Server data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
@@ -18,13 +20,15 @@ namespace Serilog.Ui.MsSqlServerProvider
         /// <param name="schemaName">
         ///     Name of the table schema. default value is <c> dbo </c>
         /// </param>
+        /// <param name="dateTimeCustomParsing">Delegate to customize the DateTime parsing. It must return a DateTime with UTC</param>
         /// <exception cref="ArgumentNullException"> throw if connectionString is null </exception>
         /// <exception cref="ArgumentNullException"> throw is tableName is null </exception>
         public static SerilogUiOptionsBuilder UseSqlServer(
             this SerilogUiOptionsBuilder optionsBuilder,
             string connectionString,
             string tableName,
-            string schemaName = "dbo"
+            string schemaName = "dbo",
+            Func<string, DateTime>? dateTimeCustomParsing = null
         )
         {
             if (string.IsNullOrWhiteSpace(connectionString))
@@ -40,9 +44,12 @@ namespace Serilog.Ui.MsSqlServerProvider
                 Schema = !string.IsNullOrWhiteSpace(schemaName) ? schemaName : "dbo"
             };
 
+            SqlMapper.AddTypeHandler(new DapperDateTimeHandler(dateTimeCustomParsing));
+
             ((ISerilogUiOptionsBuilder)optionsBuilder).Services
-                .AddScoped<IDataProvider, SqlServerDataProvider>(p => ActivatorUtilities.CreateInstance<SqlServerDataProvider>(p, relationProvider));
-            
+                .AddScoped<IDataProvider, SqlServerDataProvider>(p =>
+                    ActivatorUtilities.CreateInstance<SqlServerDataProvider>(p, relationProvider));
+
             return optionsBuilder;
         }
     }

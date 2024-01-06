@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿#nullable enable
+using Dapper;
 using System;
 using System.Data;
 using System.Globalization;
@@ -7,7 +8,15 @@ namespace Serilog.Ui.MsSqlServerProvider;
 
 public class DapperDateTimeHandler : SqlMapper.TypeHandler<DateTime>
 {
-    private static readonly string[] Formats = new[] {
+    private readonly Func<string, DateTime>? _dateTimeCustomParsing;
+
+    public DapperDateTimeHandler(Func<string, DateTime>? dateTimeCustomParsing = null)
+    {
+        _dateTimeCustomParsing = dateTimeCustomParsing;
+    }
+
+    private static readonly string[] Formats = new[]
+    {
         "M/d/yyyy h:mm:ss tt zzz",
         "M/dd/yyyy h:mm:ss tt zzz",
         "M/d/yyyy h:mm:ss tt",
@@ -27,11 +36,24 @@ public class DapperDateTimeHandler : SqlMapper.TypeHandler<DateTime>
     public override DateTime Parse(object value)
     {
         var valueStr = value.ToString();
-        DateTime.TryParse(valueStr, CultureInfo.InvariantCulture, DateTimeStyles.None, out var timeStamp);
+
+        if (_dateTimeCustomParsing is not null) return CustomParse(valueStr);
+
+        DateTime.TryParse(valueStr, CultureInfo.CurrentCulture, DateTimeStyles.None, out var timeStamp);
 
         if (timeStamp == default)
             DateTime.TryParseExact(valueStr, Formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out timeStamp);
 
         return timeStamp;
+    }
+
+    private DateTime CustomParse(string value)
+    {
+        var parseDatetime = _dateTimeCustomParsing!(value);
+
+        if (parseDatetime.Kind != DateTimeKind.Utc)
+            throw new InvalidOperationException($"The parsed date must have kind: {DateTimeKind.Utc}");
+
+        return parseDatetime;
     }
 }
