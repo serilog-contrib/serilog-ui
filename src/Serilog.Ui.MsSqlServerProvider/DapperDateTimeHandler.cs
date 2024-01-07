@@ -39,12 +39,12 @@ public class DapperDateTimeHandler : SqlMapper.TypeHandler<DateTime>
 
         if (_dateTimeCustomParsing is not null) return CustomParse(valueStr);
 
-        DateTime.TryParse(valueStr, CultureInfo.CurrentCulture, DateTimeStyles.None, out var timeStamp);
+        DateTime.TryParse(valueStr, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var timeStamp);
 
         if (timeStamp == default)
             DateTime.TryParseExact(valueStr, Formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out timeStamp);
 
-        return timeStamp;
+        return timeStamp.ToUniversalTime();
     }
 
     private DateTime CustomParse(string value)
