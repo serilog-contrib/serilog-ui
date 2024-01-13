@@ -47,6 +47,8 @@ namespace Serilog.Ui.PostgreSqlProvider
                 SinkType = sinkType
             };
 
+            QueryBuilder.SetSinkType(sinkType);
+
             ((ISerilogUiOptionsBuilder)optionsBuilder).Services
                 .AddScoped<IDataProvider, PostgresDataProvider>(p => ActivatorUtilities.CreateInstance<PostgresDataProvider>(p, relationProvider));
         }

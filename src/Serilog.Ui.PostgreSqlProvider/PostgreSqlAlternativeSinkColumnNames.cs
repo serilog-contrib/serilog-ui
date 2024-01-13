@@ -2,15 +2,13 @@
 
 internal class PostgreSqlAlternativeSinkColumnNames : SinkColumnNames
 {
-    public const string Exception = "Exception";
-
-    public const string Level = "Level";
-
-    public const string LogEventSerialized = "LogEvent";
-
-    public const string MessageTemplate = "MessageTemplate";
-
-    public const string RenderedMessage = "Message";
-
-    public const string Timestamp = "Timestamp";
+    public PostgreSqlAlternativeSinkColumnNames()
+    {
+        Exception = "Exception";
+        Level = "Level";
+        LogEventSerialized = "LogEvent";
+        MessageTemplate = "MessageTemplate";
+        RenderedMessage = "Message";
+        Timestamp = "Timestamp";
+    }
 }

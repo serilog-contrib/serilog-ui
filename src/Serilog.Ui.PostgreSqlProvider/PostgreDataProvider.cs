@@ -4,19 +4,13 @@ using Serilog.Ui.Core;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Serilog.Ui.PostgreSqlProvider;
 
-public class PostgresDataProvider : IDataProvider
+public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
 {
-    private readonly RelationalDbOptions _options;
-
-    public PostgresDataProvider(RelationalDbOptions options)
-    {
-        _options = options ?? throw new ArgumentNullException(nameof(options));
-    }
+    public string Name => options.ToDataProviderName("NPGSQL");
 
     public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
         int page,
@@ -44,8 +38,6 @@ public class PostgresDataProvider : IDataProvider
         return (await logsTask, await logCountTask);
     }
 
-    public string Name => _options.ToDataProviderName("NPGSQL");
-
     private async Task<IEnumerable<LogModel>> GetLogsAsync(
         int page,
         int count,
@@ -54,19 +46,11 @@ public class PostgresDataProvider : IDataProvider
         DateTime? startDate,
         DateTime? endDate)
     {
-        var queryBuilder = new StringBuilder();
-        queryBuilder.Append("SELECT message, message_template, level, timestamp, exception, log_event AS \"Properties\" FROM \"");
-        queryBuilder.Append(_options.Schema);
-        queryBuilder.Append("\".\"");
-        queryBuilder.Append(_options.TableName);
-        queryBuilder.Append("\"");
+        var query = QueryBuilder.BuildFetchLogsQuery(options.Schema, options.TableName, level, searchCriteria, ref startDate, ref endDate);
 
-        GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
+        using IDbConnection connection = new NpgsqlConnection(options.ConnectionString);
 
-        queryBuilder.Append(" ORDER BY timestamp DESC LIMIT @Count OFFSET @Offset ");
-
-        using IDbConnection connection = new NpgsqlConnection(_options.ConnectionString);
-        var logs = await connection.QueryAsync<PostgresLogModel>(queryBuilder.ToString(),
+        var logs = await connection.QueryAsync<PostgresLogModel>(query,
             new
             {
                 Offset = page * count,
@@ -80,7 +64,9 @@ public class PostgresDataProvider : IDataProvider
 
         var index = 1;
         foreach (var log in logs)
+        {
             log.RowNo = (page * count) + index++;
+        }
 
         return logs;
     }
@@ -91,17 +77,11 @@ public class PostgresDataProvider : IDataProvider
         DateTime? startDate = null,
         DateTime? endDate = null)
     {
-        var queryBuilder = new StringBuilder();
-        queryBuilder.Append("SELECT COUNT(message) FROM \"");
-        queryBuilder.Append(_options.Schema);
-        queryBuilder.Append("\".\"");
-        queryBuilder.Append(_options.TableName);
-        queryBuilder.Append("\"");
+        var query = QueryBuilder.BuildCountLogsQuery(options.Schema, options.TableName, level, searchCriteria, ref startDate, ref endDate);
 
-        GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
+        using IDbConnection connection = new NpgsqlConnection(options.ConnectionString);
 
-        using IDbConnection connection = new NpgsqlConnection(_options.ConnectionString);
-        return await connection.ExecuteScalarAsync<int>(queryBuilder.ToString(),
+        return await connection.ExecuteScalarAsync<int>(query,
             new
             {
                 Level = LogLevelConverter.GetLevelValue(level),
@@ -109,43 +89,5 @@ public class PostgresDataProvider : IDataProvider
                 StartDate = startDate,
                 EndDate = endDate
             });
-    }
-
-    private void GenerateWhereClause(
-        StringBuilder queryBuilder,
-        string level,
-        string searchCriteria,
-        DateTime? startDate = null,
-        DateTime? endDate = null)
-    {
-        var whereIncluded = false;
-
-        if (!string.IsNullOrEmpty(level))
-        {
-            queryBuilder.Append(" WHERE level = @Level ");
-            whereIncluded = true;
-        }
-
-        if (!string.IsNullOrEmpty(searchCriteria))
-        {
-            queryBuilder.Append(whereIncluded
-                ? " AND message LIKE @Search OR exception LIKE @Search "
-                : " WHERE message LIKE @Search OR exception LIKE @Search ");
-        }
-
-        if (startDate != null)
-        {
-            queryBuilder.Append(whereIncluded
-                ? " AND timestamp >= @StartDate "
-                : " WHERE timestamp >= @StartDate ");
-            whereIncluded = true;
-        }
-
-        if (endDate != null)
-        {
-            queryBuilder.Append(whereIncluded
-                ? " AND timestamp < @EndDate "
-                : " WHERE timestamp < @EndDate ");
-        }
     }
 }

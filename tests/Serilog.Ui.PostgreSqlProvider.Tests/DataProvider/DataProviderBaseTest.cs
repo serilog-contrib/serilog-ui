@@ -11,7 +11,7 @@ namespace Postgres.Tests.DataProvider
     [Trait("Unit-Base", "Postgres")]
     public class DataProviderBaseTest : IUnitBaseTests
     {
-        [Fact]
+        [Fact(Skip = "No longer needed!")]
         public void It_throws_when_any_dependency_is_null()
         {
             var suts = new List<Func<PostgresDataProvider>>

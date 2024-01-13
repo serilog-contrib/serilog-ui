@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Serilog.Ui.PostgreSqlProvider;
@@ -7,14 +8,14 @@ internal static class QueryBuilder
 {
     private static SinkColumnNames _columns;
 
-    private static void SetSinkType(PostgreSqlSinkType sinkType)
+    internal static void SetSinkType(PostgreSqlSinkType sinkType)
     {
         _columns = sinkType == PostgreSqlSinkType.SerilogSinksPostgreSQL
             ? new PostgreSqlSinkColumnNames()
             : new PostgreSqlAlternativeSinkColumnNames();
     }
 
-    public static string BuildFetchLogsQuery(
+    internal static string BuildFetchLogsQuery(
         string schema,
         string tableName,
         string level,
@@ -23,6 +24,7 @@ internal static class QueryBuilder
         ref DateTime? endDate)
     {
         StringBuilder queryBuilder = new();
+
         queryBuilder
             .Append("SELECT ")
             .Append($"{_columns.RenderedMessage}, {_columns.MessageTemplate}, {_columns.Level}, {_columns.Timestamp}, {_columns.Exception}, {_columns.LogEventSerialized} AS \"Properties\"")
@@ -34,7 +36,30 @@ internal static class QueryBuilder
 
         GenerateWhereClause(queryBuilder, level, searchCriteria, ref startDate, ref endDate);
 
-        queryBuilder.Append(" ORDER BY timestamp DESC LIMIT @Count OFFSET @Offset ");
+        queryBuilder.Append(" ORDER BY ");
+        queryBuilder.Append(_columns.Timestamp);
+        queryBuilder.Append(" DESC LIMIT @Count OFFSET @Offset ");
+
+        return queryBuilder.ToString();
+    }
+
+    internal static string BuildCountLogsQuery(
+        string schema,
+        string tableName,
+        string level,
+        string searchCriteria,
+        ref DateTime? startDate,
+        ref DateTime? endDate)
+    {
+        StringBuilder queryBuilder = new();
+
+        queryBuilder.Append($"SELECT COUNT({_columns.RenderedMessage}) FROM \"");
+        queryBuilder.Append(schema);
+        queryBuilder.Append("\".\"");
+        queryBuilder.Append(tableName);
+        queryBuilder.Append("\"");
+
+        GenerateWhereClause(queryBuilder, level, searchCriteria, ref startDate, ref endDate);
 
         return queryBuilder.ToString();
     }
@@ -46,43 +71,42 @@ internal static class QueryBuilder
         ref DateTime? startDate,
         ref DateTime? endDate)
     {
-        var whereIncluded = false;
+        var conditions = new List<string>();
 
         if (!string.IsNullOrEmpty(level))
         {
-            queryBuilder.Append($" WHERE {_columns.Level} = @Level ");
-            whereIncluded = true;
+            conditions.Add($"{_columns.Level} = @Level");
         }
 
         if (!string.IsNullOrEmpty(searchCriteria))
         {
-            queryBuilder
-                .Append(AndOrWhere(whereIncluded))
-                .Append($"{_columns.RenderedMessage} LIKE @Search OR exception LIKE @Search ");
-            whereIncluded = true;
+            conditions.Add($"({_columns.RenderedMessage} LIKE @Search OR exception LIKE @Search)");
         }
 
-        if (startDate != null)
+        if (startDate.HasValue)
         {
-            queryBuilder
-                .Append(AndOrWhere(whereIncluded))
-                .Append($"{_columns.Timestamp} >= @StartDate ");
-            whereIncluded = true;
+            conditions.Add($"{_columns.Timestamp} >= @StartDate");
         }
 
-        if (endDate != null)
+        if (endDate.HasValue)
         {
-            queryBuilder
-                .Append(AndOrWhere(whereIncluded))
-                .Append($"{_columns.Timestamp} <= @EndDate ");
+            conditions.Add($"{_columns.Timestamp} <= @EndDate");
         }
 
-        static string AndOrWhere(bool whereIncluded)
+        if (conditions.Count > 0)
         {
-            const string and = " AND ";
-            const string where = " WHERE ";
+            queryBuilder.Append(" WHERE ");
+        }
 
-            return whereIncluded ? and : where;
+        switch (conditions.Count)
+        {
+            case 1:
+                queryBuilder.Append(conditions[0]);
+                break;
+
+            case > 1:
+                queryBuilder.Append(string.Join(" AND ", conditions));
+                break;
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Serilog.Ui.PostgreSqlProvider;
 
-internal class PostgreSqlDbOptions : RelationalDbOptions
+public class PostgreSqlDbOptions : RelationalDbOptions
 {
     public PostgreSqlSinkType SinkType { get; set; }
 }
