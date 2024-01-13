@@ -12,6 +12,11 @@ namespace Serilog.Ui.PostgreSqlProvider
         /// <summary>
         ///     Configures the SerilogUi to connect to a PostgreSQL database.
         /// </summary>
+        /// <param name="sinkType">
+        ///     The sink that used to store logs in the PostgreSQL database. This data provider supports two sinks,
+        ///     <see href="https://github.com/b00ted/serilog-sinks-postgresql">Serilog.Sinks.Postgresql</see> and
+        ///     <see href="https://github.com/serilog-contrib/Serilog.Sinks.Postgresql.Alternative">Serilog.Sinks.Postgresql.Alternative</see>.
+        /// </param>
         /// <param name="optionsBuilder"> The options builder. </param>
         /// <param name="connectionString"> The connection string. </param>
         /// <param name="tableName"> Name of the table. </param>
@@ -22,6 +27,7 @@ namespace Serilog.Ui.PostgreSqlProvider
         /// <exception cref="ArgumentNullException"> throw is tableName is null </exception>
         public static void UseNpgSql(
             this SerilogUiOptionsBuilder optionsBuilder,
+            PostgreSqlSinkType sinkType,
             string connectionString,
             string tableName,
             string schemaName = "public"
@@ -33,11 +39,12 @@ namespace Serilog.Ui.PostgreSqlProvider
             if (string.IsNullOrWhiteSpace(tableName))
                 throw new ArgumentNullException(nameof(tableName));
 
-            var relationProvider = new RelationalDbOptions
+            var relationProvider = new PostgreSqlDbOptions
             {
                 ConnectionString = connectionString,
                 TableName = tableName,
-                Schema = !string.IsNullOrWhiteSpace(schemaName) ? schemaName : "public"
+                Schema = !string.IsNullOrWhiteSpace(schemaName) ? schemaName : "public",
+                SinkType = sinkType
             };
 
             ((ISerilogUiOptionsBuilder)optionsBuilder).Services
