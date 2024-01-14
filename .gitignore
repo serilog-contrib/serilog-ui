@@ -354,6 +354,10 @@ nuget.exe
 coverage.xml
 coverage/
 
+**/eslint-results.html
+
+# Nuke working files
 .nuke/temp/
 
-**/eslint-results.html
+# JetBrains IDE user folders
+.idea/
