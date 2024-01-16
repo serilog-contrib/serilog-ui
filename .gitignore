@@ -354,4 +354,8 @@ nuget.exe
 coverage.xml
 coverage/
 
+# Nuke working files
 .nuke/temp/
+
+# JetBrains IDE user folders
+.idea/
