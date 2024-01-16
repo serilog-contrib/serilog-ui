@@ -10,6 +10,8 @@ namespace Serilog.Ui.PostgreSqlProvider;
 
 public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
 {
+    private readonly PostgreSqlDbOptions _options = options;
+
     public string Name => options.ToDataProviderName("NPGSQL");
 
     public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
@@ -48,7 +50,9 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
     {
         var query = QueryBuilder.BuildFetchLogsQuery(options.Schema, options.TableName, level, searchCriteria, ref startDate, ref endDate);
 
-        using IDbConnection connection = new NpgsqlConnection(options.ConnectionString);
+        using IDbConnection connection = new NpgsqlConnection(_options.ConnectionString);
+
+        return new List<LogModel>();
 
         var logs = await connection.QueryAsync<PostgresLogModel>(query,
             new

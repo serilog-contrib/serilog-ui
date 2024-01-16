@@ -53,7 +53,7 @@ internal static class QueryBuilder
     {
         StringBuilder queryBuilder = new();
 
-        queryBuilder.Append($"SELECT COUNT({_columns.RenderedMessage}) FROM \"");
+        queryBuilder.Append($"SELECT COUNT(\"{_columns.RenderedMessage}\") FROM \"");
         queryBuilder.Append(schema);
         queryBuilder.Append("\".\"");
         queryBuilder.Append(tableName);
@@ -80,7 +80,7 @@ internal static class QueryBuilder
 
         if (!string.IsNullOrEmpty(searchCriteria))
         {
-            conditions.Add($"({_columns.RenderedMessage} LIKE @Search OR exception LIKE @Search)");
+            conditions.Add($"({_columns.RenderedMessage} LIKE @Search OR {_columns.Exception} LIKE @Search)");
         }
 
         if (startDate.HasValue)
@@ -95,18 +95,9 @@ internal static class QueryBuilder
 
         if (conditions.Count > 0)
         {
-            queryBuilder.Append(" WHERE ");
-        }
-
-        switch (conditions.Count)
-        {
-            case 1:
-                queryBuilder.Append(conditions[0]);
-                break;
-
-            case > 1:
-                queryBuilder.Append(string.Join(" AND ", conditions));
-                break;
+            queryBuilder
+                .Append(" WHERE TRUE AND ")
+                .Append(string.Join(" AND ", conditions)); ;
         }
     }
 }

@@ -13,6 +13,7 @@ namespace Serilog.Ui.Common.Tests.DataSamples
         {
             "Verbose", "Debug", "Information", "Warning", "Error", "Fatal"
         };
+
         private static Faker<LogModel> LogsRules()
         {
             Bogus.DataSets.Date.SystemClock = () => DateTime.Parse("8/8/2019 2:00 PM", CultureInfo.InvariantCulture);
@@ -28,6 +29,7 @@ namespace Serilog.Ui.Common.Tests.DataSamples
         }
 
         public static IEnumerable<LogModel> Logs(int generationCount) => LogsRules().Generate(generationCount);
+
         public static IEnumerable<LogModel> Logs() => Logs(20);
     }
 }
