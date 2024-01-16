@@ -4,14 +4,13 @@ using Serilog.Ui.Core;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Serilog.Ui.PostgreSqlProvider;
 
 public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
 {
-    private readonly PostgreSqlDbOptions _options = options;
-
     public string Name => options.ToDataProviderName("NPGSQL");
 
     public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
@@ -50,9 +49,9 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
     {
         var query = QueryBuilder.BuildFetchLogsQuery(options.Schema, options.TableName, level, searchCriteria, ref startDate, ref endDate);
 
-        using IDbConnection connection = new NpgsqlConnection(_options.ConnectionString);
+        using IDbConnection connection = new NpgsqlConnection(options.ConnectionString);
 
-        var logs = await connection.QueryAsync<PostgresLogModel>(query,
+        var logs = (await connection.QueryAsync<PostgresLogModel>(query,
             new
             {
                 Offset = page * count,
@@ -62,7 +61,7 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
                 Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
                 StartDate = startDate,
                 EndDate = endDate
-            });
+            })).ToList();
 
         var index = 1;
         foreach (var log in logs)
