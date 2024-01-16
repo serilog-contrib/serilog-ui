@@ -52,8 +52,6 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
 
         using IDbConnection connection = new NpgsqlConnection(_options.ConnectionString);
 
-        return new List<LogModel>();
-
         var logs = await connection.QueryAsync<PostgresLogModel>(query,
             new
             {

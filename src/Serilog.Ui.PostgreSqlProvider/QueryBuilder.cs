@@ -27,7 +27,7 @@ internal static class QueryBuilder
 
         queryBuilder
             .Append("SELECT ")
-            .Append($"{_columns.RenderedMessage}, {_columns.MessageTemplate}, {_columns.Level}, {_columns.Timestamp}, {_columns.Exception}, {_columns.LogEventSerialized} AS \"Properties\"")
+            .Append($"\"{_columns.RenderedMessage}\", \"{_columns.MessageTemplate}\", \"{_columns.Level}\", \"{_columns.Timestamp}\", \"{_columns.Exception}\", \"{_columns.LogEventSerialized}\" AS \"Properties\"")
             .Append(" FROM \"")
             .Append(schema)
             .Append("\".\"")
@@ -36,9 +36,9 @@ internal static class QueryBuilder
 
         GenerateWhereClause(queryBuilder, level, searchCriteria, ref startDate, ref endDate);
 
-        queryBuilder.Append(" ORDER BY ");
+        queryBuilder.Append(" ORDER BY \"");
         queryBuilder.Append(_columns.Timestamp);
-        queryBuilder.Append(" DESC LIMIT @Count OFFSET @Offset ");
+        queryBuilder.Append("\" DESC LIMIT @Count OFFSET @Offset ");
 
         return queryBuilder.ToString();
     }
@@ -75,22 +75,22 @@ internal static class QueryBuilder
 
         if (!string.IsNullOrEmpty(level))
         {
-            conditions.Add($"{_columns.Level} = @Level");
+            conditions.Add($"\"{_columns.Level}\" = @Level");
         }
 
         if (!string.IsNullOrEmpty(searchCriteria))
         {
-            conditions.Add($"({_columns.RenderedMessage} LIKE @Search OR {_columns.Exception} LIKE @Search)");
+            conditions.Add($"(\"{_columns.RenderedMessage}\" LIKE @Search OR \"{_columns.Exception}\" LIKE @Search)");
         }
 
         if (startDate.HasValue)
         {
-            conditions.Add($"{_columns.Timestamp} >= @StartDate");
+            conditions.Add($"\"{_columns.Timestamp}\" >= @StartDate");
         }
 
         if (endDate.HasValue)
         {
-            conditions.Add($"{_columns.Timestamp} <= @EndDate");
+            conditions.Add($"\"{_columns.Timestamp}\" <= @EndDate");
         }
 
         if (conditions.Count > 0)
