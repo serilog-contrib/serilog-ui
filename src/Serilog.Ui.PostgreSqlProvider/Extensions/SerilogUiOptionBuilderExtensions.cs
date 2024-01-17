@@ -13,11 +13,11 @@ namespace Serilog.Ui.PostgreSqlProvider
         ///     Configures the SerilogUi to connect to a PostgreSQL database.
         /// </summary>
         /// <param name="sinkType">
-        ///     The sink that used to store logs in the PostgreSQL database. This data provider supports two sinks,
-        ///     <see href="https://github.com/b00ted/serilog-sinks-postgresql">Serilog.Sinks.Postgresql</see> and
-        ///     <see href="https://github.com/serilog-contrib/Serilog.Sinks.Postgresql.Alternative">Serilog.Sinks.Postgresql.Alternative</see>.
+        ///     The sink that used to store logs in the PostgreSQL database. This data provider supports
+        ///     <a href="https://github.com/b00ted/serilog-sinks-postgresql">Serilog.Sinks.Postgresql</a> and
+        ///     <a href="https://github.com/serilog-contrib/Serilog.Sinks.Postgresql.Alternative">Serilog.Sinks.Postgresql.Alternative</a> sinks.
         /// </param>
-        /// <param name="optionsBuilder"> The options builder. </param>
+        /// <param name="optionsBuilder"> The Serilog UI option builder. </param>
         /// <param name="connectionString"> The connection string. </param>
         /// <param name="tableName"> Name of the table. </param>
         /// <param name="schemaName">
