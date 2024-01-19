@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
 using Serilog.Ui.Core;
 using System;
 using System.Globalization;
@@ -15,12 +14,12 @@ namespace Serilog.Ui.Web.Endpoints
     internal class SerilogUiEndpoints : ISerilogUiEndpoints
     {
         private readonly ILogger<SerilogUiEndpoints> _logger;
-        private static readonly JsonSerializerSettings _jsonSerializerOptions = new()
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new()
         {
-            NullValueHandling = NullValueHandling.Ignore,
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            Formatting = Formatting.None
+            IgnoreNullValues = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
+
         private string[] _providerKeys;
 
         public SerilogUiEndpoints(ILogger<SerilogUiEndpoints> logger)
@@ -41,7 +40,7 @@ namespace Serilog.Ui.Web.Endpoints
                     _providerKeys = aggregateDataProvider.Keys.ToArray();
                 }
 
-                var result = JsonConvert.SerializeObject(_providerKeys);
+                var result = JsonSerializer.Serialize(_providerKeys, JsonSerializerOptions);
                 httpContext.Response.StatusCode = (int)HttpStatusCode.OK;
                 await httpContext.Response.WriteAsync(result);
             }
@@ -85,7 +84,7 @@ namespace Serilog.Ui.Web.Endpoints
 
             var (logs, total) = await provider.FetchDataAsync(currentPage, count, level, textSearch, start, end);
 
-            var result = JsonConvert.SerializeObject(new { logs, total, count, currentPage }, _jsonSerializerOptions);
+            var result = JsonSerializer.Serialize(new { logs, total, count, currentPage }, JsonSerializerOptions);
 
             return result;
         }
@@ -119,10 +118,10 @@ namespace Serilog.Ui.Web.Endpoints
             httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
             var errorMessage = httpContext.Request.IsLocal()
-                ? JsonConvert.SerializeObject(new { errorMessage = ex.Message })
-                : JsonConvert.SerializeObject(new { errorMessage = "Internal server error" });
+                ? JsonSerializer.Serialize(new { errorMessage = ex.Message }, JsonSerializerOptions)
+                : JsonSerializer.Serialize(new { errorMessage = "Internal server error" }, JsonSerializerOptions);
 
-            return httpContext.Response.WriteAsync(JsonConvert.SerializeObject(new { errorMessage }));
+            return httpContext.Response.WriteAsync(JsonSerializer.Serialize(new { errorMessage }, JsonSerializerOptions));
         }
     }
 }
