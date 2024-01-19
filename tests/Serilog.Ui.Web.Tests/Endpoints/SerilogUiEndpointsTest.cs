@@ -8,8 +8,12 @@ using Serilog.Ui.Web.Endpoints;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Xunit;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Ui.Web.Tests.Endpoints
 {
@@ -82,7 +86,17 @@ namespace Ui.Web.Tests.Endpoints
             _testContext.Response.StatusCode.Should().Be(500);
             _testContext.Response.Body.Seek(0, SeekOrigin.Begin);
             var result = await new StreamReader(_testContext.Response.Body).ReadToEndAsync();
-            result.Should().Be("{\"errorMessage\":\"{\\\"errorMessage\\\":\\\"Value cannot be null. (Parameter 'provider')\\\"}\"}");
+
+            _testContext.Response.StatusCode.Should().Be((int) HttpStatusCode.InternalServerError);
+            _testContext.Response.ContentType.Should().Be("application/problem+json");
+            
+            var problemDetails = JsonSerializer.Deserialize<ProblemDetails>(result) ?? throw new InvalidOperationException("JsonSerializer.Deserialize<ProblemDetails>(result) == null");
+
+            problemDetails.Title.Should().StartWith("An error occured");
+            problemDetails.Detail.Should().NotBeNullOrWhiteSpace();
+            problemDetails.Status.Should().Be((int)HttpStatusCode.InternalServerError);
+            problemDetails.Extensions.Should().ContainKey("traceId");
+            ((JsonElement) problemDetails.Extensions["traceId"]!).GetString().Should().NotBeNullOrWhiteSpace();
         }
 
         private async Task<T> HappyPath<T>(Func<HttpContext, Task> call)

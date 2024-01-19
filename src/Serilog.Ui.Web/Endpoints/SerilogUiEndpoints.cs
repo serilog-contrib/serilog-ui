@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Serilog.Ui.Web.Endpoints
 {
@@ -112,16 +113,38 @@ namespace Serilog.Ui.Web.Endpoints
             return (currentPage, currentCount, keyStr, levelStr, searchStr, outputStartDate, outputEndDate);
         }
 
+        /// <summary>
+        /// Returns an industry standard ProblemDetails object.
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7807"/>
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <param name="ex"></param>
+        /// <returns></returns>
         private Task OnError(HttpContext httpContext, Exception ex)
         {
             _logger.LogError(ex, "@Message", ex.Message);
-            httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            var errorMessage = httpContext.Request.IsLocal()
-                ? JsonSerializer.Serialize(new { errorMessage = ex.Message }, JsonSerializerOptions)
-                : JsonSerializer.Serialize(new { errorMessage = "Internal server error" }, JsonSerializerOptions);
+            httpContext.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+            httpContext.Response.ContentType = "application/problem+json";
 
-            return httpContext.Response.WriteAsync(JsonSerializer.Serialize(new { errorMessage }, JsonSerializerOptions));
+            var includeDetails = httpContext.Request.IsLocal();
+
+            var title = includeDetails ? "An error occured: " + ex.Message : "An error occured";
+            var details = includeDetails ? ex.ToString() : null;
+
+            var problem = new ProblemDetails
+            {
+                Status = httpContext.Response.StatusCode,
+                Title = title,
+                Detail = details,
+                Extensions =
+                {
+                    ["traceId"] = httpContext.TraceIdentifier
+                }
+            };
+
+            var stream = httpContext.Response.Body;
+            return JsonSerializer.SerializeAsync(stream, problem);
         }
     }
 }
