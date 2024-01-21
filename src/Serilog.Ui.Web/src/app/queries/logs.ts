@@ -1,4 +1,4 @@
-import { isAfter } from 'date-fns';
+import dayjs from 'dayjs';
 import { type SearchForm, type SearchResult } from '../../types/types';
 import { isDefinedGuard, isStringGuard } from '../util/guards';
 import { createAuthHeaders, determineHost } from '../util/queries';
@@ -7,8 +7,6 @@ export const fetchLogs = async (
   values: SearchForm,
   getAuthHeader: () => string | undefined,
 ) => {
-  console.log(values, values.page);
-
   const prepareUrl = prepareSearchUrl(values, values.page);
   if (!prepareUrl.areDatesAdmitted) return;
 
@@ -46,7 +44,7 @@ const prepareSearchUrl = (input: SearchForm, identifiedPage?: number) => {
   const page = identifiedPage ?? 1;
 
   if (isDefinedGuard(startDate) && isDefinedGuard(endDate)) {
-    if (isAfter(startDate, endDate)) {
+    if (dayjs(startDate).isAfter(dayjs(endDate))) {
       alert('Start date cannot be greater than end date');
       return { areDatesAdmitted: false, url: '' };
     }

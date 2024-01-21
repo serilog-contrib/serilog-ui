@@ -1,4 +1,4 @@
-import { Burger, Button, Modal, useMantineTheme } from '@mantine/core';
+import { Box, Burger, Button, Modal, useMantineTheme } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconFilterSearch } from '@tabler/icons-react';
 import { ComponentProps } from 'react';
@@ -26,7 +26,19 @@ export const HeaderActivity = (props: ComponentProps<typeof Head>) => {
         <IconFilterSearch />
         Filter
       </Button>
-      <Modal opened={opened} onClose={close} title="Search filters" centered>
+      <Modal
+        visibleFrom="sm" // TODO
+        hiddenFrom="lg" // TODO
+        opened={opened} // TODO close after certain bkr
+        onClose={close}
+        title={
+          <Box>
+            Search filters <Button>Reset</Button>
+          </Box>
+        }
+        centered
+        size="lg"
+      >
         <SearchGroup showSearch />
       </Modal>
     </>

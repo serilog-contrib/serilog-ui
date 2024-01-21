@@ -9,6 +9,7 @@ const useQueryLogsHook = () => {
   const form = useSearchFormContext();
 
   return useQuery({
+    enabled: false,
     queryKey: ['get-logs', form.values],
     queryFn: async () =>
       isObjectGuard(form.values) ? await fetchLogs(form.values, getAuthHeader) : null,

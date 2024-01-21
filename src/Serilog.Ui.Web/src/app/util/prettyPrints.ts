@@ -1,6 +1,6 @@
 import { type MantineTheme } from '@mantine/core';
-import { format, parseJSON } from 'date-fns';
 import { LogLevel } from '../../types/types';
+import { formatLocalDate, formatUtcDate } from './dates';
 
 export const cleanHtmlTags = (onReplace: string) => {
   return onReplace
@@ -28,8 +28,8 @@ export const getBgLogLevel = (theme: MantineTheme, logLevel: LogLevel): string =
   }
 };
 
-export const printDate = (date: string) =>
-  format(parseJSON(date), 'PP H:mm:ss.SSS', { weekStartsOn: 1 });
+export const printDate = (date: string, utc?: boolean) =>
+  utc ? formatUtcDate(date) : formatLocalDate(date);
 
 export const printXmlCode = (xml: string, tab = '\t') => {
   let formatted = '';

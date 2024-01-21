@@ -1,11 +1,4 @@
-﻿import {
-  compareAsc,
-  compareDesc,
-  isAfter,
-  isBefore,
-  parseISO,
-  parseJSON,
-} from 'date-fns';
+﻿import dayjs from 'dayjs';
 import { HttpResponse, http } from 'msw';
 import { EncodedSeriLogObject, LogLevel, SearchParameters } from '../../../types/types';
 import { fakeLogs } from './samples';
@@ -53,14 +46,14 @@ const byDates = (start?: string, end?: string) => (item: EncodedSeriLogObject) =
   let after = true;
   let before = true;
 
-  const date = parseJSON(item.timestamp);
+  const date = dayjs(item.timestamp);
   if (start) {
-    const ds = parseISO(start);
-    after = isAfter(date, ds);
+    const ds = dayjs(start);
+    after = date.isAfter(ds);
   }
   if (end) {
-    const de = parseISO(end);
-    before = isBefore(date, de);
+    const de = dayjs(end);
+    before = date.isBefore(de);
   }
   return after && before;
 };
@@ -68,9 +61,11 @@ const bySearch = (search: string) => (item: EncodedSeriLogObject) =>
   search ? item.message.toLowerCase().search(search.toLowerCase()) > -1 : true;
 const byDirection =
   (direction: string) => (item1: EncodedSeriLogObject, item2: EncodedSeriLogObject) => {
-    const first = parseJSON(item1.timestamp);
-    const second = parseJSON(item2.timestamp);
-    return direction === 'desc' ? compareDesc(first, second) : compareAsc(first, second);
+    const first = dayjs(item1.timestamp);
+    const second = dayjs(item2.timestamp);
+    const sortAsc = () => (first.isAfter(second) ? 1 : -1);
+    const sortDesc = () => (first.isAfter(second) ? -1 : 1);
+    return direction === 'desc' ? sortDesc() : sortAsc();
   };
 const applyLimits = (limit: number, page: number) => ({
   start: limit * page - limit,
