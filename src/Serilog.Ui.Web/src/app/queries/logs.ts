@@ -1,20 +1,22 @@
 import { isAfter } from 'date-fns';
 import { type SearchForm, type SearchResult } from '../../types/types';
-import { AuthProperties } from '../authorization/AuthProperties';
 import { isDefinedGuard, isStringGuard } from '../util/guards';
 import { createAuthHeaders, determineHost } from '../util/queries';
 
-export const fetchLogs = async (values: SearchForm) => {
+export const fetchLogs = async (
+  values: SearchForm,
+  getAuthHeader: () => string | undefined,
+) => {
   console.log(values, values.page);
 
   const prepareUrl = prepareSearchUrl(values, values.page);
   if (!prepareUrl.areDatesAdmitted) return;
 
-  const authProps = new AuthProperties();
-
+  // const authProps = new AuthProperties();
+  const header = getAuthHeader();
   try {
     // TODO: test auth
-    const req = await fetch(prepareUrl.url, createAuthHeaders(authProps));
+    const req = await fetch(prepareUrl.url, createAuthHeaders(header));
     console.log(req);
     if (req.ok) return (await req.json()) as SearchResult;
 

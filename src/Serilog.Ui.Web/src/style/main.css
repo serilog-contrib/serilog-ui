@@ -1,4 +1,4 @@
-﻿body {
+﻿/* body {
     font-family: "Poppins", Arial, sans-serif;
     font-size: 14px;
     line-height: 1.8;
@@ -372,7 +372,8 @@ a[data-toggle="collapse"] {
 
 /*#messageModal .modal-body {
     overflow: scroll;
-}*/
+}
+
 
 .log-message {
     font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -427,4 +428,4 @@ pre.stacktrace {
 
     pre.stacktrace .st-line {
         color: #ff4f68;
-    }
+    } */

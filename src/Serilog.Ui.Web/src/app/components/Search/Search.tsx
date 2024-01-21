@@ -16,12 +16,12 @@ const levelsArray = Object.keys(LogLevel).map((p) => ({
 }));
 
 const Search = () => {
-  const { authProps } = useAuthProperties();
+  const { getAuthHeader } = useAuthProperties();
   const form = useSearchFormContext();
   const queryTableKeys = useQuery<string[]>({
     queryKey: ['get-keys'],
     queryFn: async () => {
-      return await fetchKeys(authProps);
+      return await fetchKeys(getAuthHeader);
     },
     staleTime: Infinity,
   });

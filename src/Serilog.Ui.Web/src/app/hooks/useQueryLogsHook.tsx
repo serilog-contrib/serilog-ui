@@ -5,13 +5,13 @@ import { useSearchFormContext } from './SearchFormContext';
 import { useAuthProperties } from './useAuthProperties';
 
 const useQueryLogsHook = () => {
-  const { authProps } = useAuthProperties();
+  const { getAuthHeader } = useAuthProperties();
   const form = useSearchFormContext();
 
   return useQuery({
-    queryKey: ['get-logs', authProps.bearerToken, form.values],
+    queryKey: ['get-logs', form.values],
     queryFn: async () =>
-      isObjectGuard(form.values) ? await fetchLogs(form.values) : null,
+      isObjectGuard(form.values) ? await fetchLogs(form.values, getAuthHeader) : null,
     placeholderData: keepPreviousData,
     // TODO? fetch pre-post page on data fetch
     // onError: (err) => {

@@ -24,7 +24,7 @@ const App = () => {
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools initialIsOpen={false} />
           <AppShell
-            header={{ height: '4.2em' }}
+            header={{ height: '4em' }}
             navbar={{
               breakpoint: 'sm',
               collapsed: { mobile: !mobileOpen, desktop: true },

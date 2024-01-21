@@ -1,7 +1,6 @@
 import { Button, Modal, em } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { IconLockCheck, IconLockOpen } from '@tabler/icons-react';
-import { AuthType } from '../../../types/types';
 import { useAuthProperties } from '../../hooks/useAuthProperties';
 import { isStringGuard } from '../../util/guards';
 import AuthorizeModal from './AuthorizeModal';
@@ -9,10 +8,10 @@ import AuthorizeModal from './AuthorizeModal';
 const AuthorizeButton = () => {
   const isSmallish = useMediaQuery(`(max-width: ${em(360)})`);
 
-  const { authProps } = useAuthProperties();
+  const { jwt_bearerToken } = useAuthProperties();
   const [opened, { open, close }] = useDisclosure(false);
 
-  if (authProps.authType !== AuthType.Jwt) return null;
+  // TODO: expose to different Modals if (authProps.authType !== AuthType.Jwt) return null;
 
   return (
     <>
@@ -21,14 +20,14 @@ const AuthorizeButton = () => {
         size={isSmallish ? 'compact-xs' : 'compact-md'}
         onClick={open}
       >
-        {isStringGuard(authProps.bearerToken) ? (
+        {isStringGuard(jwt_bearerToken) ? (
           <IconLockCheck size={isSmallish ? '18px' : '24px'} />
         ) : (
           <IconLockOpen size={isSmallish ? '18px' : '24px'} />
         )}
         Authorize
       </Button>
-      <Modal opened={opened} onClose={close} title="JWT Authorization" centered>
+      <Modal opened={opened} onClose={close} title="Authorization" centered>
         <AuthorizeModal close={close} />
       </Modal>
     </>

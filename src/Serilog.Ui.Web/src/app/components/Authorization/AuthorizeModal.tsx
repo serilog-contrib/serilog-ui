@@ -1,56 +1,60 @@
 import { Button, Group, PasswordInput } from '@mantine/core';
-import { useEffect, type ChangeEvent } from 'react';
-import { useImmer } from 'use-immer';
+import { type ChangeEvent } from 'react';
 import { useAuthProperties } from '../../hooks/useAuthProperties';
 import { isStringGuard } from '../../util/guards';
 
 const AuthorizeModal = ({ close }: { close: () => void }) => {
-  const { authProps, updateBearerToken } = useAuthProperties();
-  const [token, setToken] = useImmer(authProps.bearerToken);
+  const {
+    clearAuthState,
+    getAuthHeader,
+    jwt_bearerToken,
+    saveAuthState,
+    updateBearerToken,
+  } = useAuthProperties();
 
-  useEffect(() => {
-    setToken(authProps.bearerToken);
-  }, [authProps.bearerToken, setToken]);
+  const isHeaderReady = isStringGuard(getAuthHeader());
 
   return (
-    <form onSubmit={() => {}}>
-      <PasswordInput
-        placeholder="Bearer eyJhbGciOiJSUz..."
-        label="JWT Token:"
-        radius="md"
-        size="md"
-        value={token}
-        disabled={isStringGuard(authProps.bearerToken)}
-        withAsterisk
-        autoComplete="off"
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          authProps.validateToken(event.currentTarget.value);
-          setToken(event.currentTarget.value);
-        }}
-      />
+    <>
+      <Group mb="md">
+        <PasswordInput
+          placeholder="Bearer eyJhbGciOiJSUz[...]"
+          label="JWT Token"
+          radius="sm"
+          size="sm"
+          style={{ flexGrow: 1 }}
+          value={jwt_bearerToken ?? ''}
+          disabled={isHeaderReady}
+          withAsterisk
+          autoComplete="off"
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
+            console.log(event);
 
-      <Group display={!isStringGuard(authProps.bearerToken) ? 'inherit' : 'none'}>
+            updateBearerToken('jwt_bearerToken', event.currentTarget.value);
+          }}
+        />
+      </Group>
+      <Group display="flex" justify="right">
         <Button
+          display={isHeaderReady ? 'none' : 'inherit'}
           onClick={() => {
-            updateBearerToken(token);
+            console.log('here on save');
+            saveAuthState();
           }}
         >
           Save
         </Button>
-      </Group>
-      <Group display={isStringGuard(authProps.bearerToken) ? 'inherit' : 'none'}>
         <Button
+          display={!isHeaderReady ? 'none' : 'inherit'}
           onClick={() => {
-            updateBearerToken('');
+            clearAuthState();
           }}
         >
           Change Token
         </Button>
-      </Group>
-      <Group>
         <Button onClick={close}>Close</Button>
       </Group>
-    </form>
+    </>
   );
 };
 export default AuthorizeModal;

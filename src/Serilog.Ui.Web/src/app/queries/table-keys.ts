@@ -1,13 +1,12 @@
-import { type AuthProperties } from '../authorization/AuthProperties';
 import {
   createAuthHeaders as createDefaultRequestInit,
   determineHost,
 } from '../util/queries';
 
-export const fetchKeys = async (authProps: AuthProperties) => {
+export const fetchKeys = async (getAuthHeader: () => string | undefined) => {
   const url = `${determineHost}/api/keys`;
 
-  const requestInit = createDefaultRequestInit(authProps);
+  const requestInit = createDefaultRequestInit(getAuthHeader());
 
   try {
     const req = await fetch(url, requestInit);
