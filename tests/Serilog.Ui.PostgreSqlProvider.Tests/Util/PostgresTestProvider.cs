@@ -40,7 +40,8 @@ namespace Postgres.Tests.Util
 
         protected override async Task InitializeAdditionalAsync()
         {
-            var logs = LogModelFaker.Logs(100);
+            var logs = LogModelFaker.Logs(100)
+                .ToList();
 
             // manual conversion due to current implementation, based on a INT level column
             var postgresTableLogs = logs.Select(p => new

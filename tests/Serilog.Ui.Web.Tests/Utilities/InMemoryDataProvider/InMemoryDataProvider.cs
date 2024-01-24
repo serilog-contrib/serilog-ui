@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
-using Serilog.Events;
+﻿using Serilog.Events;
 using Serilog.Sinks.InMemory;
 using Serilog.Ui.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Ui.Web.Tests.Utilities.InMemoryDataProvider;
@@ -26,15 +26,18 @@ public class SerilogInMemoryDataProvider : IDataProvider
             events = events.Where(l => l.Level == logLevel);
         }
 
-        var logs = events.Skip((page - 1) * count).Take(count).Select(l => new LogModel
-        {
-            Level = l.Level.ToString(),
-            Exception = l.Exception?.ToString(),
-            Message = l.RenderMessage(),
-            Properties = JsonConvert.SerializeObject(l.Properties),
-            PropertyType = "Json",
-            Timestamp = l.Timestamp.DateTime
-        });
+        var logs = events
+            .Skip((page - 1) * count)
+            .Take(count)
+            .Select(l => new LogModel
+            {
+                Level = l.Level.ToString(),
+                Exception = l.Exception?.ToString(),
+                Message = l.RenderMessage(),
+                Properties = JsonSerializer.Serialize(l.Properties),
+                PropertyType = "Json",
+                Timestamp = l.Timestamp.DateTime
+            });
 
         return Task.FromResult((logs, events.Count()));
     }

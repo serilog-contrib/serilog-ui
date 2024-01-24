@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
-using Newtonsoft.Json;
 using Serilog.Ui.Core;
 using Serilog.Ui.Web.Endpoints;
 using System;
@@ -10,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
@@ -118,7 +118,7 @@ namespace Ui.Web.Tests.Endpoints
             mockProvider.Received().GetService(typeof(AggregateDataProvider));
             _testContext.Response.Body.Seek(0, SeekOrigin.Begin);
             var result = await new StreamReader(_testContext.Response.Body).ReadToEndAsync();
-            return JsonConvert.DeserializeObject<T>(result)!;
+            return JsonSerializer.Deserialize<T>(result)!;
         }
 
         private class FakeProvider : IDataProvider
@@ -163,13 +163,13 @@ namespace Ui.Web.Tests.Endpoints
 
         private class AnonymousObject
         {
-            [JsonProperty("logs")]
+            [JsonPropertyName("logs")]
             public IEnumerable<LogModel>? Logs { get; set; }
-            [JsonProperty("total")]
+            [JsonPropertyName("total")]
             public int Total { get; set; }
-            [JsonProperty("count")]
+            [JsonPropertyName("count")]
             public int Count { get; set; }
-            [JsonProperty("currentPage")]
+            [JsonPropertyName("currentPage")]
             public int CurrentPage { get; set; }
         }
     }
