@@ -1,4 +1,4 @@
-﻿namespace Serilog.Ui.PostgreSqlProvider;
+﻿namespace Serilog.Ui.PostgreSqlProvider.Models;
 
 internal abstract class SinkColumnNames
 {

@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Npgsql;
 using Serilog.Ui.Core;
+using Serilog.Ui.PostgreSqlProvider.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
