@@ -1,6 +1,4 @@
 ﻿using Dapper;
-
-//using
 using Npgsql;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
