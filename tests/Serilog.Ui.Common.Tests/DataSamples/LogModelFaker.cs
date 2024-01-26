@@ -1,5 +1,4 @@
 ﻿using Bogus;
-using Newtonsoft.Json;
 using Serilog.Ui.Core;
 using System;
 using System.Collections.Generic;
@@ -22,7 +21,7 @@ namespace Serilog.Ui.Common.Tests.DataSamples
              .RuleFor(p => p.RowNo, f => f.Database.Random.Int())
              .RuleFor(p => p.Level, f => f.PickRandom(LogLevels))
              .RuleFor(p => p.Properties, PropertiesFaker.SerializedProperties)
-             .RuleFor(p => p.Exception, (f) => JsonConvert.SerializeObject(f.System.Exception()))
+             .RuleFor(p => p.Exception, (f) => f.System.Exception().ToString())
              .RuleFor(p => p.Message, f => f.System.Random.Words(6))
              .RuleFor(p => p.PropertyType, f => f.System.CommonFileType())
              .RuleFor(p => p.Timestamp, f => new DateTime(f.Date.Recent().Ticks, DateTimeKind.Utc));

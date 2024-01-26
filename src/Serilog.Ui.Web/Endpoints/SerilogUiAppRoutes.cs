@@ -1,23 +1,22 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
-using Newtonsoft.Json;
+using System.Text.Json;
 using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Serialization;
 using Ardalis.GuardClauses;
 
 namespace Serilog.Ui.Web.Endpoints
 {
     internal class SerilogUiAppRoutes : ISerilogUiAppRoutes
     {
-        private static readonly JsonSerializerSettings _jsonSerializerOptions = new()
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new()
         {
-            NullValueHandling = NullValueHandling.Ignore,
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            Formatting = Formatting.None
+            IgnoreNullValues = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
+
         private readonly IAppStreamLoader _streamLoader;
 
         public SerilogUiAppRoutes(IAppStreamLoader appStreamLoader)
@@ -67,7 +66,7 @@ namespace Serilog.Ui.Web.Endpoints
         {
             var htmlStringBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
             var authType = options.Authorization.AuthenticationType.ToString();
-            var encodeAuthOpts = Uri.EscapeDataString(JsonConvert.SerializeObject(new { options.RoutePrefix, authType, options.HomeUrl }, _jsonSerializerOptions));
+            var encodeAuthOpts = Uri.EscapeDataString(JsonSerializer.Serialize(new { options.RoutePrefix, authType, options.HomeUrl }, JsonSerializerOptions));
 
             htmlStringBuilder
                 .Replace("%(Configs)", encodeAuthOpts)
