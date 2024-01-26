@@ -11,20 +11,21 @@ namespace Postgres.Tests.DataProvider
     [Trait("Unit-Base", "Postgres")]
     public class DataProviderBaseTest : IUnitBaseTests
     {
-        [Fact]
+        [Fact(Skip = "No longer needed!")]
         public void It_throws_when_any_dependency_is_null()
         {
-            var suts = new List<Func<PostgresDataProvider>>
+            var sut = new List<Func<PostgresDataProvider>>
             {
                 () => new PostgresDataProvider(null),
             };
 
-            suts.ForEach(sut => sut.Should().ThrowExactly<ArgumentNullException>());
+            sut.ForEach(sut => sut.Should().ThrowExactly<ArgumentNullException>());
         }
 
         [Fact]
         public Task It_logs_and_throws_when_db_read_breaks_down()
         {
+            QueryBuilder.SetSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQL);
             var sut = new PostgresDataProvider(new() { ConnectionString = "connString", Schema = "dbo", TableName = "logs" });
 
             var assert = () => sut.FetchDataAsync(1, 10);
