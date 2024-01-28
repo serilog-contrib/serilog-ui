@@ -33,22 +33,46 @@ public class QueryBuilderTests
     {
         private readonly List<object?[]> _data = new()
         {
-            new object[] {"dbo", "logs", null, null , null, null,
-                "SELECT \"Message\", \"MessageTemplate\", \"Level\", \"Timestamp\", \"Exception\", \"LogEvent\" AS \"Properties\" FROM \"dbo\".\"logs\" ORDER BY \"Timestamp\" DESC LIMIT @Count OFFSET @Offset "},
-            new object[] {"dbo", "logs", null, null, DateTime.Now, null,
-                "SELECT \"Message\", \"MessageTemplate\", \"Level\", \"Timestamp\", \"Exception\", \"LogEvent\" AS \"Properties\" FROM \"dbo\".\"logs\" WHERE TRUE AND \"Timestamp\" >= @StartDate ORDER BY \"Timestamp\" DESC LIMIT @Count OFFSET @Offset "},
-            new object[] {"dbo", "logs", null, null, null, DateTime.Now,
-            "SELECT \"Message\", \"MessageTemplate\", \"Level\", \"Timestamp\", \"Exception\", \"LogEvent\" AS \"Properties\" FROM \"dbo\".\"logs\" WHERE TRUE AND \"Timestamp\" <= @EndDate ORDER BY \"Timestamp\" DESC LIMIT @Count OFFSET @Offset "},
-            new object[] {"dbo", "logs", null, null, DateTime.Now, DateTime.Now,
-                "SELECT \"Message\", \"MessageTemplate\", \"Level\", \"Timestamp\", \"Exception\", \"LogEvent\" AS \"Properties\" FROM \"dbo\".\"logs\" WHERE TRUE AND \"Timestamp\" >= @StartDate AND \"Timestamp\" <= @EndDate ORDER BY \"Timestamp\" DESC LIMIT @Count OFFSET @Offset "},
-            new object[] {"dbo", "logs", "Information", null, null, null,
-                "SELECT \"Message\", \"MessageTemplate\", \"Level\", \"Timestamp\", \"Exception\", \"LogEvent\" AS \"Properties\" FROM \"dbo\".\"logs\" WHERE TRUE AND \"Level\" = @Level ORDER BY \"Timestamp\" DESC LIMIT @Count OFFSET @Offset "},
-            new object[] {"dbo", "logs", null, "Test", null, null,
-                "SELECT \"Message\", \"MessageTemplate\", \"Level\", \"Timestamp\", \"Exception\", \"LogEvent\" AS \"Properties\" FROM \"dbo\".\"logs\" WHERE TRUE AND (\"Message\" LIKE @Search OR \"Exception\" LIKE @Search) ORDER BY \"Timestamp\" DESC LIMIT @Count OFFSET @Offset "},
-            new object[] {"dbo", "logs", "Information", "Test", null, null,
-                "SELECT \"Message\", \"MessageTemplate\", \"Level\", \"Timestamp\", \"Exception\", \"LogEvent\" AS \"Properties\" FROM \"dbo\".\"logs\" WHERE TRUE AND \"Level\" = @Level AND (\"Message\" LIKE @Search OR \"Exception\" LIKE @Search) ORDER BY \"Timestamp\" DESC LIMIT @Count OFFSET @Offset "},
-            new object[] {"dbo", "logs", "Information", "Test", DateTime.Now, DateTime.Now,
-                "SELECT \"Message\", \"MessageTemplate\", \"Level\", \"Timestamp\", \"Exception\", \"LogEvent\" AS \"Properties\" FROM \"dbo\".\"logs\" WHERE TRUE AND \"Level\" = @Level AND (\"Message\" LIKE @Search OR \"Exception\" LIKE @Search) AND \"Timestamp\" >= @StartDate AND \"Timestamp\" <= @EndDate ORDER BY \"Timestamp\" DESC LIMIT @Count OFFSET @Offset "},
+            new object[]
+            {
+                "dbo", "logs", null!, null!, null!, null!,
+                "SELECT \"Message\", \"MessageTemplate\", \"Level\", \"Timestamp\", \"Exception\", \"LogEvent\" AS \"Properties\" FROM \"dbo\".\"logs\" ORDER BY \"Timestamp\" DESC LIMIT @Count OFFSET @Offset "
+            },
+            new object[]
+            {
+                "dbo", "logs", null!, null!, DateTime.Now, null!,
+                "SELECT \"Message\", \"MessageTemplate\", \"Level\", \"Timestamp\", \"Exception\", \"LogEvent\" AS \"Properties\" FROM \"dbo\".\"logs\" WHERE TRUE AND \"Timestamp\" >= @StartDate ORDER BY \"Timestamp\" DESC LIMIT @Count OFFSET @Offset "
+            },
+            new object[]
+            {
+                "dbo", "logs", null!, null!, null!, DateTime.Now,
+                "SELECT \"Message\", \"MessageTemplate\", \"Level\", \"Timestamp\", \"Exception\", \"LogEvent\" AS \"Properties\" FROM \"dbo\".\"logs\" WHERE TRUE AND \"Timestamp\" <= @EndDate ORDER BY \"Timestamp\" DESC LIMIT @Count OFFSET @Offset "
+            },
+            new object[]
+            {
+                "dbo", "logs", null!, null!, DateTime.Now, DateTime.Now,
+                "SELECT \"Message\", \"MessageTemplate\", \"Level\", \"Timestamp\", \"Exception\", \"LogEvent\" AS \"Properties\" FROM \"dbo\".\"logs\" WHERE TRUE AND \"Timestamp\" >= @StartDate AND \"Timestamp\" <= @EndDate ORDER BY \"Timestamp\" DESC LIMIT @Count OFFSET @Offset "
+            },
+            new object[]
+            {
+                "dbo", "logs", "Information", null!, null!, null!,
+                "SELECT \"Message\", \"MessageTemplate\", \"Level\", \"Timestamp\", \"Exception\", \"LogEvent\" AS \"Properties\" FROM \"dbo\".\"logs\" WHERE TRUE AND \"Level\" = @Level ORDER BY \"Timestamp\" DESC LIMIT @Count OFFSET @Offset "
+            },
+            new object[]
+            {
+                "dbo", "logs", null!, "Test", null!, null!,
+                "SELECT \"Message\", \"MessageTemplate\", \"Level\", \"Timestamp\", \"Exception\", \"LogEvent\" AS \"Properties\" FROM \"dbo\".\"logs\" WHERE TRUE AND (\"Message\" LIKE @Search OR \"Exception\" LIKE @Search) ORDER BY \"Timestamp\" DESC LIMIT @Count OFFSET @Offset "
+            },
+            new object[]
+            {
+                "dbo", "logs", "Information", "Test", null!, null!,
+                "SELECT \"Message\", \"MessageTemplate\", \"Level\", \"Timestamp\", \"Exception\", \"LogEvent\" AS \"Properties\" FROM \"dbo\".\"logs\" WHERE TRUE AND \"Level\" = @Level AND (\"Message\" LIKE @Search OR \"Exception\" LIKE @Search) ORDER BY \"Timestamp\" DESC LIMIT @Count OFFSET @Offset "
+            },
+            new object[]
+            {
+                "dbo", "logs", "Information", "Test", DateTime.Now, DateTime.Now,
+                "SELECT \"Message\", \"MessageTemplate\", \"Level\", \"Timestamp\", \"Exception\", \"LogEvent\" AS \"Properties\" FROM \"dbo\".\"logs\" WHERE TRUE AND \"Level\" = @Level AND (\"Message\" LIKE @Search OR \"Exception\" LIKE @Search) AND \"Timestamp\" >= @StartDate AND \"Timestamp\" <= @EndDate ORDER BY \"Timestamp\" DESC LIMIT @Count OFFSET @Offset "
+            },
         };
 
         public IEnumerator<object[]> GetEnumerator() => _data.GetEnumerator();
