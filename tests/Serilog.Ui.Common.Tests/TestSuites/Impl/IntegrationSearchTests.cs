@@ -47,7 +47,10 @@ namespace MsSql.Tests.DataProvider
             var log = Logs.First();
             log.Message.Should().Be(logCollector.Example.Message);
             log.Level.Should().Be(logCollector.Example.Level);
-            if (!excludeProps) log.Properties.Should().Be(logCollector.Example.Properties);
+            if (!excludeProps)
+            {
+                log.Properties.Should().Be(logCollector.Example.Properties);
+            }
             ConvertToUtc(log.Timestamp, checkWithUtc).Should().BeCloseTo(logCollector.Example.Timestamp, TimeSpan.FromMinutes(5));
             Count.Should().BeCloseTo(1, 2);
         }
