@@ -45,6 +45,9 @@
     "popper.js": "1.16.1",
     "xml-formatter": "^3.6.0"
   },
+  "optionalDependencies": {
+    "@parcel/watcher-linux-x64-glibc": "^2.4.0"
+  },
   "jest-junit": {
     "outputDirectory": "reports",
     "outputName": "jest-junit.xml",
