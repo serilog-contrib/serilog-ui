@@ -1,9 +1,7 @@
 ﻿using Dapper;
-//using 
 using Npgsql;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
-using Serilog.Ui.Core;
 using Serilog.Ui.PostgreSqlProvider;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,7 +11,9 @@ using Xunit;
 namespace Postgres.Tests.Util
 {
     [CollectionDefinition(nameof(PostgresDataProvider))]
-    public class PostgresCollection : ICollectionFixture<PostgresTestProvider> { }
+    public class PostgresCollection : ICollectionFixture<PostgresTestProvider>
+    { }
+
     public sealed class PostgresTestProvider : DatabaseInstance
     {
         protected override string Name => nameof(PostgreSqlContainer);
@@ -21,12 +21,14 @@ namespace Postgres.Tests.Util
         public PostgresTestProvider()
         {
             Container = new PostgreSqlBuilder().Build();
+            QueryBuilder.SetSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQL);
         }
 
-        public RelationalDbOptions DbOptions { get; set; } = new()
+        public PostgreSqlDbOptions DbOptions { get; set; } = new()
         {
             TableName = "logs",
-            Schema = "public"
+            Schema = "public",
+            SinkType = PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative
         };
 
         protected override async Task CheckDbReadinessAsync()
@@ -40,7 +42,8 @@ namespace Postgres.Tests.Util
 
         protected override async Task InitializeAdditionalAsync()
         {
-            var logs = LogModelFaker.Logs(100);
+            var logs = LogModelFaker.Logs(100)
+                .ToList();
 
             // manual conversion due to current implementation, based on a INT level column
             var postgresTableLogs = logs.Select(p => new
@@ -64,6 +67,5 @@ namespace Postgres.Tests.Util
 
             Provider = new PostgresDataProvider(DbOptions);
         }
-
     }
 }

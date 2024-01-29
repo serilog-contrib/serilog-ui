@@ -12,24 +12,19 @@ namespace Postgres.Tests.Extensions
     [Trait("DI-DataProvider", "Postgres")]
     public class SerilogUiOptionBuilderExtensionsTest
     {
-        private readonly ServiceCollection serviceCollection;
-
-        public SerilogUiOptionBuilderExtensionsTest()
-        {
-            serviceCollection = new ServiceCollection();
-        }
+        private readonly ServiceCollection _serviceCollection = new();
 
         [Theory]
         [InlineData(null)]
         [InlineData("schema")]
         public void It_registers_provider_and_dependencies(string schemaName)
         {
-            serviceCollection.AddSerilogUi((builder) =>
+            _serviceCollection.AddSerilogUi((builder) =>
             {
-                builder.UseNpgSql("https://npgsql.example.com", "my-table", schemaName);
+                builder.UseNpgSql(PostgreSqlSinkType.SerilogSinksPostgreSQL, "https://npgsql.example.com", "my-table", schemaName);
             });
 
-            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var serviceProvider = _serviceCollection.BuildServiceProvider();
             using var scope = serviceProvider.CreateScope();
 
             var provider = scope.ServiceProvider.GetService<IDataProvider>();
@@ -41,12 +36,12 @@ namespace Postgres.Tests.Extensions
         {
             var nullables = new List<Func<IServiceCollection>>
             {
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql(null, "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql(" ", "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql("", "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql("name", null)),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql("name", " ")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql("name", "")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql(PostgreSqlSinkType.SerilogSinksPostgreSQL, null, "name")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql(PostgreSqlSinkType.SerilogSinksPostgreSQL," ", "name")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql(PostgreSqlSinkType.SerilogSinksPostgreSQL,"", "name")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql(PostgreSqlSinkType.SerilogSinksPostgreSQL,"name", null)),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql(PostgreSqlSinkType.SerilogSinksPostgreSQL,"name", " ")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql(PostgreSqlSinkType.SerilogSinksPostgreSQL,"name", "")),
             };
 
             foreach (var nullable in nullables)

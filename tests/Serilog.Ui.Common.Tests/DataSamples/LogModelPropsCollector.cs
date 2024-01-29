@@ -8,6 +8,11 @@ namespace Serilog.Ui.Common.Tests.DataSamples
     public class LogModelPropsCollector
     {
         public LogModelPropsCollector(IEnumerable<LogModel> models)
+            : this(models.ToList())
+        {
+        }
+
+        public LogModelPropsCollector(ICollection<LogModel> models)
         {
             DataSet = models.ToList();
             Collect(models);
@@ -19,7 +24,7 @@ namespace Serilog.Ui.Common.Tests.DataSamples
         public IEnumerable<DateTime> TimesSamples { get; private set; }
         public IEnumerable<string> MessagePiecesSamples { get; private set; }
 
-        private void Collect(IEnumerable<LogModel> models)
+        private void Collect(ICollection<LogModel> models)
         {
             Example = models.First();
 
@@ -29,15 +34,15 @@ namespace Serilog.Ui.Common.Tests.DataSamples
 
             MessagePiecesSamples = new List<string>
             {
-                models.ElementAtOrDefault(0).Message,
-                models.ElementAtOrDefault(1).Message.Substring(1, models.ElementAtOrDefault(1).Message.Length / 2),
-                models.ElementAtOrDefault(2).Message.Substring(1, models.ElementAtOrDefault(2).Message.Length / 2),
+                models.ElementAt(0).Message,
+                models.ElementAt(1).Message.Substring(1, models.ElementAt(1).Message.Length / 2),
+                models.ElementAt(2).Message.Substring(1, models.ElementAt(2).Message.Length / 2),
             };
             TimesSamples = new List<DateTime>
             {
-                models.ElementAtOrDefault(0).Timestamp,
-                models.ElementAtOrDefault(1).Timestamp,
-                models.ElementAtOrDefault(2).Timestamp,
+                models.ElementAt(0).Timestamp,
+                models.ElementAt(1).Timestamp,
+                models.ElementAt(2).Timestamp,
             }.OrderBy(p => p.Ticks);
         }
     }

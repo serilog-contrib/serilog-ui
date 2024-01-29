@@ -24,6 +24,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj" />
+		<ProjectReference Include="..\..\src\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
 	</ItemGroup>
 
 </Project>

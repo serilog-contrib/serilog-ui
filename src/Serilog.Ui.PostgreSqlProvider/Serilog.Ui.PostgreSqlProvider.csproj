@@ -2,8 +2,9 @@
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<LangVersion>latest</LangVersion>
-		<Version>2.2.2</Version>
+		<Version>2.3.0</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -12,7 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
+		<ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" PrivateAssets="all" />
 		<InternalsVisibleTo Include="Postgres.Tests" />
 	</ItemGroup>
 </Project>

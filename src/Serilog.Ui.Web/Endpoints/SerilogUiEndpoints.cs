@@ -1,26 +1,26 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
 using Serilog.Ui.Core;
 using System;
 using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Serilog.Ui.Web.Endpoints
 {
     internal class SerilogUiEndpoints : ISerilogUiEndpoints
     {
         private readonly ILogger<SerilogUiEndpoints> _logger;
-        private static readonly JsonSerializerSettings _jsonSerializerOptions = new()
+        private static readonly JsonSerializerOptions JsonSerializerOptions = new()
         {
-            NullValueHandling = NullValueHandling.Ignore,
-            ContractResolver = new CamelCasePropertyNamesContractResolver(),
-            Formatting = Formatting.None
+            IgnoreNullValues = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
+
         private string[] _providerKeys;
 
         public SerilogUiEndpoints(ILogger<SerilogUiEndpoints> logger)
@@ -41,7 +41,7 @@ namespace Serilog.Ui.Web.Endpoints
                     _providerKeys = aggregateDataProvider.Keys.ToArray();
                 }
 
-                var result = JsonConvert.SerializeObject(_providerKeys);
+                var result = JsonSerializer.Serialize(_providerKeys, JsonSerializerOptions);
                 httpContext.Response.StatusCode = (int)HttpStatusCode.OK;
                 await httpContext.Response.WriteAsync(result);
             }
@@ -85,7 +85,7 @@ namespace Serilog.Ui.Web.Endpoints
 
             var (logs, total) = await provider.FetchDataAsync(currentPage, count, level, textSearch, start, end);
 
-            var result = JsonConvert.SerializeObject(new { logs, total, count, currentPage }, _jsonSerializerOptions);
+            var result = JsonSerializer.Serialize(new { logs, total, count, currentPage }, JsonSerializerOptions);
 
             return result;
         }
@@ -113,16 +113,38 @@ namespace Serilog.Ui.Web.Endpoints
             return (currentPage, currentCount, keyStr, levelStr, searchStr, outputStartDate, outputEndDate);
         }
 
+        /// <summary>
+        /// Returns an industry standard ProblemDetails object.
+        /// See: <see href="https://datatracker.ietf.org/doc/html/rfc7807"/>
+        /// </summary>
+        /// <param name="httpContext"></param>
+        /// <param name="ex"></param>
+        /// <returns></returns>
         private Task OnError(HttpContext httpContext, Exception ex)
         {
-            _logger.LogError(ex, "@Message", ex.Message);
-            httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            _logger.LogError(ex, "{Message}", ex.Message);
 
-            var errorMessage = httpContext.Request.IsLocal()
-                ? JsonConvert.SerializeObject(new { errorMessage = ex.Message })
-                : JsonConvert.SerializeObject(new { errorMessage = "Internal server error" });
+            httpContext.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+            httpContext.Response.ContentType = "application/problem+json";
 
-            return httpContext.Response.WriteAsync(JsonConvert.SerializeObject(new { errorMessage }));
+            var includeDetails = httpContext.Request.IsLocal();
+
+            var title = includeDetails ? "An error occured: " + ex.Message : "An error occured";
+            var details = includeDetails ? ex.ToString() : null;
+
+            var problem = new ProblemDetails
+            {
+                Status = httpContext.Response.StatusCode,
+                Title = title,
+                Detail = details,
+                Extensions =
+                {
+                    ["traceId"] = httpContext.TraceIdentifier
+                }
+            };
+
+            var stream = httpContext.Response.Body;
+            return JsonSerializer.SerializeAsync(stream, problem);
         }
     }
 }

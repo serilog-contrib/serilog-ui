@@ -2,21 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Ardalis.GuardClauses;
 
 namespace Serilog.Ui.Core
 {
     /// <summary>
-    ///   Aggregates multiple <see cref="IDataProvider"/> into one instance.
+    /// Aggregates multiple <see cref="IDataProvider"/> into one instance.
     /// </summary>
     public class AggregateDataProvider : IDataProvider
     {
-        private IDataProvider _selectedDataProvider;
-        private readonly Dictionary<string, IDataProvider> _dataProviders = new Dictionary<string, IDataProvider>();
+        private readonly Dictionary<string, IDataProvider> _dataProviders = new();
 
+        /// <summary>
+        /// It creates an instance of <see cref="AggregateDataProvider"/>.
+        /// </summary>
+        /// <param name="dataProviders">IEnumerable of providers.</param>
+        /// <exception cref="ArgumentNullException">when <paramref name="dataProviders"/> is null</exception>
+        /// <exception cref="ArgumentException">when <paramref name="dataProviders"/> is empty</exception>
         public AggregateDataProvider(IEnumerable<IDataProvider> dataProviders)
         {
-            if (dataProviders == null)
-                throw new ArgumentNullException(nameof(dataProviders));
+            Guard.Against.NullOrEmpty(dataProviders, nameof(dataProviders));
 
             foreach (var grouped in dataProviders.GroupBy(dp => dp.Name, p => p, (k, e) => e.ToList()))
             {
@@ -39,25 +44,33 @@ namespace Serilog.Ui.Core
                 }
             }
 
-            _selectedDataProvider = _dataProviders.First(c => true).Value;
+            SelectedDataProvider = _dataProviders.First().Value;
         }
 
         /// <summary>
-        ///   <inheritdoc cref="IDataProvider.Name"/> NOTE We assume only one Aggregate provider, so
-        ///   the name is static.
+        /// <inheritdoc cref="IDataProvider.Name"/>
+        /// NOTE: We assume only one Aggregate provider, so the name is static.
         /// </summary>
         public string Name => nameof(AggregateDataProvider);
 
         /// <summary>
-        ///   If there is only one data provider, this is it. If there are multiple, this is the
-        ///   current data provider.
+        /// If there is only one data provider, this is it.
+        /// If there are multiple, this is the current data provider.
         /// </summary>
-        public IDataProvider SelectedDataProvider => _selectedDataProvider;
+        private IDataProvider SelectedDataProvider { get; set; }
 
-        public void SwitchToProvider(string key) => _selectedDataProvider = _dataProviders[key];
+        /// <summary>
+        /// Switch active data provider by key.
+        /// </summary>
+        /// <param name="key">Data provider key</param>
+        public void SwitchToProvider(string key) => SelectedDataProvider = _dataProviders[key];
 
+        /// <summary>
+        /// Existing data providers keys.
+        /// </summary>
         public IEnumerable<string> Keys => _dataProviders.Keys;
 
+        /// <inheritdoc/>
         public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
             int page,
             int count,
