@@ -122,7 +122,7 @@ namespace Serilog.Ui.Web.Endpoints
         /// <returns></returns>
         private Task OnError(HttpContext httpContext, Exception ex)
         {
-            _logger.LogError(ex, "@Message", ex.Message);
+            _logger.LogError(ex, "{Message}", ex.Message);
 
             httpContext.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
             httpContext.Response.ContentType = "application/problem+json";

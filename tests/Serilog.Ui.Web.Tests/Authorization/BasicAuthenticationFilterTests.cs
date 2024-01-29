@@ -1,16 +1,17 @@
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
-using System.Threading.Tasks;
+using Serilog.Ui.Web.Authorization;
 using Xunit;
 
-namespace Serilog.Ui.Web.Authorization.Tests;
+namespace Ui.Web.Tests.Authorization;
 
 public class BasicAuthenticationFilterTests
 {
     [Fact]
-    public async Task Authorize_WithValidCredentials_ShouldReturnTrue()
+    public void Authorize_WithValidCredentials_ShouldReturnTrue()
     {
         // Arrange
         var filter = new BasicAuthenticationFilter
@@ -32,7 +33,7 @@ public class BasicAuthenticationFilterTests
     }
 
     [Fact]
-    public async Task Authorize_WithInvalidCredentials_ShouldReturnFalse()
+    public void Authorize_WithInvalidCredentials_ShouldReturnFalse()
     {
         // Arrange
         var filter = new BasicAuthenticationFilter
@@ -52,7 +53,7 @@ public class BasicAuthenticationFilterTests
     }
 
     [Fact]
-    public async Task Authorize_WithMissingAuthorizationHeader_ShouldSetChallengeResponse()
+    public void Authorize_WithMissingAuthorizationHeader_ShouldSetChallengeResponse()
     {
         // Arrange
         var filter = new BasicAuthenticationFilter

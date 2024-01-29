@@ -41,10 +41,10 @@ namespace MsSql.Tests.Extensions
         {
             var nullables = new List<Func<IServiceCollection>>
             {
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer(null, "name")),
+                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer(null!, "name")),
                 () => serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer(" ", "name")),
                 () => serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("", "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("name", null)),
+                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("name", null!)),
                 () => serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("name", " ")),
                 () => serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("name", "")),
             };

@@ -13,7 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
+		<ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" PrivateAssets="all" />
 		<InternalsVisibleTo Include="Postgres.Tests" />
 	</ItemGroup>
 </Project>

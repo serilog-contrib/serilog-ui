@@ -10,10 +10,13 @@ using System.Threading.Tasks;
 
 namespace Serilog.Ui.PostgreSqlProvider;
 
+/// <inheritdoc/>
 public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
 {
+    /// <inheritdoc/>
     public string Name => options.ToDataProviderName("NPGSQL");
 
+    /// <inheritdoc/>
     public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
         int page,
         int count,

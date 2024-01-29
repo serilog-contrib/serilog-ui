@@ -40,7 +40,7 @@ namespace Serilog.Ui.Web
             services.AddScoped<ISerilogUiAppRoutes, SerilogUiAppRoutes>();
             services.Decorate<ISerilogUiAppRoutes, SerilogUiAppRoutesDecorator>();
             
-            services.TryAddScoped(typeof(AggregateDataProvider));
+            services.TryAddScoped<AggregateDataProvider>();
 
             return services;
         }
