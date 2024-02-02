@@ -1,11 +1,32 @@
-.sidebarGroupNavlink {
-  display: 'block';
-  width: '100%';
-  padding: var(--mantine-spacing-xs);
-  border-radius: var(--mantine-radius-sm);
-  color: var(--mantine-color-dark-0);
+.sidebarBox {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
 
-  &:hover {
-    background-color: var(--mantine-color-gray-6);
+.sidebarBoxNavlink {
+  height: 100%;
+  margin: var(--mantine-spacing-md);
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  border-radius: em(4px);
+  border: 0.1em solid var(--mantine-color-lime-0);
+  color: var(--mantine-color-dark-9);
+
+  @mixin hover {
+    background-color: var(--mantine-color-blue-4);
   }
+
+  @mixin dark {
+    color: var(--mantine-color-dark-0);
+    @mixin hover {
+      background-color: var(--mantine-color-gray-5);
+    }
+  }
+}
+
+.searchFiltersModalTitle {
+  display: flex;
+  justify-content: space-around;
+  gap: 0.4em;
 }

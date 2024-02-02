@@ -1,0 +1,121 @@
+import { CodeHighlight } from '@mantine/code-highlight';
+import {
+  Box,
+  Card,
+  Group,
+  Indicator,
+  Loader,
+  SimpleGrid,
+  Skeleton,
+  Spoiler,
+  Tabs,
+  Text,
+  useMantineTheme,
+} from '@mantine/core';
+import useQueryLogsHook from 'app/hooks/useQueryLogsHook';
+import { getBgLogLevel, printDate } from 'app/util/prettyPrints';
+import classes from 'style/table.module.css';
+import { LogLevel } from 'types/types';
+import { renderContent } from './temputil';
+
+export const SerilogResultsMobile = () => {
+  const theme = useMantineTheme();
+  const { data, isFetching } = useQueryLogsHook();
+
+  if (isFetching) return <Loader />;
+
+  if (!data?.logs.length) return <Skeleton height="10" radius="xl"></Skeleton>;
+
+  //   todo font family
+  return (
+    <SimpleGrid
+      w="100%"
+      cols={{ base: 1, sm: 2 }}
+      spacing="xs"
+      verticalSpacing="sm"
+      p="0.3em"
+    >
+      {data.logs.map((log) => (
+        <Card key={log.rowNo} shadow="xs" padding="0" radius="sm" withBorder>
+          <Card.Section
+            withBorder
+            className={classes.mobileCardHeaderWrapper}
+            style={{ borderColor: getBgLogLevel(theme, LogLevel[log.level]) }}
+          >
+            <Indicator
+              size={14}
+              position="middle-start"
+              color={getBgLogLevel(theme, LogLevel[log.level])}
+              zIndex={1}
+            >
+              <Box className={classes.mobileCardHeaderText}>
+                <Text size="md" fw={600} truncate="end" ta="center">
+                  {log.rowNo}
+                </Text>
+                <Text size="xs" c={theme.colors.gray[5]} ta="center">
+                  {printDate(log.timestamp)}
+                </Text>
+              </Box>
+            </Indicator>
+          </Card.Section>
+
+          <Group p="0.1em 0.4em 0.5em">
+            <Spoiler
+              hideLabel="Close"
+              showLabel="More..."
+              ta="justify"
+              fz="md"
+              lh="sm"
+              style={{ letterSpacing: '0.002em' }}
+            >
+              {log.message}
+            </Spoiler>
+          </Group>
+          <Group p="0.1em 0.4em 0.5em">
+            <Tabs w="100%" allowTabDeactivation>
+              <Tabs.List>
+                <Tabs.Tab value="exception" disabled={!log.exception}>
+                  Exception
+                </Tabs.Tab>
+                <Tabs.Tab value="properties" disabled={!log.properties}>
+                  Properties
+                </Tabs.Tab>
+              </Tabs.List>
+              <Tabs.Panel value="exception">
+                <CodeHighlight
+                  code={renderContent(log.propertyType, log.exception || '')}
+                  language={
+                    log.propertyType === 'xml'
+                      ? 'markup'
+                      : log.propertyType === 'json'
+                        ? 'json'
+                        : 'bash'
+                  }
+                />
+              </Tabs.Panel>
+              <Tabs.Panel value="properties">
+                <CodeHighlight
+                  code={renderContent(log.propertyType, log.properties || '')}
+                  language={
+                    log.propertyType === 'xml'
+                      ? 'markup'
+                      : log.propertyType === 'json'
+                        ? 'json'
+                        : 'bash'
+                  }
+                />
+              </Tabs.Panel>
+            </Tabs>
+          </Group>
+        </Card>
+      ))}
+    </SimpleGrid>
+  );
+};
+
+// rowNo: number;
+//   level: string;
+//   message: string;
+//   timestamp: string;
+//   exception?: string;
+//   properties?: string;

@@ -1,0 +1,5 @@
+.searchFiltersGrid {
+  @media (min-width: $mantine-breakpoint-lg) {
+    margin: 1em 2em;
+  }
+}

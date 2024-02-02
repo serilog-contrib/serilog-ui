@@ -1,13 +1,11 @@
-import { Button, Modal, em } from '@mantine/core';
-import { useDisclosure, useMediaQuery } from '@mantine/hooks';
+import { Button, Modal } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { IconLockCheck, IconLockOpen } from '@tabler/icons-react';
 import { useAuthProperties } from '../../hooks/useAuthProperties';
 import { isStringGuard } from '../../util/guards';
 import AuthorizeModal from './AuthorizeModal';
 
-const AuthorizeButton = () => {
-  const isSmallish = useMediaQuery(`(max-width: ${em(360)})`);
-
+const AuthorizeButton = ({ customStyle }: { customStyle?: string }) => {
   const { jwt_bearerToken } = useAuthProperties();
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -15,15 +13,11 @@ const AuthorizeButton = () => {
 
   return (
     <>
-      <Button
-        color="green"
-        size={isSmallish ? 'compact-xs' : 'compact-md'}
-        onClick={open}
-      >
+      <Button color="green" size="compact-md" onClick={open} className={customStyle}>
         {isStringGuard(jwt_bearerToken) ? (
-          <IconLockCheck size={isSmallish ? '18px' : '24px'} />
+          <IconLockCheck size="24px" />
         ) : (
-          <IconLockOpen size={isSmallish ? '18px' : '24px'} />
+          <IconLockOpen size="24px" />
         )}
         Authorize
       </Button>

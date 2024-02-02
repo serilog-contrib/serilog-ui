@@ -1,57 +1,37 @@
-import {
-  ActionIcon,
-  Anchor,
-  AppShell,
-  Badge,
-  Group,
-  NavLink,
-  useMantineColorScheme,
-} from '@mantine/core';
-import { IconMoonStars, IconSun } from '@tabler/icons-react';
-import classes from 'style/header.module.css';
+import { Anchor, AppShell, Badge, Box, Button, Group } from '@mantine/core';
+import { IconHomeDot } from '@tabler/icons-react';
+import styles from 'style/header.module.css';
 import { isStringGuard } from '../../util/guards';
 import AuthorizeButton from '../Authorization/AuthorizeButton';
+import { FilterButton } from './FilterButton';
 
 const Sidebar = () => {
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const homeUrl = window.config.homeUrl;
 
   return (
-    <>
-      <AppShell.Section mt="xs">
-        <Group justify="center" gap="xs">
-          <ActionIcon
-            variant="default"
-            onClick={() => {
-              toggleColorScheme();
-            }}
-            size={30}
-          >
-            {colorScheme === 'dark' ? (
-              <IconSun size="1rem" stroke="3" />
-            ) : (
-              <IconMoonStars size="1rem" stroke="3" />
-            )}
-          </ActionIcon>
-        </Group>
-      </AppShell.Section>
-      <AppShell.Section grow mt="md">
-        <Group>
-          <NavLink
-            label="Home"
-            description="Home"
+    <Box
+      hiddenFrom="sm"
+      display="flex"
+      style={{ flexDirection: 'column', alignContent: 'space-between', height: '100%' }}
+    >
+      <AppShell.Section grow>
+        <Box className={styles.sidebarBox}>
+          <Button
+            size="compact-lg"
+            className={styles.sidebarBoxNavlink}
             component={isStringGuard(homeUrl) ? 'a' : 'button'}
             href={isStringGuard(homeUrl) ? homeUrl : ''}
+            justify="center"
+            variant="transparent"
+            autoContrast
+            leftSection={<IconHomeDot size="1.3rem" stroke={1.4} />}
             target="_blank"
-            className={classes.sidebarGroupNavlink}
-            leftSection={
-              <Badge size="xs" variant="filled" color="red" w={16} h={16} p={0}>
-                TODO?
-              </Badge>
-            }
-          />
-          <AuthorizeButton />
-        </Group>
+          >
+            Home
+          </Button>
+          <AuthorizeButton customStyle={styles.sidebarBoxNavlink} />
+          <FilterButton />
+        </Box>
       </AppShell.Section>
       <AppShell.Section>
         <Group>
@@ -60,11 +40,11 @@ const Sidebar = () => {
             href="https://github.com/serilog-contrib/serilog-ui"
             target="_blank"
           >
-            <Badge size="sm">Serilog Ui | {new Date().getFullYear()}</Badge>
+            <Badge size="md">Serilog Ui | {new Date().getFullYear()}</Badge>
           </Anchor>
         </Group>
       </AppShell.Section>
-    </>
+    </Box>
   );
 };
 

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import AppBody from './components/AppBody';
 import Head from './components/ShellStructure/Header';
+import Sidebar from './components/ShellStructure/Sidebar';
 import {
   SearchFormProvider,
   searchFormInitialValues,
@@ -20,6 +21,7 @@ const App = () => {
       xs: '28em', // 448px
       sm: '36em', // 576px
     },
+    fontFamily: 'Arial, Helvetica, sans-serif', // todo nice font
   });
 
   // console.log(theme.breakpoints);
@@ -41,7 +43,7 @@ const App = () => {
               navbar={{
                 breakpoint: 'sm',
                 collapsed: { mobile: !mobileOpen, desktop: true },
-                width: { sm: 70, md: 150, lg: 220 },
+                width: 70,
               }}
             >
               <AppShell.Header>
@@ -56,7 +58,7 @@ const App = () => {
                 // bg={colorScheme === 'dark' ? theme.colors.blue[7] : theme.colors.blue[4]}
               >
                 {/* show sidebar with search options */}
-                {/* <Sidebar /> */}
+                <Sidebar />
               </AppShell.Navbar>
               <AppShell.Main>
                 <AppBody />

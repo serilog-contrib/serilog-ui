@@ -1,9 +1,19 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { Button, Grid, Group, Select, Switch, TextInput } from '@mantine/core';
+import {
+  ActionIcon,
+  Button,
+  Grid,
+  Group,
+  Select,
+  Switch,
+  TextInput,
+} from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
+import { IconEraser } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import useQueryLogsHook from 'app/hooks/useQueryLogsHook';
 import { useEffect } from 'react';
+import classes from 'style/search.module.css';
 import { LogLevel } from '../../../types/types';
 import { useSearchFormContext } from '../../hooks/SearchFormContext';
 import { useAuthProperties } from '../../hooks/useAuthProperties';
@@ -17,7 +27,7 @@ const levelsArray = Object.keys(LogLevel).map((p) => ({
 
 const Search = () => {
   const { getAuthHeader } = useAuthProperties();
-  const form = useSearchFormContext();
+  const { getInputProps, onSubmit, reset, setFieldValue } = useSearchFormContext();
   const queryTableKeys = useQuery<string[]>({
     queryKey: ['get-keys'],
     queryFn: async () => {
@@ -37,63 +47,67 @@ const Search = () => {
   useEffect(() => {
     const tableKeysDefaultValue =
       isArrayGuard(queryTableKeys.data) && queryTableKeys.data.at(0);
-    form.setFieldValue(
+    setFieldValue(
       'table',
       isStringGuard(tableKeysDefaultValue) ? tableKeysDefaultValue : '',
     );
-  }, [form, queryTableKeys.data]);
+  }, [queryTableKeys.data, setFieldValue]);
 
   return (
     <form
-      onSubmit={form.onSubmit((values) => {
-        form.setFieldValue('page', 1);
+      onSubmit={onSubmit((values) => {
+        setFieldValue('page', 1);
         console.log(values);
         // void refetch(); // TODO temporary...
       })}
     >
-      <Grid w="100%" justify="space-between" align="flex-end">
-        <Grid.Col span={{ xs: 6, sm: 7, md: 4 }} order={{ sm: 1, md: 1 }}>
+      <Grid className={classes.searchFiltersGrid}>
+        <Grid.Col span={{ xs: 6, sm: 7, md: 4, lg: 2 }} order={{ sm: 1, md: 1 }}>
           <Select
             label="Table"
             data={queryTableKeys.data?.map((d) => ({ value: d, label: d })) ?? []}
-            {...form.getInputProps('table')}
+            {...getInputProps('table')}
           ></Select>
         </Grid.Col>
-        <Grid.Col span={{ xs: 6, sm: 5, md: 2 }} order={{ sm: 2, md: 4 }}>
-          <Select
-            label="Level"
-            data={levelsArray}
-            {...form.getInputProps('level')}
-          ></Select>
+        <Grid.Col span={{ xs: 6, sm: 5, md: 2, lg: 2 }} order={{ sm: 2, md: 4, lg: 3 }}>
+          <Select label="Level" data={levelsArray} {...getInputProps('level')}></Select>
         </Grid.Col>{' '}
-        <Grid.Col span={{ xs: 6, sm: 6, md: 4 }} order={{ sm: 3, md: 2 }}>
+        <Grid.Col span={{ xs: 6, sm: 6, md: 4 }} order={{ sm: 3, md: 2, lg: 4 }}>
           <DateTimePicker
-            label="Start date:"
+            label="Start date"
             withSeconds={true}
             mx="auto"
-            {...form.getInputProps('startDate')}
+            {...getInputProps('startDate')}
           />
         </Grid.Col>{' '}
-        <Grid.Col span={{ xs: 6, sm: 6, md: 4 }} order={{ sm: 4, md: 3 }}>
+        <Grid.Col span={{ xs: 6, sm: 6, md: 4 }} order={{ sm: 4, md: 3, lg: 5 }}>
           <DateTimePicker
-            label="End date:"
+            label="End date"
             withSeconds={true}
             mx="auto"
-            {...form.getInputProps('endDate')}
+            {...getInputProps('endDate')}
           />
         </Grid.Col>{' '}
-        <Grid.Col span={{ xs: 6, sm: 6, md: 6 }} order={{ sm: 5, md: 6 }}>
+        <Grid.Col span={{ xs: 6, sm: 6, md: 6, lg: 8 }} order={{ sm: 5, md: 6, lg: 2 }}>
           <TextInput
-            withAsterisk
             label="Search"
             placeholder="Your input..."
-            {...form.getInputProps('search')}
+            {...getInputProps('search')}
           />
         </Grid.Col>{' '}
         <Grid.Col span={{ xs: 6, sm: 6, md: 4 }} order={{ sm: 6 }}>
-          <Group justify="center">
+          <Group justify="end" align="center" h="100%">
             <Switch size="md" onLabel="Local" offLabel="UTC" />
             <Button type="submit">Submit</Button>
+            <ActionIcon
+              visibleFrom="lg"
+              size={28}
+              onClick={reset}
+              variant="light"
+              aria-label="reset filters"
+            >
+              <IconEraser />
+            </ActionIcon>
           </Group>
         </Grid.Col>
       </Grid>

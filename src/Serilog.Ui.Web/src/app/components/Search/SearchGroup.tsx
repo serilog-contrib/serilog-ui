@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import Paging from './Paging';
 import Search from './Search';
 
 type IProps = {
@@ -8,12 +7,13 @@ type IProps = {
   children?: ReactNode;
 };
 
+// to remove
 export const SearchGroup = (props: IProps) => {
   return (
     <>
       {props?.showSearch && <Search />}
       {props?.children}
-      {props?.showPaging && <Paging />}
+      {/* {props?.showPaging && <Paging />} */}
     </>
   );
 };
