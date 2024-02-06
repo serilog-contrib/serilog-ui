@@ -1,9 +1,10 @@
-import { Loader, Table, useMantineTheme } from '@mantine/core';
+import { Indicator, Table, Text, useMantineTheme } from '@mantine/core';
 import { useMemo } from 'react';
+import classes from 'style/table.module.css';
 import { LogLevel } from '../../../types/types';
 import useQueryLogsHook from '../../hooks/useQueryLogsHook';
 import { isArrayGuard, isObjectGuard, isStringGuard } from '../../util/guards';
-import { getBgLogLevel, printDate } from '../../util/prettyPrints';
+import { getBgLogLevel, splitPrintDate } from '../../util/prettyPrints';
 import DetailsModal from './DetailsModal';
 
 const SerilogResults = () => {
@@ -16,8 +17,15 @@ const SerilogResults = () => {
   );
 
   return (
-    <div style={{ overflowX: 'auto' }}>
-      <Table highlightOnHover withTableBorder withColumnBorders>
+    <Table.ScrollContainer minWidth={1200}>
+      <Table
+        w="100%"
+        verticalSpacing="sm"
+        highlightOnHover
+        withTableBorder
+        withColumnBorders
+        className={classes.desktopTableCell}
+      >
         <Table.Thead>
           <Table.Tr>
             <Table.Th>#</Table.Th>
@@ -26,50 +34,84 @@ const SerilogResults = () => {
             <Table.Th>Message</Table.Th>
             <Table.Th>Exception</Table.Th>
             <Table.Th>Properties</Table.Th>
+            {/* TODO: dynamic columns configuration from ui definition */}
           </Table.Tr>
         </Table.Thead>
-        <Table.Tbody>
+        <Table.Tbody className={isFetching ? classes.skeletonDesktopTableCell : ''}>
           {!isFetching &&
             isObjectGuard(data) &&
             isArrayGuard(data.logs) &&
-            data.logs.map((log) => (
-              // TODO: all styles and modals
-              <Table.Tr key={log.rowNo} className={log.level}>
-                <Table.Td>{log.rowNo}</Table.Td>
-                <Table.Td style={{ backgroundColor: getCellColor(log.level) }}>
-                  {log.level} TODO Color
-                </Table.Td>
-                <Table.Td>{printDate(log.timestamp)}</Table.Td>
-                <Table.Td>{log.message}</Table.Td>
-                <Table.Td>
-                  {isStringGuard(log.exception) ? (
-                    <DetailsModal
-                      modalContent={log.exception}
-                      modalTitle="Exception details"
-                      contentType={log.propertyType}
+            data.logs.map((log) => {
+              const date = splitPrintDate(log.timestamp);
+
+              return (
+                <Table.Tr
+                  key={log.rowNo}
+                  className={log.level}
+                  style={{
+                    border: `1px solid ${getCellColor(log.level)}`,
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  <Table.Td>
+                    <Indicator
+                      color={getCellColor(log.level)}
+                      size="13"
+                      position="middle-center"
+                      withBorder
                     />
-                  ) : null}
-                </Table.Td>
-                <Table.Td>
-                  {isStringGuard(log.properties) ? (
-                    <DetailsModal
-                      modalContent={log.properties}
-                      modalTitle="Properties details"
-                      contentType="json"
-                    />
-                  ) : null}
-                </Table.Td>
+                  </Table.Td>
+                  <Table.Td>
+                    <Text size="sm" fw={500} ta="center">
+                      {log.rowNo}
+                    </Text>
+                  </Table.Td>
+                  <Table.Td w="fit-content">
+                    <Text size="sm" fw={300} ta="center">
+                      {date[0]}
+                    </Text>
+                    <Text size="sm" fw={300} ta="center">
+                      {date[1]}
+                    </Text>
+                  </Table.Td>
+                  <Table.Td>
+                    <Text ta="justify" fz="sm" lh="sm">
+                      {log.message}
+                    </Text>
+                  </Table.Td>
+                  <Table.Td>
+                    {isStringGuard(log.exception) ? (
+                      <DetailsModal
+                        modalContent={log.exception}
+                        modalTitle="Exception details"
+                        contentType={log.propertyType}
+                      />
+                    ) : null}
+                  </Table.Td>
+                  <Table.Td>
+                    {isStringGuard(log.properties) ? (
+                      <DetailsModal
+                        modalContent={log.properties}
+                        modalTitle="Properties details"
+                        contentType="json"
+                      />
+                    ) : null}
+                  </Table.Td>
+                </Table.Tr>
+              );
+            })}
+          {isFetching &&
+            [...Array(10).keys()].map((k) => (
+              <Table.Tr key={k} h="40px">
+                {/* TODO: 6 + custom columns */}
+                {[...Array(6).keys()].map((k) => (
+                  <Table.Td key={k} />
+                ))}
               </Table.Tr>
             ))}
         </Table.Tbody>
       </Table>
-      {isFetching && (
-        <Loader
-          // TODO replace with logs skeleton
-          variant="dots"
-        />
-      )}
-    </div>
+    </Table.ScrollContainer>
   );
 };
 

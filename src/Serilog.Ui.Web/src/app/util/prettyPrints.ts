@@ -1,6 +1,11 @@
 import { type MantineTheme } from '@mantine/core';
 import { LogLevel } from '../../types/types';
-import { formatLocalDate, formatUtcDate } from './dates';
+import {
+  formatLocalDate,
+  formatLocalSplitDate,
+  formatUtcDate,
+  formatUtcSplitDate,
+} from './dates';
 
 export const cleanHtmlTags = (onReplace: string) => {
   return onReplace
@@ -30,6 +35,9 @@ export const getBgLogLevel = (theme: MantineTheme, logLevel: LogLevel): string =
 
 export const printDate = (date: string, utc?: boolean) =>
   utc ? formatUtcDate(date) : formatLocalDate(date);
+
+export const splitPrintDate = (date: string, utc?: boolean) =>
+  utc ? formatUtcSplitDate(date) : formatLocalSplitDate(date);
 
 export const printXmlCode = (xml: string, tab = '\t') => {
   let formatted = '';

@@ -14,10 +14,12 @@ const AppBody = () => {
       <Box hiddenFrom="md" className={classes.mobileTableWrapper}>
         <SerilogResultsMobile />
       </Box>
-      <Box visibleFrom="md">
-        <SerilogResults />
+      <Box m="xl">
+        <Box visibleFrom="md">
+          <SerilogResults />
+        </Box>
+        <Paging />
       </Box>
-      <Paging />
     </>
   );
 };
