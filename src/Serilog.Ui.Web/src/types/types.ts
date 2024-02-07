@@ -56,10 +56,11 @@ export enum SearchParameters {
 
 export interface SearchForm {
   table: string;
-  entriesPerPage: number;
   level: LogLevel | null;
   startDate: Date | null;
   endDate: Date | null;
   search: string;
+  isUtc: boolean;
+  entriesPerPage: string;
   page: number;
 }

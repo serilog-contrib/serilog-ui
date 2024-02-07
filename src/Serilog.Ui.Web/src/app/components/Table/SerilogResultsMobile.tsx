@@ -24,7 +24,7 @@ export const SerilogResultsMobile = () => {
 
   if (isFetching) return <Loader />;
 
-  if (!data?.logs.length) return <Skeleton height="10" radius="xl"></Skeleton>;
+  if (!data?.logs?.length) return <Skeleton height="10" radius="xl"></Skeleton>;
 
   //   todo font family
   return (
@@ -36,7 +36,7 @@ export const SerilogResultsMobile = () => {
       p="0.3em"
     >
       {data.logs.map((log) => (
-        <Card key={log.rowNo} shadow="xs" padding="0" radius="sm" withBorder>
+        <Card key={log.rowNo} shadow="xs" padding="0" radius="sm" withBorder mih="14em">
           <Card.Section
             withBorder
             className={classes.mobileCardHeaderWrapper}
@@ -59,20 +59,25 @@ export const SerilogResultsMobile = () => {
             </Indicator>
           </Card.Section>
 
-          <Group p="0.1em 0.4em 0.5em">
+          <Group p="0.8em">
             <Spoiler
               hideLabel="Close"
               showLabel="More..."
               ta="justify"
-              fz="md"
+              fz="sm"
               lh="sm"
               style={{ letterSpacing: '0.002em' }}
             >
               {log.message}
             </Spoiler>
           </Group>
-          <Group p="0.1em 0.4em 0.5em">
-            <Tabs w="100%" allowTabDeactivation>
+          <Card.Section p="0.8em" h="100%" display="flex" style={{ alignContent: 'end' }}>
+            <Tabs
+              w="100%"
+              allowTabDeactivation
+              display="grid"
+              style={{ alignContent: 'end' }}
+            >
               <Tabs.List>
                 <Tabs.Tab value="exception" disabled={!log.exception}>
                   Exception
@@ -106,7 +111,7 @@ export const SerilogResultsMobile = () => {
                 />
               </Tabs.Panel>
             </Tabs>
-          </Group>
+          </Card.Section>
         </Card>
       ))}
     </SimpleGrid>

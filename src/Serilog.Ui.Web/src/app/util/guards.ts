@@ -9,3 +9,8 @@ export const isArrayGuard = <T>(value?: T[]): value is T[] => (value?.length ?? 
 
 export const isObjectGuard = <T>(value?: T | null): value is T =>
   (value as T) !== undefined && isDefinedGuard(value);
+
+export const toNumber = (value: string) => {
+  const numberTransform = Number.parseInt(value, 10);
+  return Number.isInteger(numberTransform) ? numberTransform : null;
+};

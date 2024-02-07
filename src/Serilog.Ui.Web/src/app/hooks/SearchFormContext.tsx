@@ -3,11 +3,12 @@ import { type SearchForm } from '../../types/types';
 
 export const searchFormInitialValues: SearchForm = {
   table: '',
-  entriesPerPage: 10,
   level: null,
   startDate: null,
   endDate: null,
   search: '',
+  isUtc: false,
+  entriesPerPage: '10',
   page: 1,
 };
 

@@ -15,10 +15,13 @@ import useQueryLogsHook from 'app/hooks/useQueryLogsHook';
 import { useEffect } from 'react';
 import classes from 'style/search.module.css';
 import { LogLevel } from '../../../types/types';
-import { useSearchFormContext } from '../../hooks/SearchFormContext';
+import {
+  searchFormInitialValues,
+  useSearchFormContext,
+} from '../../hooks/SearchFormContext';
 import { useAuthProperties } from '../../hooks/useAuthProperties';
 import { fetchKeys } from '../../queries/table-keys';
-import { isArrayGuard, isStringGuard } from '../../util/guards';
+import { isArrayGuard } from '../../util/guards';
 
 const levelsArray = Object.keys(LogLevel).map((p) => ({
   value: p,
@@ -27,7 +30,8 @@ const levelsArray = Object.keys(LogLevel).map((p) => ({
 
 const Search = () => {
   const { getAuthHeader } = useAuthProperties();
-  const { getInputProps, onSubmit, reset, setFieldValue } = useSearchFormContext();
+  const { getInputProps, setInitialValues, onSubmit, reset, setFieldValue } =
+    useSearchFormContext();
   const queryTableKeys = useQuery<string[]>({
     queryKey: ['get-keys'],
     queryFn: async () => {
@@ -45,13 +49,14 @@ const Search = () => {
   }, [refetch]);
 
   useEffect(() => {
-    const tableKeysDefaultValue =
-      isArrayGuard(queryTableKeys.data) && queryTableKeys.data.at(0);
-    setFieldValue(
-      'table',
-      isStringGuard(tableKeysDefaultValue) ? tableKeysDefaultValue : '',
-    );
-  }, [queryTableKeys.data, setFieldValue]);
+    const tableKeysDefaultValue = isArrayGuard(queryTableKeys.data)
+      ? queryTableKeys.data.at(0)!
+      : '';
+
+    setFieldValue('table', tableKeysDefaultValue);
+    setInitialValues({ ...searchFormInitialValues, table: tableKeysDefaultValue });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryTableKeys.data]);
 
   return (
     <form
@@ -97,7 +102,13 @@ const Search = () => {
         </Grid.Col>{' '}
         <Grid.Col span={{ xs: 6, sm: 6, md: 4 }} order={{ sm: 6 }}>
           <Group justify="end" align="center" h="100%">
-            <Switch size="md" onLabel="Local" offLabel="UTC" />
+            <Switch
+              size="md"
+              offLabel="Local"
+              onLabel="UTC"
+              checked={getInputProps('isUtc').value}
+              {...getInputProps('isUtc')}
+            />
             <Button type="submit">Submit</Button>
             <ActionIcon
               visibleFrom="lg"

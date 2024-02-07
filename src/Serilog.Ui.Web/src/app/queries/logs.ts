@@ -7,6 +7,7 @@ export const fetchLogs = async (
   values: SearchForm,
   getAuthHeader: () => string | undefined,
 ) => {
+  // return {} as SearchResult;
   const prepareUrl = prepareSearchUrl(values, values.page);
   if (!prepareUrl.areDatesAdmitted) return;
 

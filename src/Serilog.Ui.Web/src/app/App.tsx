@@ -55,9 +55,7 @@ const App = () => {
               <AppShell.Navbar
                 // TODO: center all the buttons, correct bg to use dynamic mantine themes, improve all items
                 p="md"
-                // bg={colorScheme === 'dark' ? theme.colors.blue[7] : theme.colors.blue[4]}
               >
-                {/* show sidebar with search options */}
                 <Sidebar />
               </AppShell.Navbar>
               <AppShell.Main>
