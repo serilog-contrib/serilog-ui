@@ -1,4 +1,5 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import { fetchLogs } from '../queries/logs';
 import { isObjectGuard } from '../util/guards';
 import { useSearchForm } from './SearchFormContext';
@@ -7,11 +8,11 @@ import { useAuthProperties } from './useAuthProperties';
 const useQueryLogsHook = () => {
   const { getAuthHeader } = useAuthProperties();
   const { getValues } = useSearchForm();
-  const searchValues = getValues();
+  const searchValues = useMemo(() => getValues(), [getValues]);
 
   return useQuery({
     enabled: false,
-    queryKey: ['get-logs', searchValues],
+    queryKey: ['get-logs'],
     queryFn: async () =>
       isObjectGuard(searchValues) ? await fetchLogs(searchValues, getAuthHeader) : null,
     placeholderData: keepPreviousData,

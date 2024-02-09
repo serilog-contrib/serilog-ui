@@ -11,27 +11,28 @@ import {
 import { DateTimePicker } from '@mantine/dates';
 import { IconEraser } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
+import { useSearchForm } from 'app/hooks/SearchFormContext';
 import useQueryLogsHook from 'app/hooks/useQueryLogsHook';
-import { useEffect } from 'react';
+import { memo } from 'react';
+import { useController } from 'react-hook-form';
 import classes from 'style/search.module.css';
 import { LogLevel } from '../../../types/types';
-import {
-  searchFormInitialValues,
-  useSearchFormContext,
-} from '../../hooks/SearchFormContext';
 import { useAuthProperties } from '../../hooks/useAuthProperties';
 import { fetchKeys } from '../../queries/table-keys';
-import { isArrayGuard } from '../../util/guards';
 
-const levelsArray = Object.keys(LogLevel).map((p) => ({
-  value: p,
-  label: p,
+const levelsArray = Object.keys(LogLevel).map((level) => ({
+  value: level,
+  label: level,
 }));
 
 const Search = () => {
   const { getAuthHeader } = useAuthProperties();
-  const { getInputProps, setInitialValues, onSubmit, reset, setFieldValue } =
-    useSearchFormContext();
+  const { control, getValues, handleSubmit, register, reset, setValue } = useSearchForm();
+  const { field } = useController({ ...control, name: 'table' });
+  const { field: levelField } = useController({ ...control, name: 'level' });
+  const { field: startRangeField } = useController({ ...control, name: 'startDate' });
+  const { field: endRangeField } = useController({ ...control, name: 'endDate' });
+
   const queryTableKeys = useQuery<string[]>({
     queryKey: ['get-keys'],
     queryFn: async () => {
@@ -39,81 +40,61 @@ const Search = () => {
     },
     staleTime: Infinity,
   });
-
   const { refetch } = useQueryLogsHook();
 
-  useEffect(() => {
-    const refetchLogs = async () => await refetch();
-
-    refetchLogs();
-  }, [refetch]);
-
-  useEffect(() => {
-    const tableKeysDefaultValue = isArrayGuard(queryTableKeys.data)
-      ? queryTableKeys.data.at(0)!
-      : '';
-
-    setFieldValue('table', tableKeysDefaultValue);
-    setInitialValues({ ...searchFormInitialValues, table: tableKeysDefaultValue });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryTableKeys.data]);
+  const submit = async () => {
+    setValue('page', 1);
+    await refetch();
+  };
 
   return (
-    <form
-      onSubmit={onSubmit((values) => {
-        setFieldValue('page', 1);
-        console.log(values);
-        // void refetch(); // TODO temporary...
-      })}
-    >
+    <form onSubmit={handleSubmit(submit)}>
       <Grid className={classes.searchFiltersGrid}>
         <Grid.Col span={{ xs: 6, sm: 7, md: 4, lg: 2 }} order={{ sm: 1, md: 1 }}>
           <Select
             label="Table"
             data={queryTableKeys.data?.map((d) => ({ value: d, label: d })) ?? []}
-            {...getInputProps('table')}
+            {...field}
           ></Select>
         </Grid.Col>
         <Grid.Col span={{ xs: 6, sm: 5, md: 2, lg: 2 }} order={{ sm: 2, md: 4, lg: 3 }}>
-          <Select label="Level" data={levelsArray} {...getInputProps('level')}></Select>
-        </Grid.Col>{' '}
+          <Select label="Level" data={levelsArray} {...levelField}></Select>
+        </Grid.Col>
         <Grid.Col span={{ xs: 6, sm: 6, md: 4 }} order={{ sm: 3, md: 2, lg: 4 }}>
           <DateTimePicker
             label="Start date"
             withSeconds={true}
             mx="auto"
-            {...getInputProps('startDate')}
+            {...startRangeField}
           />
-        </Grid.Col>{' '}
+        </Grid.Col>
         <Grid.Col span={{ xs: 6, sm: 6, md: 4 }} order={{ sm: 4, md: 3, lg: 5 }}>
           <DateTimePicker
             label="End date"
             withSeconds={true}
             mx="auto"
-            {...getInputProps('endDate')}
+            {...endRangeField}
           />
-        </Grid.Col>{' '}
+        </Grid.Col>
         <Grid.Col span={{ xs: 6, sm: 6, md: 6, lg: 8 }} order={{ sm: 5, md: 6, lg: 2 }}>
-          <TextInput
-            label="Search"
-            placeholder="Your input..."
-            {...getInputProps('search')}
-          />
-        </Grid.Col>{' '}
+          <TextInput label="Search" placeholder="Your input..." {...register('search')} />
+        </Grid.Col>
         <Grid.Col span={{ xs: 6, sm: 6, md: 4 }} order={{ sm: 6 }}>
           <Group justify="end" align="center" h="100%">
             <Switch
               size="md"
               offLabel="Local"
               onLabel="UTC"
-              checked={getInputProps('isUtc').value}
-              {...getInputProps('isUtc')}
+              checked={getValues('isUtc')}
+              {...register('isUtc')}
             />
             <Button type="submit">Submit</Button>
             <ActionIcon
               visibleFrom="lg"
               size={28}
-              onClick={reset}
+              onClick={() => {
+                reset();
+              }}
               variant="light"
               aria-label="reset filters"
             >
@@ -126,4 +107,4 @@ const Search = () => {
   );
 };
 
-export default Search;
+export default memo(Search);
