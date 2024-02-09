@@ -1,4 +1,4 @@
-import { createFormContext } from '@mantine/form';
+import { useForm, useFormContext } from 'react-hook-form';
 import { type SearchForm } from '../../types/types';
 
 export const searchFormInitialValues: SearchForm = {
@@ -12,6 +12,12 @@ export const searchFormInitialValues: SearchForm = {
   page: 1,
 };
 
-// You can give context variables any name
-export const [SearchFormProvider, useSearchFormContext, useSearchForm] =
-  createFormContext<SearchForm>();
+export const useSearchForm = () => {
+  const methods = useForm<SearchForm>({
+    defaultValues: searchFormInitialValues,
+  });
+
+  const useSearchContext = useFormContext<SearchForm>();
+
+  return { methods, ...useSearchContext };
+};

@@ -1,16 +1,14 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import { AppShell, ColorSchemeScript, MantineProvider, createTheme } from '@mantine/core';
 import '@mantine/core/styles.css';
 import { useDisclosure } from '@mantine/hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { FormProvider } from 'react-hook-form';
 import AppBody from './components/AppBody';
 import Head from './components/ShellStructure/Header';
 import Sidebar from './components/ShellStructure/Sidebar';
-import {
-  SearchFormProvider,
-  searchFormInitialValues,
-  useSearchForm,
-} from './hooks/SearchFormContext';
+import { useSearchForm } from './hooks/SearchFormContext';
 import { AuthPropertiesProvider } from './hooks/useAuthProperties';
 
 const App = () => {
@@ -23,13 +21,7 @@ const App = () => {
     },
     fontFamily: 'Arial, Helvetica, sans-serif', // todo nice font
   });
-
-  // console.log(theme.breakpoints);
-  const methods = useSearchForm({
-    initialValues: searchFormInitialValues,
-    validate: {}, // TODO?
-    // TODO: fix form input changes that doesn't reset page to 1 (as it happens on submit button)
-  });
+  const { methods } = useSearchForm();
 
   return (
     <>
@@ -37,7 +29,7 @@ const App = () => {
       <MantineProvider defaultColorScheme="auto" theme={theme}>
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools initialIsOpen={false} />
-          <SearchFormProvider form={methods}>
+          <FormProvider {...methods}>
             <AppShell
               header={{ height: '4em' }}
               navbar={{
@@ -62,7 +54,7 @@ const App = () => {
                 <AppBody />
               </AppShell.Main>
             </AppShell>
-          </SearchFormProvider>
+          </FormProvider>
         </QueryClientProvider>
       </MantineProvider>
     </>

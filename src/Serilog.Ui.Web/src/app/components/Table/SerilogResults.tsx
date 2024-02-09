@@ -28,8 +28,8 @@ const SerilogResults = () => {
       >
         <Table.Thead>
           <Table.Tr>
-            <Table.Th>#</Table.Th>
             <Table.Th>Level</Table.Th>
+            <Table.Th>#</Table.Th>
             <Table.Th>Date</Table.Th>
             <Table.Th>Message</Table.Th>
             <Table.Th>Exception</Table.Th>

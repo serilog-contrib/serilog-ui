@@ -9,7 +9,7 @@ import {
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import dayjs from 'dayjs';
 import { HeaderActivity } from './HeaderActivity';
 
 const styles: { [key: string]: MantineStyleProp } = {
@@ -42,13 +42,13 @@ interface IProps extends IDispatch {
   isMobileOpen: boolean;
 }
 
+const currentYear = dayjs().year();
+
 const Head = ({ isMobileOpen, toggleMobile }: IProps) => {
   const theme = useMantineTheme();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const isSmallishSize = useMediaQuery(`(max-width: ${em(360)})`);
   const isMobileSize = useMediaQuery(`(max-width: ${em(768)})`);
-
-  const currentYear = useMemo(() => new Date().getFullYear(), []);
 
   return (
     <Group

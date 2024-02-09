@@ -3,7 +3,6 @@
 import react from '@vitejs/plugin-react-swc';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import { checker } from 'vite-plugin-checker';
-import eslint from 'vite-plugin-eslint';
 import mkcert from 'vite-plugin-mkcert';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
 
@@ -18,14 +17,21 @@ export default defineConfig((env) => ({
     },
   },
   plugins: [
-    react(),
+    env.mode !== 'development' && react(),
+    env.mode === 'development' &&
+      react({
+        jsxImportSource: '@welldone-software/why-did-you-render',
+      }),
     viteTsconfigPaths(),
-    env.mode !== 'test' && eslint(),
     env.mode === 'production' && splitVendorChunkPlugin(), // TODO chunking and lazy load
     mkcert(),
-    checker({
-      typescript: true,
-    }),
+    env.mode !== 'test' &&
+      checker({
+        typescript: true,
+        eslint: {
+          lintCommand: 'eslint .',
+        },
+      }),
   ],
   server: {
     open: false,

@@ -1,14 +1,14 @@
 import { ActionIcon, Box, Button, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconEraser, IconFilterSearch } from '@tabler/icons-react';
-import { useSearchFormContext } from 'app/hooks/SearchFormContext';
+import { useSearchForm } from 'app/hooks/SearchFormContext';
 import { useEffect } from 'react';
 import classes from 'style/header.module.css';
 import { SearchGroup } from '../Search/SearchGroup';
 
 export const FilterButton = () => {
   const [filterModalOpened, { open, close }] = useDisclosure(false);
-  const { reset } = useSearchFormContext();
+  const { reset } = useSearchForm();
 
   useEffect(() => {
     window.addEventListener('resize', close);
@@ -28,7 +28,9 @@ export const FilterButton = () => {
           <Box className={classes.searchFiltersModalTitle}>
             <Text>Search filters</Text>
             <ActionIcon
-              onClick={reset}
+              onClick={() => {
+                reset();
+              }}
               size={28}
               variant="light"
               aria-label="reset filters"

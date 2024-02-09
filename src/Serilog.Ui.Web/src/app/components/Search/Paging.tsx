@@ -12,10 +12,11 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconListNumbers } from '@tabler/icons-react';
-import { useMemo, useState, type MouseEvent } from 'react';
-import { useSearchFormContext } from '../../hooks/SearchFormContext';
+import { useSearchForm } from 'app/hooks/SearchFormContext';
+import { toNumber } from 'app/util/guards';
+import { memo, useEffect, useMemo, useState } from 'react';
+import { useController } from 'react-hook-form';
 import useQueryLogsHook from '../../hooks/useQueryLogsHook';
-import { isStringGuard } from '../../util/guards';
 
 const entriesOptions = ['10', '25', '50', '100'].map((entry) => ({
   value: entry,
@@ -24,9 +25,13 @@ const entriesOptions = ['10', '25', '50', '100'].map((entry) => ({
 
 const Paging = () => {
   const [opened, { close, toggle }] = useDisclosure(false);
-  const { data, isFetching } = useQueryLogsHook();
-  const { getInputProps, setFieldValue, values } = useSearchFormContext();
-  const [pageToChange, changePage] = useState<number | string>(1);
+  const { control } = useSearchForm();
+
+  const { field } = useController({ ...control, name: 'page' });
+  const { field: fieldEntries } = useController({ ...control, name: 'entriesPerPage' });
+  const [dialogPage, setDialogPage] = useState(field.value);
+
+  const { data, refetch } = useQueryLogsHook();
 
   const totalPages = useMemo(() => {
     if (!data) return 1;
@@ -34,18 +39,23 @@ const Paging = () => {
     return Number.isNaN(pages) ? 1 : pages;
   }, [data]);
 
-  // TODO Object guard
-  if (isFetching) return null;
-
-  const setPage = (_: MouseEvent<HTMLButtonElement>) => {
-    console.log('todo', _);
-    if (!isStringGuard(pageToChange)) {
-      setFieldValue('page', pageToChange);
-      close();
+  const changePageInput = (val: string | number) => {
+    const newPage = toNumber(`${val}`);
+    if (newPage) {
+      setDialogPage(newPage);
     }
   };
 
-  console.log(values);
+  const setPage = () => {
+    field.onChange(dialogPage);
+    close();
+    refetch();
+  };
+
+  useEffect(() => {
+    refetch();
+  }, [refetch, field.value, fieldEntries.value]);
+
   return (
     <Box
       display="grid"
@@ -53,11 +63,10 @@ const Paging = () => {
     >
       <Box display="flex" style={{ alignItems: 'center', justifyContent: 'start' }}>
         <Select
+          {...fieldEntries}
           label="entries"
           data={entriesOptions}
-          defaultValue={getInputProps('entriesPerPage').value.toString()}
-          value={getInputProps('entriesPerPage').value.toString()}
-          {...getInputProps('entriesPerPage')}
+          allowDeselect={false}
         ></Select>
       </Box>
       <Box display="flex" style={{ alignItems: 'center', justifyContent: 'end' }}>
@@ -70,27 +79,22 @@ const Paging = () => {
           </Text>
           <Group align="flex-end">
             <NumberInput
-              value={pageToChange}
-              onChange={changePage}
+              value={dialogPage}
+              onChange={changePageInput}
               max={totalPages}
               min={1}
               hideControls
-              placeholder={`${values.page}`}
+              placeholder={`${dialogPage}`}
               style={{ flex: 1 }}
             />
             /{`${totalPages}`}
             <Button onClick={setPage}>set</Button>
           </Group>
         </Dialog>
-        <Pagination
-          withEdges
-          total={totalPages}
-          siblings={2}
-          {...getInputProps('page')}
-        />
+        <Pagination withEdges total={totalPages} siblings={2} {...field} />
       </Box>
     </Box>
   );
 };
 
-export default Paging;
+export default memo(Paging);

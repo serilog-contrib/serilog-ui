@@ -498,14 +498,6 @@
   dependencies:
     clsx "2.0.0"
 
-"@mantine/form@^7.4.1":
-  version "7.5.0"
-  resolved "https://registry.yarnpkg.com/@mantine/form/-/form-7.5.0.tgz#f197a8d1c9e1185361de6337b4c43f033fc0b3d0"
-  integrity sha512-Bp2ZYwt+oYXNUm7ySPwst5C9S44YvrdsiFXjUzjX1QaoznAWern1W0dtyF7vJ3KWOoY9+7XXx+Ou4pHTOIq/hQ==
-  dependencies:
-    fast-deep-equal "^3.1.3"
-    klona "^2.0.6"
-
 "@mantine/hooks@^7.4.1":
   version "7.5.0"
   resolved "https://registry.yarnpkg.com/@mantine/hooks/-/hooks-7.5.0.tgz#e978e8e9dc20f3e703c2a95a8a6a2b4d122d39ed"
@@ -1224,6 +1216,13 @@
     estree-walker "^3.0.3"
     loupe "^2.3.7"
     pretty-format "^29.7.0"
+
+"@welldone-software/why-did-you-render@^8.0.1":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@welldone-software/why-did-you-render/-/why-did-you-render-8.0.1.tgz#e69303ca98424642843f8dd9aa8d4e4f638234b2"
+  integrity sha512-PtLBjiHNX04gDPheMeAQP16S24JV3SOW6wGDUrm4bFPZmofmmflgvd4Kacf/jhB8zlX6equ8m3t6CS+OxA3Q4g==
+  dependencies:
+    lodash "^4"
 
 acorn-jsx@^5.3.2:
   version "5.3.2"
@@ -3181,11 +3180,6 @@ keyv@^4.5.3:
   dependencies:
     json-buffer "3.0.1"
 
-klona@^2.0.6:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/klona/-/klona-2.0.6.tgz#85bffbf819c03b2f53270412420a4555ef882e22"
-  integrity sha512-dhG34DXATL5hSxJbIexCft8FChFXtmskoZYnoPWjXQuebWYCNkVeV3KkGegCK9CP1oswI/vQibS2GY7Em/sJJA==
-
 language-subtag-registry@^0.3.20:
   version "0.3.22"
   resolved "https://registry.yarnpkg.com/language-subtag-registry/-/language-subtag-registry-0.3.22.tgz#2e1500861b2e457eba7e7ae86877cbd08fa1fd1d"
@@ -3263,7 +3257,7 @@ lodash.pick@^4.4.0:
   resolved "https://registry.yarnpkg.com/lodash.pick/-/lodash.pick-4.4.0.tgz#52f05610fff9ded422611441ed1fc123a03001b3"
   integrity sha512-hXt6Ul/5yWjfklSGvLQl8vM//l3FtyHZeuelpzK6mm99pNvN9yTDruNZPEJZD1oWrqo+izBmB7oUfWgcCX7s4Q==
 
-lodash@^4.17.15, lodash@^4.17.21:
+lodash@^4, lodash@^4.17.15, lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -3922,6 +3916,11 @@ react-dom@^18.2.0:
   dependencies:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
+
+react-hook-form@^7.50.1:
+  version "7.50.1"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.50.1.tgz#f6aeb17a863327e5a0252de8b35b4fc8990377ed"
+  integrity sha512-3PCY82oE0WgeOgUtIr3nYNNtNvqtJ7BZjsbxh6TnYNbXButaD5WpjOmTjdxZfheuHKR68qfeFnEDVYoSSFPMTQ==
 
 react-is@^16.13.1:
   version "16.13.1"
