@@ -48,7 +48,7 @@ const Search = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(submit)}>
+    <form onSubmit={() => {}}>
       <Grid className={classes.searchFiltersGrid}>
         <Grid.Col span={{ xs: 6, sm: 7, md: 4, lg: 2 }} order={{ sm: 1, md: 1 }}>
           <Select
@@ -88,7 +88,9 @@ const Search = () => {
               checked={getValues('isUtc')}
               {...register('isUtc')}
             />
-            <Button type="submit">Submit</Button>
+            <Button type="submit" onClick={handleSubmit(submit)}>
+              Submit
+            </Button>
             <ActionIcon
               visibleFrom="lg"
               size={28}

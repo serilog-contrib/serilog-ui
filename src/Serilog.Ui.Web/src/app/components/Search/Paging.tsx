@@ -28,7 +28,9 @@ const Paging = () => {
   const { control } = useSearchForm();
 
   const { field } = useController({ ...control, name: 'page' });
-  const { field: fieldEntries } = useController({ ...control, name: 'entriesPerPage' });
+  const {
+    field: { onChange, ...fieldEntries },
+  } = useController({ ...control, name: 'entriesPerPage' });
   const [dialogPage, setDialogPage] = useState(field.value);
 
   const { data, refetch } = useQueryLogsHook();
@@ -52,6 +54,11 @@ const Paging = () => {
     refetch();
   };
 
+  const setEntries = (event) => {
+    field.onChange(1);
+    onChange(event);
+  };
+
   useEffect(() => {
     refetch();
   }, [refetch, field.value, fieldEntries.value]);
@@ -64,6 +71,7 @@ const Paging = () => {
       <Box display="flex" style={{ alignItems: 'center', justifyContent: 'start' }}>
         <Select
           {...fieldEntries}
+          onChange={setEntries}
           label="entries"
           data={entriesOptions}
           allowDeselect={false}
