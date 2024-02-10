@@ -1,4 +1,5 @@
 import { type MantineTheme } from '@mantine/core';
+import formatXml from 'xml-formatter';
 import { LogLevel } from '../../types/types';
 import {
   formatLocalDate,
@@ -6,14 +7,6 @@ import {
   formatUtcDate,
   formatUtcSplitDate,
 } from './dates';
-
-export const cleanHtmlTags = (onReplace: string) => {
-  return onReplace
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-};
 
 export const getBgLogLevel = (theme: MantineTheme, logLevel: LogLevel): string => {
   switch (logLevel) {
@@ -39,15 +32,19 @@ export const printDate = (date: string, utc?: boolean) =>
 export const splitPrintDate = (date: string, utc?: boolean) =>
   utc ? formatUtcSplitDate(date) : formatLocalSplitDate(date);
 
-export const printXmlCode = (xml: string, tab = '\t') => {
-  let formatted = '';
-  let indent = '';
-  xml.split(/>\s*</).forEach((node) => {
-    // decrease indent by one "tab"
-    if (node.match(/^\/\w/) != null) indent = indent.substring(tab.length);
-    formatted += indent + '<' + node + '>\r\n';
-    // increase indent
-    if (node.match(/^<?\w[^>]*[^/]$/) != null) indent += tab;
-  });
-  return formatted.substring(1, formatted.length - 3);
+export const renderCodeContent = (contentType: string, modalContent: string) => {
+  try {
+    if (contentType === 'xml') {
+      return formatXml(modalContent, { forceSelfClosingEmptyTag: true });
+    }
+
+    if (contentType === 'json') {
+      return JSON.stringify(JSON.parse(modalContent), null, 2) ?? '{}';
+    }
+  } catch {
+    console.warn(`${modalContent} is not a valid json!`);
+    return `Content could not be parsed, as per expected type: ${contentType}`;
+  }
+
+  return '{}';
 };

@@ -1,15 +1,15 @@
 import { CodeHighlight } from '@mantine/code-highlight';
 import '@mantine/code-highlight/styles.css';
 import {
+  Box,
   Button,
-  Group,
   Modal,
   useMantineColorScheme,
   useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useMemo } from 'react';
-import { printXmlCode } from '../../util/prettyPrints';
+import { renderCodeContent } from '../../util/prettyPrints';
 
 const DetailsModal = ({
   modalContent,
@@ -24,17 +24,12 @@ const DetailsModal = ({
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
 
-  const renderContent = useMemo(() => {
-    if (contentType === 'xml') return printXmlCode(contentType);
-    if (contentType === 'json') {
-      try {
-        return JSON.stringify(JSON.parse(modalContent), null, 2) ?? '{}';
-      } catch {
-        console.warn(`${modalContent} is not a valid json!`);
-      }
-    }
-    return '{}';
-  }, [contentType, modalContent]);
+  const codeLanguage =
+    contentType === 'xml' ? 'markup' : contentType === 'json' ? 'json' : 'bash';
+  const renderContent = useMemo(
+    () => renderCodeContent(contentType, modalContent),
+    [contentType, modalContent],
+  );
 
   return (
     <>
@@ -51,17 +46,14 @@ const DetailsModal = ({
           blur: 3,
         }}
       >
-        <CodeHighlight
-          code={renderContent}
-          language={
-            contentType === 'xml' ? 'markup' : contentType === 'json' ? 'json' : 'bash'
-          }
-        />
+        <CodeHighlight code={renderContent} language={codeLanguage} />
       </Modal>
 
-      <Group>
-        <Button onClick={open}>Click to view</Button>
-      </Group>
+      <Box display="grid" style={{ justifyContent: 'center', alignContent: 'center' }}>
+        <Button size="compact-sm" onClick={open}>
+          View
+        </Button>
+      </Box>
     </>
   );
 };

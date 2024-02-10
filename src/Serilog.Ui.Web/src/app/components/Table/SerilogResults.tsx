@@ -93,7 +93,7 @@ const SerilogResults = () => {
                       <DetailsModal
                         modalContent={log.properties}
                         modalTitle="Properties details"
-                        contentType="json"
+                        contentType={log.propertyType}
                       />
                     ) : null}
                   </Table.Td>

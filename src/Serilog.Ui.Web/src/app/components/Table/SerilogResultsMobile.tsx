@@ -13,11 +13,10 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import useQueryLogsHook from 'app/hooks/useQueryLogsHook';
-import { getBgLogLevel, printDate } from 'app/util/prettyPrints';
+import { getBgLogLevel, printDate, renderCodeContent } from 'app/util/prettyPrints';
 import { memo } from 'react';
 import classes from 'style/table.module.css';
 import { EncodedSeriLogObject, LogLevel } from 'types/types';
-import { renderContent } from './temputil';
 
 export const SerilogResultsMobile = () => {
   const { data, isFetching } = useQueryLogsHook();
@@ -26,7 +25,6 @@ export const SerilogResultsMobile = () => {
 
   if (!data?.logs?.length) return <Skeleton height="10" radius="xl"></Skeleton>;
 
-  //   TODO: font family
   return (
     <SimpleGrid
       w="100%"
@@ -98,7 +96,7 @@ const LogCard = memo(({ log }: { log: EncodedSeriLogObject }) => {
           </Tabs.List>
           <Tabs.Panel value="exception">
             <CodeHighlight
-              code={renderContent(log.propertyType, log.exception || '')}
+              code={renderCodeContent(log.propertyType, log.exception || '')}
               language={
                 log.propertyType === 'xml'
                   ? 'markup'
@@ -110,7 +108,7 @@ const LogCard = memo(({ log }: { log: EncodedSeriLogObject }) => {
           </Tabs.Panel>
           <Tabs.Panel value="properties">
             <CodeHighlight
-              code={renderContent(log.propertyType, log.properties || '')}
+              code={renderCodeContent(log.propertyType, log.properties || '')}
               language={
                 log.propertyType === 'xml'
                   ? 'markup'
