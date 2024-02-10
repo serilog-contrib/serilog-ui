@@ -408,6 +408,16 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.1.tgz#16308cea045f0fc777b6ff20a9f25474dd8293d2"
   integrity sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==
 
+"@fontsource-variable/open-sans@^5.0.23":
+  version "5.0.23"
+  resolved "https://registry.yarnpkg.com/@fontsource-variable/open-sans/-/open-sans-5.0.23.tgz#7f834cf7f1f2c22430887a9e0b9334b54289f7b7"
+  integrity sha512-fIvxjvdqyl53Nw2ostM94pNAXtqpJPKWUlNqZo2NGzOERz/TK4HL+Lgxy5XCNVw2yPdeGt01xb0Qr5aa9fZ9gA==
+
+"@fontsource/mononoki@^5.0.7":
+  version "5.0.7"
+  resolved "https://registry.yarnpkg.com/@fontsource/mononoki/-/mononoki-5.0.7.tgz#286bdcb38e0afe718418732801e8eeb00bbca671"
+  integrity sha512-kde/6GjVxCSZIuITQs76vd4Vc6FOx8PHZ7+Nw4u97wDCy6XE022EU0AvfeXxNw/d2FAesKbhBFtGxT2IWG1SAQ==
+
 "@humanwhocodes/config-array@^0.11.13":
   version "0.11.14"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.11.14.tgz#d78e481a039f7566ecc9660b4ea7fe6b1fec442b"

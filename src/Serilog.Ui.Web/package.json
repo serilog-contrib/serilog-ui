@@ -18,6 +18,8 @@
     "make-me-pretty": "prettier --write .\\assets\\"
   },
   "dependencies": {
+    "@fontsource-variable/open-sans": "^5.0.23",
+    "@fontsource/mononoki": "^5.0.7",
     "@mantine/code-highlight": "^7.4.1",
     "@mantine/core": "^7.4.1",
     "@mantine/dates": "^7.4.1",

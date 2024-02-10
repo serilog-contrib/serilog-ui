@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { AppShell, ColorSchemeScript, MantineProvider, createTheme } from '@mantine/core';
-import '@mantine/core/styles.css';
 import { useDisclosure } from '@mantine/hooks';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -18,7 +17,9 @@ const App = () => {
       xs: '28em', // 448px
       sm: '36em', // 576px
     },
-    fontFamily: 'Arial, Helvetica, sans-serif', // todo nice font
+    fontFamily: 'Open Sans Variable, sans-serif',
+    fontFamilyMonospace: 'Mononoki, sans-serif',
+    autoContrast: true,
   });
 
   return (
@@ -35,31 +36,29 @@ const App = () => {
 };
 
 const Shell = () => {
-  const [mobileOpen, { toggle: toggleMobile }] = useDisclosure();
   const { methods } = useSearchForm();
+  const [mobileOpen, { toggle: toggleMobile }] = useDisclosure();
+
+  const headerProps = { height: '4em' };
+  const navbarProps = {
+    breakpoint: 'sm',
+    collapsed: { mobile: !mobileOpen, desktop: true },
+    width: 70,
+  };
 
   return (
     <FormProvider {...methods}>
-      <AppShell
-        header={{ height: '4em' }}
-        navbar={{
-          breakpoint: 'sm',
-          collapsed: { mobile: !mobileOpen, desktop: true },
-          width: 70,
-        }}
-      >
+      <AppShell header={headerProps} navbar={navbarProps}>
         <AppShell.Header>
           <AuthPropertiesProvider>
             <Head isMobileOpen={mobileOpen} toggleMobile={toggleMobile} />
           </AuthPropertiesProvider>
         </AppShell.Header>
 
-        <AppShell.Navbar
-          // TODO: center all the buttons, correct bg to use dynamic mantine themes, improve all items
-          p="md"
-        >
+        <AppShell.Navbar p="sm">
           <Sidebar />
         </AppShell.Navbar>
+
         <AppShell.Main>
           <AppBody />
         </AppShell.Main>
