@@ -11,6 +11,7 @@ export default defineConfig((env) => ({
   root: './src',
   build: {
     outDir: '../wwwroot/dist',
+    emptyOutDir: true,
     sourcemap: false,
     rollupOptions: {
       external: ['**/__tests__/**/*', '**/*.{spec,test}.*', '**/mocks/**/*.*'],
