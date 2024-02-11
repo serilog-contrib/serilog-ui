@@ -10,7 +10,8 @@ import {
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { IconEraser } from '@tabler/icons-react';
-import useQueryLogsHook from 'app/hooks/useQueryLogsHook';
+import useQueryLogsHook from 'app/hooks/useQueryLogs';
+import { useQueryTableKeys } from 'app/hooks/useQueryTableKeys';
 import { useSearchForm } from 'app/hooks/useSearchForm';
 import { memo } from 'react';
 import { useController } from 'react-hook-form';
@@ -23,8 +24,8 @@ const levelsArray = Object.keys(LogLevel).map((level) => ({
 }));
 
 const Search = () => {
-  const { control, getValues, handleSubmit, queryTableKeys, register, reset, setValue } =
-    useSearchForm();
+  const { data: queryTableKeys } = useQueryTableKeys();
+  const { control, getValues, handleSubmit, register, reset, setValue } = useSearchForm();
   const { field } = useController({ ...control, name: 'table' });
   const { field: levelField } = useController({ ...control, name: 'level' });
   const { field: startRangeField } = useController({ ...control, name: 'startDate' });
@@ -43,7 +44,7 @@ const Search = () => {
         <Grid.Col span={{ xs: 6, sm: 7, md: 4, lg: 2 }} order={{ sm: 1, md: 1 }}>
           <Select
             label="Table"
-            data={queryTableKeys.data?.map((d) => ({ value: d, label: d })) ?? []}
+            data={queryTableKeys?.map((d) => ({ value: d, label: d })) ?? []}
             {...field}
           ></Select>
         </Grid.Col>

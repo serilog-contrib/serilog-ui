@@ -1,15 +1,10 @@
-import {
-  createAuthHeaders as createDefaultRequestInit,
-  determineHost,
-} from '../util/queries';
+import { determineHost } from '../util/queries';
 
-export const fetchKeys = async (authHeader: string) => {
+export const fetchKeys = async (fetchOptions: RequestInit) => {
   const url = `${determineHost}/api/keys`;
 
-  const requestInit = createDefaultRequestInit(authHeader);
-
   try {
-    const req = await fetch(url, requestInit);
+    const req = await fetch(url, fetchOptions);
 
     if (req.ok) return await (req.json() as Promise<string[]>);
 

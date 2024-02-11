@@ -2,7 +2,7 @@ import { Indicator, Table, Text, useMantineTheme } from '@mantine/core';
 import { useMemo } from 'react';
 import classes from 'style/table.module.css';
 import { LogLevel } from '../../../types/types';
-import useQueryLogsHook from '../../hooks/useQueryLogsHook';
+import useQueryLogsHook from '../../hooks/useQueryLogs';
 import { isArrayGuard, isObjectGuard, isStringGuard } from '../../util/guards';
 import { getBgLogLevel, splitPrintDate } from '../../util/prettyPrints';
 import DetailsModal from './DetailsModal';

@@ -16,7 +16,7 @@ import { useSearchForm } from 'app/hooks/useSearchForm';
 import { toNumber } from 'app/util/guards';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { useController } from 'react-hook-form';
-import useQueryLogsHook from '../../hooks/useQueryLogsHook';
+import useQueryLogsHook from '../../hooks/useQueryLogs';
 
 const entriesOptions = ['10', '25', '50', '100'].map((entry) => ({
   value: entry,

@@ -1,15 +1,15 @@
 import dayjs from 'dayjs';
 import { type SearchForm, type SearchResult } from '../../types/types';
 import { isDefinedGuard, isStringGuard } from '../util/guards';
-import { createAuthHeaders, determineHost } from '../util/queries';
+import { determineHost } from '../util/queries';
 
-export const fetchLogs = async (values: SearchForm, authHeader: string) => {
+export const fetchLogs = async (values: SearchForm, fetchOptions: RequestInit) => {
   const prepareUrl = prepareSearchUrl(values, values.page);
   if (!prepareUrl.areDatesAdmitted) return;
 
   try {
     // TODO: test auth
-    const req = await fetch(prepareUrl.url, createAuthHeaders(authHeader));
+    const req = await fetch(prepareUrl.url, fetchOptions);
     console.log(req);
     if (req.ok) return (await req.json()) as SearchResult;
 

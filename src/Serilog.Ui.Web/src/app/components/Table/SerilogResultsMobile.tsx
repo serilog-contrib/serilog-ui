@@ -12,7 +12,7 @@ import {
   Text,
   useMantineTheme,
 } from '@mantine/core';
-import useQueryLogsHook from 'app/hooks/useQueryLogsHook';
+import useQueryLogsHook from 'app/hooks/useQueryLogs';
 import { getBgLogLevel, printDate, renderCodeContent } from 'app/util/prettyPrints';
 import { memo } from 'react';
 import classes from 'style/table.module.css';

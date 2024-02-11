@@ -1,18 +1,22 @@
+import { SerilogUiConfig } from 'app/hooks/useSerilogUiProps';
+import { AuthType } from 'types/types';
+
 export const determineHost = ['development', 'test'].includes(import.meta.env.MODE ?? '')
   ? ''
   : location.pathname.replace('/index.html', '');
 
-// TODO: review the whole token auth
-export const createAuthHeaders = (header?: string): RequestInit => {
+export const createAuthHeaders = (
+  uiProps: SerilogUiConfig,
+  header?: string,
+): RequestInit => {
   const headers: Headers = new Headers();
 
   // TODO move in class...
-  // const notWindowsAuth = authProps.authType !== AuthType.Windows;
+  const notWindowsAuth = uiProps.authType !== AuthType.Windows;
   if (header) {
     headers.set('Authorization', header);
   }
 
-  // const credentials = notWindowsAuth ? 'include' : 'same-origin';
-  const credentials = 'same-origin'; // tmp
+  const credentials = notWindowsAuth ? 'include' : 'same-origin';
   return { headers, credentials };
 };
