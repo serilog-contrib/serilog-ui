@@ -8,6 +8,7 @@ import viteTsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
 export default defineConfig((env) => ({
+  base: './',
   root: './src',
   build: {
     outDir: '../wwwroot/dist',
@@ -30,7 +31,7 @@ export default defineConfig((env) => ({
       checker({
         typescript: true,
         eslint: {
-          lintCommand: 'eslint .',
+          lintCommand: 'eslint',
         },
       }),
   ],

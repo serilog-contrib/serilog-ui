@@ -5,14 +5,14 @@ export const determineHost = ['development', 'test'].includes(import.meta.env.MO
   ? ''
   : location.pathname.replace('/index.html', '');
 
-export const createAuthHeaders = (
+export const createRequestInit = (
   uiProps: SerilogUiConfig,
   header?: string,
 ): RequestInit => {
+  const notWindowsAuth = uiProps.authType !== AuthType.Windows;
+
   const headers: Headers = new Headers();
 
-  // TODO move in class...
-  const notWindowsAuth = uiProps.authType !== AuthType.Windows;
   if (header) {
     headers.set('Authorization', header);
   }

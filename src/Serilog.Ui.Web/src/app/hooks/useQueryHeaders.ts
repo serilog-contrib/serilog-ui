@@ -1,4 +1,4 @@
-import { createAuthHeaders } from 'app/util/queries';
+import { createRequestInit } from 'app/util/queries';
 import { useMemo } from 'react';
 import { useAuthProperties } from './useAuthProperties';
 import { useSerilogUiProps } from './useSerilogUiProps';
@@ -8,7 +8,7 @@ export const useQueryHeaders = () => {
   const { authHeader } = useAuthProperties();
 
   const headers = useMemo(
-    () => createAuthHeaders(props, authHeader),
+    () => createRequestInit(props, authHeader),
     [authHeader, props],
   );
 

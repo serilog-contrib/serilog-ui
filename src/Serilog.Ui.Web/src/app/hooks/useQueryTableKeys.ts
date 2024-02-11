@@ -6,10 +6,9 @@ export const useQueryTableKeys = () => {
   const requestInit = useQueryHeaders();
 
   return useQuery<string[]>({
-    queryKey: ['get-keys'],
+    queryKey: ['get-keys', requestInit],
     queryFn: async () => {
       return await fetchKeys(requestInit);
     },
-    staleTime: Infinity,
   });
 };

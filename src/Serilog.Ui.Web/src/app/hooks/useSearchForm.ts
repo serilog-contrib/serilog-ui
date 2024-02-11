@@ -26,7 +26,11 @@ export const useSearchForm = () => {
   const tableKeysDefaultValue = isArrayGuard(data) ? data.at(0)! : '';
 
   useEffect(() => {
-    methods.resetField('table', { defaultValue: tableKeysDefaultValue });
+    const tableValue = methods.getValues('table');
+
+    if (data && !data.includes(tableValue)) {
+      methods.resetField('table', { defaultValue: tableKeysDefaultValue });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tableKeysDefaultValue]);
 

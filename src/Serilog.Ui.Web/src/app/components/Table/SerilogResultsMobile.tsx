@@ -18,7 +18,7 @@ import { memo } from 'react';
 import classes from 'style/table.module.css';
 import { EncodedSeriLogObject, LogLevel } from 'types/types';
 
-export const SerilogResultsMobile = () => {
+const SerilogResultsMobile = () => {
   const { data, isFetching } = useQueryLogsHook();
 
   if (!isFetching) return <Loader />;
@@ -123,3 +123,5 @@ const LogCard = memo(({ log }: { log: EncodedSeriLogObject }) => {
     </Card>
   );
 });
+
+export default SerilogResultsMobile;
