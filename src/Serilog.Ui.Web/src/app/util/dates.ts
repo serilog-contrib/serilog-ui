@@ -5,6 +5,8 @@ import utc from 'dayjs/plugin/utc';
 dayjs.extend(localizedFormat);
 dayjs.extend(utc);
 
+export const currentYear = dayjs().year();
+
 export const formatLocalDate = (date: string) => dayjs(date).format('ll HH:mm:ss');
 
 export const formatLocalSplitDate = (date: string) => {

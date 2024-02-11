@@ -3,18 +3,13 @@ import { type SearchForm, type SearchResult } from '../../types/types';
 import { isDefinedGuard, isStringGuard } from '../util/guards';
 import { createAuthHeaders, determineHost } from '../util/queries';
 
-export const fetchLogs = async (
-  values: SearchForm,
-  getAuthHeader: () => string | undefined,
-) => {
+export const fetchLogs = async (values: SearchForm, authHeader: string) => {
   const prepareUrl = prepareSearchUrl(values, values.page);
   if (!prepareUrl.areDatesAdmitted) return;
 
-  // const authProps = new AuthProperties();
-  const header = getAuthHeader();
   try {
     // TODO: test auth
-    const req = await fetch(prepareUrl.url, createAuthHeaders(header));
+    const req = await fetch(prepareUrl.url, createAuthHeaders(authHeader));
     console.log(req);
     if (req.ok) return (await req.json()) as SearchResult;
 

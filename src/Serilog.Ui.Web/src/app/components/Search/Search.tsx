@@ -10,15 +10,12 @@ import {
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { IconEraser } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
-import { useSearchForm } from 'app/hooks/SearchFormContext';
 import useQueryLogsHook from 'app/hooks/useQueryLogsHook';
+import { useSearchForm } from 'app/hooks/useSearchForm';
 import { memo } from 'react';
 import { useController } from 'react-hook-form';
 import classes from 'style/search.module.css';
 import { LogLevel } from '../../../types/types';
-import { useAuthProperties } from '../../hooks/useAuthProperties';
-import { fetchKeys } from '../../queries/table-keys';
 
 const levelsArray = Object.keys(LogLevel).map((level) => ({
   value: level,
@@ -26,20 +23,13 @@ const levelsArray = Object.keys(LogLevel).map((level) => ({
 }));
 
 const Search = () => {
-  const { getAuthHeader } = useAuthProperties();
-  const { control, getValues, handleSubmit, register, reset, setValue } = useSearchForm();
+  const { control, getValues, handleSubmit, queryTableKeys, register, reset, setValue } =
+    useSearchForm();
   const { field } = useController({ ...control, name: 'table' });
   const { field: levelField } = useController({ ...control, name: 'level' });
   const { field: startRangeField } = useController({ ...control, name: 'startDate' });
   const { field: endRangeField } = useController({ ...control, name: 'endDate' });
 
-  const queryTableKeys = useQuery<string[]>({
-    queryKey: ['get-keys'],
-    queryFn: async () => {
-      return await fetchKeys(getAuthHeader);
-    },
-    staleTime: Infinity,
-  });
   const { refetch } = useQueryLogsHook();
 
   const submit = async () => {

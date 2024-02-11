@@ -9,7 +9,8 @@ import {
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { IconMoonStars, IconSun } from '@tabler/icons-react';
-import dayjs from 'dayjs';
+import { currentYear } from 'app/util/dates';
+import { serilogUiUrl } from 'app/util/prettyPrints';
 import { HeaderActivity } from './HeaderActivity';
 
 const styles: { [key: string]: MantineStyleProp } = {
@@ -41,8 +42,6 @@ type IDispatch = {
 interface IProps extends IDispatch {
   isMobileOpen: boolean;
 }
-
-const currentYear = dayjs().year();
 
 const Head = ({ isMobileOpen, toggleMobile }: IProps) => {
   const theme = useMantineTheme();
@@ -79,7 +78,7 @@ const Head = ({ isMobileOpen, toggleMobile }: IProps) => {
         </ActionIcon>
         <Badge
           component="a"
-          href="https://github.com/serilog-contrib/serilog-ui"
+          href={serilogUiUrl}
           target="_blank"
           size={isMobileSize ? 'sm' : 'lg'}
           rightSection={currentYear}

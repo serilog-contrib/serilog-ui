@@ -8,6 +8,8 @@ import {
   formatUtcSplitDate,
 } from './dates';
 
+export const serilogUiUrl = 'https://github.com/serilog-contrib/serilog-ui';
+
 export const getBgLogLevel = (theme: MantineTheme, logLevel: LogLevel): string => {
   switch (logLevel) {
     case LogLevel.Verbose:

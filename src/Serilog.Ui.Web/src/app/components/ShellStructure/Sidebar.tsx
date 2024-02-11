@@ -1,12 +1,15 @@
 import { Anchor, AppShell, Badge, Box, Button, Group } from '@mantine/core';
 import { IconHomeDot } from '@tabler/icons-react';
+import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
+import { currentYear } from 'app/util/dates';
+import { serilogUiUrl } from 'app/util/prettyPrints';
 import styles from 'style/header.module.css';
 import { isStringGuard } from '../../util/guards';
 import AuthorizeButton from '../Authorization/AuthorizeButton';
 import { FilterButton } from './FilterButton';
 
 const Sidebar = () => {
-  const homeUrl = window.config.homeUrl;
+  const { homeUrl } = useSerilogUiProps();
 
   return (
     <Box
@@ -37,10 +40,10 @@ const Sidebar = () => {
         <Group>
           <Anchor
             // TODO: hide on sm size or write alt, define sizes by page size
-            href="https://github.com/serilog-contrib/serilog-ui"
+            href={serilogUiUrl}
             target="_blank"
           >
-            <Badge size="md">Serilog Ui | {new Date().getFullYear()}</Badge>
+            <Badge size="md">Serilog Ui | {currentYear}</Badge>
           </Anchor>
         </Group>
       </AppShell.Section>

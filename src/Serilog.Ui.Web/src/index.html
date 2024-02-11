@@ -11,17 +11,6 @@
   <body>
     <div id="serilog-ui-app"></div>
 
-    <script>
-      const config = '%(Configs)';
-      try {
-        const decodedConfig = decodeURIComponent(config);
-        const configObject = JSON.parse(decodedConfig);
-        window.config = configObject;
-      } catch (e) {
-        console.warn('SerilogUI Config not received correctly! Using defaults');
-        window.config = JSON.parse('{"routePrefix":"serilog-ui","authType":"Jwt"}');
-      }
-    </script>
     <script type="module" src="./main.tsx"></script>
     <meta name="dummy" content="%(BodyContent)">
   </body>

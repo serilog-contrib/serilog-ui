@@ -1,7 +1,7 @@
 import { ActionIcon, Box, Button, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconEraser, IconFilterSearch } from '@tabler/icons-react';
-import { useSearchForm } from 'app/hooks/SearchFormContext';
+import { useSearchForm } from 'app/hooks/useSearchForm';
 import { useEffect } from 'react';
 import classes from 'style/header.module.css';
 import { SearchGroup } from '../Search/SearchGroup';

@@ -5,14 +5,14 @@ import { isStringGuard } from '../../util/guards';
 
 const AuthorizeModal = ({ close }: { close: () => void }) => {
   const {
+    authHeader,
     clearAuthState,
-    getAuthHeader,
     jwt_bearerToken,
     saveAuthState,
     updateBearerToken,
   } = useAuthProperties();
 
-  const isHeaderReady = isStringGuard(getAuthHeader());
+  const isHeaderReady = isStringGuard(authHeader);
 
   return (
     <>

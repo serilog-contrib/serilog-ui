@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconListNumbers } from '@tabler/icons-react';
-import { useSearchForm } from 'app/hooks/SearchFormContext';
+import { useSearchForm } from 'app/hooks/useSearchForm';
 import { toNumber } from 'app/util/guards';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { useController } from 'react-hook-form';

@@ -1,11 +1,11 @@
 import { decodeJwt } from 'jose';
-import { AuthType } from '../../types/types';
 
 export interface IAuthPropertiesData {
   jwt_bearerToken?: string;
   basic_user?: string;
   basic_pwd?: string;
 }
+const notSavedKeys: (keyof IAuthPropertiesData)[] = ['basic_pwd'];
 
 export const initialAuthProps = {
   basic_pwd: '',
@@ -13,10 +13,14 @@ export const initialAuthProps = {
   jwt_bearerToken: '',
 };
 
-const notSavedKeys: (keyof IAuthPropertiesData)[] = ['basic_pwd'];
+export const getAuthKey = (props: IAuthPropertiesData, key: keyof IAuthPropertiesData) =>
+  props[key] ?? sessionStorage.getItem(`serilog_ui_${key}`) ?? '';
 
-export const authType = AuthType[window.config.authType ?? ''];
-export const routePrefix = window.config.routePrefix;
+// TODO: different headers by type
+export const getAuthorizationHeader = (props: IAuthPropertiesData) => {
+  console.log(props);
+  return props?.jwt_bearerToken ? `Bearer ${props.jwt_bearerToken}` : '';
+};
 
 const setAuthDataValue = (
   props: IAuthPropertiesData,
@@ -26,28 +30,8 @@ const setAuthDataValue = (
   props[key] = value;
 
   if (!notSavedKeys.includes(key)) {
-    sessionStorage.setItem(`serilogui_${key}`, value);
+    sessionStorage.setItem(`serilog_ui_${key}`, value);
   }
-};
-
-export const getAuthKey = (props: IAuthPropertiesData, key: keyof IAuthPropertiesData) =>
-  props[key] ?? sessionStorage.getItem(`serilogui_${key}`) ?? '';
-
-export const saveAuthKey = (
-  props: IAuthPropertiesData,
-  key: keyof IAuthPropertiesData,
-  value: string,
-) => {
-  const validation = validateKey(key, value);
-
-  setAuthDataValue(props, key, value);
-
-  return { success: validation.success, error: validation.error };
-};
-
-// TODO: different headers by type
-export const getAuthorizationHeader = (props: IAuthPropertiesData) => {
-  return props?.jwt_bearerToken ? `Bearer ${props.jwt_bearerToken}` : '';
 };
 
 /**
@@ -76,4 +60,16 @@ const validateBearerToken = (bearerToken: string) => {
   } catch {
     return { success: false, error: 'Token invalid.' };
   }
+};
+
+export const saveAuthKey = (
+  props: IAuthPropertiesData,
+  key: keyof IAuthPropertiesData,
+  value: string,
+) => {
+  const validation = validateKey(key, value);
+
+  setAuthDataValue(props, key, value);
+
+  return { success: validation.success, error: validation.error };
 };

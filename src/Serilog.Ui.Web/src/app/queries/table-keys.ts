@@ -3,10 +3,10 @@ import {
   determineHost,
 } from '../util/queries';
 
-export const fetchKeys = async (getAuthHeader: () => string | undefined) => {
+export const fetchKeys = async (authHeader: string) => {
   const url = `${determineHost}/api/keys`;
 
-  const requestInit = createDefaultRequestInit(getAuthHeader());
+  const requestInit = createDefaultRequestInit(authHeader);
 
   try {
     const req = await fetch(url, requestInit);
