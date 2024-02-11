@@ -2,7 +2,6 @@ import { AppShell, ColorSchemeScript, MantineProvider, createTheme } from '@mant
 import { useDisclosure } from '@mantine/hooks';
 import { Notifications } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { FormProvider } from 'react-hook-form';
 import AppBody from './components/AppBody';
 import Head from './components/ShellStructure/Header';
@@ -29,7 +28,7 @@ const App = () => {
       <MantineProvider defaultColorScheme="auto" theme={theme}>
         <Notifications />
         <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools buttonPosition="bottom-left" initialIsOpen={false} />
+          {/* <ReactQueryDevtools buttonPosition="bottom-left" initialIsOpen={false} /> */}
           <Shell />
         </QueryClientProvider>
       </MantineProvider>

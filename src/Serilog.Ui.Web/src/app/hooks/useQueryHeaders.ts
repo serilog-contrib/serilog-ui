@@ -12,5 +12,5 @@ export const useQueryHeaders = () => {
     [authHeader, props],
   );
 
-  return headers;
+  return { headers, authHeader };
 };

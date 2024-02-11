@@ -9,13 +9,15 @@ import {
   Pagination,
   Select,
   Text,
+  em,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { IconListNumbers } from '@tabler/icons-react';
+import { useDisclosure, useMediaQuery } from '@mantine/hooks';
+import { IconBook, IconLayoutList, IconListNumbers } from '@tabler/icons-react';
 import { useSearchForm } from 'app/hooks/useSearchForm';
 import { toNumber } from 'app/util/guards';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { useController } from 'react-hook-form';
+import classes from 'style/search.module.css';
 import useQueryLogsHook from '../../hooks/useQueryLogs';
 
 const entriesOptions = ['10', '25', '50', '100'].map((entry) => ({
@@ -25,6 +27,8 @@ const entriesOptions = ['10', '25', '50', '100'].map((entry) => ({
 
 const Paging = () => {
   const [opened, { close, toggle }] = useDisclosure(false);
+  const lessPages = useMediaQuery(`(max-width: ${em(800)})`);
+
   const { control } = useSearchForm();
 
   const { field } = useController({ ...control, name: 'page' });
@@ -64,42 +68,51 @@ const Paging = () => {
   }, [refetch, field.value, fieldEntries.value]);
 
   return (
-    <Box
-      display="grid"
-      style={{ gridTemplateColumns: '1fr 4fr', justifyContent: 'space-between' }}
-    >
-      <Box display="flex" style={{ alignItems: 'center', justifyContent: 'start' }}>
+    <Box className={classes.pagingGrid} m="xl">
+      <Box display="flex" style={{ alignItems: 'center', justifyContent: 'center' }}>
         <Select
           {...fieldEntries}
           onChange={setEntries}
-          label="entries"
+          label=""
+          leftSection={<IconLayoutList />}
           data={entriesOptions}
           allowDeselect={false}
         ></Select>
       </Box>
-      <Box display="flex" style={{ alignItems: 'center', justifyContent: 'end' }}>
-        <ActionIcon disabled={totalPages < 2} onClick={toggle} mr="xs">
-          <IconListNumbers strokeWidth={2} />
-        </ActionIcon>
-        <Dialog opened={opened} withCloseButton onClose={close} size="lg" radius="md">
-          <Text size="sm" mb="xs" w={500}>
-            Select page
-          </Text>
-          <Group align="flex-end">
-            <NumberInput
-              value={dialogPage}
-              onChange={changePageInput}
-              max={totalPages}
-              min={1}
-              hideControls
-              placeholder={`${dialogPage}`}
-              style={{ flex: 1 }}
-            />
-            /{`${totalPages}`}
-            <Button onClick={setPage}>set</Button>
-          </Group>
-        </Dialog>
-        <Pagination withEdges total={totalPages} siblings={2} {...field} />
+      <Box className={classes.paginationGrid}>
+        <Box m="xs" style={{ justifySelf: 'end' }}>
+          <ActionIcon disabled={totalPages < 2} onClick={toggle}>
+            <IconListNumbers strokeWidth={2} />
+          </ActionIcon>
+          <Dialog opened={opened} withCloseButton onClose={close} size="lg" radius="md">
+            <Text size="sm" mb="xs" w={500}>
+              Select page
+            </Text>
+            <Group align="flex-end">
+              <NumberInput
+                onChange={changePageInput}
+                hideControls
+                max={totalPages}
+                min={1}
+                placeholder={`${field.value}`}
+                style={{ flex: 1 }}
+                suffix={` of ${totalPages}`}
+                value={dialogPage}
+              />
+              <Button size="sm" onClick={setPage}>
+                <IconBook />
+              </Button>
+            </Group>
+          </Dialog>
+        </Box>
+        <Box m="xs">
+          <Pagination
+            withEdges
+            total={totalPages}
+            siblings={lessPages ? 1 : 2}
+            {...field}
+          />
+        </Box>
       </Box>
     </Box>
   );

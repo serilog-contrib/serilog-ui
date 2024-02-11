@@ -3,10 +3,10 @@ import { fetchKeys } from 'app/queries/table-keys';
 import { useQueryHeaders } from './useQueryHeaders';
 
 export const useQueryTableKeys = () => {
-  const requestInit = useQueryHeaders();
+  const { headers: requestInit, authHeader } = useQueryHeaders();
 
   return useQuery<string[]>({
-    queryKey: ['get-keys', requestInit],
+    queryKey: ['get-keys', authHeader],
     queryFn: async () => {
       return await fetchKeys(requestInit);
     },

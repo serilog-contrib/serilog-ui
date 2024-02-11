@@ -20,10 +20,15 @@ export const useSearchForm = () => {
     defaultValues: searchFormInitialValues,
   });
   const useSearchContext = useFormContext<SearchForm>();
-
   const { data } = useQueryTableKeys();
-
   const tableKeysDefaultValue = isArrayGuard(data) ? data.at(0)! : '';
+
+  const resetForm = () => {
+    useSearchContext.reset({
+      isUtc: useSearchContext.getValues('isUtc'),
+      table: tableKeysDefaultValue,
+    });
+  };
 
   useEffect(() => {
     const tableValue = methods.getValues('table');
@@ -34,5 +39,5 @@ export const useSearchForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tableKeysDefaultValue]);
 
-  return { methods, ...useSearchContext };
+  return { methods, ...useSearchContext, reset: resetForm };
 };

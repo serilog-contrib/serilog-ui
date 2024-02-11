@@ -1,29 +1,25 @@
-import { CodeHighlight } from '@mantine/code-highlight';
 import {
+  Blockquote,
   Box,
   Card,
   Group,
   Indicator,
-  Loader,
+  LoadingOverlay,
   SimpleGrid,
   Skeleton,
-  Spoiler,
-  Tabs,
   Text,
   useMantineTheme,
 } from '@mantine/core';
+import { IconSearchOff } from '@tabler/icons-react';
 import useQueryLogsHook from 'app/hooks/useQueryLogs';
-import { getBgLogLevel, printDate, renderCodeContent } from 'app/util/prettyPrints';
+import { getBgLogLevel, printDate } from 'app/util/prettyPrints';
 import { memo } from 'react';
 import classes from 'style/table.module.css';
 import { EncodedSeriLogObject, LogLevel } from 'types/types';
+import DetailsModal from './DetailsModal';
 
 const SerilogResultsMobile = () => {
   const { data, isFetching } = useQueryLogsHook();
-
-  if (!isFetching) return <Loader />;
-
-  if (!data?.logs?.length) return <Skeleton height="10" radius="xl"></Skeleton>;
 
   return (
     <SimpleGrid
@@ -31,14 +27,27 @@ const SerilogResultsMobile = () => {
       cols={{ base: 1, sm: 2 }}
       spacing="xs"
       verticalSpacing="sm"
-      p="0.3em"
+      p="0.8em"
     >
-      {data.logs.map((log) => (
-        <LogCard key={log.rowNo} log={log} />
-      ))}
+      <LoadingOverlay
+        visible={isFetching}
+        zIndex={1000}
+        overlayProps={{ radius: 'sm', blur: 2 }}
+      />
+      {isFetching && mobileSkeleton}
+      {!data?.logs && (
+        <Blockquote mt="lg" ml="lg" icon={<IconSearchOff />}>
+          No results.
+        </Blockquote>
+      )}
+      {data?.logs && data.logs.map((log) => <LogCard key={log.rowNo} log={log} />)}
     </SimpleGrid>
   );
 };
+
+const mobileSkeleton = [...Array(4).keys()].map((_, i) => (
+  <Skeleton height={'14em'} key={i} radius="none" mb="xl" />
+));
 
 const LogCard = memo(({ log }: { log: EncodedSeriLogObject }) => {
   const theme = useMantineTheme();
@@ -68,57 +77,36 @@ const LogCard = memo(({ log }: { log: EncodedSeriLogObject }) => {
       </Card.Section>
 
       <Group p="0.8em">
-        <Spoiler
-          hideLabel="Close"
-          showLabel="More..."
-          ta="justify"
-          fz="sm"
-          lh="sm"
-          style={{ letterSpacing: '0.002em' }}
-        >
+        <Text ta="justify" fz="sm" lh="sm" style={{ letterSpacing: '0.002em' }}>
           {log.message}
-        </Spoiler>
+        </Text>
       </Group>
-      <Card.Section p="0.8em" h="100%" display="flex" style={{ alignContent: 'end' }}>
-        <Tabs
-          w="100%"
-          allowTabDeactivation
-          display="grid"
-          style={{ alignContent: 'end' }}
-        >
-          <Tabs.List>
-            <Tabs.Tab value="exception" disabled={!log.exception}>
-              Exception
-            </Tabs.Tab>
-            <Tabs.Tab value="properties" disabled={!log.properties}>
-              Properties
-            </Tabs.Tab>
-          </Tabs.List>
-          <Tabs.Panel value="exception">
-            <CodeHighlight
-              code={renderCodeContent(log.propertyType, log.exception || '')}
-              language={
-                log.propertyType === 'xml'
-                  ? 'markup'
-                  : log.propertyType === 'json'
-                    ? 'json'
-                    : 'bash'
-              }
-            />
-          </Tabs.Panel>
-          <Tabs.Panel value="properties">
-            <CodeHighlight
-              code={renderCodeContent(log.propertyType, log.properties || '')}
-              language={
-                log.propertyType === 'xml'
-                  ? 'markup'
-                  : log.propertyType === 'json'
-                    ? 'json'
-                    : 'bash'
-              }
-            />
-          </Tabs.Panel>
-        </Tabs>
+      <Card.Section
+        p="0.8em"
+        display="grid"
+        w="80%"
+        fz="xs"
+        m="auto auto 0.5em"
+        style={{
+          gridTemplateColumns: '1fr 1fr',
+          justifyContent: 'space-evenly',
+          alignContent: 'center',
+        }}
+      >
+        <DetailsModal
+          modalContent={log.exception || ''}
+          modalTitle="Exception details"
+          buttonTitle="exception"
+          contentType={log.propertyType}
+          disabled={!log.exception}
+        />
+        <DetailsModal
+          modalContent={log.properties || ''}
+          modalTitle="Properties details"
+          contentType={log.propertyType}
+          disabled={!log.properties}
+          buttonTitle="properties"
+        />
       </Card.Section>
     </Card>
   );

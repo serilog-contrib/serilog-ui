@@ -1,5 +1,4 @@
 import { CodeHighlight } from '@mantine/code-highlight';
-import '@mantine/code-highlight/styles.css';
 import {
   Box,
   Button,
@@ -15,10 +14,14 @@ const DetailsModal = ({
   modalContent,
   modalTitle,
   contentType,
+  disabled,
+  buttonTitle,
 }: {
   modalContent: string;
   modalTitle: string;
   contentType: string;
+  disabled?: boolean;
+  buttonTitle?: string;
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const theme = useMantineTheme();
@@ -50,8 +53,8 @@ const DetailsModal = ({
       </Modal>
 
       <Box display="grid" style={{ justifyContent: 'center', alignContent: 'center' }}>
-        <Button size="compact-sm" onClick={open}>
-          View
+        <Button size="compact-sm" disabled={disabled} onClick={open}>
+          {buttonTitle || 'View'}
         </Button>
       </Box>
     </>

@@ -5,7 +5,7 @@ import { useQueryHeaders } from './useQueryHeaders';
 import { useSearchForm } from './useSearchForm';
 
 const useQueryLogsHook = () => {
-  const requestInit = useQueryHeaders();
+  const { headers: requestInit } = useQueryHeaders();
   const { getValues } = useSearchForm();
   const searchValues = getValues();
 

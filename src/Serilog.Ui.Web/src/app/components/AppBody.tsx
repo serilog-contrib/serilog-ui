@@ -1,10 +1,10 @@
 import { Box } from '@mantine/core';
 import { lazy } from 'react';
 import classes from 'style/table.module.css';
-import Paging from './Search/Paging';
-import Search from './Search/Search';
-import SerilogResults from './Table/SerilogResults';
 
+const Search = lazy(() => import('./Search/Search'));
+const Paging = lazy(() => import('./Search/Paging'));
+const SerilogResults = lazy(() => import('./Table/SerilogResults'));
 const SerilogResultsMobile = lazy(() => import('./Table/SerilogResultsMobile'));
 
 const AppBody = () => {
@@ -16,8 +16,8 @@ const AppBody = () => {
       <Box hiddenFrom="md" className={classes.mobileTableWrapper}>
         <SerilogResultsMobile />
       </Box>
-      <Box m="xl">
-        <Box visibleFrom="md">
+      <Box>
+        <Box visibleFrom="md" m="xl">
           <SerilogResults />
         </Box>
         <Paging />

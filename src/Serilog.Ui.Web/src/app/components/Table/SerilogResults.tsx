@@ -100,19 +100,20 @@ const SerilogResults = () => {
                 </Table.Tr>
               );
             })}
-          {isFetching &&
-            [...Array(10).keys()].map((k) => (
-              <Table.Tr key={k} h="40px">
-                {/* TODO: 6 + custom columns */}
-                {[...Array(6).keys()].map((k) => (
-                  <Table.Td key={k} />
-                ))}
-              </Table.Tr>
-            ))}
+          {isFetching && desktopSkeleton}
         </Table.Tbody>
       </Table>
     </Table.ScrollContainer>
   );
 };
+
+const desktopSkeleton = [...Array(10).keys()].map((k) => (
+  <Table.Tr key={k} h="40px">
+    {/* TODO: 6 + custom columns */}
+    {[...Array(6).keys()].map((k) => (
+      <Table.Td key={k} />
+    ))}
+  </Table.Tr>
+));
 
 export default SerilogResults;
