@@ -2,6 +2,7 @@ import '@fontsource-variable/open-sans';
 import '@fontsource/mononoki';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
+import '@mantine/notifications/styles.css';
 import { createRoot } from 'react-dom/client';
 import App from './app/App';
 

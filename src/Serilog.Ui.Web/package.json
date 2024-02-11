@@ -4,7 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "old:build": "parcel build assets/index.html --dist-dir wwwroot/dist --public-url ./",
     "old:test": "npx jest --watch",
     "old:test:local": "jest",
     "old:test:ci": "jest --ci --reporters=default --reporters=jest-junit",
@@ -24,6 +23,7 @@
     "@mantine/core": "^7.4.1",
     "@mantine/dates": "^7.4.1",
     "@mantine/hooks": "^7.4.1",
+    "@mantine/notifications": "^7.5.2",
     "@tabler/icons-react": "^2.46.0",
     "@tanstack/react-query": "^5.17.10",
     "dayjs": "^1.11.10",
