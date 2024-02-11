@@ -1,26 +1,29 @@
-import { Anchor, AppShell, Badge, Box, Button, Group } from '@mantine/core';
+import { Anchor, Badge, Box, Button } from '@mantine/core';
 import { IconHomeDot } from '@tabler/icons-react';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { currentYear } from 'app/util/dates';
 import { serilogUiUrl } from 'app/util/prettyPrints';
+import { lazy } from 'react';
 import styles from 'style/header.module.css';
 import { isStringGuard } from '../../util/guards';
-import AuthorizeButton from '../Authorization/AuthorizeButton';
 import { FilterButton } from './FilterButton';
+
+const AuthorizeButton = lazy(() => import('../Authorization/AuthorizeButton'));
+const Paging = lazy(() => import('../Search/Paging'));
 
 const Sidebar = () => {
   const { homeUrl } = useSerilogUiProps();
 
   return (
-    <Box
-      hiddenFrom="sm"
-      display="flex"
-      style={{ flexDirection: 'column', alignContent: 'space-between', height: '100%' }}
-    >
-      <AppShell.Section grow>
-        <Box className={styles.sidebarBox}>
+    <Box hiddenFrom="sm" h="100%" display="flex" style={{ flexDirection: 'column' }}>
+      <Box h="100%">
+        <Button.Group
+          orientation="vertical"
+          display="flex"
+          style={{ alignItems: 'center' }}
+        >
           <Button
-            size="compact-lg"
+            size="compact-md"
             className={styles.sidebarBoxNavlink}
             component={isStringGuard(homeUrl) ? 'a' : 'button'}
             href={isStringGuard(homeUrl) ? homeUrl : ''}
@@ -32,21 +35,23 @@ const Sidebar = () => {
           >
             Home
           </Button>
-          <AuthorizeButton customStyle={styles.sidebarBoxNavlink} />
-          <FilterButton />
-        </Box>
-      </AppShell.Section>
-      <AppShell.Section>
-        <Group>
-          <Anchor
-            // TODO: hide on sm size or write alt, define sizes by page size
-            href={serilogUiUrl}
-            target="_blank"
+          <Box
+            display="grid"
+            fz="xs"
+            style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.2em' }}
           >
-            <Badge size="md">Serilog Ui | {currentYear}</Badge>
-          </Anchor>
-        </Group>
-      </AppShell.Section>
+            <AuthorizeButton />
+            <FilterButton />
+          </Box>
+        </Button.Group>
+
+        <Paging />
+      </Box>
+      <Box m="0 auto">
+        <Anchor href={serilogUiUrl} target="_blank">
+          <Badge size="md">Serilog Ui | {currentYear}</Badge>
+        </Anchor>
+      </Box>
     </Box>
   );
 };

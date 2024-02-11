@@ -7,13 +7,17 @@ const Paging = lazy(() => import('./Search/Paging'));
 const SerilogResults = lazy(() => import('./Table/SerilogResults'));
 const SerilogResultsMobile = lazy(() => import('./Table/SerilogResultsMobile'));
 
-const AppBody = () => {
+const AppBody = ({ hideMobileResults }: { hideMobileResults: boolean }) => {
   return (
     <>
       <Box visibleFrom="lg">
         <Search />
       </Box>
-      <Box hiddenFrom="md" className={classes.mobileTableWrapper}>
+      <Box
+        display={hideMobileResults ? 'none' : 'block'}
+        hiddenFrom="md"
+        className={classes.mobileTableWrapper}
+      >
         <SerilogResultsMobile />
       </Box>
       <Box>

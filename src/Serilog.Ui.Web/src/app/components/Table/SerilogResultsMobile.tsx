@@ -12,6 +12,7 @@ import {
 } from '@mantine/core';
 import { IconSearchOff } from '@tabler/icons-react';
 import useQueryLogsHook from 'app/hooks/useQueryLogs';
+import { useSearchForm } from 'app/hooks/useSearchForm';
 import { getBgLogLevel, printDate } from 'app/util/prettyPrints';
 import { memo } from 'react';
 import classes from 'style/table.module.css';
@@ -20,6 +21,10 @@ import DetailsModal from './DetailsModal';
 
 const SerilogResultsMobile = () => {
   const { data, isFetching } = useQueryLogsHook();
+
+  const { getValues } = useSearchForm();
+  const isUtc = getValues('isUtc');
+  console.log(isUtc);
 
   return (
     <SimpleGrid
@@ -40,7 +45,8 @@ const SerilogResultsMobile = () => {
           No results.
         </Blockquote>
       )}
-      {data?.logs && data.logs.map((log) => <LogCard key={log.rowNo} log={log} />)}
+      {data?.logs &&
+        data.logs.map((log) => <LogCard key={log.rowNo} isUtc={isUtc} log={log} />)}
     </SimpleGrid>
   );
 };
@@ -49,7 +55,7 @@ const mobileSkeleton = [...Array(4).keys()].map((_, i) => (
   <Skeleton height={'14em'} key={i} radius="none" mb="xl" />
 ));
 
-const LogCard = memo(({ log }: { log: EncodedSeriLogObject }) => {
+const LogCard = memo(({ log, isUtc }: { log: EncodedSeriLogObject; isUtc?: boolean }) => {
   const theme = useMantineTheme();
 
   return (
@@ -70,7 +76,7 @@ const LogCard = memo(({ log }: { log: EncodedSeriLogObject }) => {
               {log.rowNo}
             </Text>
             <Text size="xs" c={theme.colors.gray[5]} ta="center">
-              {printDate(log.timestamp)}
+              {printDate(log.timestamp, isUtc)}
             </Text>
           </Box>
         </Indicator>

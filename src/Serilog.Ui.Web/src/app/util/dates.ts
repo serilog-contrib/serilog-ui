@@ -15,10 +15,11 @@ export const formatLocalSplitDate = (date: string) => {
   return [dayjsDate.format('ll'), dayjsDate.format('HH:mm:ss')];
 };
 
-export const formatUtcDate = (date: string) => dayjs.utc(date).format('ll HH:mm:ss');
+export const formatUtcDate = (date: string) =>
+  dayjs.utc(date).format('ll HH:mm:ss [[UTC]]');
 
 export const formatUtcSplitDate = (date: string) => {
   const dayjsDate = dayjs.utc(date);
 
-  return [dayjsDate.format('ll'), dayjsDate.format('HH:mm:ss')];
+  return [dayjsDate.format('ll'), dayjsDate.format('HH:mm:ss [[UTC]]')];
 };

@@ -23,7 +23,11 @@ export const SerilogUiPropsProvider = ({
       setServerProps(configObject);
     } catch (e) {
       console.warn('SerilogUI Config not received correctly! Using defaults');
-      setServerProps({ routePrefix: 'serilog-ui', authType: 'Jwt' });
+      setServerProps({
+        routePrefix: 'serilog-ui',
+        authType: 'Jwt',
+        homeUrl: 'https://google.com',
+      });
     }
   }, []);
 

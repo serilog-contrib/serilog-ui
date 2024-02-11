@@ -25,11 +25,13 @@ const levelsArray = Object.keys(LogLevel).map((level) => ({
 
 const Search = () => {
   const { data: queryTableKeys } = useQueryTableKeys();
-  const { control, handleSubmit, register, reset, setValue } = useSearchForm();
+  const { control, handleSubmit, reset, setValue } = useSearchForm();
   const { field } = useController({ ...control, name: 'table' });
   const { field: levelField } = useController({ ...control, name: 'level' });
   const { field: startRangeField } = useController({ ...control, name: 'startDate' });
   const { field: endRangeField } = useController({ ...control, name: 'endDate' });
+  const { field: textField } = useController({ ...control, name: 'search' });
+  const { field: isUtcField } = useController({ ...control, name: 'isUtc' });
 
   const { refetch } = useQueryLogsHook();
 
@@ -68,11 +70,11 @@ const Search = () => {
           />
         </Grid.Col>
         <Grid.Col span={{ xs: 6, sm: 6, md: 6, lg: 8 }} order={{ sm: 5, md: 6, lg: 2 }}>
-          <TextInput label="Search" placeholder="Your input..." {...register('search')} />
+          <TextInput label="Search" placeholder="Your input..." {...textField} />
         </Grid.Col>
         <Grid.Col span={{ xs: 6, sm: 6, md: 4 }} order={{ sm: 6 }}>
           <Group justify="end" align="center" h="100%">
-            <Switch size="md" offLabel="Local" onLabel="UTC" {...register('isUtc')} />
+            <Switch size="md" offLabel="Local" onLabel="UTC" {...isUtcField} />
             <Button type="submit" onClick={handleSubmit(submit)}>
               Submit
             </Button>

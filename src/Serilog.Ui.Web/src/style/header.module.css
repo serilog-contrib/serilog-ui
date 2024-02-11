@@ -1,8 +1,29 @@
-.sidebarBox {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  align-items: center;
+.mobileGrid {
+  grid-template-columns: 1fr 2fr;
+  gap: 0.5em;
+
+  @media (min-width: em(400)) {
+    grid-template-columns: 2fr 2fr;
+  }
+}
+
+.desktopGrid {
+  grid-template-columns: repeat(2 1fr);
+  gap: 1em;
+}
+
+.activityGroup {
+  grid-column: 1 / 2;
+  height: 100%;
+  justify-content: start;
+  align-content: center;
+}
+
+.bannerGroup {
+  grid-column: 2 / 3;
+  height: 100%;
+  justify-content: end;
+  align-content: center;
 }
 
 .sidebarBoxNavlink {

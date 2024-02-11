@@ -62,7 +62,7 @@ const Shell = () => {
             </AppShell.Navbar>
 
             <AppShell.Main>
-              <AppBody />
+              <AppBody hideMobileResults={mobileOpen} />
             </AppShell.Main>
           </AppShell>
         </AuthPropertiesProvider>
