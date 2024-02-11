@@ -18,10 +18,6 @@ const useQueryLogsHook = () => {
         : null;
     },
     placeholderData: keepPreviousData,
-    // TODO? fetch pre-post page on data fetch
-    // onError: (err) => {
-    //   console.error(err);
-    // }, // TODO: notification box
     refetchOnMount: true,
     refetchOnWindowFocus: false,
     retry: 3,

@@ -1,4 +1,5 @@
 import { decodeJwt } from 'jose';
+import { AuthType } from 'types/types';
 
 export interface IAuthPropertiesData {
   jwt_bearerToken?: string;
@@ -16,10 +17,20 @@ export const initialAuthProps = {
 export const getAuthKey = (props: IAuthPropertiesData, key: keyof IAuthPropertiesData) =>
   props[key] ?? sessionStorage.getItem(`serilog_ui_${key}`) ?? '';
 
-// TODO: different headers by type
-export const getAuthorizationHeader = (props: IAuthPropertiesData) => {
-  console.log(props);
-  return props?.jwt_bearerToken ? `Bearer ${props.jwt_bearerToken}` : '';
+export const getAuthorizationHeader = (
+  authType: string = '',
+  props: IAuthPropertiesData,
+) => {
+  const authTypeToEnum = AuthType[authType];
+
+  switch (authTypeToEnum) {
+    case AuthType.Jwt:
+      return props?.jwt_bearerToken ? `Bearer ${props.jwt_bearerToken}` : '';
+    case AuthType.Basic:
+      return 'TODO';
+    default:
+      return '';
+  }
 };
 
 const setAuthDataValue = (

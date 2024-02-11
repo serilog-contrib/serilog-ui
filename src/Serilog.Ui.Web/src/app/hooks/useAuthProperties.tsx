@@ -33,11 +33,14 @@ export const AuthPropertiesProvider = ({
 }: {
   children: ReactNode | undefined;
 }) => {
-  const p = useSerilogUiProps();
-  console.log(p);
+  const { authType } = useSerilogUiProps();
+
   const [authInfo, setAuthInfo] = useImmer<IAuthPropertiesData>({ ...initialAuthProps });
   const [activeAuthProps, setAuthProps] = useImmer<IAuthPropertiesData>(authInfo);
-  const authHeader = useMemo(() => getAuthorizationHeader(authInfo), [authInfo]);
+  const authHeader = useMemo(
+    () => getAuthorizationHeader(authType, authInfo),
+    [authInfo, authType],
+  );
 
   const clearAuthState = useCallback(() => {
     setAuthInfo(initialAuthProps);

@@ -1,4 +1,5 @@
 ﻿export enum AuthType {
+  Basic = 'Basic',
   Jwt = 'Jwt',
   Windows = 'Windows',
 }

@@ -8,7 +8,7 @@ import {
 } from '../util/queries';
 
 export const fetchLogs = async (values: SearchForm, fetchOptions: RequestInit) => {
-  const prepareUrl = prepareSearchUrl(values, values.page);
+  const prepareUrl = prepareSearchUrl(values);
   if (!prepareUrl.areDatesAdmitted) return;
 
   try {
@@ -24,42 +24,46 @@ export const fetchLogs = async (values: SearchForm, fetchOptions: RequestInit) =
   }
 };
 
-const prepareSearchUrl = (input: SearchForm, identifiedPage?: number) => {
+const prepareSearchUrl = (input: SearchForm) => {
   const {
-    startDate,
-    endDate,
-    table: key,
     entriesPerPage: count,
-    level,
-    search: searchTerm,
-  } = input;
-  const page = identifiedPage ?? 1;
+    page,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isUtc: _,
+    table: key,
+    ...inputData
+  } = { ...input };
 
-  if (isDefinedGuard(startDate) && isDefinedGuard(endDate)) {
-    if (dayjs(startDate).isAfter(dayjs(endDate))) {
-      sendUnexpectedNotification(
-        'Start date cannot be greater than end date',
-        'Invalid data',
-        'yellow',
-      );
+  const startDate = inputData.startDate;
+  const endDate = inputData.endDate;
+  if (
+    isDefinedGuard(startDate) &&
+    isDefinedGuard(endDate) &&
+    dayjs(startDate).isAfter(dayjs(endDate))
+  ) {
+    sendUnexpectedNotification(
+      'Start date cannot be greater than end date',
+      'Invalid data',
+      'yellow',
+    );
 
-      return { areDatesAdmitted: false, url: '' };
-    }
+    return { areDatesAdmitted: false, url: '' };
   }
 
-  // TODO: review dates parsing
+  const url = `${determineHost}/api/logs?page=${page}&count=${count}`;
+
   const startAsString = startDate?.toISOString() ?? '';
+  inputData['startDate'] = startAsString as unknown as Date;
   const endAsString = endDate?.toISOString() ?? '';
+  inputData['endDate'] = endAsString as unknown as Date;
+  inputData['key'] = key;
 
-  // TODO check url creation result when using
-  const url = `${determineHost}/api/logs?page=${page}&count=${count}\
-${queryParamIfSet('key', key)}\
-${queryParamIfSet('level', level)}\
-${queryParamIfSet('search', searchTerm)}\
-${queryParamIfSet('startDate', startAsString)}\
-${queryParamIfSet('endDate', endAsString)}`;
+  const urlWithOptionalParams = Object.keys(inputData).reduce(
+    (prev, curr) => `${prev}${queryParamIfSet(curr, inputData[curr])}`,
+    url,
+  );
 
-  return { areDatesAdmitted: true, url };
+  return { areDatesAdmitted: true, url: urlWithOptionalParams };
 };
 
 const queryParamIfSet = (paramName: string, paramValue?: string | null) =>
