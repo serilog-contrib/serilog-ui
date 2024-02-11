@@ -18,7 +18,7 @@ const AuthorizeModal = ({ close }: { close: () => void }) => {
     <>
       <Group mb="md">
         <PasswordInput
-          placeholder="Bearer eyJhbGciOiJSUz[...]"
+          placeholder="eyJhbGciOiJSUz[...]"
           label="JWT Token"
           radius="sm"
           size="sm"
