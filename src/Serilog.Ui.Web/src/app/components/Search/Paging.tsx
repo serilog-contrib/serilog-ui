@@ -18,7 +18,7 @@ import { toNumber } from 'app/util/guards';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { useController } from 'react-hook-form';
 import classes from 'style/search.module.css';
-import useQueryLogsHook from '../../hooks/useQueryLogs';
+import useQueryLogs from '../../hooks/useQueryLogs';
 
 const entriesOptions = ['10', '25', '50', '100'].map((entry) => ({
   value: entry,
@@ -37,7 +37,7 @@ const Paging = () => {
   } = useController({ ...control, name: 'entriesPerPage' });
   const [dialogPage, setDialogPage] = useState(field.value);
 
-  const { data, refetch } = useQueryLogsHook();
+  const { data, refetch } = useQueryLogs();
 
   const totalPages = useMemo(() => {
     if (!data) return 1;

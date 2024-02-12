@@ -3,7 +3,7 @@ import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { useCallback, useMemo } from 'react';
 import classes from 'style/table.module.css';
 import { ColumnType, LogLevel } from '../../../types/types';
-import useQueryLogsHook from '../../hooks/useQueryLogs';
+import useQueryLogs from '../../hooks/useQueryLogs';
 import { isArrayGuard, isObjectGuard, isStringGuard } from '../../util/guards';
 import { getBgLogLevel, splitPrintDate } from '../../util/prettyPrints';
 import DetailsModal from './DetailsModal';
@@ -11,7 +11,7 @@ import DetailsModal from './DetailsModal';
 const SerilogResults = () => {
   const theme = useMantineTheme();
 
-  const { data, isFetching } = useQueryLogsHook();
+  const { data, isFetching } = useQueryLogs();
 
   const getCellColor = useMemo(
     () => (logLevel: string) => getBgLogLevel(theme, LogLevel[logLevel]),

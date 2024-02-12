@@ -1,5 +1,5 @@
 import { Button, Group, PasswordInput } from '@mantine/core';
-import useQueryLogsHook from 'app/hooks/useQueryLogs';
+import useQueryLogs from 'app/hooks/useQueryLogs';
 import { type ChangeEvent } from 'react';
 import { useAuthProperties } from '../../hooks/useAuthProperties';
 import { isStringGuard } from '../../util/guards';
@@ -7,7 +7,7 @@ import { isStringGuard } from '../../util/guards';
 const JwtModal = ({ close }: { close: () => void }) => {
   const { authHeader, clearAuthState, jwt_bearerToken, saveAuthState, updateAuthKey } =
     useAuthProperties();
-  const { refetch } = useQueryLogsHook();
+  const { refetch } = useQueryLogs();
 
   const isHeaderReady = isStringGuard(authHeader);
 

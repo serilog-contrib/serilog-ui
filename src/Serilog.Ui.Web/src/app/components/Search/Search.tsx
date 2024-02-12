@@ -10,7 +10,7 @@ import {
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
 import { IconEraser } from '@tabler/icons-react';
-import useQueryLogsHook from 'app/hooks/useQueryLogs';
+import useQueryLogs from 'app/hooks/useQueryLogs';
 import { useQueryTableKeys } from 'app/hooks/useQueryTableKeys';
 import { useSearchForm } from 'app/hooks/useSearchForm';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
@@ -36,7 +36,7 @@ const Search = () => {
   const { field: endRangeField } = useController({ ...control, name: 'endDate' });
   const { field: textField } = useController({ ...control, name: 'search' });
 
-  const { refetch } = useQueryLogsHook();
+  const { refetch } = useQueryLogs();
 
   const submit = async () => {
     setValue('page', 1);

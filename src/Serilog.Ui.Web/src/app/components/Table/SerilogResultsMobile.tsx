@@ -11,7 +11,7 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { IconSearchOff } from '@tabler/icons-react';
-import useQueryLogsHook from 'app/hooks/useQueryLogs';
+import useQueryLogs from 'app/hooks/useQueryLogs';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { getBgLogLevel, printDate } from 'app/util/prettyPrints';
 import { memo } from 'react';
@@ -20,7 +20,7 @@ import { EncodedSeriLogObject, LogLevel } from 'types/types';
 import DetailsModal from './DetailsModal';
 
 const SerilogResultsMobile = () => {
-  const { data, isFetching } = useQueryLogsHook();
+  const { data, isFetching } = useQueryLogs();
 
   const { isUtc } = useSerilogUiProps();
 

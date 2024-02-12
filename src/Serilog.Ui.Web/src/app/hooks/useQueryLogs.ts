@@ -4,7 +4,7 @@ import { isObjectGuard } from '../util/guards';
 import { useQueryHeaders } from './useQueryHeaders';
 import { useSearchForm } from './useSearchForm';
 
-const useQueryLogsHook = () => {
+const useQueryLogs = () => {
   const { headers: requestInit } = useQueryHeaders();
   const { getValues } = useSearchForm();
   const searchValues = getValues();
@@ -24,4 +24,4 @@ const useQueryLogsHook = () => {
   });
 };
 
-export default useQueryLogsHook;
+export default useQueryLogs;
