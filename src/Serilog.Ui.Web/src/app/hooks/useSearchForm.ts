@@ -10,7 +10,6 @@ export const searchFormInitialValues: SearchForm = {
   startDate: null,
   endDate: null,
   search: '',
-  isUtc: false,
   entriesPerPage: '10',
   page: 1,
 };
@@ -20,12 +19,12 @@ export const useSearchForm = () => {
     defaultValues: searchFormInitialValues,
   });
   const useSearchContext = useFormContext<SearchForm>();
+
   const { data } = useQueryTableKeys();
   const tableKeysDefaultValue = isArrayGuard(data) ? data.at(0)! : '';
 
   const resetForm = () => {
     useSearchContext.reset({
-      isUtc: useSearchContext.getValues('isUtc'),
       table: tableKeysDefaultValue,
     });
   };

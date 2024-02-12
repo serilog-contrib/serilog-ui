@@ -25,14 +25,7 @@ export const fetchLogs = async (values: SearchForm, fetchOptions: RequestInit) =
 };
 
 const prepareSearchUrl = (input: SearchForm) => {
-  const {
-    entriesPerPage: count,
-    page,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isUtc: _,
-    table: key,
-    ...inputData
-  } = { ...input };
+  const { entriesPerPage: count, page, table: key, ...inputData } = { ...input };
 
   const startDate = inputData.startDate;
   const endDate = inputData.endDate;

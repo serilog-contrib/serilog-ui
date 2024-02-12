@@ -10,5 +10,8 @@ export const useQueryTableKeys = () => {
     queryFn: async () => {
       return await fetchKeys(requestInit);
     },
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
   });
 };

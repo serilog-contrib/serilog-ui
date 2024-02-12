@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { IconSearchOff } from '@tabler/icons-react';
 import useQueryLogsHook from 'app/hooks/useQueryLogs';
-import { useSearchForm } from 'app/hooks/useSearchForm';
+import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { getBgLogLevel, printDate } from 'app/util/prettyPrints';
 import { memo } from 'react';
 import classes from 'style/table.module.css';
@@ -22,9 +22,7 @@ import DetailsModal from './DetailsModal';
 const SerilogResultsMobile = () => {
   const { data, isFetching } = useQueryLogsHook();
 
-  const { getValues } = useSearchForm();
-  const isUtc = getValues('isUtc');
-  console.log(isUtc);
+  const { isUtc } = useSerilogUiProps();
 
   return (
     <SimpleGrid

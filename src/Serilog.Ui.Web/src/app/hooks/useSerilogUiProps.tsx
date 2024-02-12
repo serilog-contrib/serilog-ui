@@ -5,8 +5,15 @@ export interface SerilogUiConfig {
   routePrefix?: string;
   homeUrl?: string;
 }
+interface SerilogUiProps extends SerilogUiConfig {
+  isUtc: boolean;
+  setIsUtc: (value: boolean) => void;
+}
 
-const SerilogUiPropsContext = createContext<SerilogUiConfig>({});
+const SerilogUiPropsContext = createContext<SerilogUiProps>({
+  isUtc: false,
+  setIsUtc: () => {},
+});
 
 export const SerilogUiPropsProvider = ({
   children,
@@ -14,6 +21,7 @@ export const SerilogUiPropsProvider = ({
   children: ReactNode | undefined;
 }) => {
   const [serverProps, setServerProps] = useState<SerilogUiConfig>({});
+  const [isUtc, setIsUtc] = useState<boolean>(false);
 
   useEffect(() => {
     const config = '%(Configs)';
@@ -32,7 +40,7 @@ export const SerilogUiPropsProvider = ({
   }, []);
 
   return (
-    <SerilogUiPropsContext.Provider value={serverProps}>
+    <SerilogUiPropsContext.Provider value={{ ...serverProps, isUtc, setIsUtc }}>
       {children}
     </SerilogUiPropsContext.Provider>
   );

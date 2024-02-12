@@ -1,5 +1,5 @@
 import { Indicator, Table, Text, useMantineTheme } from '@mantine/core';
-import { useSearchForm } from 'app/hooks/useSearchForm';
+import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { useCallback, useMemo } from 'react';
 import classes from 'style/table.module.css';
 import { LogLevel } from '../../../types/types';
@@ -13,8 +13,7 @@ const SerilogResults = () => {
 
   const { data, isFetching } = useQueryLogsHook();
 
-  const { getValues } = useSearchForm();
-  const isUtc = getValues('isUtc');
+  const { isUtc } = useSerilogUiProps();
 
   const splitDate = useCallback(
     (timestamp: string) => splitPrintDate(timestamp, isUtc),
@@ -50,10 +49,12 @@ const SerilogResults = () => {
                 {log.rowNo}
               </Text>
             </Table.Td>
-            <Table.Td w="fit-content">
+            <Table.Td>
               <Text size="sm" fw={300} ta="center">
                 {splitDate(log.timestamp)[0]}
               </Text>
+            </Table.Td>
+            <Table.Td>
               <Text size="sm" fw={300} ta="center">
                 {splitDate(log.timestamp)[1]}
               </Text>
@@ -98,8 +99,9 @@ const SerilogResults = () => {
         <Table.Thead>
           <Table.Tr>
             <Table.Th>Level</Table.Th>
-            <Table.Th>#</Table.Th>
-            <Table.Th>Date</Table.Th>
+            <Table.Th ta="center">#</Table.Th>
+            <Table.Th ta="center">Day</Table.Th>
+            <Table.Th ta="center">Time</Table.Th>
             <Table.Th>Message</Table.Th>
             <Table.Th>Exception</Table.Th>
             <Table.Th>Properties</Table.Th>
