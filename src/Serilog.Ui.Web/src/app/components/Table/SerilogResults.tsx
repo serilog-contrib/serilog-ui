@@ -54,7 +54,7 @@ const SerilogResults = () => {
             {/* TODO: dynamic columns configuration from ui definition */}
           </Table.Tr>
         ));
-  }, [data?.logs, getCellColor, theme.colors.gray]);
+  }, [data?.logs, getCellColor]);
 
   return (
     <Table.ScrollContainer minWidth={1250}>
