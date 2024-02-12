@@ -1,14 +1,14 @@
+import loadable from '@loadable/component';
 import { ActionIcon, Box, Button, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconEraser, IconFilterSearch } from '@tabler/icons-react';
 import { useCloseOnResize } from 'app/hooks/useCloseOnResize';
 import { useSearchForm } from 'app/hooks/useSearchForm';
-import { lazy } from 'react';
 import classes from 'style/header.module.css';
 
-const Search = lazy(() => import('../Search/Search'));
+const Search = loadable(() => import('../Search/Search'));
 
-export const FilterButton = () => {
+const FilterButton = () => {
   const [filterModalOpened, { open, close }] = useDisclosure(false);
   const { reset } = useSearchForm();
 
@@ -46,3 +46,5 @@ export const FilterButton = () => {
     </>
   );
 };
+
+export default FilterButton;

@@ -1,3 +1,4 @@
+import loadable from '@loadable/component';
 import {
   Blockquote,
   Box,
@@ -17,7 +18,8 @@ import { getBgLogLevel, printDate } from 'app/util/prettyPrints';
 import { memo } from 'react';
 import classes from 'style/table.module.css';
 import { EncodedSeriLogObject, LogLevel } from 'types/types';
-import DetailsModal from './DetailsModal';
+
+const DetailsModal = loadable(() => import('./DetailsModal'));
 
 const SerilogResultsMobile = () => {
   const { data, isFetching } = useQueryLogs();

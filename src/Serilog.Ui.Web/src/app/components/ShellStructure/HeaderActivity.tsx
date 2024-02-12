@@ -1,10 +1,12 @@
+import loadable from '@loadable/component';
 import { Box, Burger, useMantineTheme } from '@mantine/core';
 import { ComponentProps } from 'react';
-import AuthorizeButton from '../Authorization/AuthorizeButton';
-import { FilterButton } from './FilterButton';
-import Head from './Header';
 
-export const HeaderActivity = (props: ComponentProps<typeof Head>) => {
+const Head = loadable(() => import('./Header'));
+const AuthorizeButton = loadable(() => import('../Authorization/AuthorizeButton'));
+const FilterButton = loadable(() => import('./FilterButton'));
+
+const HeaderActivity = (props: ComponentProps<typeof Head>) => {
   const theme = useMantineTheme();
 
   return (
@@ -27,3 +29,5 @@ export const HeaderActivity = (props: ComponentProps<typeof Head>) => {
     </>
   );
 };
+
+export default HeaderActivity;

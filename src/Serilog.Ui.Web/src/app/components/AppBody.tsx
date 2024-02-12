@@ -1,11 +1,11 @@
+import loadable from '@loadable/component';
 import { Box } from '@mantine/core';
-import { lazy } from 'react';
 import classes from 'style/table.module.css';
 
-const Search = lazy(() => import('./Search/Search'));
-const Paging = lazy(() => import('./Search/Paging'));
-const SerilogResults = lazy(() => import('./Table/SerilogResults'));
-const SerilogResultsMobile = lazy(() => import('./Table/SerilogResultsMobile'));
+const Search = loadable(() => import('./Search/Search'));
+const Paging = loadable(() => import('./Search/Paging'));
+const SerilogResults = loadable(() => import('./Table/SerilogResults'));
+const SerilogResultsMobile = loadable(() => import('./Table/SerilogResultsMobile'));
 
 const AppBody = ({ hideMobileResults }: { hideMobileResults: boolean }) => {
   return (

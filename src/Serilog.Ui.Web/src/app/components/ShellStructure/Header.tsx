@@ -1,3 +1,4 @@
+import loadable from '@loadable/component';
 import {
   ActionIcon,
   Badge,
@@ -13,7 +14,8 @@ import { currentYear } from 'app/util/dates';
 import { isStringGuard } from 'app/util/guards';
 import { serilogUiUrl } from 'app/util/prettyPrints';
 import classes from 'style/header.module.css';
-import { HeaderActivity } from './HeaderActivity';
+
+const HeaderActivity = loadable(() => import('./HeaderActivity'));
 
 type IDispatch = {
   toggleMobile: () => void;

@@ -1,16 +1,18 @@
+import loadable from '@loadable/component';
 import { AppShell, ColorSchemeScript, MantineProvider, createTheme } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Notifications } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import { FormProvider } from 'react-hook-form';
-import AppBody from './components/AppBody';
-import Head from './components/ShellStructure/Header';
-import Sidebar from './components/ShellStructure/Sidebar';
 import { AuthPropertiesProvider } from './hooks/useAuthProperties';
 import { useCloseOnResize } from './hooks/useCloseOnResize';
 import { useSearchForm } from './hooks/useSearchForm';
 import { SerilogUiPropsProvider } from './hooks/useSerilogUiProps';
+
+const AppBody = loadable(() => import('./components/AppBody'));
+const Head = loadable(() => import('./components/ShellStructure/Header'));
+const Sidebar = loadable(() => import('./components/ShellStructure/Sidebar'));
 
 const App = () => {
   const queryClient = new QueryClient();

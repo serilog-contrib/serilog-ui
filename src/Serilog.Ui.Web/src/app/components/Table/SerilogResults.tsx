@@ -1,3 +1,4 @@
+import loadable from '@loadable/component';
 import { Indicator, Table, Text, useMantineTheme } from '@mantine/core';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { useCallback, useMemo } from 'react';
@@ -6,7 +7,8 @@ import { ColumnType, LogLevel } from '../../../types/types';
 import useQueryLogs from '../../hooks/useQueryLogs';
 import { isArrayGuard, isObjectGuard, isStringGuard } from '../../util/guards';
 import { getBgLogLevel, splitPrintDate } from '../../util/prettyPrints';
-import DetailsModal from './DetailsModal';
+
+const DetailsModal = loadable(() => import('./DetailsModal'));
 
 const SerilogResults = () => {
   const theme = useMantineTheme();
