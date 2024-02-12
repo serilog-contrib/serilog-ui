@@ -94,8 +94,9 @@ const Search = () => {
               <ActionIcon
                 visibleFrom="lg"
                 size={28}
-                onClick={() => {
+                onClick={async () => {
                   reset();
+                  await refetch();
                 }}
                 variant="light"
                 aria-label="reset filters"

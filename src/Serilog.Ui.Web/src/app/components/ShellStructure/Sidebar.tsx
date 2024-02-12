@@ -28,8 +28,7 @@ const Sidebar = () => {
             component={isStringGuard(homeUrl) ? 'a' : 'button'}
             href={isStringGuard(homeUrl) ? homeUrl : ''}
             justify="center"
-            variant="transparent"
-            autoContrast
+            variant="light"
             leftSection={<IconHomeDot size="1.3rem" stroke={1.4} />}
             target="_blank"
           >
@@ -44,13 +43,14 @@ const Sidebar = () => {
             <FilterButton />
           </Box>
         </Button.Group>
-
-        <Paging />
       </Box>
-      <Box m="0 auto">
-        <Anchor href={serilogUiUrl} target="_blank">
-          <Badge size="md">Serilog Ui | {currentYear}</Badge>
-        </Anchor>
+      <Box>
+        <Paging />
+        <Box display="flex">
+          <Anchor m="0 auto" href={serilogUiUrl} target="_blank">
+            <Badge size="md">Serilog Ui | {currentYear}</Badge>
+          </Anchor>
+        </Box>
       </Box>
     </Box>
   );

@@ -31,19 +31,6 @@
   margin: var(--mantine-spacing-md);
   padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
   border-radius: em(4px);
-  border: 0.1em solid var(--mantine-color-lime-0);
-  color: var(--mantine-color-dark-9);
-
-  @mixin hover {
-    background-color: var(--mantine-color-blue-4);
-  }
-
-  @mixin dark {
-    color: var(--mantine-color-dark-0);
-    @mixin hover {
-      background-color: var(--mantine-color-gray-5);
-    }
-  }
 }
 
 .searchFiltersModalTitle {

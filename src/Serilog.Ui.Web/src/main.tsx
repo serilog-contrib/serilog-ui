@@ -7,6 +7,12 @@ import '@mantine/notifications/styles.css';
 import { createRoot } from 'react-dom/client';
 import App from './app/App';
 
+/**
+ * TODO:
+ * - filter by _id
+ * - sort by option
+ */
+
 // Render your React component
 const main = async () => {
   const rootItem = document.getElementById('serilog-ui-app');

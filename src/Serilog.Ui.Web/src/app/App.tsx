@@ -5,6 +5,7 @@ import { Notifications } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import { FormProvider } from 'react-hook-form';
+import { serilogUi } from 'style/colors';
 import { AuthPropertiesProvider } from './hooks/useAuthProperties';
 import { useCloseOnResize } from './hooks/useCloseOnResize';
 import { useSearchForm } from './hooks/useSearchForm';
@@ -21,6 +22,7 @@ const App = () => {
       xs: '28em', // 448px
       sm: '36em', // 576px
     },
+    colors: serilogUi,
     fontFamily: 'Open Sans Variable, sans-serif',
     fontFamilyMonospace: 'Mononoki, sans-serif',
     autoContrast: true,
@@ -44,7 +46,7 @@ const Shell = () => {
   const { methods } = useSearchForm();
   const [mobileOpen, { toggle: toggleMobile, close }] = useDisclosure();
 
-  const headerProps = { height: '4em' };
+  const headerProps = { height: '4.3em' };
   const navbarProps = {
     breakpoint: 'sm',
     collapsed: { mobile: !mobileOpen, desktop: true },

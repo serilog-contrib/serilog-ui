@@ -1,5 +1,5 @@
 import loadable from '@loadable/component';
-import { Indicator, Table, Text, useMantineTheme } from '@mantine/core';
+import { Table, Text, useMantineColorScheme, useMantineTheme } from '@mantine/core';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { useCallback, useMemo } from 'react';
 import classes from 'style/table.module.css';
@@ -12,12 +12,13 @@ const DetailsModal = loadable(() => import('./DetailsModal'));
 
 const SerilogResults = () => {
   const theme = useMantineTheme();
+  const { colorScheme } = useMantineColorScheme();
 
   const { data, isFetching } = useQueryLogs();
 
   const getCellColor = useMemo(
-    () => (logLevel: string) => getBgLogLevel(theme, LogLevel[logLevel]),
-    [theme],
+    () => (logLevel: string) => getBgLogLevel(theme, colorScheme, LogLevel[logLevel]),
+    [colorScheme, theme],
   );
 
   const TableRows = useMemo(() => {
@@ -32,13 +33,8 @@ const SerilogResults = () => {
               boxSizing: 'border-box',
             }}
           >
-            <Table.Td>
-              <Indicator
-                color={getCellColor(log.level)}
-                size="13"
-                position="middle-center"
-                withBorder
-              />
+            <Table.Td bg={getCellColor(log.level)} ta="center">
+              <Text fz="sm">{log.level}</Text>
             </Table.Td>
             <TableCell content={log.rowNo} columnType={ColumnType.shortstring} />
             <TableCell content={log.timestamp} columnType={ColumnType.datetime} />
@@ -58,7 +54,7 @@ const SerilogResults = () => {
             {/* TODO: dynamic columns configuration from ui definition */}
           </Table.Tr>
         ));
-  }, [data, getCellColor]);
+  }, [data?.logs, getCellColor, theme.colors.gray]);
 
   return (
     <Table.ScrollContainer minWidth={1250}>
@@ -72,7 +68,7 @@ const SerilogResults = () => {
       >
         <Table.Thead>
           <Table.Tr>
-            <TableHeader text="Level" columnType={ColumnType.string} />
+            <TableHeader text="Level" columnType={ColumnType.shortstring} />
             <TableHeader text="#" columnType={ColumnType.shortstring} />
             <TableHeader text="" columnType={ColumnType.datetime} />
             <TableHeader text="Message" columnType={ColumnType.text} />
@@ -94,7 +90,7 @@ const DesktopSkeleton = () => {
   return [...Array(10).keys()].map((k) => (
     <Table.Tr key={k} h="4em">
       {/* TODO: 6 + custom columns */}
-      {[...Array(6).keys()].map((k) => (
+      {[...Array(7).keys()].map((k) => (
         <Table.Td key={k} />
       ))}
     </Table.Tr>

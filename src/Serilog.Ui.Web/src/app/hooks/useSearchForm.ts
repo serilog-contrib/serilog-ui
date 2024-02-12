@@ -23,8 +23,9 @@ export const useSearchForm = () => {
   const { data, isSuccess } = useQueryTableKeys();
   const tableKeysDefaultValue = isArrayGuard(data) ? data.at(0)! : '';
 
-  const resetForm = () => {
+  const resetForm = async () => {
     useSearchContext.reset({
+      ...searchFormInitialValues,
       table: tableKeysDefaultValue,
     });
   };

@@ -4,11 +4,11 @@ import {
   Box,
   Card,
   Group,
-  Indicator,
   LoadingOverlay,
   SimpleGrid,
   Skeleton,
   Text,
+  useMantineColorScheme,
   useMantineTheme,
 } from '@mantine/core';
 import { IconSearchOff } from '@tabler/icons-react';
@@ -36,7 +36,7 @@ const SerilogResultsMobile = () => {
     >
       <LoadingOverlay
         visible={isFetching}
-        zIndex={1000}
+        zIndex={200}
         overlayProps={{ radius: 'sm', blur: 2 }}
       />
       {isFetching && mobileSkeleton}
@@ -57,29 +57,28 @@ const mobileSkeleton = [...Array(4).keys()].map((_, i) => (
 
 const LogCard = memo(({ log, isUtc }: { log: EncodedSeriLogObject; isUtc?: boolean }) => {
   const theme = useMantineTheme();
+  const { colorScheme } = useMantineColorScheme();
+
+  const colorByLogLevel = getBgLogLevel(theme, colorScheme, LogLevel[log.level]);
 
   return (
     <Card key={log.rowNo} shadow="xs" padding="0" radius="sm" withBorder mih="14em">
       <Card.Section
         withBorder
         className={classes.mobileCardHeaderWrapper}
-        style={{ borderColor: getBgLogLevel(theme, LogLevel[log.level]) }}
+        style={{ backgroundColor: colorByLogLevel }}
       >
-        <Indicator
-          size={14}
-          position="middle-start"
-          color={getBgLogLevel(theme, LogLevel[log.level])}
-          zIndex={1}
-        >
-          <Box className={classes.mobileCardHeaderText}>
-            <Text size="md" fw={600} truncate="end" ta="center">
-              {log.rowNo}
-            </Text>
-            <Text size="xs" c={theme.colors.gray[5]} ta="center">
-              {printDate(log.timestamp, isUtc)}
-            </Text>
-          </Box>
-        </Indicator>
+        <Box className={classes.mobileCardHeaderText}>
+          <Text size="md" fw={700} c={theme.colors.dark[8]} truncate="end" ta="center">
+            {log.rowNo}
+          </Text>
+          <Text size="sm" fs="italic" c={theme.colors.dark[6]} ta="center">
+            {log.level}
+          </Text>
+          <Text size="xs" c={theme.colors.dark[6]} ta="center">
+            {printDate(log.timestamp, isUtc)}
+          </Text>
+        </Box>
       </Card.Section>
 
       <Group p="0.8em">
