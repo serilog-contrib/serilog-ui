@@ -81,22 +81,23 @@ const SerilogResults = () => {
         </Table.Thead>
         <Table.Tbody className={isFetching ? classes.skeletonDesktopTableCell : ''}>
           {!isFetching && isObjectGuard(data) && isArrayGuard(data.logs) && TableRows}
-          {isFetching && desktopSkeleton}
+          {isFetching && <DesktopSkeleton />}
         </Table.Tbody>
       </Table>
     </Table.ScrollContainer>
   );
 };
 
-const desktopSkeleton = [...Array(10).keys()].map((k) => (
-  <Table.Tr key={k} h="40px">
-    {/* TODO: 6 + custom columns */}
-    {[...Array(6).keys()].map((k) => (
-      <Table.Td key={k} />
-    ))}
-  </Table.Tr>
-));
-
+const DesktopSkeleton = () => {
+  return [...Array(10).keys()].map((k) => (
+    <Table.Tr key={k} h="4em">
+      {/* TODO: 6 + custom columns */}
+      {[...Array(6).keys()].map((k) => (
+        <Table.Td key={k} />
+      ))}
+    </Table.Tr>
+  ));
+};
 const TableHeader = ({ text, columnType }: { text: string; columnType: ColumnType }) => {
   switch (columnType) {
     case ColumnType.datetime:

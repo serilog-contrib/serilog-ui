@@ -69,6 +69,7 @@ const Head = ({ isMobileOpen, toggleMobile }: IProps) => {
         <Badge
           component="a"
           href={serilogUiUrl}
+          style={{ cursor: 'pointer' }}
           target="_blank"
           size={isMobileSize ? 'sm' : 'lg'}
           rightSection={currentYear}

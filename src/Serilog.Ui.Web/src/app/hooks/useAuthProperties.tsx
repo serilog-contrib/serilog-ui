@@ -55,6 +55,7 @@ export const AuthPropertiesProvider = ({
 
   const [authInfo, setAuthInfo] = useImmer<IAuthPropertiesData>({ ...initialAuthProps });
   const [activeAuthProps, setAuthProps] = useImmer<IAuthPropertiesData>(authInfo);
+
   const authHeader = useMemo(
     () => getAuthorizationHeader(authType, authInfo),
     [authInfo, authType],

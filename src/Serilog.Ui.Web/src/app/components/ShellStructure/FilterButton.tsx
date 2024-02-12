@@ -1,8 +1,9 @@
 import { ActionIcon, Box, Button, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconEraser, IconFilterSearch } from '@tabler/icons-react';
+import { useCloseOnResize } from 'app/hooks/useCloseOnResize';
 import { useSearchForm } from 'app/hooks/useSearchForm';
-import { lazy, useEffect } from 'react';
+import { lazy } from 'react';
 import classes from 'style/header.module.css';
 
 const Search = lazy(() => import('../Search/Search'));
@@ -11,11 +12,8 @@ export const FilterButton = () => {
   const [filterModalOpened, { open, close }] = useDisclosure(false);
   const { reset } = useSearchForm();
 
-  useEffect(() => {
-    window.addEventListener('resize', close);
+  useCloseOnResize(close);
 
-    return () => window.removeEventListener('resize', close);
-  }, [close]);
   return (
     <>
       <Button size="compact-md" onClick={open}>
