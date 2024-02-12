@@ -34,7 +34,7 @@ export const printDate = (date: string, utc?: boolean) =>
 export const splitPrintDate = (date: string, utc?: boolean) =>
   utc ? formatUtcSplitDate(date) : formatLocalSplitDate(date);
 
-export const renderCodeContent = (contentType: string, modalContent: string) => {
+export const renderCodeContent = (contentType: string = '', modalContent: string) => {
   try {
     if (contentType === 'xml') {
       return formatXml(modalContent, { forceSelfClosingEmptyTag: true });
@@ -48,5 +48,5 @@ export const renderCodeContent = (contentType: string, modalContent: string) => 
     return `Content could not be parsed, as per expected type: ${contentType}`;
   }
 
-  return '{}';
+  return contentType;
 };

@@ -64,3 +64,12 @@ export interface SearchForm {
   entriesPerPage: string;
   page: number;
 }
+
+// column definitions
+export enum ColumnType {
+  code = 'code',
+  datetime = 'date',
+  shortstring = 'shortstring',
+  string = 'string',
+  text = 'text',
+}

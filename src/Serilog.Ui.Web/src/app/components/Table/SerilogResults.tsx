@@ -2,7 +2,7 @@ import { Indicator, Table, Text, useMantineTheme } from '@mantine/core';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { useCallback, useMemo } from 'react';
 import classes from 'style/table.module.css';
-import { LogLevel } from '../../../types/types';
+import { ColumnType, LogLevel } from '../../../types/types';
 import useQueryLogsHook from '../../hooks/useQueryLogs';
 import { isArrayGuard, isObjectGuard, isStringGuard } from '../../util/guards';
 import { getBgLogLevel, splitPrintDate } from '../../util/prettyPrints';
@@ -13,12 +13,6 @@ const SerilogResults = () => {
 
   const { data, isFetching } = useQueryLogsHook();
 
-  const { isUtc } = useSerilogUiProps();
-
-  const splitDate = useCallback(
-    (timestamp: string) => splitPrintDate(timestamp, isUtc),
-    [isUtc],
-  );
   const getCellColor = useMemo(
     () => (logLevel: string) => getBgLogLevel(theme, LogLevel[logLevel]),
     [theme],
@@ -44,50 +38,28 @@ const SerilogResults = () => {
                 withBorder
               />
             </Table.Td>
-            <Table.Td>
-              <Text size="sm" fw={500} ta="center">
-                {log.rowNo}
-              </Text>
-            </Table.Td>
-            <Table.Td>
-              <Text size="sm" fw={300} ta="center">
-                {splitDate(log.timestamp)[0]}
-              </Text>
-            </Table.Td>
-            <Table.Td>
-              <Text size="sm" fw={300} ta="center">
-                {splitDate(log.timestamp)[1]}
-              </Text>
-            </Table.Td>
-            <Table.Td>
-              <Text ta="justify" fz="sm" lh="sm">
-                {log.message}
-              </Text>
-            </Table.Td>
-            <Table.Td>
-              {isStringGuard(log.exception) ? (
-                <DetailsModal
-                  modalContent={log.exception}
-                  modalTitle="Exception details"
-                  contentType={log.propertyType}
-                />
-              ) : null}
-            </Table.Td>
-            <Table.Td>
-              {isStringGuard(log.properties) ? (
-                <DetailsModal
-                  modalContent={log.properties}
-                  modalTitle="Properties details"
-                  contentType={log.propertyType}
-                />
-              ) : null}
-            </Table.Td>
+            <TableCell content={log.rowNo} columnType={ColumnType.shortstring} />
+            <TableCell content={log.timestamp} columnType={ColumnType.datetime} />
+            <TableCell content={log.message} columnType={ColumnType.text} />
+            <TableCell
+              content={log.exception}
+              columnType={ColumnType.code}
+              codeContentType={log.propertyType}
+              codeModalTitle="Exception details"
+            />
+            <TableCell
+              content={log.properties}
+              columnType={ColumnType.code}
+              codeContentType={log.propertyType}
+              codeModalTitle="Properties details"
+            />
+            {/* TODO: dynamic columns configuration from ui definition */}
           </Table.Tr>
         ));
-  }, [data, getCellColor, splitDate]);
+  }, [data, getCellColor]);
 
   return (
-    <Table.ScrollContainer minWidth={1200}>
+    <Table.ScrollContainer minWidth={1250}>
       <Table
         w="100%"
         verticalSpacing="sm"
@@ -98,13 +70,12 @@ const SerilogResults = () => {
       >
         <Table.Thead>
           <Table.Tr>
-            <Table.Th>Level</Table.Th>
-            <Table.Th ta="center">#</Table.Th>
-            <Table.Th ta="center">Day</Table.Th>
-            <Table.Th ta="center">Time</Table.Th>
-            <Table.Th>Message</Table.Th>
-            <Table.Th>Exception</Table.Th>
-            <Table.Th>Properties</Table.Th>
+            <TableHeader text="Level" columnType={ColumnType.string} />
+            <TableHeader text="#" columnType={ColumnType.shortstring} />
+            <TableHeader text="" columnType={ColumnType.datetime} />
+            <TableHeader text="Message" columnType={ColumnType.text} />
+            <TableHeader text="Exception" columnType={ColumnType.code} />
+            <TableHeader text="Properties" columnType={ColumnType.code} />
             {/* TODO: dynamic columns configuration from ui definition */}
           </Table.Tr>
         </Table.Thead>
@@ -125,5 +96,87 @@ const desktopSkeleton = [...Array(10).keys()].map((k) => (
     ))}
   </Table.Tr>
 ));
+
+const TableHeader = ({ text, columnType }: { text: string; columnType: ColumnType }) => {
+  switch (columnType) {
+    case ColumnType.datetime:
+      return (
+        <>
+          <Table.Th ta="center">{`${text}${text ? ' ' : ''}[Day]`}</Table.Th>
+          <Table.Th ta="center">{`${text}${text ? ' ' : ''}[Time]`}</Table.Th>
+        </>
+      );
+    case ColumnType.shortstring:
+    case ColumnType.code:
+      return <Table.Th ta="center">{text}</Table.Th>;
+    default:
+      return <Table.Th>{text}</Table.Th>;
+  }
+};
+
+const TableCell = ({
+  content,
+  columnType,
+  codeContentType,
+  codeModalTitle,
+}: {
+  columnType: ColumnType;
+  content?: string | number;
+  codeModalTitle?: string;
+  codeContentType?: string;
+}) => {
+  const { isUtc } = useSerilogUiProps();
+
+  const splitDate = useCallback(
+    (timestamp: string) => splitPrintDate(timestamp, isUtc),
+    [isUtc],
+  );
+
+  switch (columnType) {
+    case ColumnType.shortstring:
+      return (
+        <Table.Td>
+          <Text size="sm" fw={500} ta="center">
+            {content}
+          </Text>
+        </Table.Td>
+      );
+    case ColumnType.datetime:
+      return (
+        <>
+          <Table.Td>
+            <Text size="sm" fw={300} ta="center">
+              {splitDate(`${content}`)[0]}
+            </Text>
+          </Table.Td>
+          <Table.Td>
+            <Text size="sm" fw={300} ta="center">
+              {splitDate(`${content}`)[1]}
+            </Text>
+          </Table.Td>
+        </>
+      );
+    case ColumnType.text:
+      return (
+        <Table.Td>
+          <Text ta="justify" fz="sm" lh="sm">
+            {content}
+          </Text>
+        </Table.Td>
+      );
+    case ColumnType.code:
+      return (
+        <Table.Td>
+          {isStringGuard(content) ? (
+            <DetailsModal
+              modalContent={content}
+              modalTitle={codeModalTitle}
+              contentType={codeContentType}
+            />
+          ) : null}
+        </Table.Td>
+      );
+  }
+};
 
 export default SerilogResults;

@@ -18,8 +18,8 @@ const DetailsModal = ({
   buttonTitle,
 }: {
   modalContent: string;
-  modalTitle: string;
-  contentType: string;
+  modalTitle?: string;
+  contentType?: string;
   disabled?: boolean;
   buttonTitle?: string;
 }) => {
