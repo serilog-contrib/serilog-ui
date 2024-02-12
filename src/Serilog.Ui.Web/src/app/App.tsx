@@ -34,7 +34,6 @@ const App = () => {
       <MantineProvider defaultColorScheme="auto" theme={theme}>
         <Notifications />
         <QueryClientProvider client={queryClient}>
-          {/* <ReactQueryDevtools buttonPosition="bottom-left" initialIsOpen={false} /> */}
           <Shell />
         </QueryClientProvider>
       </MantineProvider>

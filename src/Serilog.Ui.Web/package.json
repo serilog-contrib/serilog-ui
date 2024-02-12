@@ -4,15 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "old:test": "npx jest --watch",
-    "old:test:local": "jest",
-    "old:test:ci": "jest --ci --reporters=default --reporters=jest-junit",
     "build": "tsc && vite build",
     "lint": "eslint src",
     "preview": "vite preview",
     "start": "vite",
     "test": "vitest",
-    "test:coverage": "vitest run --reporter=default --reporter=vitest-sonar-reporter --coverage",
+    "test:ci": "vitest run --reporter=default --reporter=vitest-sonar-reporter --coverage",
     "test:ui": "vitest --ui --reporter=default",
     "make-me-pretty": "prettier --write .\\src\\"
   },
@@ -38,7 +35,6 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
-    "@tanstack/react-query-devtools": "^5.20.2",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.1",

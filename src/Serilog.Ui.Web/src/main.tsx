@@ -9,11 +9,12 @@ import App from './app/App';
 
 /**
  * TODO:
+ * - change basic to receive data from ui...
  * - filter by _id
  * - sort by option
+ * - better colors?
  */
 
-// Render your React component
 const main = async () => {
   const rootItem = document.getElementById('serilog-ui-app');
   if (rootItem == null)

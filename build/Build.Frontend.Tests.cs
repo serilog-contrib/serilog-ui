@@ -13,7 +13,7 @@ partial class Build : NukeBuild
 
             NpmTasks.NpmRun(s => s
                 .SetProcessWorkingDirectory(FrontendWorkingDirectory)
-                .SetCommand("test:local")
+                .SetCommand("test")
             );
         });
 
