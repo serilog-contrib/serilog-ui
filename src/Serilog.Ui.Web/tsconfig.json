@@ -21,9 +21,9 @@
     "noImplicitAny": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "typeRoots": ["./src/types/", "./node_modules/@types/"],
+    "typeRoots": ["./src/types/", "./node_modules/@types/"]
   },
   "include": ["./**/*.ts", "./**/*.tsx"],
   "exclude": ["node_modules", "wwwroot"],
-  "references": [{ "path": "./tsconfig.node.json" }],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
