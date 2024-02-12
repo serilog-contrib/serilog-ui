@@ -23,3 +23,9 @@ export const formatUtcSplitDate = (date: string) => {
 
   return [dayjsDate.format('ll'), dayjsDate.format('HH:mm:ss [[UTC]]')];
 };
+
+export const isValidJwtUnixDate = (unixTime: number) => {
+  const parse = dayjs.unix(unixTime).utc(true);
+
+  return parse.isAfter(dayjs());
+};

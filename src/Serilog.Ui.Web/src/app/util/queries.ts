@@ -1,6 +1,7 @@
 import { DefaultMantineColor } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { SerilogUiConfig } from 'app/hooks/useSerilogUiProps';
+import { ReactNode } from 'react';
 import { AuthType } from 'types/types';
 
 export const determineHost = ['development', 'test'].includes(import.meta.env.MODE ?? '')
@@ -35,9 +36,10 @@ export const send403Notification = () => {
 };
 
 export const sendUnexpectedNotification = (
-  message: string,
+  message: ReactNode,
   title: string = 'Query error',
   color: DefaultMantineColor = 'red',
+  autoClose: number | boolean = 5000,
 ) => {
   notifications.show({
     title,
@@ -45,6 +47,6 @@ export const sendUnexpectedNotification = (
     color: color,
     radius: 'md',
     withBorder: true,
-    autoClose: 5000,
+    autoClose: autoClose,
   });
 };

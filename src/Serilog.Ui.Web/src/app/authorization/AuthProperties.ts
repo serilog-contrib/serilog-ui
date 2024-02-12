@@ -1,3 +1,4 @@
+import { isValidJwtUnixDate } from 'app/util/dates';
 import { decodeJwt } from 'jose';
 import { AuthType } from 'types/types';
 
@@ -6,21 +7,30 @@ export interface IAuthPropertiesData {
   basic_user?: string;
   basic_pwd?: string;
 }
-const notSavedKeys: (keyof IAuthPropertiesData)[] = ['basic_pwd'];
-
-export const initialAuthProps = {
+export const defaultAuthProps = {
   basic_pwd: '',
   basic_user: '',
   jwt_bearerToken: '',
 };
 
+const notSavedKeys: (keyof IAuthPropertiesData)[] = ['basic_pwd'];
+
+export const clearAuth = () => {
+  Object.keys(initialAuthProps).forEach((key) => {
+    sessionStorage.removeItem(`serilog_ui_${key}`);
+  });
+
+  return defaultAuthProps;
+};
+
 export const getAuthKey = (props: IAuthPropertiesData, key: keyof IAuthPropertiesData) =>
-  props[key] ?? sessionStorage.getItem(`serilog_ui_${key}`) ?? '';
+  props[key] || sessionStorage.getItem(`serilog_ui_${key}`) || '';
 
 export const getAuthorizationHeader = (
   authType: string = '',
   props: IAuthPropertiesData,
 ) => {
+  // TODO: expose to different Modals if (authProps.authType !== AuthType.Jwt) return null;
   const authTypeToEnum = AuthType[authType];
 
   switch (authTypeToEnum) {
@@ -31,6 +41,12 @@ export const getAuthorizationHeader = (
     default:
       return '';
   }
+};
+
+export const initialAuthProps = {
+  basic_pwd: '',
+  basic_user: getAuthKey({}, 'basic_user'),
+  jwt_bearerToken: getAuthKey({}, 'jwt_bearerToken'),
 };
 
 const setAuthDataValue = (
@@ -62,14 +78,12 @@ const validateKey = (key: keyof IAuthPropertiesData, value: string) => {
  */
 const validateBearerToken = (bearerToken: string) => {
   try {
-    // TODO: Decode jwt token in method
-    // and send component notification, if it's not valid anymore
     const decoded = decodeJwt(bearerToken);
-    console.log(decoded);
-    console.log(decoded.iat);
-    return { success: true, error: '' };
+    const isValidExp = !decoded.exp || isValidJwtUnixDate(decoded.exp);
+
+    return { success: isValidExp, error: 'Token expired' };
   } catch {
-    return { success: false, error: 'Token invalid.' };
+    return { success: false, error: 'Token invalid' };
   }
 };
 

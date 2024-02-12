@@ -1,7 +1,8 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import { AuthType } from 'types/types';
 
 export interface SerilogUiConfig {
-  authType?: string;
+  authType?: AuthType;
   routePrefix?: string;
   homeUrl?: string;
 }
@@ -33,7 +34,7 @@ export const SerilogUiPropsProvider = ({
       console.warn('SerilogUI Config not received correctly! Using defaults');
       setServerProps({
         routePrefix: 'serilog-ui',
-        authType: 'Jwt',
+        authType: AuthType.Jwt,
         homeUrl: 'https://google.com',
       });
     }
