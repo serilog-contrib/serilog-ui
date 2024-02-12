@@ -5,7 +5,7 @@ import {
   getAuthorizationHeader,
   initialAuthProps,
   saveAuthKey,
-} from 'app/authorization/AuthProperties';
+} from 'app/util/auth';
 import { sendUnexpectedNotification } from 'app/util/queries';
 import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react';
 import { useImmer } from 'use-immer';
