@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 import { AuthType } from 'types/types';
 
 export const determineHost = ['development', 'test'].includes(import.meta.env.MODE ?? '')
-  ? ''
+  ? 'https://localhost:3001'
   : location.pathname.replace('/index.html', '');
 
 export const createRequestInit = (

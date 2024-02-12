@@ -4,7 +4,7 @@ import { getBgLogLevel } from '../../app/util/prettyPrints';
 import { LogLevel } from '../../types/types';
 
 describe('log level backgrounds', () => {
-  it.skip.each([
+  it.each([
     [LogLevel.Verbose, 'bg-success'],
     [LogLevel.Debug, 'bg-success'],
     [LogLevel.Error, 'bg-danger'],
@@ -12,13 +12,18 @@ describe('log level backgrounds', () => {
     [LogLevel.Information, 'bg-primary'],
     [LogLevel.Warning, 'bg-warning'],
   ])('TODO returns %s color for log level: %s', (logLevelEntry, expectedBg) => {
-    const result = getBgLogLevel(vi.fn() as unknown as MantineTheme, logLevelEntry);
+    const result = getBgLogLevel(
+      vi.fn() as unknown as MantineTheme,
+      'dark',
+      logLevelEntry,
+    );
     expect(result).toBe(expectedBg);
   });
 
-  it.skip('TODO: returns default color for unrecognized enum case', () => {
+  it('TODO: returns default color for unrecognized enum case', () => {
     const result = getBgLogLevel(
       vi.fn() as unknown as MantineTheme,
+      'dark',
       'fakeEnum' as LogLevel,
     );
     expect(result).toBe('bg-secondary');

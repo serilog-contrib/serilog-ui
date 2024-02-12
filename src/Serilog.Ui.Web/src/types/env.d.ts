@@ -13,11 +13,6 @@ interface ImportMeta {
 
 declare global {
   export interface Window {
-    config: {
-      authType?: string;
-      routePrefix?: string;
-      homeUrl?: string;
-    };
     userEventLibApi: UserEvent;
   }
 }

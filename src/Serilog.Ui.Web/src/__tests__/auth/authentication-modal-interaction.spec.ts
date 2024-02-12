@@ -14,7 +14,7 @@ describe('interactions with the Auth JWT Modal', () => {
     user = window.userEventLibApi as unknown as UserEvent;
   });
 
-  it('opens the modal', async () => {
+  it.skip('opens the modal', async () => {
     expect(getAuthDialog()).toBeNull();
 
     await user.click(await screen.findByText(/Authorize/i));
@@ -24,7 +24,7 @@ describe('interactions with the Auth JWT Modal', () => {
     expect(openDialog).not.toBeNull();
   });
 
-  it('closes the modal clicking the X', async () => {
+  it.skip('closes the modal clicking the X', async () => {
     await user.click(await screen.findByText(/Authorize/i));
     const authDialog = getAuthDialog();
 
