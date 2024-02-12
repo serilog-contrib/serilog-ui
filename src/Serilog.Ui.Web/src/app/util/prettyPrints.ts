@@ -35,6 +35,8 @@ export const splitPrintDate = (date: string, utc?: boolean) =>
   utc ? formatUtcSplitDate(date) : formatLocalSplitDate(date);
 
 export const renderCodeContent = (contentType: string = '', modalContent: string) => {
+  if (!modalContent) return contentType;
+
   try {
     if (contentType === 'xml') {
       return formatXml(modalContent, { forceSelfClosingEmptyTag: true });
