@@ -30,14 +30,14 @@ export const getAuthorizationHeader = (
   authType: string = '',
   props: IAuthPropertiesData,
 ) => {
-  // TODO: expose to different Modals if (authProps.authType !== AuthType.Jwt) return null;
   const authTypeToEnum = AuthType[authType];
 
   switch (authTypeToEnum) {
     case AuthType.Jwt:
       return props?.jwt_bearerToken ? `Bearer ${props.jwt_bearerToken}` : '';
     case AuthType.Basic:
-      return 'TODO';
+      const encodeProps = btoa(`${props.basic_user}:${props.basic_pwd}`);
+      return `Basic ${encodeProps}`;
     default:
       return '';
   }

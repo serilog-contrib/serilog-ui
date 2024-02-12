@@ -4,7 +4,7 @@ import { type ChangeEvent } from 'react';
 import { useAuthProperties } from '../../hooks/useAuthProperties';
 import { isStringGuard } from '../../util/guards';
 
-const JwtModal = ({ close }: { close: () => void }) => {
+const JwtModal = ({ onClose }: { onClose: () => void }) => {
   const { authHeader, clearAuthState, jwt_bearerToken, saveAuthState, updateAuthKey } =
     useAuthProperties();
   const { refetch } = useQueryLogs();
@@ -47,7 +47,7 @@ const JwtModal = ({ close }: { close: () => void }) => {
         >
           Change Token
         </Button>
-        <Button onClick={close}>Close</Button>
+        <Button onClick={onClose}>Close</Button>
       </Group>
     </>
   );
