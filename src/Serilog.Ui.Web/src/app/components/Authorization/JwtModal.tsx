@@ -11,6 +11,10 @@ const JwtModal = ({ onClose }: { onClose: () => void }) => {
 
   const isHeaderReady = isStringGuard(authHeader);
 
+  const onSave = async () => {
+    saveAuthState(['jwt_bearerToken']);
+    await refetch();
+  };
   return (
     <>
       <Group mb="md">
@@ -30,13 +34,7 @@ const JwtModal = ({ onClose }: { onClose: () => void }) => {
         />
       </Group>
       <Group display="flex" justify="right">
-        <Button
-          display={isHeaderReady ? 'none' : 'inherit'}
-          onClick={async () => {
-            saveAuthState();
-            await refetch();
-          }}
-        >
+        <Button display={isHeaderReady ? 'none' : 'inherit'} onClick={onSave}>
           Save
         </Button>
         <Button

@@ -15,7 +15,10 @@ interface AuthProps {
   authProps: IAuthPropertiesData;
   authHeader: string;
   clearAuthState: () => void;
-  saveAuthState: () => { success: boolean; errors?: string[] };
+  saveAuthState: (authKeysToSave: (keyof IAuthPropertiesData)[]) => {
+    success: boolean;
+    errors?: string[];
+  };
   updateAuthKey: (key: keyof IAuthPropertiesData, value: string) => void;
 }
 
@@ -23,7 +26,7 @@ const AuthPropertiesContext = createContext<AuthProps>({
   authProps: {},
   authHeader: '',
   clearAuthState: () => {},
-  saveAuthState: () => ({
+  saveAuthState: ([]) => ({
     success: true,
   }),
   updateAuthKey: (_, __) => {
@@ -67,26 +70,29 @@ export const AuthPropertiesProvider = ({
     setAuthProps(cleanState);
   }, [setAuthInfo, setAuthProps]);
 
-  const saveAuthState = useCallback(() => {
-    const validationInfo: string[] = [];
-    setAuthInfo((draft) => {
-      Object.keys(initialAuthProps).forEach((e) => {
-        const saveResult = saveAuthKey(
-          draft,
-          e as keyof IAuthPropertiesData,
-          activeAuthProps[e],
-        );
-        if (saveResult.error) {
-          validationInfo.push(saveResult.error);
-        }
+  const saveAuthState = useCallback(
+    (authKeysToSave: (keyof IAuthPropertiesData)[]) => {
+      const validationInfo: string[] = [];
+      setAuthInfo((draft) => {
+        authKeysToSave.forEach((e) => {
+          const saveResult = saveAuthKey(
+            draft,
+            e as keyof IAuthPropertiesData,
+            activeAuthProps[e] || '',
+          );
+          if (saveResult.error) {
+            validationInfo.push(saveResult.error);
+          }
+        });
+        return draft;
       });
-      return draft;
-    });
 
-    const result = { success: !validationInfo.length, errors: validationInfo };
-    checkErrors(result);
-    return result;
-  }, [activeAuthProps, setAuthInfo]);
+      const result = { success: !validationInfo.length, errors: validationInfo };
+      checkErrors(result);
+      return result;
+    },
+    [activeAuthProps, setAuthInfo],
+  );
 
   const updateAuthKey = (key: keyof IAuthPropertiesData, value: string) => {
     setAuthProps((draft) => {

@@ -17,12 +17,18 @@ const BasicModal = ({ onClose }: { onClose: () => void }) => {
 
   const isHeaderReady = isStringGuard(authHeader);
 
+  const onSave = async () => {
+    saveAuthState(['basic_pwd', 'basic_user']);
+    await refetch();
+  };
+
   return (
     <>
       <Fieldset legend="Basic Authentication" mb="md">
         <TextInput
           placeholder="admin"
           label="Username"
+          disabled={isHeaderReady}
           value={basic_user}
           onChange={(event) => {
             updateAuthKey('basic_user', event.currentTarget.value);
@@ -47,10 +53,7 @@ const BasicModal = ({ onClose }: { onClose: () => void }) => {
         <Button
           display={isHeaderReady ? 'none' : 'inherit'}
           disabled={!basic_pwd || !basic_user}
-          onClick={async () => {
-            saveAuthState();
-            await refetch();
-          }}
+          onClick={onSave}
         >
           Save
         </Button>

@@ -15,7 +15,7 @@ export const createRequestInit = (
   const notWindowsAuth = uiProps.authType !== AuthType.Windows;
 
   const headers: Headers = new Headers();
-
+  console.log(uiProps, header);
   if (header) {
     headers.set('Authorization', header);
   }

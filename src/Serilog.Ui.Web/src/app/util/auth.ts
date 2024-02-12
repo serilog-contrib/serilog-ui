@@ -36,6 +36,10 @@ export const getAuthorizationHeader = (
     case AuthType.Jwt:
       return props?.jwt_bearerToken ? `Bearer ${props.jwt_bearerToken}` : '';
     case AuthType.Basic:
+      if (!props.basic_user || !props.basic_pwd) {
+        return '';
+      }
+
       const encodeProps = btoa(`${props.basic_user}:${props.basic_pwd}`);
       return `Basic ${encodeProps}`;
     default:
