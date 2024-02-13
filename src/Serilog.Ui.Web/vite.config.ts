@@ -17,7 +17,7 @@ const vitestConfig: VitestUserConfigInterface = {
     },
     globals: true,
     restoreMocks: true,
-    setupFiles: './__tests__/setupTests.ts',
+    setupFiles: './__tests__/_setup/setupTests.ts',
     outputFile: {
       'vitest-sonar-reporter': './reports/test-report.xml',
     },
@@ -40,6 +40,13 @@ export default defineConfig((env) => ({
     sourcemap: false,
     rollupOptions: {
       external: ['**/__tests__/**/*', '**/*.{spec,test}.*', '**/mocks/**/*.*'],
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return id.toString().split('node_modules/')[1].split('/')[0].toString();
+          }
+        },
+      },
     },
   },
   plugins: [
