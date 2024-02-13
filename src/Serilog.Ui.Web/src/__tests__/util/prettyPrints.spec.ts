@@ -1,7 +1,13 @@
 import { MantineColorScheme, MantineTheme } from '@mantine/core';
+import dayjs from 'dayjs';
 import { theme } from 'style/theme';
 import { describe, expect, it, vi } from 'vitest';
-import { getBgLogLevel, renderCodeContent } from '../../app/util/prettyPrints';
+import {
+  getBgLogLevel,
+  printDate,
+  renderCodeContent,
+  splitPrintDate,
+} from '../../app/util/prettyPrints';
 import { LogLevel, LogType } from '../../types/types';
 
 describe('pretty prints util', () => {
@@ -106,6 +112,42 @@ describe('pretty prints util', () => {
       const act = renderCodeContent('fake-content', '{ "json": "ok"}');
 
       expect(act).toBe('{ "json": "ok"}');
+    });
+  });
+
+  describe('date prints', () => {
+    it('print local date from iso string', () => {
+      const time = '2022-09-27T14:15:10.000Z';
+      const parsedDate = dayjs(time);
+
+      const sut = printDate(time);
+
+      expect(sut).toBe(`Sep 27, 2022 ${parsedDate.hour()}:15:10`);
+    });
+
+    it('print utc date from iso string', () => {
+      const time = '2022-09-27T14:15:10.000Z';
+      const sut = printDate(time, true);
+
+      expect(sut).toBe(`Sep 27, 2022 14:15:10 [UTC]`);
+    });
+
+    it('return split local date from iso string', () => {
+      const time = '2022-09-27T14:15:10.000Z';
+      const parsedDate = dayjs(time);
+
+      const sut = splitPrintDate(time);
+
+      expect(sut[0]).toBe(`Sep 27, 2022`);
+      expect(sut[1]).toBe(`${parsedDate.hour()}:15:10`);
+    });
+
+    it('return split utc date from iso string', () => {
+      const time = '2022-09-27T14:15:10.000Z';
+      const sut = splitPrintDate(time, true);
+
+      expect(sut[0]).toBe(`Sep 27, 2022`);
+      expect(sut[1]).toBe(`14:15:10 [UTC]`);
     });
   });
 });
