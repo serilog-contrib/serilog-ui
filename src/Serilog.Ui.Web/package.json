@@ -23,7 +23,7 @@
     "@mantine/hooks": "^7.5.2",
     "@mantine/notifications": "^7.5.2",
     "@tabler/icons-react": "^2.47.0",
-    "@tanstack/react-query": "^5.20.2",
+    "@tanstack/react-query": "^5.20.5",
     "dayjs": "^1.11.10",
     "immer": "^10.0.2",
     "jose": "^5.2.2",
