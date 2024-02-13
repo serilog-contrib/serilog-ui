@@ -5,6 +5,30 @@ import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import { checker } from 'vite-plugin-checker';
 import mkcert from 'vite-plugin-mkcert';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
+import type { UserConfig as VitestUserConfigInterface } from 'vitest/config';
+
+const vitestConfig: VitestUserConfigInterface = {
+  test: {
+    environment: 'happy-dom',
+    environmentOptions: {
+      happyDOM: {
+        url: 'https://localhost:3001',
+      },
+    },
+    globals: true,
+    restoreMocks: true,
+    setupFiles: './__tests__/setupTests.ts',
+    outputFile: {
+      'vitest-sonar-reporter': './reports/test-report.xml',
+    },
+    coverage: {
+      provider: 'istanbul',
+      reporter: 'lcov',
+      reportsDirectory: './reports/coverage/',
+      reportOnFailure: true,
+    },
+  },
+};
 
 // https://vitejs.dev/config/
 export default defineConfig((env) => ({
@@ -39,19 +63,5 @@ export default defineConfig((env) => ({
     open: false,
     port: 3001,
   },
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    restoreMocks: true,
-    setupFiles: './__tests__/setupTests.ts',
-    outputFile: {
-      'vitest-sonar-reporter': './reports/test-report.xml',
-    },
-    coverage: {
-      provider: 'istanbul',
-      reporter: 'lcov',
-      reportsDirectory: './reports/coverage/',
-      reportOnFailure: true,
-    },
-  },
+  test: vitestConfig.test,
 }));

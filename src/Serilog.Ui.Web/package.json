@@ -61,7 +61,7 @@
     "eslint-plugin-testing-library": "^6.1.2",
     "eslint-plugin-vitest": "^0.3.22",
     "eslint-plugin-vitest-globals": "^1.4.0",
-    "jsdom": "^24.0.0",
+    "happy-dom": "^13.3.8",
     "msw": "^2.2.0",
     "postcss": "^8.4.35",
     "postcss-preset-mantine": "^1.13.0",

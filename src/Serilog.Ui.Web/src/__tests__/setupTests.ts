@@ -1,23 +1,19 @@
-import '@testing-library/jest-dom';
-import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
-import { renderSerilogUiDom as setupSerilogUiDom } from './__setup__/dom-renderer';
-import './__setup__/mocks/globals';
-import { server } from './__setup__/msw-server';
+import userEvent, { UserEvent } from '@testing-library/user-event';
+import '__tests__/_setup/mocks/globals';
+import { server } from '__tests__/_setup/msw-server';
+import { afterAll, afterEach, beforeAll } from 'vitest';
+
+export let userEventInstance: UserEvent;
 
 // Establish API mocking before all tests.
 beforeAll(() => {
+  userEventInstance = userEvent.setup();
   server.listen();
 });
 
 // Clean up after the tests are finished.
-afterAll(() => server.close());
-
-// Load the DOM before each test and setup userEvent.
-// If the window.config should be overriden, either
-// - re-call the method in the test itself with params
-// - set the config manually in the test
-beforeEach(async () => {
-  await setupSerilogUiDom();
+afterAll(() => {
+  server.close();
 });
 
 // Reset any request handlers that we may add during the tests,

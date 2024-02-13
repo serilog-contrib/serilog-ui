@@ -26,7 +26,7 @@ const main = async () => {
 
   // attach msw on development
   if (import.meta.env.MODE === 'development') {
-    const { worker } = await import('./__tests__/__setup__/msw-worker');
+    const { worker } = await import('./__tests__/_setup/msw-worker');
     try {
       await worker.start();
     } catch (err) {
