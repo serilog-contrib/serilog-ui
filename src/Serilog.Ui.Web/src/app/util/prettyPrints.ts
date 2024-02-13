@@ -1,6 +1,6 @@
 import { MantineColorScheme, type MantineTheme } from '@mantine/core';
 import formatXml from 'xml-formatter';
-import { LogLevel } from '../../types/types';
+import { LogLevel, LogType } from '../../types/types';
 import {
   formatLocalDate,
   formatLocalSplitDate,
@@ -40,20 +40,19 @@ export const splitPrintDate = (date: string, utc?: boolean) =>
   utc ? formatUtcSplitDate(date) : formatLocalSplitDate(date);
 
 export const renderCodeContent = (contentType: string = '', modalContent: string) => {
-  if (!modalContent) return contentType;
+  if (!modalContent?.trim() || !Object.values(LogType).includes(contentType as LogType))
+    return modalContent;
 
   try {
-    if (contentType === 'xml') {
+    if (contentType === LogType.Xml) {
       return formatXml(modalContent, { forceSelfClosingEmptyTag: true });
     }
 
-    if (contentType === 'json') {
+    if (contentType === LogType.Json) {
       return JSON.stringify(JSON.parse(modalContent), null, 2) ?? '{}';
     }
   } catch {
     console.warn(`${modalContent} is not a valid json!`);
     return `Content could not be parsed, as per expected type: ${contentType}`;
   }
-
-  return contentType;
 };
