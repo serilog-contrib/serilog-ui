@@ -3,7 +3,6 @@
 }
 
 .mobileCardHeaderWrapper {
-  margin: em(0.2em);
   display: flex;
   justify-content: center;
 }

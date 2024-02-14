@@ -1,5 +1,11 @@
 import loadable from '@loadable/component';
-import { Table, Text, useMantineColorScheme, useMantineTheme } from '@mantine/core';
+import {
+  Skeleton,
+  Table,
+  Text,
+  useMantineColorScheme,
+  useMantineTheme,
+} from '@mantine/core';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { useCallback, useMemo } from 'react';
 import classes from 'style/table.module.css';
@@ -29,7 +35,7 @@ const SerilogResults = () => {
             key={log.rowNo}
             className={log.level}
             style={{
-              border: `1px solid ${getCellColor(log.level)}`,
+              borderBottom: `0.15em solid ${getCellColor(log.level)}`,
               boxSizing: 'border-box',
             }}
           >
@@ -60,7 +66,7 @@ const SerilogResults = () => {
     <Table.ScrollContainer minWidth={1250}>
       <Table
         w="100%"
-        verticalSpacing="sm"
+        verticalSpacing="md"
         highlightOnHover
         withTableBorder
         withColumnBorders
@@ -86,16 +92,18 @@ const SerilogResults = () => {
   );
 };
 
-const DesktopSkeleton = () => {
-  return [...Array(10).keys()].map((k) => (
+const DesktopSkeleton = () =>
+  [...Array(10).keys()].map((k) => (
     <Table.Tr key={k} h="4em">
-      {/* TODO: 6 + custom columns */}
-      {[...Array(7).keys()].map((k) => (
-        <Table.Td key={k} />
+      {/* TODO: 8 + custom columns */}
+      {[...Array(8).keys()].map((k) => (
+        <Table.Td key={k} p="0">
+          <Skeleton h="4em" radius="0" />
+        </Table.Td>
       ))}
     </Table.Tr>
   ));
-};
+
 const TableHeader = ({ text, columnType }: { text: string; columnType: ColumnType }) => {
   switch (columnType) {
     case ColumnType.datetime:

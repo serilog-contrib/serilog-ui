@@ -14,7 +14,6 @@
     "test:ui": "vitest --ui --reporter=default"
   },
   "dependencies": {
-    "@fontsource-variable/open-sans": "^5.0.24",
     "@fontsource/mononoki": "^5.0.7",
     "@loadable/component": "^5.16.3",
     "@mantine/core": "^7.5.2",

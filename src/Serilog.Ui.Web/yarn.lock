@@ -408,11 +408,6 @@
   resolved "https://registry.yarnpkg.com/@floating-ui/utils/-/utils-0.2.1.tgz#16308cea045f0fc777b6ff20a9f25474dd8293d2"
   integrity sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==
 
-"@fontsource-variable/open-sans@^5.0.24":
-  version "5.0.24"
-  resolved "https://registry.yarnpkg.com/@fontsource-variable/open-sans/-/open-sans-5.0.24.tgz#99e9a8c57892b560c0253bcc152bab320b028d4d"
-  integrity sha512-NzSXW5ehGVHLHHkvTvaAbm5ZrAzJ7Xe/on5d84EScTJqFxiaudnpLDKdVdvS77IyIP+ZFnR6oTfRKzmzGlto2g==
-
 "@fontsource/mononoki@^5.0.7":
   version "5.0.7"
   resolved "https://registry.yarnpkg.com/@fontsource/mononoki/-/mononoki-5.0.7.tgz#286bdcb38e0afe718418732801e8eeb00bbca671"

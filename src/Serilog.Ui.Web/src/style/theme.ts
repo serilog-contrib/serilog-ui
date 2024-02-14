@@ -7,7 +7,7 @@ export const theme = createTheme({
     sm: '36em', // 576px
   },
   colors: serilogUi,
-  fontFamily: 'Open Sans Variable, sans-serif',
+  fontFamily: 'Mononoki, sans-serif',
   fontFamilyMonospace: 'Mononoki, sans-serif',
   autoContrast: true,
 });

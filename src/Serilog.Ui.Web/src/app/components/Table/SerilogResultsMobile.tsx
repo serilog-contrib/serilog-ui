@@ -39,7 +39,7 @@ const SerilogResultsMobile = () => {
         zIndex={200}
         overlayProps={{ radius: 'sm', blur: 2 }}
       />
-      {isFetching && mobileSkeleton}
+      {isFetching && <MobileSkeleton />}
       {!data?.logs.length ? (
         <Blockquote mt="lg" ml="lg" icon={<IconSearchOff />}>
           No results.
@@ -52,9 +52,18 @@ const SerilogResultsMobile = () => {
   );
 };
 
-const mobileSkeleton = [...Array(4).keys()].map((_, i) => (
-  <Skeleton height={'14em'} key={i} radius="none" mb="xl" />
-));
+const MobileSkeleton = () => {
+  const theme = useMantineTheme();
+  return [...Array(4).keys()].map((_, i) => (
+    <Skeleton
+      h="14em"
+      key={i}
+      radius="none"
+      mb="sm"
+      style={{ border: `0.1em dashed ${theme.colors!.gray![7]}` }}
+    />
+  ));
+};
 
 const LogCard = memo(({ log, isUtc }: { log: EncodedSeriLogObject; isUtc?: boolean }) => {
   const theme = useMantineTheme();
