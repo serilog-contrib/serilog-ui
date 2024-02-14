@@ -66,50 +66,53 @@ describe('pretty prints util', () => {
   });
 
   describe('code content render', () => {
-    it('returns xml prettified', () => {
+    it('returns xml prettified', async () => {
       // eslint-disable-next-line testing-library/render-result-naming-convention
-      const act = renderCodeContent(LogType.Xml, '<root><my-xml>sample</my-xml></root>');
+      const act = await renderCodeContent(
+        LogType.Xml,
+        '<root><my-xml>sample</my-xml></root>',
+      );
 
       expect(act).toBe(
         '<root>\r\n    <my-xml>\r\n        sample\r\n    </my-xml>\r\n</root>',
       );
     });
 
-    it('returns json prettified', () => {
+    it('returns json prettified', async () => {
       // eslint-disable-next-line testing-library/render-result-naming-convention
-      const act = renderCodeContent(LogType.Json, '{ "json": "ok"}');
+      const act = await renderCodeContent(LogType.Json, '{ "json": "ok"}');
       const result = {
         json: 'ok',
       };
       expect(act).toBe(JSON.stringify(result, null, 2));
     });
 
-    it('returns error message if content cannot be parsed', () => {
+    it('returns error message if content cannot be parsed', async () => {
       const consoleMock = vi.fn();
       console.warn = consoleMock;
       // eslint-disable-next-line testing-library/render-result-naming-convention
-      const actXml = renderCodeContent(LogType.Xml, 'not an XML!');
+      const actXml = await renderCodeContent(LogType.Xml, 'not an XML!');
 
       expect(actXml).toBe('Content could not be parsed, as per expected type: xml');
 
       // eslint-disable-next-line testing-library/render-result-naming-convention
-      const actJson = renderCodeContent(LogType.Json, 'not a JSON!');
+      const actJson = await renderCodeContent(LogType.Json, 'not a JSON!');
 
       expect(actJson).toBe('Content could not be parsed, as per expected type: json');
 
       expect(consoleMock).toHaveBeenCalledTimes(2);
     });
 
-    it.each(['', '  '])('returns content if input: %s [invalid]', (input) => {
+    it.each(['', '  '])('returns content if input: %s [invalid]', async (input) => {
       // eslint-disable-next-line testing-library/render-result-naming-convention
-      const act = renderCodeContent(LogType.Json, input);
+      const act = await renderCodeContent(LogType.Json, input);
 
       expect(act).toBe(input || '');
     });
 
-    it('returns content if type is not expected', () => {
+    it('returns content if type is not expected', async () => {
       // eslint-disable-next-line testing-library/render-result-naming-convention
-      const act = renderCodeContent('fake-content', '{ "json": "ok"}');
+      const act = await renderCodeContent('fake-content', '{ "json": "ok"}');
 
       expect(act).toBe('{ "json": "ok"}');
     });

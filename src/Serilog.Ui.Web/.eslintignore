@@ -4,3 +4,4 @@ obj/*
 wwwroot/*
 coverage/*
 *.html
+mockServiceWorker.js

@@ -42,7 +42,7 @@ const getSearchParams = (params: URLSearchParams) => ({
 const byLevel = (level?: LogLevel) => (item: EncodedSeriLogObject) =>
   level ? item.level === level : true;
 const byDates = (start?: string, end?: string) => (item: EncodedSeriLogObject) => {
-  if (!start && !end) return true; // TODO: check that are valid dates
+  if (!start && !end) return true;
   let after = true;
   let before = true;
 

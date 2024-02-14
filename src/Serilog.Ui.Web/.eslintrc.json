@@ -12,10 +12,11 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": "latest",
-    "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
-    }
+    },
+    "project": "tsconfig.json",
+    "sourceType": "module"
   },
   "plugins": ["@typescript-eslint", "import", "jsx-a11y", "react", "react-hooks", "html"],
   "settings": {
@@ -34,7 +35,8 @@
     "react/require-default-props": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
-    "@typescript-eslint/explicit-function-return-type": "off"
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-floating-promises": ["error"]
   },
   "overrides": [
     {
