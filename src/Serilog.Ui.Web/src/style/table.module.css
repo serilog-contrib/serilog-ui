@@ -63,5 +63,10 @@
     padding: 0.5em 1em;
     white-space: pre-wrap;
     line-height: 2;
+    font-size: var(--mantine-font-size-sm);
+
+    @media (max-width: $mantine-breakpoint-md) {
+      font-size: var(--mantine-font-size-xs);
+    }
   }
 }

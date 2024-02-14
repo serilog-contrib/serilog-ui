@@ -40,13 +40,14 @@ const SerilogResultsMobile = () => {
         overlayProps={{ radius: 'sm', blur: 2 }}
       />
       {isFetching && mobileSkeleton}
-      {!data?.logs && (
+      {!data?.logs.length ? (
         <Blockquote mt="lg" ml="lg" icon={<IconSearchOff />}>
           No results.
         </Blockquote>
-      )}
-      {data?.logs &&
-        data.logs.map((log) => <LogCard key={log.rowNo} isUtc={isUtc} log={log} />)}
+      ) : null}
+      {data?.logs.length
+        ? data.logs.map((log) => <LogCard key={log.rowNo} isUtc={isUtc} log={log} />)
+        : null}
     </SimpleGrid>
   );
 };

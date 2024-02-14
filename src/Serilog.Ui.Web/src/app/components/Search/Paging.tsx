@@ -79,7 +79,10 @@ const Paging = () => {
           allowDeselect={false}
         ></Select>
       </Box>
-      <Box className={classes.paginationGrid}>
+      <Box
+        className={classes.paginationGrid}
+        display={totalPages === 0 ? 'none' : 'inherit'}
+      >
         <Box m="xs" style={{ justifySelf: 'end' }}>
           <ActionIcon disabled={totalPages < 2} onClick={toggle}>
             <IconListNumbers strokeWidth={2} />

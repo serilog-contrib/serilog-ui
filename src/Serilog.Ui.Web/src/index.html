@@ -6,9 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Serilog UI</title>
     <meta name="dummy" content="%(HeadContent)">
+    <style>
+      body.serilog-ui-app {
+        margin-right: 0 !important;
+        overflow: auto !important;
+      }
+
+      .serilog-ui-app .right-scroll-bar-position {
+        right: 0 !important;
+      }
+    </style>
   </head>
 
-  <body>
+  <body class="serilog-ui-app">
     <div id="serilog-ui-app"></div>
 
     <script type="module" src="main.tsx"></script>
