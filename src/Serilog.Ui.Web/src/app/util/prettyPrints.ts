@@ -1,4 +1,5 @@
 import { MantineColorScheme, type MantineTheme } from '@mantine/core';
+import { BundledTheme, CodeOptionsMultipleThemes, codeToHtml } from 'shiki';
 import formatXml from 'xml-formatter';
 import { LogLevel, LogType } from '../../types/types';
 import {
@@ -39,17 +40,32 @@ export const printDate = (date: string, utc?: boolean) =>
 export const splitPrintDate = (date: string, utc?: boolean) =>
   utc ? formatUtcSplitDate(date) : formatLocalSplitDate(date);
 
-export const renderCodeContent = (contentType: string = '', modalContent: string) => {
+const shikijiThemes: CodeOptionsMultipleThemes<BundledTheme> = {
+  themes: {
+    light: 'tokyo-night',
+    dark: 'night-owl',
+  },
+};
+export const renderCodeContent = async (
+  contentType: string = '',
+  modalContent: string,
+) => {
   if (!modalContent?.trim() || !Object.values(LogType).includes(contentType as LogType))
     return modalContent;
 
   try {
     if (contentType === LogType.Xml) {
-      return formatXml(modalContent, { forceSelfClosingEmptyTag: true });
+      const xmlResult = formatXml(modalContent, { forceSelfClosingEmptyTag: true });
+      return await codeToHtml(xmlResult, {
+        lang: 'xml',
+        ...shikijiThemes,
+        mergeWhitespaces: true,
+      });
     }
 
     if (contentType === LogType.Json) {
-      return JSON.stringify(JSON.parse(modalContent), null, 2) ?? '{}';
+      const jsonResult = JSON.stringify(JSON.parse(modalContent), null, 4) ?? '{}';
+      return await codeToHtml(jsonResult, { lang: 'json', ...shikijiThemes });
     }
   } catch {
     console.warn(`${modalContent} is not a valid json!`);

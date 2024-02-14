@@ -523,14 +523,6 @@
     hoist-non-react-statics "^3.3.1"
     react-is "^16.12.0"
 
-"@mantine/code-highlight@^7.5.2":
-  version "7.5.2"
-  resolved "https://registry.yarnpkg.com/@mantine/code-highlight/-/code-highlight-7.5.2.tgz#0357d5760d13528af05074ffee68b8892835c045"
-  integrity sha512-Sw8F4Cc/1Yx0GELNg0Z2WYoSr55EQqqo0tSMrqOFFvnmM1rezBBdsSKlIvKELc74UXkCAYucENvIKgKMdghHWA==
-  dependencies:
-    clsx "2.0.0"
-    highlight.js "^11.9.0"
-
 "@mantine/core@^7.5.2":
   version "7.5.2"
   resolved "https://registry.yarnpkg.com/@mantine/core/-/core-7.5.2.tgz#c9bb809f1b0ccb212a609f30b0829d28e3584fbe"
@@ -796,6 +788,11 @@
   version "4.10.0"
   resolved "https://registry.yarnpkg.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.10.0.tgz#4eedd01af3a82c1acb0fe6d837ebf339c4cbf839"
   integrity sha512-OZoJd+o5TaTSQeFFQ6WjFCiltiYVjIdsXxwu/XZ8qRpsvMQr4UsVrE5UyT9RIvsnuF47DqkJKhhVZ2Q9YW9IpQ==
+
+"@shikijs/core@1.1.2":
+  version "1.1.2"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/@shikijs/core/-/core-1.1.2.tgz#39e05dab76f4f4c1bbafadc1920d93b5fe3038ef"
+  integrity sha1-OeBdq3b09MG7r63Bkg2Ttf4wOO8=
 
 "@sinclair/typebox@^0.27.8":
   version "0.27.8"
@@ -2725,11 +2722,6 @@ headers-polyfill@^4.0.2:
   resolved "https://registry.yarnpkg.com/headers-polyfill/-/headers-polyfill-4.0.2.tgz#9115a76eee3ce8fbf95b6e3c6bf82d936785b44a"
   integrity sha512-EWGTfnTqAO2L/j5HZgoM/3z82L7necsJ0pO9Tp0X1wil3PDLrkypTBRgVO2ExehEEvUycejZD3FuRaXpZZc3kw==
 
-highlight.js@^11.9.0:
-  version "11.9.0"
-  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-11.9.0.tgz#04ab9ee43b52a41a047432c8103e2158a1b8b5b0"
-  integrity sha512-fJ7cW7fQGCYAkgv4CPfwFHrfd/cLS4Hau96JuJ+ZTOWhjnhoeN1ub1tFmALm/+lW5z4WCAuAV9bm05AP0mS6Gw==
-
 hoist-non-react-statics@^3.3.1:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz#ece0acaf71d62c2969c2ec59feff42a4b1a85b45"
@@ -4153,6 +4145,13 @@ shebang-regex@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/shebang-regex/-/shebang-regex-3.0.0.tgz#ae16f1644d873ecad843b0307b143362d4c42172"
   integrity sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==
+
+shiki@^1.1.2:
+  version "1.1.2"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/shiki/-/shiki-1.1.2.tgz#b703f79d7fb64dac2af94706b2aff8cd8928034b"
+  integrity sha1-twP3nX+2Tawq+UcGsq/4zYkoA0s=
+  dependencies:
+    "@shikijs/core" "1.1.2"
 
 side-channel@^1.0.4:
   version "1.0.5"

@@ -1,4 +1,3 @@
-import { CodeHighlight } from '@mantine/code-highlight';
 import {
   Box,
   Button,
@@ -7,7 +6,8 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
+import classes from 'style/table.module.css';
 import { renderCodeContent } from '../../util/prettyPrints';
 
 const DetailsModal = ({
@@ -26,13 +26,16 @@ const DetailsModal = ({
   const [opened, { open, close }] = useDisclosure(false);
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
+  const [renderContent, setRenderContent] = useState<TrustedHTML>('');
 
-  const codeLanguage =
-    contentType === 'xml' ? 'markup' : contentType === 'json' ? 'json' : 'bash';
-  const renderContent = useMemo(
-    () => renderCodeContent(contentType, modalContent),
-    [contentType, modalContent],
-  );
+  useEffect(() => {
+    const fetchContent = async () => {
+      const content = await renderCodeContent(contentType, modalContent);
+      setRenderContent(content || '');
+    };
+
+    fetchContent();
+  }, [contentType, modalContent]);
 
   return (
     <>
@@ -49,7 +52,10 @@ const DetailsModal = ({
           blur: 3,
         }}
       >
-        <CodeHighlight code={renderContent} language={codeLanguage} />
+        <div
+          dangerouslySetInnerHTML={{ __html: renderContent }}
+          className={classes.detailModalCode}
+        ></div>
       </Modal>
 
       <Box display="grid" style={{ justifyContent: 'center', alignContent: 'center' }}>

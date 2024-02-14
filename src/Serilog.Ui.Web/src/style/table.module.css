@@ -56,3 +56,12 @@
     }
   }
 }
+
+.detailModalCode {
+  pre {
+    overflow: hidden;
+    padding: 0.5em 1em;
+    white-space: pre-wrap;
+    line-height: 2;
+  }
+}
