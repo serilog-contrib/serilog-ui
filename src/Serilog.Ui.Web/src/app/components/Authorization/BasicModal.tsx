@@ -24,7 +24,7 @@ const BasicModal = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <>
-      <Fieldset legend="Basic Authentication" mb="md">
+      <Fieldset component="form" legend="Basic Authentication" mb="md">
         <TextInput
           placeholder="admin"
           label="Username"
@@ -52,7 +52,7 @@ const BasicModal = ({ onClose }: { onClose: () => void }) => {
       <Group display="flex" justify="right">
         <Button
           display={isHeaderReady ? 'none' : 'inherit'}
-          disabled={!basic_pwd || !basic_user}
+          disabled={!(basic_pwd && basic_user)}
           onClick={onSave}
         >
           Save

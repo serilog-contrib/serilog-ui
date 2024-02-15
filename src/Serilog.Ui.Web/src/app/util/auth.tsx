@@ -1,12 +1,21 @@
+import { Text } from '@mantine/core';
 import { isValidJwtUnixDate } from 'app/util/dates';
 import { decodeJwt } from 'jose';
 import { AuthType } from 'types/types';
+import { sendUnexpectedNotification } from './queries';
 
 export interface IAuthPropertiesData {
   jwt_bearerToken?: string;
   basic_user?: string;
   basic_pwd?: string;
 }
+
+export const IAuthPropertiesStorageKeys = {
+  basic_user: 'serilog_ui_basic_user',
+  jwt_bearerToken: 'serilog_ui_jwt_bearerToken',
+  basic_pwd: '',
+} as const;
+
 export const defaultAuthProps = {
   basic_pwd: '',
   basic_user: '',
@@ -16,15 +25,19 @@ export const defaultAuthProps = {
 const notSavedKeys: (keyof IAuthPropertiesData)[] = ['basic_pwd'];
 
 export const clearAuth = () => {
-  Object.keys(initialAuthProps).forEach((key) => {
-    sessionStorage.removeItem(`serilog_ui_${key}`);
+  Object.keys(IAuthPropertiesStorageKeys).forEach((key) => {
+    sessionStorage.removeItem(IAuthPropertiesStorageKeys[key]);
   });
 
   return defaultAuthProps;
 };
 
-export const getAuthKey = (props: IAuthPropertiesData, key: keyof IAuthPropertiesData) =>
-  props[key] || sessionStorage.getItem(`serilog_ui_${key}`) || '';
+export const getAuthKey = (
+  props: IAuthPropertiesData,
+  key: keyof IAuthPropertiesData,
+) => {
+  return props[key] || sessionStorage.getItem(IAuthPropertiesStorageKeys[key]) || '';
+};
 
 export const getAuthorizationHeader = (
   authType: string = '',
@@ -47,11 +60,11 @@ export const getAuthorizationHeader = (
   }
 };
 
-export const initialAuthProps = {
+export const initialAuthProps: () => IAuthPropertiesData = () => ({
   basic_pwd: '',
   basic_user: getAuthKey({}, 'basic_user'),
   jwt_bearerToken: getAuthKey({}, 'jwt_bearerToken'),
-};
+});
 
 const setAuthDataValue = (
   props: IAuthPropertiesData,
@@ -61,7 +74,7 @@ const setAuthDataValue = (
   props[key] = value;
 
   if (!notSavedKeys.includes(key)) {
-    sessionStorage.setItem(`serilog_ui_${key}`, value);
+    sessionStorage.setItem(IAuthPropertiesStorageKeys[key], value);
   }
 };
 
@@ -101,4 +114,25 @@ export const saveAuthKey = (
   setAuthDataValue(props, key, value);
 
   return { success: validation.success, error: validation.error };
+};
+
+export const checkErrors = ({
+  success,
+  errors,
+}: {
+  success: boolean;
+  errors?: string[];
+}) => {
+  if (!success) {
+    sendUnexpectedNotification(
+      <Text ta="justify">
+        Your authorization data could be invalid, we noticed the following errors:
+        <br />
+        {errors?.join(', ')}
+      </Text>,
+      'Auth validation',
+      'yellow',
+      false,
+    );
+  }
 };

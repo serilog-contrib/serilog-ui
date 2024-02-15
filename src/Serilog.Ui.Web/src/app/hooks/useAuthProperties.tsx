@@ -1,12 +1,11 @@
-import { Text } from '@mantine/core';
 import {
   IAuthPropertiesData,
+  checkErrors,
   clearAuth,
   getAuthorizationHeader,
   initialAuthProps,
   saveAuthKey,
 } from 'app/util/auth';
-import { sendUnexpectedNotification } from 'app/util/queries';
 import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react';
 import { useImmer } from 'use-immer';
 import { useSerilogUiProps } from './useSerilogUiProps';
@@ -34,21 +33,6 @@ const AuthPropertiesContext = createContext<AuthProps>({
   },
 });
 
-const checkErrors = ({ success, errors }: { success: boolean; errors?: string[] }) => {
-  if (!success) {
-    sendUnexpectedNotification(
-      <Text ta="justify">
-        Your authorization data could be invalid, we noticed the following errors:
-        <br />
-        {errors?.join(', ')}
-      </Text>,
-      'Auth validation',
-      'yellow',
-      false,
-    );
-  }
-};
-
 export const AuthPropertiesProvider = ({
   children,
 }: {
@@ -56,7 +40,9 @@ export const AuthPropertiesProvider = ({
 }) => {
   const { authType } = useSerilogUiProps();
 
-  const [authInfo, setAuthInfo] = useImmer<IAuthPropertiesData>({ ...initialAuthProps });
+  const [authInfo, setAuthInfo] = useImmer<IAuthPropertiesData>({
+    ...initialAuthProps(),
+  });
   const [activeAuthProps, setAuthProps] = useImmer<IAuthPropertiesData>(authInfo);
 
   const authHeader = useMemo(

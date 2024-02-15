@@ -4360,6 +4360,11 @@ test-exclude@^6.0.0:
     glob "^7.1.4"
     minimatch "^3.0.4"
 
+testing-library-selector@^0.3.1:
+  version "0.3.1"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/testing-library-selector/-/testing-library-selector-0.3.1.tgz#ef4c2dfef356d7e0e1de458250d8311dae08af77"
+  integrity sha1-70wt/vNW1+Dh3kWCUNgxHa4Ir3c=
+
 text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
