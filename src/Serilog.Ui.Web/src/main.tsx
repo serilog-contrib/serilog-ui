@@ -1,4 +1,3 @@
-import '@fontsource-variable/open-sans';
 import '@fontsource/mononoki';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
