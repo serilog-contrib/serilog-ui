@@ -1,5 +1,6 @@
 import { MantineColorScheme, type MantineTheme } from '@mantine/core';
-import { BundledTheme, CodeOptionsMultipleThemes, codeToHtml } from 'shiki';
+import { BundledTheme, CodeOptionsMultipleThemes } from 'shiki';
+import { highlighter } from 'style/shikijiBundle';
 import formatXml from 'xml-formatter';
 import { LogLevel, LogType } from '../../types/types';
 import {
@@ -54,9 +55,10 @@ export const renderCodeContent = async (
     return modalContent;
 
   try {
+    const highlighterInstance = await highlighter();
     if (contentType === LogType.Xml) {
       const xmlResult = formatXml(modalContent, { forceSelfClosingEmptyTag: true });
-      return await codeToHtml(xmlResult, {
+      return highlighterInstance.codeToHtml(xmlResult, {
         lang: 'xml',
         ...shikijiThemes,
         mergeWhitespaces: true,
@@ -65,7 +67,10 @@ export const renderCodeContent = async (
 
     if (contentType === LogType.Json) {
       const jsonResult = JSON.stringify(JSON.parse(modalContent), null, 4) ?? '{}';
-      return await codeToHtml(jsonResult, { lang: 'json', ...shikijiThemes });
+      return highlighterInstance.codeToHtml(jsonResult, {
+        lang: 'json',
+        ...shikijiThemes,
+      });
     }
   } catch {
     console.warn(`${modalContent} is not a valid json!`);
