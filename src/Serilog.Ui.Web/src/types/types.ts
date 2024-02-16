@@ -50,9 +50,10 @@ export enum SearchParameters {
   Page = 'page',
   Level = 'level',
   Search = 'search',
-  StartDate = 'startDate', // wip
-  EndDate = 'endDate', // wip
-  SortDirection = 'sort', // wip
+  StartDate = 'startDate',
+  EndDate = 'endDate',
+  SortProperty = 'sortOn',
+  SortDirection = 'sortBy',
 }
 
 export interface SearchForm {
@@ -61,8 +62,21 @@ export interface SearchForm {
   startDate: Date | null;
   endDate: Date | null;
   search: string;
+  sortOn: SortPropertyOptions;
+  sortBy: SortDirectionOptions;
   entriesPerPage: string;
   page: number;
+}
+
+export enum SortPropertyOptions {
+  Timestamp = 'Timestamp',
+  Level = 'Level',
+  Message = 'Message',
+}
+
+export enum SortDirectionOptions {
+  Asc = 'Asc',
+  Desc = 'Desc',
 }
 
 // column definitions

@@ -1,7 +1,11 @@
 import { isArrayGuard } from 'app/util/guards';
 import { useEffect } from 'react';
 import { useForm, useFormContext } from 'react-hook-form';
-import { type SearchForm } from '../../types/types';
+import {
+  SortDirectionOptions,
+  SortPropertyOptions,
+  type SearchForm,
+} from '../../types/types';
 import { useQueryTableKeys } from './useQueryTableKeys';
 
 export const searchFormInitialValues: SearchForm = {
@@ -10,6 +14,8 @@ export const searchFormInitialValues: SearchForm = {
   startDate: null,
   endDate: null,
   search: '',
+  sortBy: SortDirectionOptions.Desc,
+  sortOn: SortPropertyOptions.Timestamp,
   entriesPerPage: '10',
   page: 1,
 };
@@ -23,7 +29,7 @@ export const useSearchForm = () => {
   const { data, isSuccess } = useQueryTableKeys();
   const tableKeysDefaultValue = isArrayGuard(data) ? data.at(0)! : '';
 
-  const resetForm = async () => {
+  const resetForm = () => {
     useSearchContext.reset({
       ...searchFormInitialValues,
       table: tableKeysDefaultValue,
