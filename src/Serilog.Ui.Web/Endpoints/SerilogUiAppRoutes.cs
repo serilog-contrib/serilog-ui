@@ -9,7 +9,7 @@ using Ardalis.GuardClauses;
 
 namespace Serilog.Ui.Web.Endpoints
 {
-    internal class SerilogUiAppRoutes : ISerilogUiAppRoutes
+    internal class SerilogUiAppRoutes(IAppStreamLoader appStreamLoader) : ISerilogUiAppRoutes
     {
         private static readonly JsonSerializerOptions JsonSerializerOptions = new()
         {
@@ -17,12 +17,7 @@ namespace Serilog.Ui.Web.Endpoints
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        private readonly IAppStreamLoader _streamLoader;
-
-        public SerilogUiAppRoutes(IAppStreamLoader appStreamLoader)
-        {
-            _streamLoader = appStreamLoader;
-        }
+        private readonly IAppStreamLoader _streamLoader = appStreamLoader;
 
         public UiOptions Options { get; private set; }
 

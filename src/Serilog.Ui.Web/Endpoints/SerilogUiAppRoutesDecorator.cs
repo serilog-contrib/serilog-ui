@@ -6,16 +6,11 @@ using System.Threading.Tasks;
 
 namespace Serilog.Ui.Web.Endpoints
 {
-    internal class SerilogUiAppRoutesDecorator : ISerilogUiAppRoutes
+    internal class SerilogUiAppRoutesDecorator(ISerilogUiAppRoutes decoratedService, IAuthorizationFilterService authFilterService) : ISerilogUiAppRoutes
     {
-        private readonly ISerilogUiAppRoutes _decoratedService;
-        private readonly IAuthorizationFilterService _authFilterService;
+        private readonly ISerilogUiAppRoutes _decoratedService = decoratedService;
+        private readonly IAuthorizationFilterService _authFilterService = authFilterService;
 
-        public SerilogUiAppRoutesDecorator(ISerilogUiAppRoutes decoratedService, IAuthorizationFilterService authFilterService)
-        {
-            _decoratedService = decoratedService;
-            _authFilterService = authFilterService;
-        }
         public UiOptions Options { get; private set; }
 
         public Task GetHomeAsync(HttpContext httpContext)

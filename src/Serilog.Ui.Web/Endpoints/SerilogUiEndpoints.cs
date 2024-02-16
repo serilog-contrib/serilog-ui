@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using Serilog.Ui.Core;
@@ -9,24 +8,29 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.Web.Endpoints
 {
     internal class SerilogUiEndpoints : ISerilogUiEndpoints
     {
         private readonly ILogger<SerilogUiEndpoints> _logger;
+        private readonly AggregateDataProvider _aggregateDataProvider;
+
+        public SerilogUiEndpoints(ILogger<SerilogUiEndpoints> logger, AggregateDataProvider aggregateDataProvider)
+        {
+            _logger = logger;
+            _aggregateDataProvider = aggregateDataProvider;
+
+            _providerKeys = _aggregateDataProvider.Keys.ToArray();
+        }
         private static readonly JsonSerializerOptions JsonSerializerOptions = new()
         {
             IgnoreNullValues = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        private string[] _providerKeys;
-
-        public SerilogUiEndpoints(ILogger<SerilogUiEndpoints> logger)
-        {
-            _logger = logger;
-        }
+        private readonly string[] _providerKeys;
 
         public UiOptions Options { get; private set; }
 
@@ -34,12 +38,7 @@ namespace Serilog.Ui.Web.Endpoints
         {
             try
             {
-                httpContext.Response.ContentType = "application/json;charset=utf-8";
-                if (_providerKeys == null)
-                {
-                    var aggregateDataProvider = httpContext.RequestServices.GetRequiredService<AggregateDataProvider>();
-                    _providerKeys = aggregateDataProvider.Keys.ToArray();
-                }
+                SetResponseContentType(httpContext);
 
                 var result = JsonSerializer.Serialize(_providerKeys, JsonSerializerOptions);
                 httpContext.Response.StatusCode = (int)HttpStatusCode.OK;
@@ -55,7 +54,7 @@ namespace Serilog.Ui.Web.Endpoints
         {
             try
             {
-                httpContext.Response.ContentType = "application/json;charset=utf-8";
+                SetResponseContentType(httpContext);
 
                 var result = await FetchLogsAsync(httpContext);
                 httpContext.Response.StatusCode = (int)HttpStatusCode.OK;
@@ -72,45 +71,68 @@ namespace Serilog.Ui.Web.Endpoints
             Options = options;
         }
 
-        private static async Task<string> FetchLogsAsync(HttpContext httpContext)
+        private async Task<string> FetchLogsAsync(HttpContext httpContext)
         {
-            var (currentPage, count, dbKey, level, textSearch, start, end) = ParseQuery(httpContext.Request.Query);
-
-            var provider = httpContext.RequestServices.GetService<AggregateDataProvider>();
+            var (currentPage, count, dbKey, level, textSearch, start, end, on, by) = ParseQuery(httpContext.Request.Query);
 
             if (!string.IsNullOrWhiteSpace(dbKey))
             {
-                provider.SwitchToProvider(dbKey);
+                _aggregateDataProvider.SwitchToProvider(dbKey);
             }
 
-            var (logs, total) = await provider.FetchDataAsync(currentPage, count, level, textSearch, start, end);
+            var (logs, total) = await _aggregateDataProvider.FetchDataAsync(currentPage, count, level, textSearch, start, end, on, by);
 
             var result = JsonSerializer.Serialize(new { logs, total, count, currentPage }, JsonSerializerOptions);
 
             return result;
         }
 
-        private static (int currPage, int count, string dbKey, string level, string textSearch, DateTime? start, DateTime? end) ParseQuery(IQueryCollection queryParams)
+        private static (int currPage, int count, string dbKey, string level, string textSearch, DateTime? start, DateTime? end, SortProperty sortOn, SortDirection sortBy) ParseQuery(IQueryCollection queryParams)
+        {
+            var (currentPage, currentCount) = ParseRequiredParams(queryParams);
+            var (outputStartDate, outputEndDate) = ParseDates(queryParams);
+            var (sortOn, sortBy) = ParseSort(queryParams);
+            queryParams.TryGetValue("key", out var keyStr);
+            queryParams.TryGetValue("level", out var levelStr);
+            queryParams.TryGetValue("search", out var searchStr);
+
+            return (currentPage, currentCount, keyStr, levelStr, searchStr, outputStartDate, outputEndDate, sortOn, sortBy);
+        }
+
+        private static (int currentPage, int currentCount) ParseRequiredParams(IQueryCollection queryParams)
         {
             queryParams.TryGetValue("page", out var pageStr);
             queryParams.TryGetValue("count", out var countStr);
-            queryParams.TryGetValue("level", out var levelStr);
-            queryParams.TryGetValue("search", out var searchStr);
-            queryParams.TryGetValue("startDate", out var startDateStar);
-            queryParams.TryGetValue("endDate", out var endDateStar);
-            queryParams.TryGetValue("key", out var keyStr);
-
             var canPageBeParsed = int.TryParse(pageStr, out var currentPage);
             var canCountBeParsed = int.TryParse(countStr, out var currentCount);
             currentPage = !canPageBeParsed ? 1 : currentPage;
             currentCount = !canCountBeParsed ? 10 : currentCount;
+
+            return (currentPage, currentCount);
+        }
+
+        private static (DateTime?, DateTime?) ParseDates(IQueryCollection queryParams)
+        {
+            queryParams.TryGetValue("startDate", out var startDateStar);
+            queryParams.TryGetValue("endDate", out var endDateStar);
 
             DateTime.TryParse(startDateStar, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var startDate);
             DateTime.TryParse(endDateStar, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var endDate);
             var outputStartDate = startDate == default ? (DateTime?)null : startDate;
             var outputEndDate = endDate == default ? (DateTime?)null : endDate;
 
-            return (currentPage, currentCount, keyStr, levelStr, searchStr, outputStartDate, outputEndDate);
+            return (outputStartDate, outputEndDate);
+        }
+
+        private static (SortProperty, SortDirection) ParseSort(IQueryCollection queryParams)
+        {
+            queryParams.TryGetValue("sortOn", out var sortStrOn);
+            queryParams.TryGetValue("sortBy", out var sortStrBy);
+
+            Enum.TryParse<SortProperty>(sortStrOn, out var sortProperty);
+            Enum.TryParse<SortDirection>(sortStrBy, out var sortDirection);
+
+            return (sortProperty, sortDirection);
         }
 
         /// <summary>
@@ -124,7 +146,7 @@ namespace Serilog.Ui.Web.Endpoints
         {
             _logger.LogError(ex, "{Message}", ex.Message);
 
-            httpContext.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+            httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             httpContext.Response.ContentType = "application/problem+json";
 
             var includeDetails = httpContext.Request.IsLocal();
@@ -145,6 +167,11 @@ namespace Serilog.Ui.Web.Endpoints
 
             var stream = httpContext.Response.Body;
             return JsonSerializer.SerializeAsync(stream, problem);
+        }
+
+        private void SetResponseContentType(HttpContext httpContext)
+        {
+            httpContext.Response.ContentType = "application/json;charset=utf-8";
         }
     }
 }

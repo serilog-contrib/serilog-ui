@@ -4,16 +4,10 @@ using System.Threading.Tasks;
 
 namespace Serilog.Ui.Web.Endpoints
 {
-    internal class SerilogUiEndpointsDecorator : ISerilogUiEndpoints
+    internal class SerilogUiEndpointsDecorator(ISerilogUiEndpoints decoratedService, IAuthorizationFilterService authFilterService) : ISerilogUiEndpoints
     {
-        private readonly ISerilogUiEndpoints _decoratedService;
-        private readonly IAuthorizationFilterService _authFilterService;
-
-        public SerilogUiEndpointsDecorator(ISerilogUiEndpoints decoratedService, IAuthorizationFilterService authFilterService)
-        {
-            _decoratedService = decoratedService;
-            _authFilterService = authFilterService;
-        }
+        private readonly ISerilogUiEndpoints _decoratedService = decoratedService;
+        private readonly IAuthorizationFilterService _authFilterService = authFilterService;
 
         public UiOptions Options { get; private set; }
 
