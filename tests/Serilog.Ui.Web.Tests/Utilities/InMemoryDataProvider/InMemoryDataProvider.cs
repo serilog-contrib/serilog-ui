@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Serilog.Ui.Core.Models;
 
 namespace Ui.Web.Tests.Utilities.InMemoryDataProvider;
 
@@ -13,8 +14,15 @@ public class SerilogInMemoryDataProvider : IDataProvider
 {
     public string Name => nameof(SerilogInMemoryDataProvider);
 
-    public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page, int count, string? level = null, string? searchCriteria = null, DateTime? startDate = null,
-        DateTime? endDate = null)
+    public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page,
+        int count,
+        string? level = null,
+        string? searchCriteria = null,
+        DateTime? startDate = null,
+        DateTime? endDate = null,
+        SearchOptions.SortProperty sortOn = SearchOptions.SortProperty.Timestamp,
+        SearchOptions.SortDirection sortBy = SearchOptions.SortDirection.Desc
+        )
     {
         var events = InMemorySink.Instance.LogEvents;
 

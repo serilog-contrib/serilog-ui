@@ -12,6 +12,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Serilog.Ui.Core.Models;
 using Xunit;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -30,7 +31,8 @@ namespace Ui.Web.Tests.Endpoints
             _testContext = new DefaultHttpContext();
             _testContext.Request.Host = new HostString("test.dev");
             _testContext.Request.Scheme = "https";
-            _sut = new SerilogUiEndpoints(_loggerMock);
+            var aggregateDataProvider = new AggregateDataProvider(new IDataProvider[] { new FakeProvider(), new FakeSecondProvider() });
+            _sut = new SerilogUiEndpoints(_loggerMock, aggregateDataProvider);
         }
 
         [Fact]
@@ -102,11 +104,6 @@ namespace Ui.Web.Tests.Endpoints
         private async Task<T> HappyPath<T>(Func<HttpContext, Task> call)
         {
             // Arrange
-            var mockProvider = Substitute.For<IServiceProvider>();
-            mockProvider
-                .GetService(typeof(AggregateDataProvider))
-                .Returns(new AggregateDataProvider(new IDataProvider[] { new FakeProvider(), new FakeSecondProvider() }));
-            _testContext.RequestServices = mockProvider;
             _testContext.Response.Body = new MemoryStream();
 
             // Act
@@ -115,7 +112,6 @@ namespace Ui.Web.Tests.Endpoints
             // Assert
             _testContext.Response.ContentType.Should().Be("application/json;charset=utf-8");
             _testContext.Response.StatusCode.Should().Be(200);
-            mockProvider.Received().GetService(typeof(AggregateDataProvider));
             _testContext.Response.Body.Seek(0, SeekOrigin.Begin);
             var result = await new StreamReader(_testContext.Response.Body).ReadToEndAsync();
             return JsonSerializer.Deserialize<T>(result)!;
@@ -125,7 +121,14 @@ namespace Ui.Web.Tests.Endpoints
         {
             public string Name => "FakeFirstProvider";
 
-            public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page, int count, string? level = null, string? searchCriteria = null, DateTime? startDate = null, DateTime? endDate = null)
+            public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page,
+                int count,
+                string? level = null,
+                string? searchCriteria = null,
+                DateTime? startDate = null,
+                DateTime? endDate = null,
+                SearchOptions.SortProperty sortOn = SearchOptions.SortProperty.Timestamp,
+                SearchOptions.SortDirection sortBy = SearchOptions.SortDirection.Desc)
             {
                 if (page != 1 ||
                     count != 10 ||
@@ -145,7 +148,14 @@ namespace Ui.Web.Tests.Endpoints
         {
             public string Name => "FakeSecondProvider";
 
-            public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page, int count, string? level = null, string? searchCriteria = null, DateTime? startDate = null, DateTime? endDate = null)
+            public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page,
+                int count,
+                string? level = null,
+                string? searchCriteria = null,
+                DateTime? startDate = null,
+                DateTime? endDate = null,
+                SearchOptions.SortProperty sortOn = SearchOptions.SortProperty.Timestamp,
+                SearchOptions.SortDirection sortBy = SearchOptions.SortDirection.Desc)
             {
                 if (page != 2 ||
                     count != 30 ||
