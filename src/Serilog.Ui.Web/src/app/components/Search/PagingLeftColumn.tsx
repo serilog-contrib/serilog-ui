@@ -44,7 +44,7 @@ export const PagingLeftColumn = ({
 
   useEffect(() => {
     void refetch();
-  }, [refetch, fieldEntries.value]);
+  }, [refetch, fieldEntries.value, fieldSortOn.value, fieldSortBy.value]);
 
   return (
     <Box

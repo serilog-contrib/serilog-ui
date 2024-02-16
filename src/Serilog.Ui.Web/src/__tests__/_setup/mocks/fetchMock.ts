@@ -1,6 +1,12 @@
 ﻿import dayjs from 'dayjs';
 import { HttpResponse, http } from 'msw';
-import { EncodedSeriLogObject, LogLevel, SearchParameters } from '../../../types/types';
+import {
+  EncodedSeriLogObject,
+  LogLevel,
+  SearchParameters,
+  SortDirectionOptions,
+  SortPropertyOptions,
+} from '../../../types/types';
 import { fakeLogs } from './samples';
 
 const developmentListenersHost = ['https://localhost:3001'];
@@ -13,7 +19,12 @@ export const handlers = developmentListenersHost.flatMap((dlh) => [
       .filter(byLevel(LogLevel[params.level || '']))
       .filter(byDates(params.start || '', params.end || ''))
       .filter(bySearch(params.search || ''))
-      .sort(byDirection(params.sort || ''));
+      .sort(
+        byDirection(
+          params.sortOn ?? SortPropertyOptions.Timestamp,
+          params.sortBy ?? SortDirectionOptions.Desc,
+        ),
+      );
     const sliceValues = applyLimits(params.count, params.page);
 
     const data = {
@@ -36,7 +47,8 @@ const getSearchParams = (params: URLSearchParams) => ({
   search: params.get(SearchParameters.Search),
   start: params.get(SearchParameters.StartDate),
   end: params.get(SearchParameters.EndDate),
-  sort: params.get(SearchParameters.SortDirection),
+  sortOn: params.get(SearchParameters.SortProperty),
+  sortBy: params.get(SearchParameters.SortDirection),
 });
 
 const byLevel = (level?: LogLevel) => (item: EncodedSeriLogObject) =>
@@ -59,14 +71,30 @@ const byDates = (start?: string, end?: string) => (item: EncodedSeriLogObject) =
 };
 const bySearch = (search: string) => (item: EncodedSeriLogObject) =>
   search ? item.message.toLowerCase().search(search.toLowerCase()) > -1 : true;
+
 const byDirection =
-  (direction: string) => (item1: EncodedSeriLogObject, item2: EncodedSeriLogObject) => {
-    const first = dayjs(item1.timestamp);
-    const second = dayjs(item2.timestamp);
-    const sortAsc = () => (first.isAfter(second) ? 1 : -1);
-    const sortDesc = () => (first.isAfter(second) ? -1 : 1);
-    return direction === 'desc' ? sortDesc() : sortAsc();
+  (on: string, direction: string) =>
+  (item1: EncodedSeriLogObject, item2: EncodedSeriLogObject) => {
+    if (on === SortPropertyOptions.Timestamp) {
+      const first = dayjs(item1.timestamp);
+      const second = dayjs(item2.timestamp);
+
+      const sortAsc = () => (first.isAfter(second) ? 1 : -1);
+      const sortDesc = () => (first.isAfter(second) ? -1 : 1);
+      return direction === SortDirectionOptions.Desc ? sortDesc() : sortAsc();
+    }
+
+    if (on === SortPropertyOptions.Message) {
+      return direction === SortDirectionOptions.Desc
+        ? item2.message.localeCompare(item1.message)
+        : item1.message.localeCompare(item2.message);
+    }
+
+    return direction === SortDirectionOptions.Desc
+      ? item2.level.localeCompare(item1.level)
+      : item1.level.localeCompare(item2.level);
   };
+
 const applyLimits = (limit: number, page: number) => ({
   start: limit * page - limit,
   end: limit * page,
