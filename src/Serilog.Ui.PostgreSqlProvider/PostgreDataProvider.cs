@@ -7,12 +7,15 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.PostgreSqlProvider;
 
 /// <inheritdoc/>
 public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
 {
+    private readonly PostgreSqlDbOptions options = options ?? throw new ArgumentNullException(nameof(options));
+
     /// <inheritdoc/>
     public string Name => options.ToDataProviderName("NPGSQL");
 
@@ -23,7 +26,9 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
         string level = null,
         string searchCriteria = null,
         DateTime? startDate = null,
-        DateTime? endDate = null
+        DateTime? endDate = null,
+        SortProperty sortOn = SortProperty.Timestamp,
+        SortDirection sortBy = SortDirection.Desc
     )
     {
         if (startDate != null && startDate.Value.Kind != DateTimeKind.Utc)
@@ -36,7 +41,7 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
             endDate = DateTime.SpecifyKind(endDate.Value, DateTimeKind.Utc);
         }
 
-        var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
+        var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate, sortOn, sortBy);
         var logCountTask = CountLogsAsync(level, searchCriteria, startDate, endDate);
         await Task.WhenAll(logsTask, logCountTask);
 
@@ -49,9 +54,11 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
         string level,
         string searchCriteria,
         DateTime? startDate,
-        DateTime? endDate)
+        DateTime? endDate,
+        SortProperty sortOn,
+        SortDirection sortBy)
     {
-        var query = QueryBuilder.BuildFetchLogsQuery(options.Schema, options.TableName, level, searchCriteria, ref startDate, ref endDate);
+        var query = QueryBuilder.BuildFetchLogsQuery(options.Schema, options.TableName, level, searchCriteria, ref startDate, ref endDate, sortOn, sortBy);
 
         using IDbConnection connection = new NpgsqlConnection(options.ConnectionString);
 

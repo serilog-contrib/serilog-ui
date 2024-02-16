@@ -1,7 +1,9 @@
 ﻿using Serilog.Ui.PostgreSqlProvider.Models;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
+using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.PostgreSqlProvider;
 
@@ -22,7 +24,9 @@ internal static class QueryBuilder
         string level,
         string searchCriteria,
         ref DateTime? startDate,
-        ref DateTime? endDate)
+        ref DateTime? endDate,
+        SortProperty sortOn = SortProperty.Timestamp,
+        SortDirection sortBy = SortDirection.Desc)
     {
         StringBuilder queryBuilder = new();
 
@@ -36,10 +40,11 @@ internal static class QueryBuilder
             .Append("\"");
 
         GenerateWhereClause(queryBuilder, level, searchCriteria, ref startDate, ref endDate);
+        var sortClause = GenerateSortClause(sortOn, sortBy);
 
         queryBuilder.Append(" ORDER BY \"");
-        queryBuilder.Append(_columns.Timestamp);
-        queryBuilder.Append("\" DESC LIMIT @Count OFFSET @Offset ");
+        queryBuilder.Append(sortClause);
+        queryBuilder.Append("\" LIMIT @Count OFFSET @Offset ");
 
         return queryBuilder.ToString();
     }
@@ -100,5 +105,20 @@ internal static class QueryBuilder
                 .Append(" WHERE TRUE AND ")
                 .Append(string.Join(" AND ", conditions)); ;
         }
+    }
+
+    private static string GenerateSortClause(SortProperty sortOn, SortDirection sortBy)
+    {
+        var isDesc = sortBy == SortDirection.Desc;
+
+        var sortPropertyName = sortOn switch
+        {
+            SortProperty.Timestamp => _columns.Timestamp,
+            SortProperty.Level => _columns.Level,
+            SortProperty.Message => _columns.MessageTemplate,
+            _ => _columns.Timestamp,
+        };
+
+        return $"{sortPropertyName} ${sortBy.ToString().ToUpper()}";
     }
 }

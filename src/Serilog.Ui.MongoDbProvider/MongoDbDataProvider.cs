@@ -1,9 +1,12 @@
-﻿using MongoDB.Driver;
+﻿using Ardalis.GuardClauses;
+using MongoDB.Driver;
 using Serilog.Ui.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Serilog.Ui.Core.Models.SearchOptions;
+using SortDirection = Serilog.Ui.Core.Models.SearchOptions.SortDirection;
 
 namespace Serilog.Ui.MongoDbProvider
 {
@@ -14,9 +17,8 @@ namespace Serilog.Ui.MongoDbProvider
 
         public MongoDbDataProvider(IMongoClient client, MongoDbOptions options)
         {
-            _options = options;
-            if (client is null) throw new ArgumentNullException(nameof(client));
-            if (options is null) throw new ArgumentNullException(nameof(options));
+            Guard.Against.Null(client, nameof(client));
+            _options = options ?? throw new ArgumentNullException(nameof(options));
 
             _collection = client.GetDatabase(options.DatabaseName)
                 .GetCollection<MongoDbLogModel>(options.CollectionName);
@@ -28,9 +30,11 @@ namespace Serilog.Ui.MongoDbProvider
             string level = null,
             string searchCriteria = null,
             DateTime? startDate = null,
-            DateTime? endDate = null)
+            DateTime? endDate = null,
+            SortProperty sortOn = SortProperty.Timestamp,
+            SortDirection sortBy = SortDirection.Desc)
         {
-            var logsTask = await GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
+            var logsTask = await GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate, sortOn, sortBy);
             var logCountTask = await CountLogsAsync(level, searchCriteria, startDate, endDate);
 
             return (logsTask, logCountTask);
@@ -44,7 +48,9 @@ namespace Serilog.Ui.MongoDbProvider
             string level,
             string searchCriteria,
             DateTime? startDate,
-            DateTime? endDate)
+            DateTime? endDate,
+            SortProperty sortOn,
+            SortDirection sortBy)
         {
             try
             {
@@ -57,11 +63,13 @@ namespace Serilog.Ui.MongoDbProvider
                         new CreateIndexModel<MongoDbLogModel>(Builders<MongoDbLogModel>.IndexKeys.Text(p => p.RenderedMessage)));
                 }
 
+                var sortClause = GenerateSortClause(sortOn, sortBy);
+
                 var logs = await _collection
                     .Find(builder)
+                    .Sort(sortClause)
                     .Skip(count * page)
                     .Limit(count)
-                    .SortByDescending(entry => entry.Timestamp)
                     .ToListAsync();
 
                 var index = 1;
@@ -115,6 +123,20 @@ namespace Serilog.Ui.MongoDbProvider
                 var utcEnd = endDate.Value.ToUniversalTime();
                 builder &= Builders<MongoDbLogModel>.Filter.Lte(entry => entry.UtcTimeStamp, utcEnd);
             }
+        }
+
+
+        private static SortDefinition<MongoDbLogModel> GenerateSortClause(SortProperty sortOn, SortDirection sortBy)
+        {
+            var isDesc = sortBy == SortDirection.Desc;
+            var sortPropertyName = typeof(MongoDbLogModel).GetProperty(sortOn.ToString()).Name;
+
+            // workaround to use utctimestamp
+            if (sortPropertyName.Equals(SortProperty.Timestamp.ToString())) sortPropertyName = nameof(MongoDbLogModel.UtcTimeStamp);
+            if (sortPropertyName.Equals(SortProperty.Message.ToString())) sortPropertyName = nameof(MongoDbLogModel.RenderedMessage);
+            return isDesc ?
+                Builders<MongoDbLogModel>.Sort.Descending(sortPropertyName) :
+                Builders<MongoDbLogModel>.Sort.Ascending(sortPropertyName);
         }
     }
 }

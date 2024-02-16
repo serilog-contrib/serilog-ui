@@ -5,17 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.MySqlProvider
 {
-    public class MySqlDataProvider : IDataProvider
+    public class MySqlDataProvider(RelationalDbOptions options) : IDataProvider
     {
-        private readonly RelationalDbOptions _options;
-
-        public MySqlDataProvider(RelationalDbOptions options)
-        {
-            _options = options ?? throw new ArgumentNullException(nameof(options));
-        }
+        private readonly RelationalDbOptions _options = options ?? throw new ArgumentNullException(nameof(options));
 
         public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
             int page,
@@ -23,10 +19,12 @@ namespace Serilog.Ui.MySqlProvider
             string level = null,
             string searchCriteria = null,
             DateTime? startDate = null,
-            DateTime? endDate = null
+            DateTime? endDate = null,
+            SortProperty sortOn = SortProperty.Timestamp,
+            SortDirection sortBy = SortDirection.Desc
         )
         {
-            var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
+            var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate, sortOn, sortBy);
             var logCountTask = CountLogsAsync(level, searchCriteria, startDate, endDate);
 
             await Task.WhenAll(logsTask, logCountTask);
@@ -42,7 +40,9 @@ namespace Serilog.Ui.MySqlProvider
             string level,
             string searchCriteria,
             DateTime? startDate,
-            DateTime? endDate)
+            DateTime? endDate,
+            SortProperty sortOn,
+            SortDirection sortBy)
         {
             var queryBuilder = new StringBuilder();
             queryBuilder.Append("SELECT Id, Message, LogLevel AS `Level`, TimeStamp, Exception, Properties From `");
@@ -51,26 +51,26 @@ namespace Serilog.Ui.MySqlProvider
 
             GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
 
-            queryBuilder.Append("ORDER BY Id DESC LIMIT @Offset, @Count");
+            queryBuilder.Append("ORDER BY @SortOn @SortBy LIMIT @Offset, @Count");
 
-            using (var connection = new MySqlConnection(_options.ConnectionString))
+            using var connection = new MySqlConnection(_options.ConnectionString);
+            var param = new
             {
-                var param = new
-                {
-                    Offset = page * count,
-                    Count = count,
-                    Level = level,
-                    Search = searchCriteria != null ? $"%{searchCriteria}%" : null,
-                    StartDate = startDate,
-                    EndDate = endDate
-                };
-                var logs = await connection.QueryAsync<MySqlLogModel>(queryBuilder.ToString(), param);
-                var index = 1;
-                foreach (var log in logs)
-                    log.RowNo = (page * count) + index++;
+                Offset = page * count,
+                Count = count,
+                Level = level,
+                Search = searchCriteria != null ? $"%{searchCriteria}%" : null,
+                StartDate = startDate,
+                EndDate = endDate,
+                SortOn = sortOn.ToString(),
+                SortBy = sortBy.ToString().ToUpper()
+            };
+            var logs = await connection.QueryAsync<MySqlLogModel>(queryBuilder.ToString(), param);
+            var index = 1;
+            foreach (var log in logs)
+                log.RowNo = (page * count) + index++;
 
-                return logs;
-            }
+            return logs;
         }
 
         private async Task<int> CountLogsAsync(
