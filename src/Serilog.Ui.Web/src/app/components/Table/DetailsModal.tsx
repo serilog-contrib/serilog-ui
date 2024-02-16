@@ -34,7 +34,7 @@ const DetailsModal = ({
       setRenderContent(content || '');
     };
 
-    fetchContent();
+    void fetchContent();
   }, [contentType, modalContent]);
 
   return (

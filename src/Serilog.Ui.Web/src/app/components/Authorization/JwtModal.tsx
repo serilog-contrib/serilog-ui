@@ -1,4 +1,4 @@
-import { Button, Group, PasswordInput } from '@mantine/core';
+import { Button, Fieldset, Group, PasswordInput } from '@mantine/core';
 import useQueryLogs from 'app/hooks/useQueryLogs';
 import { type ChangeEvent } from 'react';
 import { useAuthProperties } from '../../hooks/useAuthProperties';
@@ -17,7 +17,14 @@ const JwtModal = ({ onClose }: { onClose: () => void }) => {
   };
   return (
     <>
-      <Group mb="md">
+      <Fieldset
+        component="form"
+        legend="JWT Authentication"
+        mb="md"
+        onSubmit={(event) => {
+          event.preventDefault();
+        }}
+      >
         <PasswordInput
           placeholder="eyJhbGciOiJSUz [...]"
           label="JWT Token"
@@ -32,7 +39,7 @@ const JwtModal = ({ onClose }: { onClose: () => void }) => {
             updateAuthKey('jwt_bearerToken', event.currentTarget.value);
           }}
         />
-      </Group>
+      </Fieldset>
       <Group display="flex" justify="right">
         <Button display={isHeaderReady ? 'none' : 'inherit'} onClick={onSave}>
           Save

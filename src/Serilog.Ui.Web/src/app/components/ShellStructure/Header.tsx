@@ -1,7 +1,6 @@
 import loadable from '@loadable/component';
 import {
   ActionIcon,
-  Badge,
   Group,
   em,
   useMantineColorScheme,
@@ -10,10 +9,9 @@ import {
 import { useMediaQuery } from '@mantine/hooks';
 import { IconHomeDot, IconMoonStars, IconSun } from '@tabler/icons-react';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { currentYear } from 'app/util/dates';
 import { isStringGuard } from 'app/util/guards';
-import { serilogUiUrl } from 'app/util/prettyPrints';
 import classes from 'style/header.module.css';
+import BrandBadge from './BrandBadge';
 
 const HeaderActivity = loadable(() => import('./HeaderActivity'));
 
@@ -35,7 +33,7 @@ const Head = ({ isMobileOpen, toggleMobile }: IProps) => {
   return (
     <Group
       display="grid"
-      bg={colorScheme === 'dark' ? theme.colors.gray[8] : theme.colors.gray[3]}
+      bg={colorScheme === 'dark' ? theme.colors.blue[8] : theme.colors.blue[3]}
       className={isMobileSize ? classes.mobileGrid : classes.desktopGrid}
       w="100%"
       h="100%"
@@ -68,16 +66,7 @@ const Head = ({ isMobileOpen, toggleMobile }: IProps) => {
             <IconMoonStars size="1rem" stroke="3" />
           )}
         </ActionIcon>
-        <Badge
-          component="a"
-          href={serilogUiUrl}
-          style={{ cursor: 'pointer' }}
-          target="_blank"
-          size={isMobileSize ? 'sm' : 'lg'}
-          rightSection={currentYear}
-        >
-          Serilog UI
-        </Badge>
+        <BrandBadge size={isMobileSize ? 'sm' : 'lg'} />
       </Group>
     </Group>
   );

@@ -1,11 +1,10 @@
 import loadable from '@loadable/component';
-import { Anchor, Badge, Box, Button } from '@mantine/core';
+import { Box, Button } from '@mantine/core';
 import { IconHomeDot } from '@tabler/icons-react';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { currentYear } from 'app/util/dates';
-import { serilogUiUrl } from 'app/util/prettyPrints';
 import styles from 'style/header.module.css';
 import { isStringGuard } from '../../util/guards';
+import BrandBadge from './BrandBadge';
 
 const FilterButton = loadable(() => import('./FilterButton'));
 const AuthorizeButton = loadable(() => import('../Authorization/AuthorizeButton'));
@@ -47,9 +46,7 @@ const Sidebar = () => {
       <Box>
         <Paging />
         <Box display="flex">
-          <Anchor m="0 auto" href={serilogUiUrl} target="_blank">
-            <Badge size="md">Serilog Ui | {currentYear}</Badge>
-          </Anchor>
+          <BrandBadge size="lg" margin={'0 auto'} />
         </Box>
       </Box>
     </Box>

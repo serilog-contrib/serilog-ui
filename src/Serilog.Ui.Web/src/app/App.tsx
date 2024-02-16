@@ -1,5 +1,11 @@
 import loadable from '@loadable/component';
-import { AppShell, ColorSchemeScript, MantineProvider } from '@mantine/core';
+import {
+  AppShell,
+  AppShellHeaderConfiguration,
+  AppShellNavbarConfiguration,
+  ColorSchemeScript,
+  MantineProvider,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Notifications } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -35,8 +41,8 @@ const Shell = () => {
   const { methods } = useSearchForm();
   const [mobileOpen, { toggle: toggleMobile, close }] = useDisclosure();
 
-  const headerProps = { height: '4.3em' };
-  const navbarProps = {
+  const headerProps: AppShellHeaderConfiguration = { height: '4.3em' };
+  const navbarProps: AppShellNavbarConfiguration = {
     breakpoint: 'sm',
     collapsed: { mobile: !mobileOpen, desktop: true },
     width: 70,
