@@ -14,12 +14,6 @@ namespace ElasticSearch.Tests.DataProvider
     {
         public DataProviderPaginationTest(ElasticTestProvider instance) : base(instance) { }
 
-        public override Task It_fetches_with_limit() => base.It_fetches_with_limit();
-
-        public override Task It_fetches_with_limit_and_skip() => base.It_fetches_with_limit_and_skip();
-
-        public override Task It_fetches_with_skip() => base.It_fetches_with_skip();
-
         [I]
         public override Task It_throws_when_skip_is_zero()
         {
