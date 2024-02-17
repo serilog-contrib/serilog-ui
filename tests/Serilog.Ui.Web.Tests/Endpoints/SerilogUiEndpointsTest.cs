@@ -80,9 +80,10 @@ namespace Ui.Web.Tests.Endpoints
         {
             // Arrange
             _testContext.Response.Body = new MemoryStream();
-
+            var sut = new SerilogUiEndpoints(_loggerMock, new AggregateDataProvider(new[] { new BrokenProvider() }));
+            
             // Act
-            await _sut.GetLogsAsync(_testContext);
+            await sut.GetLogsAsync(_testContext);
 
             // Assert
             _testContext.Response.StatusCode.Should().Be(500);
@@ -92,7 +93,7 @@ namespace Ui.Web.Tests.Endpoints
             _testContext.Response.StatusCode.Should().Be((int) HttpStatusCode.InternalServerError);
             _testContext.Response.ContentType.Should().Be("application/problem+json");
             
-            var problemDetails = JsonSerializer.Deserialize<ProblemDetails>(result) ?? throw new InvalidOperationException("JsonSerializer.Deserialize<ProblemDetails>(result) == null");
+            var problemDetails = JsonSerializer.Deserialize<ProblemDetails>(result)!;
 
             problemDetails.Title.Should().StartWith("An error occured");
             problemDetails.Detail.Should().NotBeNullOrWhiteSpace();
@@ -171,6 +172,23 @@ namespace Ui.Web.Tests.Endpoints
             }
         }
 
+        private class BrokenProvider : IDataProvider
+        {
+            public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page,
+                int count,
+                string level = null,
+                string searchCriteria = null,
+                DateTime? startDate = null,
+                DateTime? endDate = null,
+                SearchOptions.SortProperty sortOn = SearchOptions.SortProperty.Timestamp,
+                SearchOptions.SortDirection sortBy = SearchOptions.SortDirection.Desc)
+            {
+                throw new NotImplementedException();
+            }
+
+            public string Name { get; } = "BrokenProvider";
+        };
+        
         private class AnonymousObject
         {
             [JsonPropertyName("logs")]

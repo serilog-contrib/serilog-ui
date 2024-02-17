@@ -42,9 +42,9 @@ internal static class QueryBuilder
         GenerateWhereClause(queryBuilder, level, searchCriteria, ref startDate, ref endDate);
         var sortClause = GenerateSortClause(sortOn, sortBy);
 
-        queryBuilder.Append(" ORDER BY \"");
+        queryBuilder.Append(" ORDER BY ");
         queryBuilder.Append(sortClause);
-        queryBuilder.Append("\" LIMIT @Count OFFSET @Offset ");
+        queryBuilder.Append(" LIMIT @Count OFFSET @Offset ");
 
         return queryBuilder.ToString();
     }
@@ -119,6 +119,6 @@ internal static class QueryBuilder
             _ => _columns.Timestamp,
         };
 
-        return $"{sortPropertyName} ${sortBy.ToString().ToUpper()}";
+        return $"\"{sortPropertyName}\" {sortBy.ToString().ToUpper()}";
     }
 }

@@ -8,9 +8,12 @@ import App from './app/App';
 /**
  * TODO:
  * - change basic to receive data from ui...
- * - filter by _id
+ * - filter by _id (react router and opening log by itself)
+ * - remove index.html from end of url and intercept all towards...
  * - sort by option
- * - better colors?
+ * - text in basicmodal: is only for test and development
+ * - update basic auth be...
+ * - sample with bassic and jwt auth that passes when receivign from modal auth header
  */
 
 const main = async () => {
