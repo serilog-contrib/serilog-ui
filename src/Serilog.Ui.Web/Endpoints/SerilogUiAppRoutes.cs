@@ -17,8 +17,6 @@ namespace Serilog.Ui.Web.Endpoints
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        private readonly IAppStreamLoader _streamLoader = appStreamLoader;
-
         public UiOptions Options { get; private set; }
 
         public async Task GetHomeAsync(HttpContext httpContext)
@@ -27,7 +25,7 @@ namespace Serilog.Ui.Web.Endpoints
 
             var response = httpContext.Response;
 
-            using var stream = _streamLoader.GetIndex();
+            await using var stream = appStreamLoader.GetIndex();
             if (stream is null)
             {
                 response.StatusCode = 500;
@@ -44,7 +42,7 @@ namespace Serilog.Ui.Web.Endpoints
 
         public Task RedirectHomeAsync(HttpContext httpContext)
         {
-            var indexUrl = httpContext.Request.GetEncodedUrl().TrimEnd('/') + "/index.html";
+            var indexUrl = httpContext.Request.GetEncodedUrl().Replace("index.html", "");
 
             httpContext.Response.StatusCode = 301;
             httpContext.Response.Headers["Location"] = indexUrl;

@@ -4,9 +4,10 @@ import { SerilogUiConfig } from 'app/hooks/useSerilogUiProps';
 import { ReactNode } from 'react';
 import { AuthType } from 'types/types';
 
-export const determineHost = ['development', 'test'].includes(import.meta.env.MODE ?? '')
-  ? 'https://localhost:3001'
-  : location.pathname.replace('/index.html', '');
+export const determineHost = (routePrefix?: string) =>
+  ['development', 'test'].includes(import.meta.env.MODE ?? '')
+    ? 'https://localhost:3001'
+    : routePrefix || '';
 
 export const createRequestInit = (
   uiProps: SerilogUiConfig,

@@ -3,8 +3,10 @@ import { fetchLogs } from '../queries/logs';
 import { isObjectGuard } from '../util/guards';
 import { useQueryHeaders } from './useQueryHeaders';
 import { useSearchForm } from './useSearchForm';
+import { useSerilogUiProps } from './useSerilogUiProps';
 
 const useQueryLogs = () => {
+  const { routePrefix } = useSerilogUiProps();
   const { headers: requestInit } = useQueryHeaders();
   const { getValues } = useSearchForm();
   const searchValues = getValues();
@@ -14,7 +16,7 @@ const useQueryLogs = () => {
     queryKey: ['get-logs'],
     queryFn: async () => {
       return isObjectGuard(searchValues)
-        ? await fetchLogs(searchValues, requestInit)
+        ? await fetchLogs(searchValues, requestInit, routePrefix)
         : null;
     },
     placeholderData: keepPreviousData,

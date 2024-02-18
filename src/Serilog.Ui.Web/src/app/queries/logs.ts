@@ -7,8 +7,12 @@ import {
   sendUnexpectedNotification,
 } from '../util/queries';
 
-export const fetchLogs = async (values: SearchForm, fetchOptions: RequestInit) => {
-  const prepareUrl = prepareSearchUrl(values);
+export const fetchLogs = async (
+  values: SearchForm,
+  fetchOptions: RequestInit,
+  routePrefix?: string,
+) => {
+  const prepareUrl = prepareSearchUrl(values, routePrefix);
   if (!prepareUrl.areDatesAdmitted) return;
 
   try {
@@ -24,7 +28,7 @@ export const fetchLogs = async (values: SearchForm, fetchOptions: RequestInit) =
   }
 };
 
-const prepareSearchUrl = (input: SearchForm) => {
+const prepareSearchUrl = (input: SearchForm, routePrefix?: string) => {
   const { entriesPerPage: count, page, table: key, ...inputData } = { ...input };
 
   const startDate = inputData.startDate;
@@ -43,7 +47,7 @@ const prepareSearchUrl = (input: SearchForm) => {
     return { areDatesAdmitted: false, url: '' };
   }
 
-  const url = `${determineHost}/api/logs?page=${page}&count=${count}`;
+  const url = `${determineHost(routePrefix)}/api/logs?page=${page}&count=${count}`;
 
   const startAsString = startDate?.toISOString() ?? '';
   inputData['startDate'] = startAsString as unknown as Date;

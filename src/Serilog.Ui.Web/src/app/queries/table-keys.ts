@@ -4,8 +4,8 @@ import {
   sendUnexpectedNotification,
 } from '../util/queries';
 
-export const fetchKeys = async (fetchOptions: RequestInit) => {
-  const url = `${determineHost}/api/keys`;
+export const fetchKeys = async (fetchOptions: RequestInit, routePrefix?: string) => {
+  const url = `${determineHost(routePrefix)}/api/keys`;
 
   try {
     const req = await fetch(url, fetchOptions);

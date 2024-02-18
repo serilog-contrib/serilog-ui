@@ -25,18 +25,26 @@ export const SerilogUiPropsProvider = ({
   const [isUtc, setIsUtc] = useState<boolean>(false);
 
   useEffect(() => {
-    const config = '%(Configs)';
+    const setDefaults = () => {
+      setServerProps({
+        routePrefix: 'serilog-ui',
+        authType: AuthType.Jwt,
+        homeUrl: 'https://google.com',
+      });
+    };
+    const config = document.getElementById('serilog-ui-props')?.innerText;
+    if (!config) {
+      setDefaults();
+      return;
+    }
+
     try {
       const decodedConfig = decodeURIComponent(config);
       const configObject = JSON.parse(decodedConfig);
       setServerProps(configObject);
     } catch (e) {
       console.warn('SerilogUI Config not received correctly! Using defaults');
-      setServerProps({
-        routePrefix: 'serilog-ui',
-        authType: AuthType.Jwt,
-        homeUrl: 'https://google.com',
-      });
+      setDefaults();
     }
   }, []);
 
