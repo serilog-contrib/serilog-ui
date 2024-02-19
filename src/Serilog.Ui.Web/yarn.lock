@@ -784,10 +784,10 @@
   resolved "https://registry.yarnpkg.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.12.0.tgz#9ffdf9ed133a7464f4ae187eb9e1294413fab235"
   integrity sha512-ZYmr5mS2wd4Dew/JjT0Fqi2NPB/ZhZ2VvPp7SmvPZb4Y1CG/LRcS6tcRo2cYU7zLK5A7cdbhWnnWmUjoI4qapg==
 
-"@shikijs/core@1.1.3":
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/@shikijs/core/-/core-1.1.3.tgz#d8706a0e92d87580bb680ef399cc2e641042b107"
-  integrity sha512-1QWSvWcPbvZXsDxB1F7ejW+Kuxp3z/JHs944hp/f8BYOlFd5gplzseFIkE/GTu/qytFef3zNME4qw1oHbQ0j2A==
+"@shikijs/core@1.1.5":
+  version "1.1.5"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/@shikijs/core/-/core-1.1.5.tgz#ed92e3b7c89ba150564127062c29ae715c5da875"
+  integrity sha1-7ZLjt8iboVBWQScGLCmucVxdqHU=
 
 "@sinclair/typebox@^0.27.8":
   version "0.27.8"
@@ -886,17 +886,17 @@
   resolved "https://registry.yarnpkg.com/@tabler/icons/-/icons-2.47.0.tgz#c41c680d1947e3ab2d60af3febc4132287c60596"
   integrity sha512-4w5evLh+7FUUiA1GucvGj2ReX2TvOjEr4ejXdwL/bsjoSkof6r1gQmzqI+VHrE2CpJpB3al7bCTulOkFa/RcyA==
 
-"@tanstack/query-core@5.20.5":
-  version "5.20.5"
-  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.20.5.tgz#12bb02a937cc8f4f158b1428c0ddef5a1f48479b"
-  integrity sha512-T1W28gGgWn0A++tH3lxj3ZuUVZZorsiKcv+R50RwmPYz62YoDEkG4/aXHZELGkRp4DfrW07dyq2K5dvJ4Wl1aA==
+"@tanstack/query-core@5.21.7":
+  version "5.21.7"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/@tanstack/query-core/-/query-core-5.21.7.tgz#c020574ea683a0738836549a686605f740438a7d"
+  integrity sha1-wCBXTqaDoHOINlSaaGYF90BDin0=
 
-"@tanstack/react-query@^5.20.5":
-  version "5.20.5"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.20.5.tgz#ebf57b6d3344478d505ad8db09a8b29262a35dab"
-  integrity sha512-6MHwJ8G9cnOC/XKrwt56QMc91vN7hLlAQNUA0ubP7h9Jj3a/CmkUwT6ALdFbnVP+PsYdhW3WONa8WQ4VcTaSLQ==
+"@tanstack/react-query@^5.21.7":
+  version "5.21.7"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/@tanstack/react-query/-/react-query-5.21.7.tgz#c49d4000f8564de76693baa5ec6d703a4fca4676"
+  integrity sha1-xJ1AAPhWTedmk7ql7G1wOk/KRnY=
   dependencies:
-    "@tanstack/query-core" "5.20.5"
+    "@tanstack/query-core" "5.21.7"
 
 "@testing-library/dom@^9.0.0", "@testing-library/dom@^9.3.4":
   version "9.3.4"
@@ -1029,10 +1029,19 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^18.2.55":
+"@types/react@*":
   version "18.2.55"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.55.tgz#38141821b7084404b5013742bc4ae08e44da7a67"
   integrity sha512-Y2Tz5P4yz23brwm2d7jNon39qoAtMMmalOQv6+fEFt1mT+FcM3D841wDpoUvFXhaYenuROCy3FZYqdTjM7qVyA==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
+"@types/react@^18.2.56":
+  version "18.2.56"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/@types/react/-/react-18.2.56.tgz#2d3e9021a0b6eb5bfc227761cc61b1c6dc6e0cd8"
+  integrity sha1-LT6QIaC261v8IndhzGGxxtxuDNg=
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -1209,10 +1218,10 @@
   dependencies:
     "@swc/core" "^1.3.107"
 
-"@vitest/coverage-istanbul@^1.2.0":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@vitest/coverage-istanbul/-/coverage-istanbul-1.2.2.tgz#e65f4bcf532195bf5d8c6f60a0e10c3aef01618d"
-  integrity sha512-tJybwO8JT4H9ANz0T0/tJ1M5g3BkuHKYF1w5YO3z9sAiHBdGANrxN9c5lomJx1WSnLzCxQR5xxlJ4TLKbzrR3w==
+"@vitest/coverage-istanbul@^1.3.0":
+  version "1.3.0"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/@vitest/coverage-istanbul/-/coverage-istanbul-1.3.0.tgz#3e3704ff19f23529fc9b6332948741d7473af27d"
+  integrity sha1-PjcE/xnyNSn8m2MylIdB10c68n0=
   dependencies:
     debug "^4.3.4"
     istanbul-lib-coverage "^3.2.2"
@@ -1224,46 +1233,46 @@
     picocolors "^1.0.0"
     test-exclude "^6.0.0"
 
-"@vitest/expect@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@vitest/expect/-/expect-1.2.2.tgz#39ea22e849bbf404b7e5272786551aa99e2663d0"
-  integrity sha512-3jpcdPAD7LwHUUiT2pZTj2U82I2Tcgg2oVPvKxhn6mDI2On6tfvPQTjAI4628GUGDZrCm4Zna9iQHm5cEexOAg==
+"@vitest/expect@1.3.0":
+  version "1.3.0"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/@vitest/expect/-/expect-1.3.0.tgz#09b374357b51be44f4fba9336d59024756f902dc"
+  integrity sha1-CbN0NXtRvkT0+6kzbVkCR1b5Atw=
   dependencies:
-    "@vitest/spy" "1.2.2"
-    "@vitest/utils" "1.2.2"
+    "@vitest/spy" "1.3.0"
+    "@vitest/utils" "1.3.0"
     chai "^4.3.10"
 
-"@vitest/runner@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@vitest/runner/-/runner-1.2.2.tgz#8b060a56ecf8b3d607b044d79f5f50d3cd9fee2f"
-  integrity sha512-JctG7QZ4LSDXr5CsUweFgcpEvrcxOV1Gft7uHrvkQ+fsAVylmWQvnaAr/HDp3LAH1fztGMQZugIheTWjaGzYIg==
+"@vitest/runner@1.3.0":
+  version "1.3.0"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/@vitest/runner/-/runner-1.3.0.tgz#1fabbe8d13642473e1acc3450b4df67cf40ae9d1"
+  integrity sha1-H6u+jRNkJHPhrMNFC032fPQK6dE=
   dependencies:
-    "@vitest/utils" "1.2.2"
+    "@vitest/utils" "1.3.0"
     p-limit "^5.0.0"
     pathe "^1.1.1"
 
-"@vitest/snapshot@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@vitest/snapshot/-/snapshot-1.2.2.tgz#f56fd575569774968f3eeba9382a166c26201042"
-  integrity sha512-SmGY4saEw1+bwE1th6S/cZmPxz/Q4JWsl7LvbQIky2tKE35US4gd0Mjzqfr84/4OD0tikGWaWdMja/nWL5NIPA==
+"@vitest/snapshot@1.3.0":
+  version "1.3.0"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/@vitest/snapshot/-/snapshot-1.3.0.tgz#016b34289d87ef0c64f4cdb9173086c2edf1db7b"
+  integrity sha1-AWs0KJ2H7wxk9M25FzCGwu3x23s=
   dependencies:
     magic-string "^0.30.5"
     pathe "^1.1.1"
     pretty-format "^29.7.0"
 
-"@vitest/spy@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@vitest/spy/-/spy-1.2.2.tgz#8fc2aeccb96cecbbdd192c643729bd5f97a01c86"
-  integrity sha512-k9Gcahssw8d7X3pSLq3e3XEu/0L78mUkCjivUqCQeXJm9clfXR/Td8+AP+VC1O6fKPIDLcHDTAmBOINVuv6+7g==
+"@vitest/spy@1.3.0":
+  version "1.3.0"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/@vitest/spy/-/spy-1.3.0.tgz#1faab30e364324e9826887d479e71c03299fe77b"
+  integrity sha1-H6qzDjZDJOmCaIfUeeccAymf53s=
   dependencies:
     tinyspy "^2.2.0"
 
-"@vitest/ui@^1.2.0":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@vitest/ui/-/ui-1.2.2.tgz#62dddb1ec12bdc5c186e7f2425490bb8b5080695"
-  integrity sha512-CG+5fa8lyoBr+9i+UZGS31Qw81v33QlD10uecHxN2CLJVN+jLnqx4pGzGvFFeJ7jSnUCT0AlbmVWY6fU6NJZmw==
+"@vitest/ui@^1.3.0":
+  version "1.3.0"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/@vitest/ui/-/ui-1.3.0.tgz#6c6a0b30848254a314379ca311bfb493e890b11f"
+  integrity sha1-bGoLMISCVKMUN5yjEb+0k+iQsR8=
   dependencies:
-    "@vitest/utils" "1.2.2"
+    "@vitest/utils" "1.3.0"
     fast-glob "^3.3.2"
     fflate "^0.8.1"
     flatted "^3.2.9"
@@ -1271,10 +1280,10 @@
     picocolors "^1.0.0"
     sirv "^2.0.4"
 
-"@vitest/utils@1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@vitest/utils/-/utils-1.2.2.tgz#94b5a1bd8745ac28cf220a99a8719efea1bcfc83"
-  integrity sha512-WKITBHLsBHlpjnDQahr+XK6RE7MiAsgrIkr0pGhQ9ygoxBfUeG0lUG5iLlzqjmKSlBv3+j5EGsriBzh+C3Tq9g==
+"@vitest/utils@1.3.0":
+  version "1.3.0"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/@vitest/utils/-/utils-1.3.0.tgz#7d46aa00617c1720b075eaeb4c4979a712d86c8e"
+  integrity sha1-fUaqAGF8FyCwderrTEl5pxLYbI4=
   dependencies:
     diff-sequences "^29.6.3"
     estree-walker "^3.0.3"
@@ -1298,7 +1307,7 @@ acorn-walk@^8.3.2:
   resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-8.3.2.tgz#7703af9415f1b6db9315d6895503862e231d34aa"
   integrity sha512-cjkyv4OtNCIeqhHrfS81QWXoCBPExR/J62oyEqepVw8WaQeSqpW2uhuLPh1m9eWhDuOo/jUXVTlifvesOWp/4A==
 
-acorn@^8.10.0, acorn@^8.11.3, acorn@^8.9.0:
+acorn@^8.11.3, acorn@^8.9.0:
   version "8.11.3"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.11.3.tgz#71e0b14e13a4ec160724b38fb7b0f233b1b81d7a"
   integrity sha512-Y9rRfJG5jcKOE0CLisYbojUjIrIEE7AGMzA/Sm4BslANhbS+cDMpgBdcPT91oJ7OuJ9hYJBx59RjbhxVnrF8Xg==
@@ -3095,6 +3104,11 @@ jose@^5.2.2:
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
+js-tokens@^8.0.2:
+  version "8.0.3"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/js-tokens/-/js-tokens-8.0.3.tgz#1c407ec905643603b38b6be6977300406ec48775"
+  integrity sha1-HEB+yQVkNgOzi2vml3MAQG7Eh3U=
+
 js-yaml@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-4.1.0.tgz#c1fb65f8f5017901cdd2c951864ba18458a10602"
@@ -3390,10 +3404,10 @@ ms@^2.1.1:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-msw@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/msw/-/msw-2.2.0.tgz#a57cf5503e85e7ca39d1f188bb0fef93660ff2c9"
-  integrity sha512-98cUGcIphhdf3KDbmSxji7XFqLxeSFAmPUNV00N/U76GOkuUKEwp6MHqM6KW70rlpgeJP8qIWueppdnVThzG1g==
+msw@^2.2.1:
+  version "2.2.1"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/msw/-/msw-2.2.1.tgz#5ece7ee81331aabe632fe331f07e71e8a3949499"
+  integrity sha1-Xs5+6BMxqr5jL+Mx8H5x6KOUlJk=
   dependencies:
     "@bundled-es-modules/cookie" "^2.0.0"
     "@bundled-es-modules/statuses" "^1.0.1"
@@ -4142,12 +4156,12 @@ shebang-regex@^3.0.0:
   resolved "https://registry.yarnpkg.com/shebang-regex/-/shebang-regex-3.0.0.tgz#ae16f1644d873ecad843b0307b143362d4c42172"
   integrity sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==
 
-shiki@^1.1.2:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/shiki/-/shiki-1.1.3.tgz#9266a46d6f4f389f983c20d0e4c7389b4a0885f4"
-  integrity sha512-k/B4UvtWmGcHMLp6JnQminlex3Go5MHKXEiormmzTJECAiSQiwSon6USuwTyto8EMUQc9aYRJ7HojkfVLbBk+g==
+shiki@^1.1.5:
+  version "1.1.5"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/shiki/-/shiki-1.1.5.tgz#9d48cd8f835706dd38ccb879c87351271583d6ba"
+  integrity sha1-nUjNj4NXBt04zLh5yHNRJxWD1ro=
   dependencies:
-    "@shikijs/core" "1.1.3"
+    "@shikijs/core" "1.1.5"
 
 side-channel@^1.0.4:
   version "1.0.5"
@@ -4305,12 +4319,12 @@ strip-json-comments@^3.1.1:
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-3.1.1.tgz#31f1281b3832630434831c310c01cccda8cbe006"
   integrity sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==
 
-strip-literal@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/strip-literal/-/strip-literal-1.3.0.tgz#db3942c2ec1699e6836ad230090b84bb458e3a07"
-  integrity sha512-PugKzOsyXpArk0yWmUwqOZecSO0GH0bPoctLcqNDH9J04pVW3lflYE0ujElBGTloevcxF5MofAOZ7C5l2b+wLg==
+strip-literal@^2.0.0:
+  version "2.0.0"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/strip-literal/-/strip-literal-2.0.0.tgz#5d063580933e4e03ebb669b12db64d2200687527"
+  integrity sha1-XQY1gJM+TgPrtmmxLbZNIgBodSc=
   dependencies:
-    acorn "^8.10.0"
+    js-tokens "^8.0.2"
 
 stylus@^0.62.0:
   version "0.62.0"
@@ -4639,10 +4653,10 @@ util-deprecate@^1.0.2:
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
 
-vite-node@1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/vite-node/-/vite-node-1.2.2.tgz#f6d329b06f9032130ae6eac1dc773f3663903c25"
-  integrity sha512-1as4rDTgVWJO3n1uHmUYqq7nsFgINQ9u+mRcXpjeOMJUmviqNKjcZB7UfRZrlM7MjYXMKpuWp5oGkjaFLnjawg==
+vite-node@1.3.0:
+  version "1.3.0"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/vite-node/-/vite-node-1.3.0.tgz#618cc26d83545cfbd4e2c3014678257496d2bd00"
+  integrity sha1-YYzCbYNUXPvU4sMBRngldJbSvQA=
   dependencies:
     cac "^6.7.14"
     debug "^4.3.4"
@@ -4710,23 +4724,22 @@ vite@^5.0.0, vite@^5.1.1:
   optionalDependencies:
     fsevents "~2.3.3"
 
-vitest-sonar-reporter@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/vitest-sonar-reporter/-/vitest-sonar-reporter-1.0.0.tgz#8b27eea377ea88b9becab195579a88602f94303e"
-  integrity sha512-NVxgvLSBXevYqEZImfjEMJlX82hH2tOrBeJkmRmILl6LohBIASdLjwjWQn6fyUlLsaBWjlrekMZ/znfX5f05dA==
+vitest-sonar-reporter@^1.1.0:
+  version "1.1.0"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/vitest-sonar-reporter/-/vitest-sonar-reporter-1.1.0.tgz#eeb80633fa78dbd9ce271e2d6b0b00c9dac20f44"
+  integrity sha1-7rgGM/p429nOJx4tawsAydrCD0Q=
 
-vitest@^1.2.0:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/vitest/-/vitest-1.2.2.tgz#9e29ad2a74a5df553c30c5798c57a062d58ce299"
-  integrity sha512-d5Ouvrnms3GD9USIK36KG8OZ5bEvKEkITFtnGv56HFaSlbItJuYr7hv2Lkn903+AvRAgSixiamozUVfORUekjw==
+vitest@^1.3.0:
+  version "1.3.0"
+  resolved "https://alm.deltatre.it/tfs/D3Alm/_packaging/platforms.team.webplu/npm/registry/vitest/-/vitest-1.3.0.tgz#3b04e2a8270b2db0929829cb8f03df7bffd1b5a2"
+  integrity sha1-OwTiqCcLLbCSmCnLjwPfe//RtaI=
   dependencies:
-    "@vitest/expect" "1.2.2"
-    "@vitest/runner" "1.2.2"
-    "@vitest/snapshot" "1.2.2"
-    "@vitest/spy" "1.2.2"
-    "@vitest/utils" "1.2.2"
+    "@vitest/expect" "1.3.0"
+    "@vitest/runner" "1.3.0"
+    "@vitest/snapshot" "1.3.0"
+    "@vitest/spy" "1.3.0"
+    "@vitest/utils" "1.3.0"
     acorn-walk "^8.3.2"
-    cac "^6.7.14"
     chai "^4.3.10"
     debug "^4.3.4"
     execa "^8.0.1"
@@ -4735,11 +4748,11 @@ vitest@^1.2.0:
     pathe "^1.1.1"
     picocolors "^1.0.0"
     std-env "^3.5.0"
-    strip-literal "^1.3.0"
+    strip-literal "^2.0.0"
     tinybench "^2.5.1"
     tinypool "^0.8.2"
     vite "^5.0.0"
-    vite-node "1.2.2"
+    vite-node "1.3.0"
     why-is-node-running "^2.2.2"
 
 vscode-jsonrpc@6.0.0:

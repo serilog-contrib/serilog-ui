@@ -11,7 +11,6 @@ import App from './app/App';
  * - filter by _id (react router and opening log by itself)
  * - remove index.html from end of url and intercept all towards...
  * - sort by option
- * - text in basicmodal: is only for test and development
  * - update basic auth to receive from header and check by method
  * - sample with bassic and jwt auth that passes when receivign from modal auth heade
  * - if auth on index is active, redirect to unauth view instead of html page
