@@ -25,7 +25,7 @@ const AuthorizeButton = ({ customStyle }: { customStyle?: string }) => {
         {isHeaderReady ? <IconLockCheck size="24px" /> : <IconLockOpen size="24px" />}
         Authorize
       </Button>
-      <Modal opened={opened} onClose={close} centered>
+      <Modal opened={opened} onClose={close} centered size="lg">
         {authType === AuthType.Basic && <BasicModal onClose={close} />}
         {authType === AuthType.Jwt && <JwtModal onClose={close} />}
       </Modal>

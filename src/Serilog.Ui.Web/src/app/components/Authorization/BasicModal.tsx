@@ -1,4 +1,5 @@
-import { Button, Fieldset, Group, PasswordInput, TextInput } from '@mantine/core';
+import { Alert, Button, Fieldset, Group, PasswordInput, TextInput } from '@mantine/core';
+import { IconAlertTriangleFilled } from '@tabler/icons-react';
 import { useAuthProperties } from 'app/hooks/useAuthProperties';
 import useQueryLogs from 'app/hooks/useQueryLogs';
 import { isStringGuard } from 'app/util/guards';
@@ -24,11 +25,15 @@ const BasicModal = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <>
-      <Fieldset component="form" legend="Basic Authentication" mb="md">
+      <Fieldset
+        component="form"
+        legend="Basic Authentication"
+        mb="md"
+        disabled={isHeaderReady}
+      >
         <TextInput
           placeholder="admin"
           label="Username"
-          disabled={isHeaderReady}
           value={basic_user}
           onChange={(event) => {
             updateAuthKey('basic_user', event.currentTarget.value);
@@ -41,7 +46,6 @@ const BasicModal = ({ onClose }: { onClose: () => void }) => {
           size="sm"
           style={{ flexGrow: 1 }}
           value={basic_pwd ?? ''}
-          disabled={isHeaderReady}
           withAsterisk
           autoComplete="off"
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -49,6 +53,20 @@ const BasicModal = ({ onClose }: { onClose: () => void }) => {
           }}
         />
       </Fieldset>
+      <Alert
+        radius="md"
+        color="yellow"
+        variant="light"
+        icon={<IconAlertTriangleFilled />}
+        ta="justify"
+        mt="xs"
+        mb="md"
+      >
+        Basic authorization should be used only for testing and development purposes.
+        <br />
+        It is highly discouraged the usage of Basic authorization on production
+        environments!
+      </Alert>
       <Group display="flex" justify="right">
         <Button
           display={isHeaderReady ? 'none' : 'inherit'}
