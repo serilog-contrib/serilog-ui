@@ -7,13 +7,14 @@ import App from './app/App';
 
 /**
  * TODO:
- * - change basic to receive data from ui...
- * - filter by _id (react router and opening log by itself)
- * - remove index.html from end of url and intercept all towards...
- * - sort by option
- * - update basic auth to receive from header and check by method
- * - sample with bassic and jwt auth that passes when receivign from modal auth heade
- * - if auth on index is active, redirect to unauth view instead of html page
+ * - test sort by option to validate development
+ * - remove index.html from end of url and intercept all calls towards
+ * > change basic auth to receive data from ui (header) and check it with custom impl
+ * > sample with basic and jwt auth, that passes when receivin' from the modal auth header
+ * >> if auth on index is active, redirect to unauth view instead of html page
+ * >> filter by _id (react router and opening log by itself)
+ * >> custom columns
+ * >> clean sample and install samples with each provider
  */
 
 const main = async () => {
