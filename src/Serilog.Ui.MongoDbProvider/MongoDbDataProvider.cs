@@ -129,11 +129,16 @@ namespace Serilog.Ui.MongoDbProvider
         private static SortDefinition<MongoDbLogModel> GenerateSortClause(SortProperty sortOn, SortDirection sortBy)
         {
             var isDesc = sortBy == SortDirection.Desc;
-            var sortPropertyName = typeof(MongoDbLogModel).GetProperty(sortOn.ToString()).Name;
-
-            // workaround to use utctimestamp
-            if (sortPropertyName.Equals(SortProperty.Timestamp.ToString())) sortPropertyName = nameof(MongoDbLogModel.UtcTimeStamp);
-            if (sortPropertyName.Equals(SortProperty.Message.ToString())) sortPropertyName = nameof(MongoDbLogModel.RenderedMessage);
+            
+            // workaround to use utc timestamp
+            var sortPropertyName = sortOn switch
+            {
+                SortProperty.Level => typeof(MongoDbLogModel).GetProperty(sortOn.ToString())?.Name ?? string.Empty,
+                SortProperty.Message => nameof(MongoDbLogModel.RenderedMessage),
+                SortProperty.Timestamp => nameof(MongoDbLogModel.UtcTimeStamp),
+                _ => nameof(MongoDbLogModel.UtcTimeStamp)
+            };
+            
             return isDesc ?
                 Builders<MongoDbLogModel>.Sort.Descending(sortPropertyName) :
                 Builders<MongoDbLogModel>.Sort.Ascending(sortPropertyName);
