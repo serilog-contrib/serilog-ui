@@ -14,18 +14,18 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
     {
         private readonly LogModelPropsCollector _logCollector;
 
-        private readonly IDataProvider _provider;
+        protected readonly IDataProvider Provider;
 
         protected IntegrationPaginationTests(DbRunner instance)
         {
             _logCollector = instance.GetPropsCollector();
-            _provider = Guard.Against.Null(instance.GetDataProvider());
+            Provider = Guard.Against.Null(instance.GetDataProvider());
         }
 
         [Fact]
         public virtual async Task It_fetches_with_limit()
         {
-            var (logs, _) = await _provider.FetchDataAsync(1, 5);
+            var (logs, _) = await Provider.FetchDataAsync(1, 5);
 
             logs.Should().NotBeEmpty().And.HaveCount(5);
         }
@@ -34,7 +34,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         public virtual async Task It_fetches_with_limit_and_skip()
         {
             var example = _logCollector.Example;
-            var (logs, _) = await _provider.FetchDataAsync(2, 1, level: example.Level);
+            var (logs, _) = await Provider.FetchDataAsync(2, 1, level: example.Level);
 
             logs.Should().NotBeEmpty().And.HaveCount(1);
             logs.First().Level.Should().Be(example.Level);
@@ -45,7 +45,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         public virtual async Task It_fetches_with_skip()
         {
             var example = _logCollector.Example;
-            var (logs, _) = await _provider.FetchDataAsync(2, 1, level: example.Level);
+            var (logs, _) = await Provider.FetchDataAsync(2, 1, level: example.Level);
 
             logs.First().Level.Should().Be(example.Level);
             logs.First().Message.Should().NotBe(example.Message);
@@ -55,11 +55,11 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         public virtual async Task It_fetches_with_timestamp_sort()
         {
             // default sorting!
-            var (descLogs, _) = await _provider.FetchDataAsync(1, 20);
+            var (descLogs, _) = await Provider.FetchDataAsync(1, 20);
 
             descLogs.Should().BeInDescendingOrder(model => model.Timestamp);
 
-            var (ascLogs, _) = await _provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Timestamp, sortBy: SearchOptions.SortDirection.Asc);
+            var (ascLogs, _) = await Provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Timestamp, sortBy: SearchOptions.SortDirection.Asc);
 
             ascLogs.Should().BeInAscendingOrder(model => model.Timestamp);
         }
@@ -67,11 +67,11 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         [Fact]
         public virtual async Task It_fetches_with_message_sort()
         {
-            var (descLogs, _) = await _provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Message, sortBy: SearchOptions.SortDirection.Desc);
+            var (descLogs, _) = await Provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Message, sortBy: SearchOptions.SortDirection.Desc);
 
             descLogs.Should().BeInDescendingOrder(model => model.Message);
 
-            var (ascLogs, _) = await _provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Message, sortBy: SearchOptions.SortDirection.Asc);
+            var (ascLogs, _) = await Provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Message, sortBy: SearchOptions.SortDirection.Asc);
 
             ascLogs.Should().BeInAscendingOrder(model => model.Message);
         }
@@ -79,11 +79,11 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         [Fact]
         public virtual async Task It_fetches_with_level_sort()
         {
-            var (descLogs, _) = await _provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Level, sortBy: SearchOptions.SortDirection.Desc);
+            var (descLogs, _) = await Provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Level, sortBy: SearchOptions.SortDirection.Desc);
 
             descLogs.Should().BeInDescendingOrder(model => model.Level);
 
-            var (ascLogs, _) = await _provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Level, sortBy: SearchOptions.SortDirection.Asc);
+            var (ascLogs, _) = await Provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Level, sortBy: SearchOptions.SortDirection.Asc);
 
             ascLogs.Should().BeInAscendingOrder(model => model.Level);
         }

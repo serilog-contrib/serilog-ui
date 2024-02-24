@@ -17,7 +17,7 @@ namespace ElasticSearch.Tests.DataProvider
         [I]
         public override Task It_throws_when_skip_is_zero()
         {
-            var test = () => provider.FetchDataAsync(0, 1);
+            var test = () => Provider.FetchDataAsync(0, 1);
             return test.Should().NotThrowAsync("because Elastic Client catches the error");
         }
     }
