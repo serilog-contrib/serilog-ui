@@ -15,6 +15,7 @@ A simple Serilog log viewer for the following sinks:
 - Serilog.Sinks.**Postgresql** ([Nuget](https://github.com/b00ted/serilog-sinks-postgresql))
 - Serilog.Sinks.**MongoDB** ([Nuget](https://github.com/serilog/serilog-sinks-mongodb))
 - Serilog.Sinks.**ElasticSearch** ([Nuget](https://github.com/serilog/serilog-sinks-elasticsearch))
+- Serilog.Sinks.**RavenDB** ([Nuget](https://github.com/ravendb/serilog-sinks-ravendb))
 
 <img src="https://raw.githubusercontent.com/mo-esmp/serilog-ui/master/assets/serilog-ui.jpg" width="100%" />
 
@@ -43,7 +44,8 @@ Install one of the available providers, based upon your sink:
 | **Serilog.UI.MySqlProvider** [[NuGet](https://www.nuget.org/packages/Serilog.UI.MySqlProvider)] | `dotnet add package Serilog.UI.MySqlProvider` | `Install-Package Serilog.UI.MySqlProvider` |
 | **Serilog.UI.PostgreSqlProvider** [[NuGet](https://www.nuget.org/packages/Serilog.UI.PostgreSqlProvider)] | `dotnet add package Serilog.UI.PostgreSqlProvider` | `Install-Package Serilog.UI.PostgreSqlProvider` |
 | **Serilog.UI.MongoDbProvider** [[NuGet](https://www.nuget.org/packages/Serilog.UI.MongoDbProvider)] | `dotnet add package Serilog.UI.MongoDbProvider` | `Install-Package Serilog.UI.MongoDbProvider` |
-| **Serilog.UI.ElasticSearchProvider** [[NuGet](https://www.nuget.org/packages/Serilog.UI.ElasticSearchProvider)] | `dotnet add package Serilog.UI.ElasticSearchProvider` | `Install-Package Serilog.UI.ElasticSearcProvider` |
+| **Serilog.UI.ElasticSearchProvider** [[NuGet](https://www.nuget.org/packages/Serilog.UI.ElasticSearchProvider)] | `dotnet add package Serilog.UI.ElasticSearchProvider` | `Install-Package Serilog.UI.ElasticSearchProvider` |
+| **Serilog.UI.RavenDbProvider** [[NuGet](https://www.nuget.org/packages/Serilog.UI.RavenDbProvider)] | `dotnet add package Serilog.UI.RavenDbProvider` | `Install-Package Serilog.UI.RavenDbProvider` |
 
 ### DI registration
 
