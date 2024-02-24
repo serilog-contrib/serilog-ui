@@ -97,8 +97,9 @@ const validateBearerToken = (bearerToken: string) => {
   try {
     const decoded = decodeJwt(bearerToken);
     const isValidExp = !decoded.exp || isValidJwtUnixDate(decoded.exp);
+    const expiredErrMessage = 'Token expired';
 
-    return { success: isValidExp, error: 'Token expired' };
+    return { success: isValidExp, error: !isValidExp ? expiredErrMessage : '' };
   } catch {
     return { success: false, error: 'Token invalid' };
   }

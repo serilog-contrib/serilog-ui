@@ -11,10 +11,13 @@ import App from './app/App';
  * - remove index.html from end of url and intercept all calls towards
  * > change basic auth to receive data from ui (header) and check it with custom impl
  * > sample with basic and jwt auth, that passes when receivin' from the modal auth header
+ * >> change options registration to fluent interface on all DI registration
+ * >> let mongo registers {n} logs pages
  * >> if auth on index is active, redirect to unauth view instead of html page
  * >> filter by _id (react router and opening log by itself)
  * >> custom columns
  * >> clean sample and install samples with each provider
+ * >> remove net 5
  */
 
 const main = async () => {
