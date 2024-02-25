@@ -46,47 +46,6 @@ public sealed class RavenDbTestProvider : DatabaseInstance
         var serilog = new SetupSerilog(_documentStore);
         Collector = serilog.InitializeLogs();
 
-        //var logs = LogModelFaker.Logs(30).ToList();
-        //Collector = new LogModelPropsCollector(logs);
-
-        //Log.Logger = new LoggerConfiguration()
-        //    .MinimumLevel.Verbose()
-        //    .WriteTo.RavenDB(_documentStore)
-        //    .CreateLogger();
-
-        //Parallel.ForEach(logs, log =>
-        //{
-        //    log.Timestamp = DateTime.Now.AddSeconds();
-        //    switch (log.Level)
-        //    {
-        //        case "Verbose":
-        //            Log.Logger.Verbose(log.Message);
-        //            break;
-
-        //        case "Debug":
-        //            Log.Logger.Debug(log.Message);
-        //            break;
-
-        //        case "Information":
-        //            Log.Logger.Information(log.Message);
-        //            break;
-
-        //        case "Warning":
-        //            Log.Logger.Warning(log.Message);
-        //            break;
-
-        //        case "Error":
-        //            Log.Logger.Error(log.Message);
-        //            break;
-
-        //        case "Fatal":
-        //            Log.Logger.Fatal(log.Message);
-        //            break;
-        //    }
-        //});
-
-        //await Log.CloseAndFlushAsync();
-
         Provider = new RavenDbDataProvider(_documentStore, "LogEvents");
 
         return Task.CompletedTask;
@@ -94,20 +53,18 @@ public sealed class RavenDbTestProvider : DatabaseInstance
 
     public sealed class SetupSerilog
     {
-        public const string IndexPrefix = "logs-7x-default-";
-        public const string TemplateName = "serilog-logs-7x";
-        private readonly LoggerConfiguration loggerConfig;
+        private readonly LoggerConfiguration _loggerConfig;
 
         public SetupSerilog(IDocumentStore documentStore)
         {
-            loggerConfig = new LoggerConfiguration()
+            _loggerConfig = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.RavenDB(documentStore);
         }
 
         public LogModelPropsCollector InitializeLogs()
         {
-            using var logger = loggerConfig.CreateLogger();
+            using var logger = _loggerConfig.CreateLogger();
             return ElasticSearchLogModelFaker.Logs(logger);
         }
     }
