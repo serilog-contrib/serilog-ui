@@ -19,7 +19,7 @@ namespace ElasticSearch.Tests.Util
 
         protected Elasticsearch7XCluster Cluster { get; }
 
-        public IElasticClient Client => this.CreateClient();
+        public IElasticClient Client => CreateClient();
 
         protected virtual ConnectionSettings SetClusterSettings(ConnectionSettings s) => s;
 

@@ -1,7 +1,7 @@
 ﻿using MongoDb.Tests.Util;
-using MsSql.Tests.DataProvider;
 using Serilog.Ui.MongoDbProvider;
 using System.Threading.Tasks;
+using Serilog.Ui.Common.Tests.TestSuites.Impl;
 using Xunit;
 
 namespace MongoDb.Tests.DataProvider

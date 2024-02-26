@@ -1,9 +1,9 @@
 ﻿using Elastic.Elasticsearch.Xunit.XunitPlumbing;
 using ElasticSearch.Tests.Util;
 using FluentAssertions;
-using MsSql.Tests.DataProvider;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog.Ui.Common.Tests.TestSuites.Impl;
 using Xunit;
 
 namespace ElasticSearch.Tests.DataProvider
@@ -31,12 +31,12 @@ namespace ElasticSearch.Tests.DataProvider
             var lastTimeStamp = logCollector.TimesSamples.Last();
             var inTimeStampCount = logCollector!.DataSet
                 .Count(p => p.Timestamp >= firstTimeStamp && p.Timestamp <= lastTimeStamp);
-            var (Logs, Count) = await provider.FetchDataAsync(1, 1000, startDate: firstTimeStamp, endDate: lastTimeStamp);
+            var (logs, count) = await provider.FetchDataAsync(1, 1000, startDate: firstTimeStamp, endDate: lastTimeStamp);
 
-            Logs.Should().NotBeEmpty();
-            Logs.Should().HaveCount(inTimeStampCount);
-            Count.Should().Be(inTimeStampCount);
-            Logs.Should().OnlyContain(p =>
+            logs.Should().NotBeEmpty();
+            logs.Should().HaveCount(inTimeStampCount);
+            count.Should().Be(inTimeStampCount);
+            logs.Should().OnlyContain(p =>
             p.Timestamp.ToUniversalTime() >= firstTimeStamp &&
             p.Timestamp.ToUniversalTime() < lastTimeStamp);
         }

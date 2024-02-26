@@ -52,42 +52,42 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         }
 
         [Fact]
-        public virtual async Task It_fetches_with_timestamp_sort()
+        public virtual async Task It_fetches_with_sort_by_timestamp()
         {
             // default sorting!
             var (descLogs, _) = await Provider.FetchDataAsync(1, 20);
 
-            descLogs.Should().BeInDescendingOrder(model => model.Timestamp);
+            descLogs.Should().NotBeEmpty().And.BeInDescendingOrder(model => model.Timestamp);
 
             var (ascLogs, _) = await Provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Timestamp, sortBy: SearchOptions.SortDirection.Asc);
 
-            ascLogs.Should().BeInAscendingOrder(model => model.Timestamp);
+            ascLogs.Should().NotBeEmpty().And.BeInAscendingOrder(model => model.Timestamp);
         }
-        
+
         [Fact]
-        public virtual async Task It_fetches_with_message_sort()
+        public virtual async Task It_fetches_with_sort_by_message()
         {
             var (descLogs, _) = await Provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Message, sortBy: SearchOptions.SortDirection.Desc);
 
-            descLogs.Should().BeInDescendingOrder(model => model.Message);
+            descLogs.Should().NotBeEmpty().And.BeInDescendingOrder(model => model.Message);
 
             var (ascLogs, _) = await Provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Message, sortBy: SearchOptions.SortDirection.Asc);
 
-            ascLogs.Should().BeInAscendingOrder(model => model.Message);
+            ascLogs.Should().NotBeEmpty().And.BeInAscendingOrder(model => model.Message);
         }
 
         [Fact]
-        public virtual async Task It_fetches_with_level_sort()
+        public virtual async Task It_fetches_with_sort_by_level()
         {
             var (descLogs, _) = await Provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Level, sortBy: SearchOptions.SortDirection.Desc);
 
-            descLogs.Should().BeInDescendingOrder(model => model.Level);
+            descLogs.Should().NotBeEmpty().And.BeInDescendingOrder(model => model.Level);
 
             var (ascLogs, _) = await Provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Level, sortBy: SearchOptions.SortDirection.Asc);
 
-            ascLogs.Should().BeInAscendingOrder(model => model.Level);
+            ascLogs.Should().NotBeEmpty().And.BeInAscendingOrder(model => model.Level);
         }
-        
+
         public abstract Task It_throws_when_skip_is_zero();
     }
 }

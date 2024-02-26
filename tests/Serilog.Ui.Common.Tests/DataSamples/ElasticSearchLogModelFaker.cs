@@ -33,7 +33,9 @@ namespace Serilog.Ui.Common.Tests.DataSamples
             logger.Error("Hello Error");
             logs.Add(Spawn("Error", 17));
             logger.Fatal("Hello Fatal");
-            logs.Add(Spawn("Information", 18));
+            logs.Add(Spawn("Fatal", 18));
+            logger.Debug("Hello Verbose");
+            logs.Add(Spawn("Verbose", 19));
 
             return new LogModelPropsCollector(logs);
         }

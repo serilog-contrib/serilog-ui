@@ -1,14 +1,13 @@
 ﻿using Ardalis.GuardClauses;
 using FluentAssertions;
 using Serilog.Ui.Common.Tests.DataSamples;
-using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace MsSql.Tests.DataProvider
+namespace Serilog.Ui.Common.Tests.TestSuites.Impl
 {
     public abstract class IntegrationSearchTests<DbRunner> : IIntegrationSearchTests
         where DbRunner : class, IIntegrationRunner
