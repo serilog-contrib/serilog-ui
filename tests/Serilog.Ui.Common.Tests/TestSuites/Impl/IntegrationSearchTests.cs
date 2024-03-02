@@ -63,12 +63,15 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             var lastTimeStamp = logCollector!.TimesSamples
                 .ElementAt(logCollector.TimesSamples.Count() - 1).AddHours(-4);
             var afterTimeStampCount = logCollector!.DataSet.Count(p => p.Timestamp > lastTimeStamp);
-            var (Logs, Count) = await provider.FetchDataAsync(1, 1000, startDate: lastTimeStamp);
+            var (logs, count) = await provider.FetchDataAsync(1, 1000, startDate: lastTimeStamp);
 
-            Logs.Should().NotBeEmpty();
-            Logs.Should().HaveCount(afterTimeStampCount);
-            Count.Should().Be(afterTimeStampCount);
-            Logs.Should().OnlyContain(p => ConvertToUtc(p.Timestamp, checkWithUtc) > lastTimeStamp);
+            logs.Should().NotBeEmpty();
+            logs.Should().HaveCount(afterTimeStampCount);
+            count.Should().Be(afterTimeStampCount);
+            logs.Select(log => ConvertToUtc(log.Timestamp, checkWithUtc)).Should().AllSatisfy(p =>
+            {
+                p.Should().BeAfter(lastTimeStamp);
+            });
         }
 
         [Fact]
@@ -80,12 +83,15 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             var firstTimeStamp = logCollector!.TimesSamples
                 .ElementAt(logCollector.TimesSamples.Count() - 1).AddSeconds(50);
             var beforeTimeStampCount = logCollector!.DataSet.Count(p => p.Timestamp < firstTimeStamp);
-            var (Logs, Count) = await provider.FetchDataAsync(1, 1000, endDate: firstTimeStamp);
+            var (logs, count) = await provider.FetchDataAsync(1, 1000, endDate: firstTimeStamp);
 
-            Logs.Should().NotBeEmpty();
-            Logs.Should().HaveCount(beforeTimeStampCount);
-            Count.Should().Be(beforeTimeStampCount);
-            Logs.Should().OnlyContain(p => ConvertToUtc(p.Timestamp, checkWithUtc) < firstTimeStamp);
+            logs.Should().NotBeEmpty();
+            logs.Should().HaveCount(beforeTimeStampCount);
+            count.Should().Be(beforeTimeStampCount);
+            logs.Select(log => ConvertToUtc(log.Timestamp, checkWithUtc)).Should().AllSatisfy(p =>
+            {
+                p.Should().BeBefore(firstTimeStamp);
+            });
         }
 
         [Fact]
@@ -98,12 +104,12 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             var lastTimeStamp = logCollector.TimesSamples.Last().AddSeconds(50);
             var inTimeStampCount = logCollector!.DataSet
                 .Count(p => p.Timestamp >= firstTimeStamp && p.Timestamp < lastTimeStamp);
-            var (Logs, Count) = await provider.FetchDataAsync(1, 1000, startDate: firstTimeStamp, endDate: lastTimeStamp);
+            var (logs, count) = await provider.FetchDataAsync(1, 1000, startDate: firstTimeStamp, endDate: lastTimeStamp);
 
-            Logs.Should().NotBeEmpty();
-            Logs.Should().HaveCount(inTimeStampCount);
-            Count.Should().Be(inTimeStampCount);
-            Logs.Should().OnlyContain(p =>
+            logs.Should().NotBeEmpty();
+            logs.Should().HaveCount(inTimeStampCount);
+            count.Should().Be(inTimeStampCount);
+            logs.Should().OnlyContain(p =>
             ConvertToUtc(p.Timestamp, checkWithUtc) >= firstTimeStamp &&
             ConvertToUtc(p.Timestamp, checkWithUtc) < lastTimeStamp);
         }
@@ -111,13 +117,13 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         [Fact]
         public virtual async Task It_finds_only_data_with_specific_level()
         {
-            var choosenLvl = logCollector!.CountByLevel.FirstOrDefault(p => p.Value > 0);
+            var chosenLvl = logCollector!.CountByLevel.FirstOrDefault(p => p.Value > 0);
 
-            var (Logs, Count) = await provider.FetchDataAsync(1, 10, level: choosenLvl.Key);
+            var (logs, count) = await provider.FetchDataAsync(1, 10, level: chosenLvl.Key);
 
-            Logs.Should().NotBeEmpty();
-            Logs.Should().OnlyContain(p => p.Level == choosenLvl.Key);
-            Count.Should().Be(choosenLvl.Value);
+            logs.Should().NotBeEmpty();
+            logs.Should().OnlyContain(p => p.Level == chosenLvl.Key);
+            count.Should().Be(chosenLvl.Value);
         }
 
         [Fact]
@@ -125,14 +131,14 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         {
             var msg = logCollector!.MessagePiecesSamples.FirstOrDefault();
 
-            var (Logs, Count) = await provider.FetchDataAsync(1, 10, searchCriteria: msg);
+            var (logs, count) = await provider.FetchDataAsync(1, 10, searchCriteria: msg);
 
-            Logs.Should().NotBeEmpty();
-            Logs.Should().OnlyContain(p =>
+            logs.Should().NotBeEmpty();
+            logs.Should().OnlyContain(p =>
                 p.Message
                 .Split(" ", StringSplitOptions.None)
                 .Intersect(msg!.Split(" ", StringSplitOptions.None)).Any());
-            Count.Should().BeLessThan(100).And.BeGreaterThanOrEqualTo(1);
+            count.Should().BeLessThan(100).And.BeGreaterThanOrEqualTo(1);
         }
 
         [Fact]
@@ -140,12 +146,12 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         {
             var choosenLvl = logCollector!.CountByLevel.FirstOrDefault(p => p.Value > 0);
 
-            var (Logs, Count) = await provider.FetchDataAsync(3, 3, level: choosenLvl.Key);
+            var (logs, count) = await provider.FetchDataAsync(3, 3, level: choosenLvl.Key);
 
-            var (Logs2nd, Count2nd) = await provider.FetchDataAsync(3, 3, level: choosenLvl.Key);
+            var (logs2nd, count2nd) = await provider.FetchDataAsync(3, 3, level: choosenLvl.Key);
 
-            Logs.Should().BeEquivalentTo(Logs2nd);
-            Count.Should().Be(Count2nd);
+            logs.Should().BeEquivalentTo(logs2nd);
+            count.Should().Be(count2nd);
         }
 
         private static DateTime ConvertToUtc(DateTime timestamp, bool checkWithUtc)

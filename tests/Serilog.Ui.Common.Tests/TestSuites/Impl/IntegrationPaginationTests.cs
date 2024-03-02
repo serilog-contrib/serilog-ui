@@ -1,4 +1,5 @@
-﻿using Ardalis.GuardClauses;
+﻿using System;
+using Ardalis.GuardClauses;
 using FluentAssertions;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Core;
@@ -55,11 +56,11 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         public virtual async Task It_fetches_with_sort_by_timestamp()
         {
             // default sorting!
-            var (descLogs, _) = await Provider.FetchDataAsync(1, 20);
+            var (descLogs, _) = await Provider.FetchDataAsync(1, 50);
 
             descLogs.Should().NotBeEmpty().And.BeInDescendingOrder(model => model.Timestamp);
 
-            var (ascLogs, _) = await Provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Timestamp, sortBy: SearchOptions.SortDirection.Asc);
+            var (ascLogs, _) = await Provider.FetchDataAsync(1, 50, sortOn: SearchOptions.SortProperty.Timestamp, sortBy: SearchOptions.SortDirection.Asc);
 
             ascLogs.Should().NotBeEmpty().And.BeInAscendingOrder(model => model.Timestamp);
         }
@@ -67,25 +68,25 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         [Fact]
         public virtual async Task It_fetches_with_sort_by_message()
         {
-            var (descLogs, _) = await Provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Message, sortBy: SearchOptions.SortDirection.Desc);
+            var (descLogs, _) = await Provider.FetchDataAsync(1, 50, sortOn: SearchOptions.SortProperty.Message, sortBy: SearchOptions.SortDirection.Desc);
 
-            descLogs.Should().NotBeEmpty().And.BeInDescendingOrder(model => model.Message);
+            descLogs.Should().NotBeEmpty().And.BeInDescendingOrder(model => model.Message, StringComparer.OrdinalIgnoreCase);
 
-            var (ascLogs, _) = await Provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Message, sortBy: SearchOptions.SortDirection.Asc);
+            var (ascLogs, _) = await Provider.FetchDataAsync(1, 50, sortOn: SearchOptions.SortProperty.Message, sortBy: SearchOptions.SortDirection.Asc);
 
-            ascLogs.Should().NotBeEmpty().And.BeInAscendingOrder(model => model.Message);
+            ascLogs.Should().NotBeEmpty().And.BeInAscendingOrder(model => model.Message, StringComparer.OrdinalIgnoreCase);
         }
 
         [Fact]
         public virtual async Task It_fetches_with_sort_by_level()
         {
-            var (descLogs, _) = await Provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Level, sortBy: SearchOptions.SortDirection.Desc);
+            var (descLogs, _) = await Provider.FetchDataAsync(1, 50, sortOn: SearchOptions.SortProperty.Level, sortBy: SearchOptions.SortDirection.Desc);
 
-            descLogs.Should().NotBeEmpty().And.BeInDescendingOrder(model => model.Level);
+            descLogs.Should().NotBeEmpty().And.BeInDescendingOrder(model => model.Level, StringComparer.OrdinalIgnoreCase);
 
-            var (ascLogs, _) = await Provider.FetchDataAsync(1, 20, sortOn: SearchOptions.SortProperty.Level, sortBy: SearchOptions.SortDirection.Asc);
+            var (ascLogs, _) = await Provider.FetchDataAsync(1, 50, sortOn: SearchOptions.SortProperty.Level, sortBy: SearchOptions.SortDirection.Asc);
 
-            ascLogs.Should().NotBeEmpty().And.BeInAscendingOrder(model => model.Level);
+            ascLogs.Should().NotBeEmpty().And.BeInAscendingOrder(model => model.Level, StringComparer.OrdinalIgnoreCase);
         }
 
         public abstract Task It_throws_when_skip_is_zero();
