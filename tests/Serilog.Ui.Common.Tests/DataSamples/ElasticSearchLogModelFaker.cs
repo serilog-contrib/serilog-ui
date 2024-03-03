@@ -10,6 +10,7 @@ namespace Serilog.Ui.Common.Tests.DataSamples
         public static LogModelPropsCollector Logs(ILogger logger)
         {
             var logs = new List<LogModel>();
+            // information
             logger.Information("90 MyTestSearchItem");
             logs.Add(Spawn("Information", 90, "MyTestSearchItem"));
             Task.Delay(2000).Wait();
@@ -20,6 +21,7 @@ namespace Serilog.Ui.Common.Tests.DataSamples
             logs.Add(Spawn("Information", 92));
             Task.Delay(3000).Wait();
 
+            // warnings
             for (int i = 0; i < 15; i++)
             {
                 logger.Warning($"Hello Warning {i}");
@@ -28,14 +30,26 @@ namespace Serilog.Ui.Common.Tests.DataSamples
 
             logger.Information("Hello Information");
             logs.Add(Spawn("Information", 15));
+            // debug
             logger.Debug("Hello Debug");
             logs.Add(Spawn("Debug", 16));
+            logger.Debug("Hello Debug");
+            logs.Add(Spawn("Debug", 17));
+            // error
             logger.Error("Hello Error");
-            logs.Add(Spawn("Error", 17));
+            logs.Add(Spawn("Error", 18));
+            logger.Error("Hello Error");
+            logs.Add(Spawn("Error", 19));
+            // fatal
             logger.Fatal("Hello Fatal");
-            logs.Add(Spawn("Fatal", 18));
-            logger.Debug("Hello Verbose");
-            logs.Add(Spawn("Verbose", 19));
+            logs.Add(Spawn("Fatal", 20));
+            logger.Fatal("Hello Fatal");
+            logs.Add(Spawn("Fatal", 21));
+            // verbose
+            logger.Verbose("Hello Verbose");
+            logs.Add(Spawn("Verbose", 22));
+            logger.Verbose("Hello Verbose");
+            logs.Add(Spawn("Verbose", 23));
 
             return new LogModelPropsCollector(logs);
         }

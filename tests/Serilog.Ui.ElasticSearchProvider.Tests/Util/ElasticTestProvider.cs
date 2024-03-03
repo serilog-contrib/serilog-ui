@@ -69,7 +69,7 @@ namespace ElasticSearch.Tests.Util
         public SetupSerilog()
         {
             loggerConfig = new LoggerConfiguration()
-                .MinimumLevel.Debug()
+                .MinimumLevel.Verbose()
                 .WriteTo.Elasticsearch(
                     new ElasticsearchSinkOptions(new Uri($"http://localhost:9200"))
                     {

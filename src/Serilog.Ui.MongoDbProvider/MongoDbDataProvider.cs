@@ -66,7 +66,7 @@ namespace Serilog.Ui.MongoDbProvider
                 var sortClause = GenerateSortClause(sortOn, sortBy);
 
                 var logs = await _collection
-                    .Find(builder)
+                    .Find(builder, new FindOptions{ Collation = new Collation("en")})
                     .Sort(sortClause)
                     .Skip(count * page)
                     .Limit(count)
@@ -99,7 +99,7 @@ namespace Serilog.Ui.MongoDbProvider
             return Convert.ToInt32(count);
         }
 
-        private void GenerateWhereClause(
+        private static void GenerateWhereClause(
             ref FilterDefinition<MongoDbLogModel> builder,
             string level,
             string searchCriteria,

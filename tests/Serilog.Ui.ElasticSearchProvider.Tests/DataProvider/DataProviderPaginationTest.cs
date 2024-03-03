@@ -20,5 +20,17 @@ namespace ElasticSearch.Tests.DataProvider
             var test = () => Provider.FetchDataAsync(0, 1);
             return test.Should().NotThrowAsync("because Elastic Client catches the error");
         }
+
+        [Fact(Skip = "sort by level is disabled in Elastic Search provider.")]
+        public override Task It_fetches_with_sort_by_level()
+        {
+            return Task.CompletedTask;
+        }
+        
+        [Fact(Skip = "sort by message is disabled in Elastic Search provider.")]
+        public override Task It_fetches_with_sort_by_message()
+        {
+            return Task.CompletedTask;
+        }
     }
 }

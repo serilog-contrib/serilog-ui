@@ -8,12 +8,13 @@ using System.Linq;
 namespace Serilog.Ui.ElasticSearchProvider
 {
     /// <summary>
-    ///     ElasticSearch data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
+    /// ElasticSearch data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
+    /// It uses <see cref="Nest"/> to query data.
     /// </summary>
     public static class SerilogUiOptionBuilderExtensions
     {
         /// <summary>
-        ///     Configures the SerilogUi to connect to a MongoDB database.
+        /// Configures the SerilogUi to connect to a Elastic Search database.
         /// </summary>
         /// <param name="optionsBuilder"> The options builder. </param>
         /// <param name="endpoint"> The url of ElasticSearch server. </param>
@@ -38,12 +39,13 @@ namespace Serilog.Ui.ElasticSearchProvider
             // TODO: Fixup ES to allow multiple registrations.
             // Think about multiple ES clients (singletons) used in data providers (scoped)
             if (builder.Services.Any(c => c.ImplementationType == typeof(ElasticSearchDbDataProvider)))
-                throw new NotSupportedException($"Adding multiple registrations of '{typeof(ElasticSearchDbDataProvider).FullName}' is not (yet) supported.");
+                throw new NotSupportedException(
+                    $"Adding multiple registrations of '{typeof(ElasticSearchDbDataProvider).FullName}' is not (yet) supported.");
 
             builder.Services.AddSingleton(options);
 
             var pool = new SingleNodeConnectionPool(endpoint);
-            var connectionSettings = new ConnectionSettings(pool, sourceSerializer: (builtin, values) => new VanillaSerializer());
+            var connectionSettings = new ConnectionSettings(pool, sourceSerializer: (_, _) => new VanillaSerializer());
 
             builder.Services.AddSingleton<IElasticClient>(o => new ElasticClient(connectionSettings));
             builder.Services.AddScoped<IDataProvider, ElasticSearchDbDataProvider>();

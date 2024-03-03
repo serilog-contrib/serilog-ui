@@ -13,8 +13,21 @@ namespace Serilog.Ui.ElasticSearchProvider
 {
     public class ElasticSearchDbDataProvider(IElasticClient client, ElasticSearchDbOptions options) : IDataProvider
     {
+        private static readonly string TimeStampPropertyName;
+
         private readonly IElasticClient _client = client ?? throw new ArgumentNullException(nameof(client));
+
         private readonly ElasticSearchDbOptions _options = options ?? throw new ArgumentNullException(nameof(options));
+
+        static ElasticSearchDbDataProvider()
+        {
+            // get the PropertyInfo for the Sorted property
+            var sortProperty = typeof(ElasticSearchDbLogModel).GetProperty(SortProperty.Timestamp.ToString());
+
+            // get the actual PropertyName used by Elastic, that was set in the JsonAttribute
+            var jsonAttrName = sortProperty!.GetCustomAttribute<JsonPropertyAttribute>().PropertyName;
+            TimeStampPropertyName = jsonAttrName;
+        }
 
         public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
             int page,
@@ -38,14 +51,14 @@ namespace Serilog.Ui.ElasticSearchProvider
             string searchCriteria,
             DateTime? startDate = null,
             DateTime? endDate = null,
-            SortProperty sortOn = SortProperty.Timestamp,
+            SortProperty _ = SortProperty.Timestamp,
             SortDirection sortBy = SortDirection.Desc,
             CancellationToken cancellationToken = default)
         {
-            // get the PropertyInfo for the Sorted property
-            var sortProperty = typeof(ElasticSearchDbLogModel).GetProperty(sortOn.ToString());
-            // get the actual PropertyName used by Elastic, that was set in the JsonAttribute
-            var jsonAttrName = sortProperty.GetCustomAttribute<JsonPropertyAttribute>().PropertyName;
+            // since serilog-sink does not have keyword indexes on level and message, we can only sort on @timestamp
+            Func<SortDescriptor<ElasticSearchDbLogModel>, SortDescriptor<ElasticSearchDbLogModel>> sortDescriptor = sortBy == SortDirection.Desc
+                ? (descriptor) => descriptor.Descending(TimeStampPropertyName)
+                : (descriptor) => descriptor.Ascending(TimeStampPropertyName);
 
             var descriptor = new SearchDescriptor<ElasticSearchDbLogModel>()
                 .Index(_options.IndexName)
@@ -54,10 +67,7 @@ namespace Serilog.Ui.ElasticSearchProvider
                     +q.DateRange(dr => dr.Field(f => f.Timestamp).GreaterThanOrEquals(startDate).LessThanOrEquals(endDate)) &&
                     +q.Match(m => m.Field(f => f.Message).Query(searchCriteria)) ||
                     +q.Match(m => m.Field(f => f.Exceptions).Query(searchCriteria)))
-                .Sort(m => m.Field(
-                    // to manage Text fields (pass throught .keyword)
-                    sortProperty.PropertyType == typeof(string) ? $"{jsonAttrName}.keyword" : jsonAttrName,
-                    sortBy == SortDirection.Desc ? SortOrder.Descending : SortOrder.Ascending))
+                .Sort(sortDescriptor)
                 .Skip(page * count)
                 .Size(count);
 

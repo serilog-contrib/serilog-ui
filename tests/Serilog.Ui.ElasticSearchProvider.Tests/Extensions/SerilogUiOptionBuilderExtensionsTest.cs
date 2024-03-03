@@ -14,21 +14,16 @@ namespace ElasticSearch.Tests.Extensions
     [Trait("DI-DataProvider", "Elastic")]
     public class SerilogUiOptionBuilderExtensionsTest : IClusterFixture<Elasticsearch7XCluster>
     {
-        private readonly ServiceCollection serviceCollection;
-
-        public SerilogUiOptionBuilderExtensionsTest()
-        {
-            serviceCollection = new ServiceCollection();
-        }
+        private readonly ServiceCollection _serviceCollection = new();
 
         [U]
         public void It_registers_provider_and_dependencies()
         {
-            serviceCollection.AddSerilogUi((builder) =>
+            _serviceCollection.AddSerilogUi((builder) =>
             {
                 builder.UseElasticSearchDb(new Uri("https://elastic.example.com"), "my-index");
             });
-            var services = serviceCollection.BuildServiceProvider();
+            var services = _serviceCollection.BuildServiceProvider();
 
             services.GetRequiredService<IDataProvider>().Should().NotBeNull().And.BeOfType<ElasticSearchDbDataProvider>();
             var options = services.GetRequiredService<ElasticSearchDbOptions>();
@@ -42,10 +37,10 @@ namespace ElasticSearch.Tests.Extensions
             var uri = new Uri("https://elastic.example.com");
             var nullables = new List<Func<IServiceCollection>>
             {
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseElasticSearchDb(null, "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseElasticSearchDb(uri, null)),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseElasticSearchDb(uri, " ")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseElasticSearchDb(uri, "")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseElasticSearchDb(null, "name")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseElasticSearchDb(uri, null)),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseElasticSearchDb(uri, " ")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseElasticSearchDb(uri, "")),
             };
 
             foreach (var nullable in nullables)
