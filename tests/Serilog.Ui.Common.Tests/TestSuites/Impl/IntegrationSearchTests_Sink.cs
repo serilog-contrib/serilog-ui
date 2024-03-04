@@ -63,7 +63,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         protected async Task It_finds_only_data_emitted_after_date_by_utc(bool checkWithUtc)
         {
             // ARRANGE
-            var lastTimeStamp = LogCollector!.TimesSamples.ElementAt(LogCollector.TimesSamples.Count() - 1).AddHours(-4);
+            var lastTimeStamp = LogCollector!.TimesSamples.ElementAt(LogCollector.TimesSamples.Count() - 1).AddSeconds(-50);
             var afterTimeStampCount = LogCollector!.DataSet.Count(p => p.Timestamp > lastTimeStamp);
 
             // ACT
@@ -91,7 +91,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
                 .ElementAt(LogCollector.TimesSamples.Count() - 1).AddSeconds(50);
             var beforeTimeStampCount = LogCollector!.DataSet.Count(p => p.Timestamp < firstTimeStamp);
             var (logs, count) = await Provider.FetchDataAsync(1, 1000, endDate: firstTimeStamp);
-
+            var (___, __) = await Provider.FetchDataAsync(1, 1000);
             var enumerateLogs = logs.ToList();
             enumerateLogs.Should().NotBeEmpty();
             enumerateLogs.Should().HaveCount(beforeTimeStampCount);
@@ -109,7 +109,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             var lastTimeStamp = LogCollector.TimesSamples.Last();
             var inTimeStampCount = LogCollector!.DataSet
                 .Count(p => p.Timestamp >= firstTimeStamp && p.Timestamp <= lastTimeStamp);
-            var (logs, count) = await Provider.FetchDataAsync(1, 1000, startDate: firstTimeStamp, endDate: lastTimeStamp);
+            var (logs, count) = await Provider.FetchDataAsync(1, 10, startDate: firstTimeStamp, endDate: lastTimeStamp);
 
             var results = logs.ToList();
             results.Should().NotBeEmpty();

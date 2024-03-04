@@ -54,7 +54,7 @@ namespace Serilog.Ui.MsSqlServerProvider
         {
             var queryBuilder = new StringBuilder();
             queryBuilder.Append($"SELECT [Id], [{ColumnMessageName}], [{ColumnLevelName}], [{ColumnTimestampName}], [Exception], [Properties] ");
-            queryBuilder.Append($"FROM [{_options.Schema}].[{_options.TableName}]");
+            queryBuilder.Append($"FROM [{_options.Schema}].[{_options.TableName}] ");
 
             GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
 

@@ -15,7 +15,7 @@ namespace MsSql.Tests.DataProvider
         }
 
         public override Task It_finds_data_with_all_filters()
-            => It_finds_data_with_all_filters_by_utc(true, false);
+            => It_finds_data_with_all_filters_by_utc(true, true);
 
         public override Task It_finds_only_data_emitted_after_date()
             => It_finds_only_data_emitted_after_date_by_utc(true);
