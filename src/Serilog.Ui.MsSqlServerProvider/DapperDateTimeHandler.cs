@@ -6,15 +6,8 @@ using System.Globalization;
 
 namespace Serilog.Ui.MsSqlServerProvider;
 
-public class DapperDateTimeHandler : SqlMapper.TypeHandler<DateTime>
+public class DapperDateTimeHandler(Func<string, DateTime>? dateTimeCustomParsing = null) : SqlMapper.TypeHandler<DateTime>
 {
-    private readonly Func<string, DateTime>? _dateTimeCustomParsing;
-
-    public DapperDateTimeHandler(Func<string, DateTime>? dateTimeCustomParsing = null)
-    {
-        _dateTimeCustomParsing = dateTimeCustomParsing;
-    }
-
     private static readonly string[] Formats = new[]
     {
         "M/d/yyyy h:mm:ss tt zzz",
@@ -37,7 +30,7 @@ public class DapperDateTimeHandler : SqlMapper.TypeHandler<DateTime>
     {
         var valueStr = value.ToString();
 
-        if (_dateTimeCustomParsing is not null) return CustomParse(valueStr);
+        if (dateTimeCustomParsing is not null) return CustomParse(valueStr);
 
         DateTime.TryParse(valueStr, CultureInfo.CurrentCulture, DateTimeStyles.AssumeLocal, out var timeStamp);
 
@@ -49,7 +42,7 @@ public class DapperDateTimeHandler : SqlMapper.TypeHandler<DateTime>
 
     private DateTime CustomParse(string value)
     {
-        var parseDatetime = _dateTimeCustomParsing!(value);
+        var parseDatetime = dateTimeCustomParsing!(value);
 
         if (parseDatetime.Kind != DateTimeKind.Utc)
             throw new InvalidOperationException($"The parsed date must have kind: {DateTimeKind.Utc}");

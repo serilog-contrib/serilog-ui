@@ -4,6 +4,7 @@ using Serilog.Ui.Core;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Serilog.Ui.Core.Models.SearchOptions;
@@ -13,9 +14,11 @@ namespace Serilog.Ui.MsSqlServerProvider
     public class SqlServerDataProvider(RelationalDbOptions options) : IDataProvider
     {
         private const string ColumnTimestampName = "TimeStamp";
+
         private const string ColumnLevelName = "Level";
+
         private const string ColumnMessageName = "Message";
-        
+
         private readonly RelationalDbOptions _options = options ?? throw new ArgumentNullException(nameof(options));
 
         public string Name => _options.ToDataProviderName("MsSQL");
@@ -52,7 +55,7 @@ namespace Serilog.Ui.MsSqlServerProvider
             var queryBuilder = new StringBuilder();
             queryBuilder.Append($"SELECT [Id], [{ColumnMessageName}], [{ColumnLevelName}], [{ColumnTimestampName}], [Exception], [Properties] ");
             queryBuilder.Append($"FROM [{_options.Schema}].[{_options.TableName}]");
-            
+
             GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
 
             var sortOnCol = GetColumnName(sortOn);
@@ -71,13 +74,16 @@ namespace Serilog.Ui.MsSqlServerProvider
                     EndDate = endDate
                 });
 
-            var index = 1;
-            foreach (var log in logs)
-                log.RowNo = (page * count) + index++;
-
-            return logs;
+            var rowNoStart = page * count;
+            return logs
+                .Select((item, i) =>
+                {
+                    item.RowNo = rowNoStart + i;
+                    return item;
+                })
+                .ToList();
         }
-        
+
         private async Task<int> CountLogsAsync(
             string level,
             string searchCriteria,
@@ -85,25 +91,19 @@ namespace Serilog.Ui.MsSqlServerProvider
             DateTime? endDate = null)
         {
             var queryBuilder = new StringBuilder();
-            queryBuilder.Append("SELECT COUNT(Id) FROM [");
-            queryBuilder.Append(_options.Schema);
-            queryBuilder.Append("].[");
-            queryBuilder.Append(_options.TableName);
-            queryBuilder.Append("] ");
+            queryBuilder.Append($"SELECT COUNT(Id) FROM [{_options.Schema}].[{_options.TableName}]");
 
             GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
 
-            using (IDbConnection connection = new SqlConnection(_options.ConnectionString))
-            {
-                return await connection.ExecuteScalarAsync<int>(queryBuilder.ToString(),
-                    new
-                    {
-                        Level = level,
-                        Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
-                        StartDate = startDate,
-                        EndDate = endDate
-                    });
-            }
+            using IDbConnection connection = new SqlConnection(_options.ConnectionString);
+            return await connection.ExecuteScalarAsync<int>(queryBuilder.ToString(),
+                new
+                {
+                    Level = level,
+                    Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
+                    StartDate = startDate,
+                    EndDate = endDate
+                });
         }
 
         private static void GenerateWhereClause(

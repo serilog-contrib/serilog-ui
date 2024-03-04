@@ -13,6 +13,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         where DbRunner : class, IIntegrationRunner
     {
         protected readonly LogModelPropsCollector logCollector;
+
         protected readonly IDataProvider provider;
 
         protected IntegrationSearchTests(DbRunner instance)
@@ -50,6 +51,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             {
                 log.Properties.Should().Be(logCollector.Example.Properties);
             }
+
             ConvertToUtc(log.Timestamp, checkWithUtc).Should().BeCloseTo(logCollector.Example.Timestamp, TimeSpan.FromMinutes(5));
             Count.Should().BeCloseTo(1, 2);
         }
@@ -60,18 +62,23 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
 
         protected async Task It_finds_only_data_emitted_after_date_by_utc(bool checkWithUtc)
         {
-            var lastTimeStamp = logCollector!.TimesSamples
-                .ElementAt(logCollector.TimesSamples.Count() - 1).AddHours(-4);
+            // ARRANGE
+            var lastTimeStamp = logCollector!.TimesSamples.ElementAt(logCollector.TimesSamples.Count() - 1).AddHours(-4);
             var afterTimeStampCount = logCollector!.DataSet.Count(p => p.Timestamp > lastTimeStamp);
-            var (logs, count) = await provider.FetchDataAsync(1, 1000, startDate: lastTimeStamp);
 
-            logs.Should().NotBeEmpty();
-            logs.Should().HaveCount(afterTimeStampCount);
+            // ACT
+            var (logs, count) = await provider.FetchDataAsync(1, 1000, startDate: lastTimeStamp);
+            var enumerateLogs = logs.ToList();
+
+            // ASSERT
+            enumerateLogs.Should().NotBeEmpty();
+
+            enumerateLogs.Should().HaveCount(afterTimeStampCount);
             count.Should().Be(afterTimeStampCount);
-            logs.Select(log => ConvertToUtc(log.Timestamp, checkWithUtc)).Should().AllSatisfy(p =>
-            {
-                p.Should().BeAfter(lastTimeStamp);
-            });
+
+            var convertedLogs = enumerateLogs.Select(log => ConvertToUtc(log.Timestamp, checkWithUtc)).ToList();
+            convertedLogs.Should().AllSatisfy(p => { p.Kind.Should().Be(DateTimeKind.Utc); });
+            convertedLogs.Should().AllSatisfy(p => { p.Should().BeAfter(lastTimeStamp); });
         }
 
         [Fact]
@@ -85,13 +92,11 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             var beforeTimeStampCount = logCollector!.DataSet.Count(p => p.Timestamp < firstTimeStamp);
             var (logs, count) = await provider.FetchDataAsync(1, 1000, endDate: firstTimeStamp);
 
-            logs.Should().NotBeEmpty();
-            logs.Should().HaveCount(beforeTimeStampCount);
+            var enumerateLogs = logs.ToList();
+            enumerateLogs.Should().NotBeEmpty();
+            enumerateLogs.Should().HaveCount(beforeTimeStampCount);
             count.Should().Be(beforeTimeStampCount);
-            logs.Select(log => ConvertToUtc(log.Timestamp, checkWithUtc)).Should().AllSatisfy(p =>
-            {
-                p.Should().BeBefore(firstTimeStamp);
-            });
+            enumerateLogs.Select(log => ConvertToUtc(log.Timestamp, checkWithUtc)).Should().AllSatisfy(p => { p.Should().BeBefore(firstTimeStamp); });
         }
 
         [Fact]
@@ -106,12 +111,13 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
                 .Count(p => p.Timestamp >= firstTimeStamp && p.Timestamp < lastTimeStamp);
             var (logs, count) = await provider.FetchDataAsync(1, 1000, startDate: firstTimeStamp, endDate: lastTimeStamp);
 
-            logs.Should().NotBeEmpty();
-            logs.Should().HaveCount(inTimeStampCount);
+            var enumerateLogs = logs.ToList();
+            enumerateLogs.Should().NotBeEmpty();
+            enumerateLogs.Should().HaveCount(inTimeStampCount);
             count.Should().Be(inTimeStampCount);
-            logs.Should().OnlyContain(p =>
-            ConvertToUtc(p.Timestamp, checkWithUtc) >= firstTimeStamp &&
-            ConvertToUtc(p.Timestamp, checkWithUtc) < lastTimeStamp);
+            enumerateLogs.Should().OnlyContain(p =>
+                ConvertToUtc(p.Timestamp, checkWithUtc) >= firstTimeStamp &&
+                ConvertToUtc(p.Timestamp, checkWithUtc) < lastTimeStamp);
         }
 
         [Fact]
@@ -136,8 +142,8 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             logs.Should().NotBeEmpty();
             logs.Should().OnlyContain(p =>
                 p.Message
-                .Split(" ", StringSplitOptions.None)
-                .Intersect(msg!.Split(" ", StringSplitOptions.None)).Any());
+                    .Split(" ", StringSplitOptions.None)
+                    .Intersect(msg!.Split(" ", StringSplitOptions.None)).Any());
             count.Should().BeLessThan(100).And.BeGreaterThanOrEqualTo(1);
         }
 

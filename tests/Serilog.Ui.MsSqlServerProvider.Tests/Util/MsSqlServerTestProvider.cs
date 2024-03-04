@@ -32,7 +32,7 @@ namespace MsSql.Tests.Util
         {
             DbOptions.ConnectionString = (Container as MsSqlContainer)?.GetConnectionString();
 
-            using var dataContext = new SqlConnection(DbOptions.ConnectionString);
+            await using var dataContext = new SqlConnection(DbOptions.ConnectionString);
 
             await dataContext.ExecuteAsync("SELECT DATABASEPROPERTYEX(N'master', 'Collation')");
         }
@@ -42,12 +42,13 @@ namespace MsSql.Tests.Util
             var logs = LogModelFaker.Logs(100);
             Collector = new LogModelPropsCollector(logs);
 
-            using var dataContext = new SqlConnection(DbOptions.ConnectionString);
+            await using var dataContext = new SqlConnection(DbOptions.ConnectionString);
 
             await dataContext.ExecuteAsync(Costants.MsSqlCreateTable);
 
             await dataContext.ExecuteAsync(Costants.MsSqlInsertFakeData, logs);
 
+            SqlMapper.AddTypeHandler(new DapperDateTimeHandler());
             Provider = new SqlServerDataProvider(DbOptions);
         }
     }
