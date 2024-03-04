@@ -53,7 +53,7 @@ public abstract class DataProvider(RelationalDbOptions options) : IDataProvider
     {
         var queryBuilder = new StringBuilder();
         queryBuilder.Append(
-            $"SELECT Id, {ColumnMessageName}, {ColumnLevelName}, {ColumnTimestampName}, Exception, Properties From `{Options.TableName}` ");
+            $"SELECT Id, {ColumnMessageName}, {ColumnLevelName} AS 'Level', {ColumnTimestampName}, Exception, Properties From `{Options.TableName}` ");
 
         GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
         var sortClause = GenerateSortClause(sortOn, sortBy);
