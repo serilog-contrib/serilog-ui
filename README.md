@@ -11,7 +11,7 @@
 A simple Serilog log viewer for the following sinks:
 
 - Serilog.Sinks.**MSSqlServer** ([Nuget](https://github.com/serilog/serilog-sinks-mssqlserver))
-- Serilog.Sinks.**MySql** ([Nuget](https://github.com/TeleSoftas/serilog-sinks-mariadb)) and Serilog.Sinks.**MariaDB** [Nuget](https://github.com/TeleSoftas/serilog-sinks-mariadb)
+- Serilog.Sinks.**MySql** ([Nuget](https://github.com/saleem-mirza/serilog-sinks-mysql)) and Serilog.Sinks.**MariaDB** [Nuget](https://github.com/TeleSoftas/serilog-sinks-mariadb)
 - Serilog.Sinks.**Postgresql** ([Nuget](https://github.com/b00ted/serilog-sinks-postgresql))
 - Serilog.Sinks.**MongoDB** ([Nuget](https://github.com/serilog/serilog-sinks-mongodb))
 - Serilog.Sinks.**ElasticSearch** ([Nuget](https://github.com/serilog/serilog-sinks-elasticsearch))
