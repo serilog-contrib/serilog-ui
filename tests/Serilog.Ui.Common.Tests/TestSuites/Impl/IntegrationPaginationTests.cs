@@ -11,14 +11,14 @@ using Xunit;
 
 namespace Serilog.Ui.Common.Tests.TestSuites.Impl
 {
-    public abstract class IntegrationPaginationTests<DbRunner> : IIntegrationPaginationTests
-        where DbRunner : class, IIntegrationRunner
+    public abstract class IntegrationPaginationTests<TDbRunner> : IIntegrationPaginationTests
+        where TDbRunner : class, IIntegrationRunner
     {
         private readonly LogModelPropsCollector _logCollector;
 
         protected readonly IDataProvider Provider;
 
-        protected IntegrationPaginationTests(DbRunner instance)
+        protected IntegrationPaginationTests(TDbRunner instance)
         {
             _logCollector = instance.GetPropsCollector();
             Provider = Guard.Against.Null(instance.GetDataProvider());
@@ -38,9 +38,10 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             var example = _logCollector.Example;
             var (logs, _) = await Provider.FetchDataAsync(2, 1, level: example.Level);
 
-            logs.Should().NotBeEmpty().And.HaveCount(1);
-            logs.First().Level.Should().Be(example.Level);
-            logs.First().Message.Should().NotBe(example.Message);
+            var results = logs.ToList();
+            results.Should().NotBeEmpty().And.HaveCount(1);
+            results.First().Level.Should().Be(example.Level);
+            results.First().Message.Should().NotBe(example.Message);
         }
 
         [Fact]
@@ -49,8 +50,9 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             var example = _logCollector.Example;
             var (logs, _) = await Provider.FetchDataAsync(2, 1, level: example.Level);
 
-            logs.First().Level.Should().Be(example.Level);
-            logs.First().Message.Should().NotBe(example.Message);
+            var results = logs.ToList();
+            results.First().Level.Should().Be(example.Level);
+            results.First().Message.Should().NotBe(example.Message);
         }
 
         [Fact]

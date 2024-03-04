@@ -1,7 +1,5 @@
 ﻿using Elastic.Elasticsearch.Xunit.XunitPlumbing;
 using ElasticSearch.Tests.Util;
-using FluentAssertions;
-using System.Linq;
 using System.Threading.Tasks;
 using Serilog.Ui.Common.Tests.TestSuites.Impl;
 using Xunit;
@@ -9,11 +7,13 @@ using Xunit;
 namespace ElasticSearch.Tests.DataProvider
 {
     [Trait("Integration-Search", "Elastic")]
-    public class DataProviderSearchTest : IntegrationSearchTests<ElasticTestProvider>,
+    public class DataProviderSearchTest : IntegrationSearchTests_Sink<ElasticTestProvider>,
         IClassFixture<ElasticTestProvider>,
         IClusterFixture<Elasticsearch7XCluster>
     {
-        public DataProviderSearchTest(ElasticTestProvider instance) : base(instance) { }
+        public DataProviderSearchTest(ElasticTestProvider instance) : base(instance)
+        {
+        }
 
         public override Task It_finds_data_with_all_filters()
             => It_finds_data_with_all_filters_by_utc(true, true);
@@ -24,21 +24,7 @@ namespace ElasticSearch.Tests.DataProvider
         public override Task It_finds_only_data_emitted_before_date()
             => It_finds_only_data_emitted_before_date_by_utc(true);
 
-        [I]
-        public override async Task It_finds_only_data_emitted_in_dates_range()
-        {
-            var firstTimeStamp = logCollector!.TimesSamples.First().AddSeconds(-50);
-            var lastTimeStamp = logCollector.TimesSamples.Last();
-            var inTimeStampCount = logCollector!.DataSet
-                .Count(p => p.Timestamp >= firstTimeStamp && p.Timestamp <= lastTimeStamp);
-            var (logs, count) = await provider.FetchDataAsync(1, 1000, startDate: firstTimeStamp, endDate: lastTimeStamp);
-
-            logs.Should().NotBeEmpty();
-            logs.Should().HaveCount(inTimeStampCount);
-            count.Should().Be(inTimeStampCount);
-            logs.Should().OnlyContain(p =>
-            p.Timestamp.ToUniversalTime() >= firstTimeStamp &&
-            p.Timestamp.ToUniversalTime() < lastTimeStamp);
-        }
+        public override Task It_finds_only_data_emitted_in_dates_range()
+            => It_finds_only_data_emitted_in_dates_range_by_utc(true);
     }
 }

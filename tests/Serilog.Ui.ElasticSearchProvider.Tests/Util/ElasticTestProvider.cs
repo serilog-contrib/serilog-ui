@@ -1,6 +1,4 @@
-﻿using Serilog;
-using Serilog.Sinks.Elasticsearch;
-using Serilog.Ui.Common.Tests.DataSamples;
+﻿using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core;
 using Serilog.Ui.ElasticSearchProvider;
@@ -11,15 +9,17 @@ namespace ElasticSearch.Tests.Util
 {
     public class ElasticTestProvider : Elasticsearch7XTestBase, IIntegrationRunner
     {
-        private readonly ElasticSearchDbDataProvider provider;
-        private LogModelPropsCollector? logModelPropsCollector;
-        private bool disposedValue;
+        private readonly ElasticSearchDbDataProvider _provider;
+
+        private LogModelPropsCollector? _logModelPropsCollector;
+
+        private bool _disposedValue;
 
         public ElasticTestProvider(Elasticsearch7XCluster cl) : base(cl)
         {
-            provider = new ElasticSearchDbDataProvider(Client, new ElasticSearchDbOptions
+            _provider = new ElasticSearchDbDataProvider(Client, new ElasticSearchDbOptions
             {
-                IndexName = $"{SetupSerilog.IndexPrefix}{DateTime.UtcNow:yyyy.MM.dd}"
+                IndexName = $"{Elasticsearch7XCluster.IndexPrefix}{DateTime.UtcNow:yyyy.MM.dd}"
             });
         }
 
@@ -28,28 +28,26 @@ namespace ElasticSearch.Tests.Util
             return Task.CompletedTask;
         }
 
-        public IDataProvider GetDataProvider() => provider;
+        public IDataProvider GetDataProvider() => _provider;
 
-        public LogModelPropsCollector GetPropsCollector() => logModelPropsCollector!;
+        public LogModelPropsCollector GetPropsCollector() => _logModelPropsCollector!;
 
         public Task InitializeAsync()
         {
-            logModelPropsCollector = Cluster.Collector;
+            _logModelPropsCollector = Cluster.Collector;
 
-            return Client.Indices.RefreshAsync(SetupSerilog.IndexPrefix + "*");
+            return Client.Indices.RefreshAsync(Elasticsearch7XCluster.IndexPrefix + "*");
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (_disposedValue) return;
+            if (disposing)
             {
-                if (disposing)
-                {
-                    // dispose managed state (managed objects)
-                }
-
-                disposedValue = true;
+                // dispose managed state (managed objects)
             }
+
+            _disposedValue = true;
         }
 
         public void Dispose()
@@ -57,33 +55,6 @@ namespace ElasticSearch.Tests.Util
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
-        }
-    }
-
-    public sealed class SetupSerilog
-    {
-        public const string IndexPrefix = "logs-7x-default-";
-        public const string TemplateName = "serilog-logs-7x";
-        private readonly LoggerConfiguration loggerConfig;
-
-        public SetupSerilog()
-        {
-            loggerConfig = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.Elasticsearch(
-                    new ElasticsearchSinkOptions(new Uri($"http://localhost:9200"))
-                    {
-                        IndexFormat = IndexPrefix + "{0:yyyy.MM.dd}",
-                        TemplateName = TemplateName,
-                        AutoRegisterTemplate = true,
-                        AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
-                    });
-        }
-
-        public LogModelPropsCollector InitializeLogs()
-        {
-            using var logger = loggerConfig.CreateLogger();
-            return ElasticSearchLogModelFaker.Logs(logger);
         }
     }
 }

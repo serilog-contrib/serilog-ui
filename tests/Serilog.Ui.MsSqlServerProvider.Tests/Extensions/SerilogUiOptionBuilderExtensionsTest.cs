@@ -12,24 +12,19 @@ namespace MsSql.Tests.Extensions
     [Trait("DI-DataProvider", "MsSql")]
     public class SerilogUiOptionBuilderExtensionsTest
     {
-        private readonly ServiceCollection serviceCollection;
-
-        public SerilogUiOptionBuilderExtensionsTest()
-        {
-            serviceCollection = new ServiceCollection();
-        }
+        private readonly ServiceCollection _serviceCollection = new();
 
         [Theory]
         [InlineData(null)]
         [InlineData("schema")]
         public void It_registers_provider_and_dependencies(string schemaName)
         {
-            serviceCollection.AddSerilogUi((builder) =>
+            _serviceCollection.AddSerilogUi((builder) =>
             {
                 builder.UseSqlServer("https://sqlserver.example.com", "my-table", schemaName);
             });
 
-            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var serviceProvider = _serviceCollection.BuildServiceProvider();
             using var scope = serviceProvider.CreateScope();
 
             var provider = scope.ServiceProvider.GetService<IDataProvider>();
@@ -41,12 +36,12 @@ namespace MsSql.Tests.Extensions
         {
             var nullables = new List<Func<IServiceCollection>>
             {
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer(null!, "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer(" ", "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("", "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("name", null!)),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("name", " ")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("name", "")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer(null!, "name")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer(" ", "name")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("", "name")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("name", null!)),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("name", " ")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("name", "")),
             };
 
             foreach (var nullable in nullables)

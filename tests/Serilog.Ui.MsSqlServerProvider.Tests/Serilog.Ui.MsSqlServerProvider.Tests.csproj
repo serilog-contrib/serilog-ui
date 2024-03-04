@@ -9,6 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="6.6.0" />
 		<PackageReference Include="Testcontainers.MsSql" Version="3.4.0" />
 	</ItemGroup>
 
