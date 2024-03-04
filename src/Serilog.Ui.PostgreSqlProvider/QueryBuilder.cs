@@ -109,13 +109,11 @@ internal static class QueryBuilder
 
     private static string GenerateSortClause(SortProperty sortOn, SortDirection sortBy)
     {
-        var isDesc = sortBy == SortDirection.Desc;
-
         var sortPropertyName = sortOn switch
         {
             SortProperty.Timestamp => _columns.Timestamp,
             SortProperty.Level => _columns.Level,
-            SortProperty.Message => _columns.MessageTemplate,
+            SortProperty.Message => _columns.RenderedMessage,
             _ => _columns.Timestamp,
         };
 
