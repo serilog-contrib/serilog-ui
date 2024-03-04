@@ -34,8 +34,12 @@ namespace Serilog.Ui.MsSqlServerProvider
             SortDirection sortBy = SortDirection.Desc
         )
         {
-            var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate, sortOn, sortBy);
-            var logCountTask = CountLogsAsync(level, searchCriteria, startDate, endDate);
+            // since sink stores dates in local time, we query by local time
+            var localStartDate = startDate?.ToLocalTime();
+            var localEndDate = endDate?.ToLocalTime();
+
+            var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria, localStartDate, localEndDate, sortOn, sortBy);
+            var logCountTask = CountLogsAsync(level, searchCriteria, localStartDate, localEndDate);
 
             await Task.WhenAll(logsTask, logCountTask);
 
@@ -113,35 +117,29 @@ namespace Serilog.Ui.MsSqlServerProvider
             DateTime? startDate = null,
             DateTime? endDate = null)
         {
-            var whereIncluded = false;
+            var conditionStart = "WHERE";
 
             if (!string.IsNullOrEmpty(level))
             {
-                queryBuilder.Append($"WHERE [{ColumnLevelName}] = @Level ");
-                whereIncluded = true;
+                queryBuilder.Append($"{conditionStart} [{ColumnLevelName}] = @Level ");
+                conditionStart = "AND";
             }
 
             if (!string.IsNullOrEmpty(searchCriteria))
             {
-                queryBuilder.Append(whereIncluded
-                    ? $"AND [{ColumnMessageName}] LIKE @Search OR [Exception] LIKE @Search "
-                    : $"WHERE [{ColumnMessageName}] LIKE @Search OR [Exception] LIKE @Search ");
-                whereIncluded = true;
+                queryBuilder.Append($"{conditionStart} [{ColumnMessageName}] LIKE @Search OR [Exception] LIKE @Search ");
+                conditionStart = "AND";
             }
 
             if (startDate != null)
             {
-                queryBuilder.Append(whereIncluded
-                    ? $"AND [{ColumnTimestampName}] >= @StartDate "
-                    : $"WHERE [{ColumnTimestampName}] >= @StartDate ");
-                whereIncluded = true;
+                queryBuilder.Append($"{conditionStart} [{ColumnTimestampName}] >= @StartDate ");
+                conditionStart = "AND";
             }
 
             if (endDate != null)
             {
-                queryBuilder.Append(whereIncluded
-                    ? $"AND [{ColumnTimestampName}] <= @EndDate "
-                    : $"WHERE [{ColumnTimestampName}] <= @EndDate ");
+                queryBuilder.Append($"{conditionStart} [{ColumnTimestampName}] <= @EndDate ");
             }
         }
 
