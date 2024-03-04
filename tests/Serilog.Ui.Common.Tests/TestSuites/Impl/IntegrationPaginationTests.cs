@@ -51,6 +51,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             var (logs, _) = await Provider.FetchDataAsync(2, 1, level: example.Level);
 
             var results = logs.ToList();
+            results.Should().NotBeEmpty();
             results.First().Level.Should().Be(example.Level);
             results.First().Message.Should().NotBe(example.Message);
         }

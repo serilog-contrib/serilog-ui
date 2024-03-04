@@ -9,7 +9,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Testcontainers.MySql" Version="3.4.0" />
+		<PackageReference Include="MySqlConnector" Version="2.3.5" />
+		<PackageReference Include="Serilog.Sinks.MariaDB" Version="1.0.1" />
+		<PackageReference Include="Serilog.Sinks.MySQL" Version="5.0.0" />
+		<PackageReference Include="Testcontainers.MariaDb" Version="3.7.0" />
+		<PackageReference Include="Testcontainers.MySql" Version="3.7.0" />
 	</ItemGroup>
 
 	<ItemGroup>
