@@ -3,6 +3,7 @@ using MySql.Data.MySqlClient;
 using Serilog.Ui.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Serilog.Ui.Core.Models.SearchOptions;
@@ -45,13 +46,12 @@ namespace Serilog.Ui.MySqlProvider
             SortDirection sortBy)
         {
             var queryBuilder = new StringBuilder();
-            queryBuilder.Append("SELECT Id, Message, LogLevel AS `Level`, TimeStamp, Exception, Properties From `");
-            queryBuilder.Append(_options.TableName);
-            queryBuilder.Append("` ");
+            queryBuilder.Append($"SELECT Id, Message, LogLevel AS `Level`, TimeStamp, Exception, Properties From `{_options.TableName}` ");
 
             GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
+            var sortClause = GenerateSortClause(sortOn, sortBy);
 
-            queryBuilder.Append("ORDER BY @SortOn @SortBy LIMIT @Offset, @Count");
+            queryBuilder.Append($"ORDER BY {sortClause} LIMIT @Offset, @Count");
 
             using var connection = new MySqlConnection(_options.ConnectionString);
             var param = new
@@ -61,16 +61,18 @@ namespace Serilog.Ui.MySqlProvider
                 Level = level,
                 Search = searchCriteria != null ? $"%{searchCriteria}%" : null,
                 StartDate = startDate,
-                EndDate = endDate,
-                SortOn = sortOn.ToString(),
-                SortBy = sortBy.ToString().ToUpper()
+                EndDate = endDate
             };
             var logs = await connection.QueryAsync<MySqlLogModel>(queryBuilder.ToString(), param);
-            var index = 1;
-            foreach (var log in logs)
-                log.RowNo = (page * count) + index++;
 
-            return logs;
+            var rowNoStart = page * count;
+            return logs
+                .Select((item, i) =>
+                {
+                    item.RowNo = rowNoStart + i;
+                    return item;
+                })
+                .ToList();
         }
 
         private async Task<int> CountLogsAsync(
@@ -80,26 +82,22 @@ namespace Serilog.Ui.MySqlProvider
             DateTime? endDate = null)
         {
             var queryBuilder = new StringBuilder();
-            queryBuilder.Append("SELECT COUNT(Id) FROM `");
-            queryBuilder.Append(_options.TableName);
-            queryBuilder.Append("` ");
+            queryBuilder.Append($"SELECT COUNT(Id) FROM `{_options.TableName}` ");
 
             GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
 
-            using (var connection = new MySqlConnection(_options.ConnectionString))
-            {
-                return await connection.ExecuteScalarAsync<int>(queryBuilder.ToString(),
-                    new
-                    {
-                        Level = level,
-                        Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
-                        StartDate = startDate,
-                        EndDate = endDate
-                    });
-            }
+            using var connection = new MySqlConnection(_options.ConnectionString);
+            return await connection.ExecuteScalarAsync<int>(queryBuilder.ToString(),
+                new
+                {
+                    Level = level,
+                    Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
+                    StartDate = startDate,
+                    EndDate = endDate
+                });
         }
 
-        private void GenerateWhereClause(
+        private static void GenerateWhereClause(
             StringBuilder queryBuilder,
             string level,
             string searchCriteria,
@@ -136,6 +134,12 @@ namespace Serilog.Ui.MySqlProvider
                     ? "AND TimeStamp <= @EndDate "
                     : "WHERE TimeStamp <= @EndDate ");
             }
+        }
+
+        private static string GenerateSortClause(SortProperty sortOn, SortDirection sortBy)
+        {
+            var sortProperty = sortOn == SortProperty.Level ? "LogLevel" : sortOn.ToString();
+            return $"{sortProperty} {sortBy.ToString().ToUpper()}";
         }
     }
 }

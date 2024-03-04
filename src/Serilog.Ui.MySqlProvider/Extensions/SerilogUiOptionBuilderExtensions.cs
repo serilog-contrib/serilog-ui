@@ -5,12 +5,12 @@ using System;
 namespace Serilog.Ui.MySqlProvider
 {
     /// <summary>
-    ///     MySQL data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
+    /// MySQL data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
     /// </summary>
     public static class SerilogUiOptionBuilderExtensions
     {
         /// <summary>
-        ///     Configures the SerilogUi to connect to a MySQL database.
+        /// Configures the SerilogUi to connect to a MySQL database.
         /// </summary>
         /// <param name="optionsBuilder"> The options builder. </param>
         /// <param name="connectionString"> The connection string. </param>
@@ -34,10 +34,9 @@ namespace Serilog.Ui.MySqlProvider
                 ConnectionString = connectionString,
                 TableName = tableName
             };
-            
+
             ((ISerilogUiOptionsBuilder)optionsBuilder).Services
                 .AddScoped<IDataProvider, MySqlDataProvider>(p => ActivatorUtilities.CreateInstance<MySqlDataProvider>(p, relationProvider));
-
         }
     }
 }

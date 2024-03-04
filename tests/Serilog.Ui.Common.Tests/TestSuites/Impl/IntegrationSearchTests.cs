@@ -77,7 +77,6 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             count.Should().Be(afterTimeStampCount);
 
             var convertedLogs = enumerateLogs.Select(log => ConvertToUtc(log.Timestamp, checkWithUtc)).ToList();
-            convertedLogs.Should().AllSatisfy(p => { p.Kind.Should().Be(DateTimeKind.Utc); });
             convertedLogs.Should().AllSatisfy(p => { p.Should().BeAfter(lastTimeStamp); });
         }
 

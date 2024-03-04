@@ -12,23 +12,18 @@ namespace MySql.Tests.Extensions
     [Trait("DI-DataProvider", "MySql")]
     public class SerilogUiOptionBuilderExtensionsTest
     {
-        private readonly ServiceCollection serviceCollection;
-
-        public SerilogUiOptionBuilderExtensionsTest()
-        {
-            serviceCollection = new ServiceCollection();
-        }
+        private readonly ServiceCollection _serviceCollection = new();
 
         [Fact]
         public void It_registers_provider_and_dependencies()
         {
-            serviceCollection.AddSerilogUi((builder) =>
+            _serviceCollection.AddSerilogUi((builder) =>
             {
                 builder.UseMySqlServer("https://mysqlserver.example.com", "my-table");
             });
-            var services = serviceCollection.BuildServiceProvider();
+            var services = _serviceCollection.BuildServiceProvider();
 
-            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var serviceProvider = _serviceCollection.BuildServiceProvider();
             using var scope = serviceProvider.CreateScope();
 
             var provider = scope.ServiceProvider.GetService<IDataProvider>();
@@ -40,12 +35,12 @@ namespace MySql.Tests.Extensions
         {
             var nullables = new List<Func<IServiceCollection>>
             {
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer(null, "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer(" ", "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer("", "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer("name", null)),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer("name", " ")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer("name", "")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer(null, "name")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer(" ", "name")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer("", "name")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer("name", null)),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer("name", " ")),
+                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer("name", "")),
             };
 
             foreach (var nullable in nullables)

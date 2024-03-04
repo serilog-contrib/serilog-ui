@@ -17,7 +17,7 @@ namespace MySql.Tests.Util
     public sealed class MySqlTestProvider : DatabaseInstance
     {
         protected override string Name => nameof(MySqlContainer);
-        public MySqlTestProvider() : base()
+        public MySqlTestProvider()
         {
             Container = new MySqlBuilder().Build();
         }
@@ -34,7 +34,7 @@ namespace MySql.Tests.Util
 
             DbOptions.ConnectionString = (Container as MySqlContainer)?.GetConnectionString();
 
-            using var dataContext = new MySqlConnection(DbOptions.ConnectionString);
+            await using var dataContext = new MySqlConnection(DbOptions.ConnectionString);
 
             await dataContext.ExecuteAsync("SELECT 1");
         }
@@ -44,7 +44,7 @@ namespace MySql.Tests.Util
             var logs = LogModelFaker.Logs(100);
             Collector = new LogModelPropsCollector(logs);
 
-            using var dataContext = new MySqlConnection(DbOptions.ConnectionString);
+            await using var dataContext = new MySqlConnection(DbOptions.ConnectionString);
 
             await dataContext.ExecuteAsync(Costants.MySqlCreateTable);
 
