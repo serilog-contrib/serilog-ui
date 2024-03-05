@@ -1,28 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<AssemblyName>Postgres.Tests</AssemblyName>
-		<RootNamespace>Postgres.Tests</RootNamespace>
-		<IsPackable>false</IsPackable>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <AssemblyName>Postgres.Tests</AssemblyName>
+        <RootNamespace>Postgres.Tests</RootNamespace>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Testcontainers.PostgreSql" Version="3.7.0" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Serilog.Sinks.Postgresql.Alternative" Version="4.0.3"/>
+        <PackageReference Include="Testcontainers.PostgreSql" Version="3.7.0"/>
+    </ItemGroup>
 
-	<ItemGroup>
-		<Content Include="./../Serilog.Ui.Common.Tests/xunit.runner.json">
-			<Link>%(Filename)%(Extension)</Link>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
+    <ItemGroup>
+        <Content Include="./../Serilog.Ui.Common.Tests/xunit.runner.json">
+            <Link>%(Filename)%(Extension)</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\..\src\Serilog.Ui.PostgreSqlProvider\Serilog.Ui.PostgreSqlProvider.csproj" />
-		<ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj" />
-		<ProjectReference Include="..\Serilog.Ui.Common.Tests\Serilog.Ui.Common.Tests.csproj" />
-	</ItemGroup>
-	
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Serilog.Ui.PostgreSqlProvider\Serilog.Ui.PostgreSqlProvider.csproj"/>
+        <ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj"/>
+        <ProjectReference Include="..\Serilog.Ui.Common.Tests\Serilog.Ui.Common.Tests.csproj"/>
+    </ItemGroup>
+
 </Project>

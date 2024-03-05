@@ -1,7 +1,6 @@
 ﻿using Serilog.Ui.PostgreSqlProvider.Models;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Text;
 using static Serilog.Ui.Core.Models.SearchOptions;
 
@@ -32,19 +31,14 @@ internal static class QueryBuilder
 
         queryBuilder
             .Append("SELECT ")
-            .Append($"\"{_columns.RenderedMessage}\", \"{_columns.MessageTemplate}\", \"{_columns.Level}\", \"{_columns.Timestamp}\", \"{_columns.Exception}\", \"{_columns.LogEventSerialized}\" AS \"Properties\"")
-            .Append(" FROM \"")
-            .Append(schema)
-            .Append("\".\"")
-            .Append(tableName)
-            .Append("\"");
+            .Append(
+                $"\"{_columns.RenderedMessage}\", \"{_columns.MessageTemplate}\", \"{_columns.Level}\", \"{_columns.Timestamp}\", \"{_columns.Exception}\", \"{_columns.LogEventSerialized}\" AS \"Properties\"")
+            .Append($" FROM \"{schema}\".\"{tableName}\"");
 
         GenerateWhereClause(queryBuilder, level, searchCriteria, ref startDate, ref endDate);
         var sortClause = GenerateSortClause(sortOn, sortBy);
 
-        queryBuilder.Append(" ORDER BY ");
-        queryBuilder.Append(sortClause);
-        queryBuilder.Append(" LIMIT @Count OFFSET @Offset ");
+        queryBuilder.Append($" ORDER BY {sortClause} LIMIT @Count OFFSET @Offset");
 
         return queryBuilder.ToString();
     }
@@ -59,11 +53,9 @@ internal static class QueryBuilder
     {
         StringBuilder queryBuilder = new();
 
-        queryBuilder.Append($"SELECT COUNT(\"{_columns.RenderedMessage}\") FROM \"");
-        queryBuilder.Append(schema);
-        queryBuilder.Append("\".\"");
-        queryBuilder.Append(tableName);
-        queryBuilder.Append("\"");
+        queryBuilder
+            .Append($"SELECT COUNT(\"{_columns.RenderedMessage}\")")
+            .Append($" FROM \"{schema}\".\"{tableName}\"");
 
         GenerateWhereClause(queryBuilder, level, searchCriteria, ref startDate, ref endDate);
 
@@ -99,12 +91,11 @@ internal static class QueryBuilder
             conditions.Add($"\"{_columns.Timestamp}\" <= @EndDate");
         }
 
-        if (conditions.Count > 0)
-        {
-            queryBuilder
-                .Append(" WHERE TRUE AND ")
-                .Append(string.Join(" AND ", conditions)); ;
-        }
+        if (conditions.Count <= 0) return;
+
+        queryBuilder
+            .Append(" WHERE TRUE AND ")
+            .Append(string.Join(" AND ", conditions));
     }
 
     private static string GenerateSortClause(SortProperty sortOn, SortDirection sortBy)

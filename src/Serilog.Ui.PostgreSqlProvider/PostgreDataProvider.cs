@@ -4,7 +4,6 @@ using Serilog.Ui.Core;
 using Serilog.Ui.PostgreSqlProvider.Models;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using static Serilog.Ui.Core.Models.SearchOptions;
@@ -14,10 +13,10 @@ namespace Serilog.Ui.PostgreSqlProvider;
 /// <inheritdoc/>
 public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
 {
-    private readonly PostgreSqlDbOptions options = options ?? throw new ArgumentNullException(nameof(options));
+    private readonly PostgreSqlDbOptions _options = options ?? throw new ArgumentNullException(nameof(options));
 
     /// <inheritdoc/>
-    public string Name => options.ToDataProviderName("NPGSQL");
+    public string Name => _options.ToDataProviderName("NPGSQL");
 
     /// <inheritdoc/>
     public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
@@ -58,29 +57,33 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
         SortProperty sortOn,
         SortDirection sortBy)
     {
-        var query = QueryBuilder.BuildFetchLogsQuery(options.Schema, options.TableName, level, searchCriteria, ref startDate, ref endDate, sortOn, sortBy);
+        var query = QueryBuilder.BuildFetchLogsQuery(_options.Schema, _options.TableName, level, searchCriteria, ref startDate, ref endDate, sortOn,
+            sortBy);
 
-        using IDbConnection connection = new NpgsqlConnection(options.ConnectionString);
+        await using var connection = new NpgsqlConnection(_options.ConnectionString);
 
-        var logs = (await connection.QueryAsync<PostgresLogModel>(query,
+        var logs = await connection.QueryAsync<PostgresLogModel>(query,
             new
             {
                 Offset = page * count,
                 Count = count,
-                // TODO: this level could be a text column, to be passed as parameter: https://github.com/b00ted/serilog-sinks-postgresql/blob/ce73c7423383d91ddc3823fe350c1c71fc23bab9/Serilog.Sinks.PostgreSQL/Sinks/PostgreSQL/ColumnWriters.cs#L97
+                // TODO: [open point]
+                // this level could be a text column, to be passed as parameter:
+                // https://github.com/b00ted/serilog-sinks-postgresql/blob/ce73c7423383d91ddc3823fe350c1c71fc23bab9/Serilog.Sinks.PostgreSQL/Sinks/PostgreSQL/ColumnWriters.cs#L97
                 Level = LogLevelConverter.GetLevelValue(level),
                 Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
                 StartDate = startDate,
                 EndDate = endDate
-            })).ToList();
+            });
 
-        var index = 1;
-        foreach (var log in logs)
-        {
-            log.RowNo = (page * count) + index++;
-        }
-
-        return logs;
+        var rowNoStart = page * count;
+        return logs
+            .Select((item, i) =>
+            {
+                item.RowNo = rowNoStart + i;
+                return item;
+            })
+            .ToList();
     }
 
     private async Task<int> CountLogsAsync(
@@ -89,9 +92,9 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
         DateTime? startDate = null,
         DateTime? endDate = null)
     {
-        var query = QueryBuilder.BuildCountLogsQuery(options.Schema, options.TableName, level, searchCriteria, ref startDate, ref endDate);
+        var query = QueryBuilder.BuildCountLogsQuery(_options.Schema, _options.TableName, level, searchCriteria, ref startDate, ref endDate);
 
-        using IDbConnection connection = new NpgsqlConnection(options.ConnectionString);
+        await using var connection = new NpgsqlConnection(_options.ConnectionString);
 
         return await connection.ExecuteScalarAsync<int>(query,
             new
