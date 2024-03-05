@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using DotNet.Testcontainers.Containers;
 using Microsoft.Data.SqlClient;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using Npgsql;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.TestSuites;
@@ -15,12 +15,12 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
 #nullable enable
     public abstract class DatabaseInstance : IIntegrationRunner
     {
-        private bool disposedValue;
+        private bool _disposedValue;
 
         protected virtual string Name { get; } = nameof(IContainer);
 
         /// <summary>
-        /// Gets or sets the Testcontainers container.
+        /// Gets or sets the TestContainers container.
         /// </summary>
         protected virtual IContainer? Container { get; set; }
 
@@ -31,9 +31,9 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
 
         protected LogModelPropsCollector? Collector { get; set; }
 
-        public IDataProvider GetDataProvider() => Guard.Against.Null(Provider)!;
+        public IDataProvider GetDataProvider() => Guard.Against.Null(Provider);
 
-        public LogModelPropsCollector GetPropsCollector() => Guard.Against.Null(Collector)!;
+        public LogModelPropsCollector GetPropsCollector() => Guard.Against.Null(Collector);
 
         public async Task InitializeAsync()
         {
@@ -67,7 +67,7 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
                     await CheckDbReadinessAsync();
                     break;
                 }
-                catch (Exception ex) when (ex is SqlException || ex is MySqlException || ex is NpgsqlException)
+                catch (Exception ex) when (ex is SqlException or MySqlException or NpgsqlException)
                 {
                     retry += 1;
                     await Task.Delay(1000 * retry, token);
@@ -94,15 +94,13 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
         /// <param name="disposing">If it's disposing.</param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (_disposedValue) return;
+            if (disposing)
             {
-                if (disposing)
-                {
-                    // additional dispose items
-                }
-
-                disposedValue = true;
+                // additional dispose items
             }
+
+            _disposedValue = true;
         }
 
         /// <inheritdoc/>
