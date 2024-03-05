@@ -6,6 +6,7 @@ using Xunit;
 
 namespace Postgres.Tests.DataProvider;
 
+[Trait("Unit-QueryBuilder", "Postgres")]
 public class QueryBuilderTests
 {
     [Theory]
