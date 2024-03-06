@@ -7,11 +7,6 @@ namespace Serilog.Ui.Common.Tests.DataSamples
 {
     public class LogModelPropsCollector
     {
-        public LogModelPropsCollector(IEnumerable<LogModel> models)
-            : this(models.ToList())
-        {
-        }
-
         public LogModelPropsCollector(ICollection<LogModel> models)
         {
             DataSet = models.ToList();
