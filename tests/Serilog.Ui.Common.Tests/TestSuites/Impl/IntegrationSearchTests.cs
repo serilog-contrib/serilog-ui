@@ -9,14 +9,14 @@ using Xunit;
 
 namespace Serilog.Ui.Common.Tests.TestSuites.Impl
 {
-    public abstract class IntegrationSearchTests<DbRunner> : IIntegrationSearchTests
-        where DbRunner : class, IIntegrationRunner
+    public abstract class IntegrationSearchTests<TDbRunner> : IIntegrationSearchTests
+        where TDbRunner : class, IIntegrationRunner
     {
         protected readonly LogModelPropsCollector LogCollector;
 
         protected readonly IDataProvider Provider;
 
-        protected IntegrationSearchTests(DbRunner instance)
+        protected IntegrationSearchTests(TDbRunner instance)
         {
             LogCollector = instance.GetPropsCollector();
             Provider = Guard.Against.Null(instance.GetDataProvider());

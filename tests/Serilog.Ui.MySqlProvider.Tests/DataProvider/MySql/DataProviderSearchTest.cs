@@ -7,7 +7,7 @@ namespace MySql.Tests.DataProvider.MySql
 {
     [Collection(nameof(MySqlDataProvider))]
     [Trait("Integration-Search", "MySql")]
-    public class DataProviderSearchTest : IntegrationSearchTests_Sink<MySqlTestProvider>
+    public class DataProviderSearchTest : IntegrationSearchTests<MySqlTestProvider>
     {
         public DataProviderSearchTest(MySqlTestProvider instance) : base(instance)
         {

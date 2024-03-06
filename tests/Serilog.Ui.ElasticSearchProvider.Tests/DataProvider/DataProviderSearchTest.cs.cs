@@ -7,7 +7,7 @@ using Xunit;
 namespace ElasticSearch.Tests.DataProvider
 {
     [Trait("Integration-Search", "Elastic")]
-    public class DataProviderSearchTest : IntegrationSearchTests_Sink<ElasticTestProvider>,
+    public class DataProviderSearchTest : IntegrationSearchTests<ElasticTestProvider>,
         IClassFixture<ElasticTestProvider>,
         IClusterFixture<Elasticsearch7XCluster>
     {
