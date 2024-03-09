@@ -15,16 +15,7 @@ namespace MongoDb.Tests.DataProvider
         public DataProviderSearchTest(BaseIntegrationTest instance) : base(instance)
         {
         }
-
-        public override Task It_finds_data_with_all_filters()
-            => It_finds_data_with_all_filters_by_utc(true, true);
-
-        public override Task It_finds_only_data_emitted_after_date()
-            => It_finds_only_data_emitted_after_date_by_utc(true);
-
-        public override Task It_finds_only_data_emitted_before_date()
-            => It_finds_only_data_emitted_before_date_by_utc(true);
-
+        
         public override async Task It_finds_only_data_emitted_in_dates_range()
         {
             var firstTimeStamp = LogCollector!.TimesSamples.First().AddSeconds(50);

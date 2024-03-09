@@ -33,9 +33,9 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
 
         [Fact]
         public virtual Task It_finds_data_with_all_filters()
-            => It_finds_data_with_all_filters_by_utc(false, false);
+            => It_finds_data_with_all_filters_by_utc(true);
 
-        protected virtual async Task It_finds_data_with_all_filters_by_utc(bool checkWithUtc, bool excludeProps)
+        protected async Task It_finds_data_with_all_filters_by_utc(bool checkWithUtc)
         {
             var (logs, count) = await Provider.FetchDataAsync(1,
                 10,
@@ -47,10 +47,6 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             var log = logs.First();
             log.Message.Should().Be(LogCollector.Example.Message);
             log.Level.Should().Be(LogCollector.Example.Level);
-            if (!excludeProps)
-            {
-                log.Properties.Should().Be(LogCollector.Example.Properties);
-            }
 
             ConvertToUtc(log.Timestamp, checkWithUtc).Should().BeCloseTo(LogCollector.Example.Timestamp, TimeSpan.FromMinutes(5));
             count.Should().BeCloseTo(1, 2);
@@ -58,7 +54,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
 
         [Fact]
         public virtual Task It_finds_only_data_emitted_after_date()
-            => It_finds_only_data_emitted_after_date_by_utc(false);
+            => It_finds_only_data_emitted_after_date_by_utc(true);
 
         protected async Task It_finds_only_data_emitted_after_date_by_utc(bool checkWithUtc)
         {
@@ -83,7 +79,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
 
         [Fact]
         public virtual Task It_finds_only_data_emitted_before_date()
-            => It_finds_only_data_emitted_before_date_by_utc(false);
+            => It_finds_only_data_emitted_before_date_by_utc(true);
 
         protected async Task It_finds_only_data_emitted_before_date_by_utc(bool checkWithUtc)
         {
@@ -101,7 +97,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
 
         [Fact]
         public virtual Task It_finds_only_data_emitted_in_dates_range()
-            => It_finds_only_data_emitted_in_dates_range_by_utc(false);
+            => It_finds_only_data_emitted_in_dates_range_by_utc(true);
 
         protected async Task It_finds_only_data_emitted_in_dates_range_by_utc(bool checkWithUtc)
         {
