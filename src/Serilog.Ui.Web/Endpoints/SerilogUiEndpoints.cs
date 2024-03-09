@@ -6,6 +6,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using static Serilog.Ui.Core.Models.SearchOptions;
@@ -26,7 +27,7 @@ namespace Serilog.Ui.Web.Endpoints
         }
         private static readonly JsonSerializerOptions JsonSerializerOptions = new()
         {
-            IgnoreNullValues = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
