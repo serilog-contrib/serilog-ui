@@ -55,7 +55,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{04B4A8
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{5D0F29B0-11F4-4FEA-8D90-FD917F680D6D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests-related", "tests-related", "{DCB452AD-2E0E-4D6A-B46D-72D0AF247381}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{DCB452AD-2E0E-4D6A-B46D-72D0AF247381}"
 	ProjectSection(SolutionItems) = preProject
 		tests\Directory.Build.Props = tests\Directory.Build.Props
 	EndProjectSection

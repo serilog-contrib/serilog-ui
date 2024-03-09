@@ -17,11 +17,11 @@ namespace MsSql.Tests.Extensions
         [Theory]
         [InlineData(null)]
         [InlineData("schema")]
-        public void It_registers_provider_and_dependencies(string schemaName)
+        public void It_registers_provider_and_dependencies(string? schemaName)
         {
             _serviceCollection.AddSerilogUi((builder) =>
             {
-                builder.UseSqlServer("https://sqlserver.example.com", "my-table", schemaName);
+                builder.UseSqlServer("https://sqlserver.example.com", "my-table", schemaName!);
             });
 
             var serviceProvider = _serviceCollection.BuildServiceProvider();

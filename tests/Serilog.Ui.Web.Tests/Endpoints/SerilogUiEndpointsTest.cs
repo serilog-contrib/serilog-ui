@@ -176,8 +176,8 @@ namespace Ui.Web.Tests.Endpoints
         {
             public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page,
                 int count,
-                string level = null,
-                string searchCriteria = null,
+                string level = null!,
+                string searchCriteria = null!,
                 DateTime? startDate = null,
                 DateTime? endDate = null,
                 SearchOptions.SortProperty sortOn = SearchOptions.SortProperty.Timestamp,
