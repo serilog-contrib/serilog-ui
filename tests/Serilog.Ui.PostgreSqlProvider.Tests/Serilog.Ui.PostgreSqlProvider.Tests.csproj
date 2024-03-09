@@ -1,11 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
-        <Nullable>enable</Nullable>
         <AssemblyName>Postgres.Tests</AssemblyName>
         <RootNamespace>Postgres.Tests</RootNamespace>
-        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
