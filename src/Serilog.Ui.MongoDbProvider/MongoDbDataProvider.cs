@@ -13,6 +13,7 @@ namespace Serilog.Ui.MongoDbProvider
     public class MongoDbDataProvider : IDataProvider
     {
         private readonly IMongoCollection<MongoDbLogModel> _collection;
+
         private readonly MongoDbOptions _options;
 
         public MongoDbDataProvider(IMongoClient client, MongoDbOptions options)
@@ -66,17 +67,22 @@ namespace Serilog.Ui.MongoDbProvider
                 var sortClause = GenerateSortClause(sortOn, sortBy);
 
                 var logs = await _collection
-                    .Find(builder, new FindOptions{ Collation = new Collation("en")})
+                    .Find(builder, new FindOptions { Collation = new Collation("en") })
                     .Sort(sortClause)
                     .Skip(count * page)
                     .Limit(count)
                     .ToListAsync();
 
-                var index = 1;
-                foreach (var log in logs)
-                    log.Id = (page * count) + index++;
-
-                return logs.Select(log => log.ToLogModel()).ToList();
+                var rowNoStart = page * count;
+                return logs
+                    .Select((item, i) =>
+                    {
+                        item.Id = rowNoStart + i;
+                        var converted = item.ToLogModel();
+                        converted.Timestamp = converted.Timestamp.ToUniversalTime();
+                        return converted;
+                    })
+                    .ToList();
             }
             catch (Exception ex)
             {
@@ -129,7 +135,7 @@ namespace Serilog.Ui.MongoDbProvider
         private static SortDefinition<MongoDbLogModel> GenerateSortClause(SortProperty sortOn, SortDirection sortBy)
         {
             var isDesc = sortBy == SortDirection.Desc;
-            
+
             // workaround to use utc timestamp
             var sortPropertyName = sortOn switch
             {
@@ -138,10 +144,8 @@ namespace Serilog.Ui.MongoDbProvider
                 SortProperty.Timestamp => nameof(MongoDbLogModel.UtcTimeStamp),
                 _ => nameof(MongoDbLogModel.UtcTimeStamp)
             };
-            
-            return isDesc ?
-                Builders<MongoDbLogModel>.Sort.Descending(sortPropertyName) :
-                Builders<MongoDbLogModel>.Sort.Ascending(sortPropertyName);
+
+            return isDesc ? Builders<MongoDbLogModel>.Sort.Descending(sortPropertyName) : Builders<MongoDbLogModel>.Sort.Ascending(sortPropertyName);
         }
     }
 }

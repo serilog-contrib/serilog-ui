@@ -77,6 +77,7 @@ public abstract class DataProvider(RelationalDbOptions options) : IDataProvider
             .Select((item, i) =>
             {
                 item.RowNo = rowNoStart + i;
+                item.Timestamp = item.Timestamp.ToUniversalTime();
                 return item;
             })
             .ToList();
