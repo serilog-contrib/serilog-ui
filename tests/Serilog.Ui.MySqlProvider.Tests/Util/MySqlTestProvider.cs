@@ -45,7 +45,10 @@ namespace MySql.Tests.Util
 
         protected override Task InitializeAdditionalAsync()
         {
-            var serilog = new SerilogSinkSetup(logger => { logger.WriteTo.MySQL(DbOptions.ConnectionString, batchSize: 1); });
+            var serilog = new SerilogSinkSetup(logger =>
+            {
+                logger.WriteTo.MySQL(DbOptions.ConnectionString, batchSize: 1, storeTimestampInUtc: true);
+            });
             Collector = serilog.InitializeLogs();
 
             Provider = new MySqlDataProvider(DbOptions);

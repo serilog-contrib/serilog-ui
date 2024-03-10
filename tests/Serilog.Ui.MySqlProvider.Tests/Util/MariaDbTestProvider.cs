@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
+using Serilog.Sinks.MariaDB;
 using Serilog.Sinks.MariaDB.Extensions;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
@@ -45,7 +46,10 @@ public sealed class MariaDbTestProvider : DatabaseInstance
 
     protected override Task InitializeAdditionalAsync()
     {
-        var serilog = new SerilogSinkSetup(logger => { logger.WriteTo.MariaDB(DbOptions.ConnectionString, autoCreateTable: true); });
+        var serilog = new SerilogSinkSetup(logger =>
+        {
+            logger.WriteTo.MariaDB(DbOptions.ConnectionString, autoCreateTable: true, options: new MariaDBSinkOptions { TimestampInUtc = true });
+        });
         Collector = serilog.InitializeLogs();
 
         Provider = new MariaDbDataProvider(DbOptions);

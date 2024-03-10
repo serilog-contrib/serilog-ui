@@ -9,20 +9,14 @@ using Xunit;
 
 namespace Serilog.Ui.Common.Tests.TestSuites.Impl
 {
-    public abstract class IntegrationSearchTests<TDbRunner> : IIntegrationSearchTests
+    public abstract class IntegrationSearchTests<TDbRunner>(TDbRunner instance) : IIntegrationSearchTests
         where TDbRunner : class, IIntegrationRunner
     {
-        protected readonly LogModelPropsCollector LogCollector;
+        protected readonly LogModelPropsCollector LogCollector = instance.GetPropsCollector();
 
-        protected readonly IDataProvider Provider;
+        protected readonly IDataProvider Provider = Guard.Against.Null(instance.GetDataProvider());
 
-        protected IntegrationSearchTests(TDbRunner instance)
-        {
-            LogCollector = instance.GetPropsCollector();
-            Provider = Guard.Against.Null(instance.GetDataProvider());
-        }
-
-[Fact]
+        [Fact]
         public virtual async Task It_finds_all_data_with_default_search()
         {
             var res = await Provider.FetchDataAsync(1, 10);
@@ -32,35 +26,29 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         }
 
         [Fact]
-        public virtual Task It_finds_data_with_all_filters()
-            => It_finds_data_with_all_filters_by_utc(true);
-
-        protected async Task It_finds_data_with_all_filters_by_utc(bool checkWithUtc)
+        public virtual async Task It_finds_data_with_all_filters()
         {
             var (logs, count) = await Provider.FetchDataAsync(1,
                 10,
-                LogCollector!.Example.Level,
-                LogCollector!.Example.Message[3..],
-                LogCollector!.Example.Timestamp.AddSeconds(-2),
-                LogCollector!.Example.Timestamp.AddSeconds(2));
+                LogCollector.Example.Level,
+                LogCollector.Example.Message[3..],
+                LogCollector.Example.Timestamp.AddSeconds(-2),
+                LogCollector.Example.Timestamp.AddSeconds(2));
 
             var log = logs.First();
             log.Message.Should().Be(LogCollector.Example.Message);
             log.Level.Should().Be(LogCollector.Example.Level);
 
-            ConvertToUtc(log.Timestamp, checkWithUtc).Should().BeCloseTo(LogCollector.Example.Timestamp, TimeSpan.FromMinutes(5));
+            log.Timestamp.Should().BeCloseTo(LogCollector.Example.Timestamp, TimeSpan.FromMinutes(5));
             count.Should().BeCloseTo(1, 2);
         }
 
         [Fact]
-        public virtual Task It_finds_only_data_emitted_after_date()
-            => It_finds_only_data_emitted_after_date_by_utc(true);
-
-        protected async Task It_finds_only_data_emitted_after_date_by_utc(bool checkWithUtc)
+        public virtual async Task It_finds_only_data_emitted_after_date()
         {
             // ARRANGE
-            var lastTimeStamp = LogCollector!.TimesSamples.ElementAt(LogCollector.TimesSamples.Count() - 1).AddSeconds(-50);
-            var afterTimeStampCount = LogCollector!.DataSet.Count(p => p.Timestamp > lastTimeStamp);
+            var lastTimeStamp = LogCollector.TimesSamples.ElementAt(LogCollector.TimesSamples.Count() - 1).AddSeconds(-50);
+            var afterTimeStampCount = LogCollector.DataSet.Count(p => p.Timestamp > lastTimeStamp);
 
             // ACT
             var (logs, count) = await Provider.FetchDataAsync(1, 1000, startDate: lastTimeStamp);
@@ -72,38 +60,35 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             enumerateLogs.Should().HaveCount(afterTimeStampCount);
             count.Should().Be(afterTimeStampCount);
 
-            var convertedLogs = enumerateLogs.Select(log => ConvertToUtc(log.Timestamp, checkWithUtc)).ToList();
-            convertedLogs.Should().AllSatisfy(p => { p.Kind.Should().Be(DateTimeKind.Utc); });
-            convertedLogs.Should().AllSatisfy(p => { p.Should().BeAfter(lastTimeStamp); });
+            var convertedLogs = enumerateLogs.Select(log => log.Timestamp).ToList();
+            convertedLogs.Should().AllSatisfy(p =>
+            {
+                p.Kind.Should().Be(DateTimeKind.Utc);
+                p.Should().BeAfter(lastTimeStamp);
+            });
         }
 
         [Fact]
-        public virtual Task It_finds_only_data_emitted_before_date()
-            => It_finds_only_data_emitted_before_date_by_utc(true);
-
-        protected async Task It_finds_only_data_emitted_before_date_by_utc(bool checkWithUtc)
+        public virtual async Task It_finds_only_data_emitted_before_date()
         {
-            var firstTimeStamp = LogCollector!.TimesSamples
+            var firstTimeStamp = LogCollector.TimesSamples
                 .ElementAt(LogCollector.TimesSamples.Count() - 1).AddSeconds(50);
-            var beforeTimeStampCount = LogCollector!.DataSet.Count(p => p.Timestamp < firstTimeStamp);
+            var beforeTimeStampCount = LogCollector.DataSet.Count(p => p.Timestamp < firstTimeStamp);
             var (logs, count) = await Provider.FetchDataAsync(1, 1000, endDate: firstTimeStamp);
-            var (___, __) = await Provider.FetchDataAsync(1, 1000);
+
             var enumerateLogs = logs.ToList();
             enumerateLogs.Should().NotBeEmpty();
             enumerateLogs.Should().HaveCount(beforeTimeStampCount);
             count.Should().Be(beforeTimeStampCount);
-            enumerateLogs.Select(log => ConvertToUtc(log.Timestamp, checkWithUtc)).Should().AllSatisfy(p => { p.Should().BeBefore(firstTimeStamp); });
+            enumerateLogs.Select(log => log.Timestamp).Should().AllSatisfy(p => { p.Should().BeBefore(firstTimeStamp); });
         }
 
         [Fact]
-        public virtual Task It_finds_only_data_emitted_in_dates_range()
-            => It_finds_only_data_emitted_in_dates_range_by_utc(true);
-
-        protected async Task It_finds_only_data_emitted_in_dates_range_by_utc(bool checkWithUtc)
+        public virtual async Task It_finds_only_data_emitted_in_dates_range()
         {
-            var firstTimeStamp = LogCollector!.TimesSamples.First().AddSeconds(-50);
+            var firstTimeStamp = LogCollector.TimesSamples.First().AddSeconds(-50);
             var lastTimeStamp = LogCollector.TimesSamples.Last();
-            var inTimeStampCount = LogCollector!.DataSet
+            var inTimeStampCount = LogCollector.DataSet
                 .Count(p => p.Timestamp >= firstTimeStamp && p.Timestamp <= lastTimeStamp);
             var (logs, count) = await Provider.FetchDataAsync(1, 10, startDate: firstTimeStamp, endDate: lastTimeStamp);
 
@@ -111,8 +96,10 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             results.Should().NotBeEmpty();
             results.Should().HaveCount(inTimeStampCount);
             count.Should().Be(inTimeStampCount);
-            results.Select(log => ConvertToUtc(log.Timestamp, checkWithUtc)).Should().AllSatisfy(p =>
+
+            results.Select(log => log.Timestamp).Should().AllSatisfy(p =>
             {
+                p.Kind.Should().Be(DateTimeKind.Utc); // all providers should return utc datetime 
                 p.Should().BeOnOrAfter(firstTimeStamp);
                 p.Should().BeBefore(lastTimeStamp);
             });
@@ -121,7 +108,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         [Fact]
         public virtual async Task It_finds_only_data_with_specific_level()
         {
-            var chosenLvl = LogCollector!.CountByLevel.FirstOrDefault(p => p.Value > 0);
+            var chosenLvl = LogCollector.CountByLevel.FirstOrDefault(p => p.Value > 0);
 
             var (logs, count) = await Provider.FetchDataAsync(1, 10, level: chosenLvl.Key);
 
@@ -134,7 +121,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         [Fact]
         public virtual async Task It_finds_only_data_with_specific_message_content()
         {
-            var msg = LogCollector!.MessagePiecesSamples.FirstOrDefault();
+            var msg = LogCollector.MessagePiecesSamples.FirstOrDefault();
 
             var (logs, count) = await Provider.FetchDataAsync(1, 10, searchCriteria: msg);
 
@@ -150,7 +137,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         [Fact]
         public virtual async Task It_finds_same_data_on_same_repeated_search()
         {
-            var chosenLvl = LogCollector!.CountByLevel.FirstOrDefault(p => p.Value > 0);
+            var chosenLvl = LogCollector.CountByLevel.FirstOrDefault(p => p.Value > 0);
 
             var (logs, count) = await Provider.FetchDataAsync(3, 3, level: chosenLvl.Key);
 
@@ -159,8 +146,5 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             logs.Should().BeEquivalentTo(logs2Nd);
             count.Should().Be(count2Nd);
         }
-
-        private static DateTime ConvertToUtc(DateTime timestamp, bool checkWithUtc)
-            => checkWithUtc ? timestamp.ToUniversalTime() : timestamp;
     }
 }
