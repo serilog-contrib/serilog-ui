@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
 using Serilog.Ui.Core;
-using Serilog.Ui.Core.Models;  
+using Serilog.Ui.Core.Models;
 
 namespace Serilog.Ui.MySqlProvider.Shared;
 
@@ -77,7 +77,10 @@ public abstract class DataProvider(RelationalDbOptions options) : IDataProvider
             .Select((item, i) =>
             {
                 item.RowNo = rowNoStart + i;
-                item.Timestamp = item.Timestamp.ToUniversalTime();
+                // both sinks save UTC but MariaDb is queried as Unspecified, MySql is queried as Local 
+                var ts = DateTime.SpecifyKind(item.Timestamp,
+                    item.Timestamp.Kind == DateTimeKind.Unspecified ? DateTimeKind.Utc : item.Timestamp.Kind);
+                item.Timestamp = ts.ToUniversalTime();
                 return item;
             })
             .ToList();
