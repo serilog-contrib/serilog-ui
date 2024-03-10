@@ -7,46 +7,84 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace MySql.Tests.Extensions
+namespace MySql.Tests.Extensions;
+
+[Trait("DI-DataProvider", "MySql")]
+public class SerilogUiOptionBuilderExtensionsMySqlTest
 {
-    [Trait("DI-DataProvider", "MySql")]
-    public class SerilogUiOptionBuilderExtensionsTest
+    private readonly ServiceCollection _serviceCollection = [];
+
+    [Fact]
+    public void It_registers_provider_and_dependencies()
     {
-        private readonly ServiceCollection _serviceCollection = new();
-
-        [Fact]
-        public void It_registers_provider_and_dependencies()
+        _serviceCollection.AddSerilogUi(builder =>
         {
-            _serviceCollection.AddSerilogUi((builder) =>
-            {
-                builder.UseMySqlServer("https://mysqlserver.example.com", "my-table");
-            });
-            var services = _serviceCollection.BuildServiceProvider();
+            builder.UseMySqlServer("https://mysqlserver.example.com", "my-table");
+        });
 
-            var serviceProvider = _serviceCollection.BuildServiceProvider();
-            using var scope = serviceProvider.CreateScope();
+        var serviceProvider = _serviceCollection.BuildServiceProvider();
+        using var scope = serviceProvider.CreateScope();
 
-            var provider = scope.ServiceProvider.GetService<IDataProvider>();
-            provider.Should().NotBeNull().And.BeOfType<MySqlDataProvider>();
+        var provider = scope.ServiceProvider.GetService<IDataProvider>();
+        provider.Should().NotBeNull().And.BeOfType<MySqlDataProvider>();
+    }
+
+    [Fact]
+    public void It_throws_on_invalid_registration()
+    {
+        var nullables = new List<Func<IServiceCollection>>
+        {
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer(null, "name")),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer(" ", "name")),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer("", "name")),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer("name", null)),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer("name", " ")),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer("name", "")),
+        };
+
+        foreach (var nullable in nullables)
+        {
+            nullable.Should().ThrowExactly<ArgumentNullException>();
         }
+    }
+}
 
-        [Fact]
-        public void It_throws_on_invalid_registration()
+[Trait("DI-DataProvider", "MariaDb")]
+public class SerilogUiOptionBuilderExtensionsMariaDbTest
+{
+    private readonly ServiceCollection _serviceCollection = [];
+
+    [Fact]
+    public void It_registers_provider_and_dependencies()
+    {
+        _serviceCollection.AddSerilogUi(builder =>
         {
-            var nullables = new List<Func<IServiceCollection>>
-            {
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer(null, "name")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer(" ", "name")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer("", "name")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer("name", null)),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer("name", " ")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMySqlServer("name", "")),
-            };
+            builder.UseMariaDbServer("https://mysqlserver.example.com", "my-table");
+        });
+        
+        var serviceProvider = _serviceCollection.BuildServiceProvider();
+        using var scope = serviceProvider.CreateScope();
 
-            foreach (var nullable in nullables)
-            {
-                nullable.Should().ThrowExactly<ArgumentNullException>();
-            }
+        var provider = scope.ServiceProvider.GetService<IDataProvider>();
+        provider.Should().NotBeNull().And.BeOfType<MariaDbDataProvider>();
+    }
+
+    [Fact]
+    public void It_throws_on_invalid_registration()
+    {
+        var nullables = new List<Func<IServiceCollection>>
+        {
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMariaDbServer(null, "name")),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMariaDbServer(" ", "name")),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMariaDbServer("", "name")),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMariaDbServer("name", null)),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMariaDbServer("name", " ")),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMariaDbServer("name", "")),
+        };
+
+        foreach (var nullable in nullables)
+        {
+            nullable.Should().ThrowExactly<ArgumentNullException>();
         }
     }
 }

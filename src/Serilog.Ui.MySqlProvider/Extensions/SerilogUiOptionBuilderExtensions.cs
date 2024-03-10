@@ -10,7 +10,8 @@ namespace Serilog.Ui.MySqlProvider
     public static class SerilogUiOptionBuilderExtensions
     {
         /// <summary>
-        /// Configures the SerilogUi to connect to a MySQL database.
+        /// Configures the SerilogUi to connect to a MySQL/MariaDb database using Serilog.Sinks.MySQL.
+        /// Provider expects sink to store timestamp in utc.
         /// </summary>
         /// <param name="optionsBuilder"> The options builder. </param>
         /// <param name="connectionString"> The connection string. </param>
@@ -37,6 +38,37 @@ namespace Serilog.Ui.MySqlProvider
 
             ((ISerilogUiOptionsBuilder)optionsBuilder).Services
                 .AddScoped<IDataProvider, MySqlDataProvider>(p => ActivatorUtilities.CreateInstance<MySqlDataProvider>(p, relationProvider));
+        }
+
+        /// <summary>
+        /// Configures the SerilogUi to connect to a MySQL/MariaDb database using Serilog.Sinks.MariaDB.
+        /// Provider expects sink to store timestamp in utc.
+        /// </summary>
+        /// <param name="optionsBuilder"> The options builder. </param>
+        /// <param name="connectionString"> The connection string. </param>
+        /// <param name="tableName"> Name of the table. </param>
+        /// <exception cref="ArgumentNullException"> throw if connectionString is null </exception>
+        /// <exception cref="ArgumentNullException"> throw is tableName is null </exception>
+        public static void UseMariaDbServer(
+            this SerilogUiOptionsBuilder optionsBuilder,
+            string connectionString,
+            string tableName
+        )
+        {
+            if (string.IsNullOrWhiteSpace(connectionString))
+                throw new ArgumentNullException(nameof(connectionString));
+
+            if (string.IsNullOrWhiteSpace(tableName))
+                throw new ArgumentNullException(nameof(tableName));
+
+            var relationProvider = new RelationalDbOptions
+            {
+                ConnectionString = connectionString,
+                TableName = tableName
+            };
+
+            ((ISerilogUiOptionsBuilder)optionsBuilder).Services
+                .AddScoped<IDataProvider, MariaDbDataProvider>(p => ActivatorUtilities.CreateInstance<MariaDbDataProvider>(p, relationProvider));
         }
     }
 }
