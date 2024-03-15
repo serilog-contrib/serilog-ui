@@ -20,10 +20,9 @@ public static class SerilogUiOptionBuilderExtensions
     public static void UseRavenDb(this SerilogUiOptionsBuilder optionsBuilder, IDocumentStore documentStore, string collectionName = "LogEvents")
     {
         Guard.Against.Null(documentStore, nameof(documentStore));
-        Guard.Against.Null(documentStore.Urls, nameof(documentStore.Urls));
         Guard.Against.NullOrEmpty(documentStore.Urls, nameof(documentStore.Urls));
-        Guard.Against.Null(documentStore.Database, nameof(documentStore.Database));
-        Guard.Against.Null(collectionName, nameof(collectionName));
+        Guard.Against.NullOrEmpty(documentStore.Database, nameof(documentStore.Database));
+        Guard.Against.NullOrEmpty(collectionName, nameof(collectionName));
 
         var builder = ((ISerilogUiOptionsBuilder)optionsBuilder);
 

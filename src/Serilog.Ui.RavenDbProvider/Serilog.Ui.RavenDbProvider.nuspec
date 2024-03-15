@@ -13,7 +13,7 @@
 		<readme>docs\README.md</readme>
 		<releaseNotes></releaseNotes>
 		<copyright></copyright>
-		<tags>serilog serilog-ui serilog.sinks.postgresql</tags>
+		<tags>serilog serilog-ui serilog.sinks.ravendb</tags>
 		<icon>assets\icon.png</icon>
 		<dependencies>
 			<group targetFramework=".NETStandard2.0">

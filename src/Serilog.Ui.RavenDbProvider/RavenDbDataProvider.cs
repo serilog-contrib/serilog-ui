@@ -18,7 +18,7 @@ public class RavenDbDataProvider : IDataProvider
     }
 
     /// <inheritdoc/>
-    public string Name => string.Join(".", "RavenDB", "LogEvents");
+    public string Name => string.Join(".", "RavenDB");
 
     /// <inheritdoc/>
     public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
