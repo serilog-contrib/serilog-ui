@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Ui.Web.Tests.Utilities;
+using Serilog.Ui.Web.Tests.Utilities;
 using Xunit;
 
 namespace Serilog.Ui.Web.Tests.Authorization;

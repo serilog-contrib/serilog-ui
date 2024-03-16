@@ -1,20 +1,18 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.IO;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
 using Serilog.Sinks.InMemory;
-using Serilog.Ui.Web;
-using Serilog.Ui.Web.Authorization;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Web.Endpoints;
-using System.IO;
-using System.Threading.Tasks;
-using Ui.Web.Tests.Utilities.Authorization;
-using Ui.Web.Tests.Utilities.InMemoryDataProvider;
+using Serilog.Ui.Web.Tests.Utilities.Authorization;
+using Serilog.Ui.Web.Tests.Utilities.InMemoryDataProvider;
 
-namespace Ui.Web.Tests.Utilities;
+namespace Serilog.Ui.Web.Tests.Utilities;
 
 public class WebAppFactory
 {
@@ -28,19 +26,24 @@ public class WebAppFactory
                 .ConfigureServices(services =>
                 {
                     services.AddEndpointsApiExplorer();
+                    services.AddHttpContextAccessor();
                     Log.Logger = new LoggerConfiguration().WriteTo.InMemory().CreateLogger();
-                    services.AddSerilogUi(options => options.UseInMemory());
                 })
                 .ConfigureTestServices(WithTestServices)
                 .Configure(WithCustomConfigure);
         }
 
-        protected virtual void WithTestServices(IServiceCollection services) { }
+        protected virtual void WithTestServices(IServiceCollection services)
+        {
+            services.AddSerilogUi(options => options.UseInMemory());
+        }
+
         protected virtual void WithCustomConfigure(IApplicationBuilder builder)
         {
             builder.UseSerilogUi();
         }
     }
+
     public class WithMocks : Default
     {
         protected override void WithTestServices(IServiceCollection services)
@@ -50,17 +53,19 @@ public class WebAppFactory
             services.AddScoped<ISerilogUiEndpoints, FakeAppRoutes>();
         }
 
-        private class FakeAppRoutes : ISerilogUiAppRoutes, ISerilogUiEndpoints
+        private class FakeAppRoutes(IHttpContextAccessor contextAccessor) : ISerilogUiAppRoutes, ISerilogUiEndpoints
         {
             public UiOptions? Options { get; set; }
-            public Task GetApiKeysAsync(HttpContext httpContext) => Oper(httpContext, 417);
-            public Task GetHomeAsync(HttpContext httpContext) => Oper(httpContext, 418);
-            public Task GetLogsAsync(HttpContext httpContext) => Oper(httpContext, 409);
-            public Task RedirectHomeAsync(HttpContext httpContext) => Oper(httpContext, 400);
+
+            public Task GetApiKeysAsync() => Oper(417);
+            public Task GetHomeAsync() => Oper(418);
+            public Task GetLogsAsync() => Oper(409);
+            public Task RedirectHomeAsync() => Oper(400);
             public void SetOptions(UiOptions options) => Options = options;
-            private static Task Oper(HttpContext httpContext, int statusCode)
+
+            private Task Oper(int statusCode)
             {
-                httpContext.Response.StatusCode = statusCode;
+                contextAccessor.HttpContext!.Response.StatusCode = statusCode;
                 return Task.CompletedTask;
             }
         }
@@ -78,42 +83,44 @@ public class WebAppFactory
     {
         public class Sync : Default
         {
+            protected override void WithTestServices(IServiceCollection services)
+            {
+                services.AddSerilogUi(options => options
+                    .AddScopedAsyncAuthFilter<AdmitRequestAsyncFilter>()
+                    .AddScopedSyncAuthFilter<ForbidLocalRequestFilter>()
+                    .AddScopedSyncAuthFilter<AdmitRequestFilter>()
+                    .UseInMemory()
+                );
+            }
+
             protected override void WithCustomConfigure(IApplicationBuilder builder)
             {
                 builder.UseSerilogUi(options =>
                 {
                     options.Authorization.AuthenticationType = AuthenticationType.Jwt;
                     options.Authorization.RunAuthorizationFilterOnAppRoutes = true;
-                    options.Authorization.Filters = new IUiAuthorizationFilter[]
-                    {
-                        new ForbidLocalRequestFilter(),
-                        new AdmitRequestFilter()
-                    };
-                    options.Authorization.AsyncFilters = new[]
-                    {
-                        new AdmitRequestAsyncFilter()
-                    };
                 });
             }
         }
 
         public class Async : Default
         {
+            protected override void WithTestServices(IServiceCollection services)
+            {
+                services.AddSerilogUi(options => options
+                    .AddScopedAsyncAuthFilter<AdmitRequestAsyncFilter>()
+                    .AddScopedAsyncAuthFilter<ForbidLocalRequestAsyncFilter>()
+                    .AddScopedSyncAuthFilter<AdmitRequestFilter>()
+                    .UseInMemory()
+                );
+            }
+
             protected override void WithCustomConfigure(IApplicationBuilder builder)
             {
                 builder.UseSerilogUi(options =>
                 {
                     options.Authorization.AuthenticationType = AuthenticationType.Jwt;
                     options.Authorization.RunAuthorizationFilterOnAppRoutes = true;
-                    options.Authorization.Filters = new[]
-                    {
-                        new AdmitRequestFilter()
-                    };
-                    options.Authorization.AsyncFilters = new IUiAsyncAuthorizationFilter[]
-                    {
-                        new ForbidLocalRequestAsyncFilter(),
-                        new AdmitRequestAsyncFilter()
-                    };
                 });
             }
         }
@@ -122,7 +129,9 @@ public class WebAppFactory
 
 public class WebSampleProgram
 {
-    protected WebSampleProgram() { }
+    protected WebSampleProgram()
+    {
+    }
 
     internal static void Main()
     {

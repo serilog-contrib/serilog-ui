@@ -1,14 +1,13 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using NSubstitute;
-using Serilog.Ui.Web;
-using System.Net;
+﻿using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using NSubstitute;
 using Xunit;
 
-namespace Ui.Web.Tests.Extensions
+namespace Serilog.Ui.Web.Tests.Extensions
 {
     [Trait("Ui-HttpRequest", "Web")]
     public class HttpRequestExtensionsTest

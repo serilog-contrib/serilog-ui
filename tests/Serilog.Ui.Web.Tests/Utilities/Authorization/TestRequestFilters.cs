@@ -1,37 +1,36 @@
-﻿using Microsoft.AspNetCore.Http;
-using Serilog.Ui.Web;
-using Serilog.Ui.Web.Authorization;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Serilog.Ui.Core.Interfaces;
 
-namespace Ui.Web.Tests.Utilities.Authorization
+namespace Serilog.Ui.Web.Tests.Utilities.Authorization
 {
-    internal class ForbidLocalRequestFilter : IUiAuthorizationFilter
+    internal class ForbidLocalRequestFilter(IHttpContextAccessor contextAccessor) : IUiAuthorizationFilter
     {
-        public bool Authorize(HttpContext httpContext)
+        public bool Authorize()
         {
-            return !httpContext.Request.IsLocal();
+            return !contextAccessor.HttpContext!.Request.IsLocal();
         }
     }
 
-    internal class AdmitRequestFilter : IUiAuthorizationFilter
+    internal class AdmitRequestFilter(IHttpContextAccessor contextAccessor) : IUiAuthorizationFilter
     {
-        public bool Authorize(HttpContext httpContext)
+        public bool Authorize()
         {
-            return !httpContext.Request.IsLocal();
+            return !contextAccessor.HttpContext!.Request.IsLocal();
         }
     }
 
-    internal class ForbidLocalRequestAsyncFilter : IUiAsyncAuthorizationFilter
+    internal class ForbidLocalRequestAsyncFilter(IHttpContextAccessor contextAccessor) : IUiAsyncAuthorizationFilter
     {
-        public Task<bool> AuthorizeAsync(HttpContext httpContext)
+        public Task<bool> AuthorizeAsync()
         {
-            return Task.FromResult(!httpContext.Request.IsLocal());
+            return Task.FromResult(!contextAccessor.HttpContext!.Request.IsLocal());
         }
     }
 
     internal class AdmitRequestAsyncFilter : IUiAsyncAuthorizationFilter
     {
-        public Task<bool> AuthorizeAsync(HttpContext httpContext)
+        public Task<bool> AuthorizeAsync()
         {
             return Task.FromResult(true);
         }

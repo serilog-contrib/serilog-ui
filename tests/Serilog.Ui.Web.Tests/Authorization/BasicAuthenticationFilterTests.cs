@@ -1,31 +1,35 @@
 using System.Linq;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
+using NSubstitute;
 using Serilog.Ui.Web.Authorization;
 using Xunit;
 
-namespace Ui.Web.Tests.Authorization;
+namespace Serilog.Ui.Web.Tests.Authorization;
 
+[Trait("Ui-Authorization", "Web")]
 public class BasicAuthenticationFilterTests
 {
     [Fact]
     public void Authorize_WithValidCredentials_ShouldReturnTrue()
     {
         // Arrange
-        var filter = new BasicAuthenticationFilter
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.Headers.Authorization = "Basic VXNlcjpQQHNz"; // Base64 encoded "User:P@ss"
+        var contextAccessor = Substitute.For<IHttpContextAccessor>();
+        contextAccessor.HttpContext.Returns(httpContext);
+
+        var filter = new BasicAuthenticationFilter(contextAccessor)
         {
             UserName = "User",
             Password = "P@ss"
         };
 
-        var httpContext = new DefaultHttpContext();
-        httpContext.Request.Headers["Authorization"] = "Basic VXNlcjpQQHNz"; // Base64 encoded "User:P@ss"
-
         // Act
-        var result = filter.Authorize(httpContext);
-        var authCookie = httpContext.Response.GetTypedHeaders().SetCookie.FirstOrDefault(sc => sc.Name == BasicAuthenticationFilter.AuthenticationCookieName);
+        var result = filter.Authorize();
+        var authCookie = httpContext.Response.GetTypedHeaders().SetCookie
+            .FirstOrDefault(sc => sc.Name == BasicAuthenticationFilter.AuthenticationCookieName);
 
         // Assert
         result.Should().BeTrue();
@@ -36,17 +40,18 @@ public class BasicAuthenticationFilterTests
     public void Authorize_WithInvalidCredentials_ShouldReturnFalse()
     {
         // Arrange
-        var filter = new BasicAuthenticationFilter
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.Headers.Authorization = "Basic QWRtaW46dXNlcg=="; // Base64 encoded "Admin:user"
+        var contextAccessor = Substitute.For<IHttpContextAccessor>();
+        contextAccessor.HttpContext.Returns(httpContext);
+        var filter = new BasicAuthenticationFilter(contextAccessor)
         {
             UserName = "User",
             Password = "P@ss"
         };
 
-        var httpContext = new DefaultHttpContext();
-        httpContext.Request.Headers["Authorization"] = "Basic QWRtaW46dXNlcg=="; // Base64 encoded "Admin:user"
-
         // Act
-        var result = filter.Authorize(httpContext);
+        var result = filter.Authorize();
 
         // Assert
         result.Should().BeFalse();
@@ -56,16 +61,17 @@ public class BasicAuthenticationFilterTests
     public void Authorize_WithMissingAuthorizationHeader_ShouldSetChallengeResponse()
     {
         // Arrange
-        var filter = new BasicAuthenticationFilter
+        var httpContext = new DefaultHttpContext();
+        var contextAccessor = Substitute.For<IHttpContextAccessor>();
+        contextAccessor.HttpContext.Returns(httpContext);
+        var filter = new BasicAuthenticationFilter(contextAccessor)
         {
             UserName = "User",
             Password = "P@ss"
         };
 
-        var httpContext = new DefaultHttpContext();
-
         // Act
-        var result = filter.Authorize(httpContext);
+        var result = filter.Authorize();
 
         // Assert
         result.Should().BeFalse();

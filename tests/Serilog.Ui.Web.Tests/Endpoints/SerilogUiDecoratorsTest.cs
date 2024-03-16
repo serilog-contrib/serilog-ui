@@ -1,98 +1,102 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using NSubstitute;
-using Serilog.Ui.Web;
-using Serilog.Ui.Web.Authorization;
-using Serilog.Ui.Web.Endpoints;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Ui.Web.Tests.Utilities.Authorization;
+using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using NSubstitute;
+using Serilog.Ui.Core.Interfaces;
+using Serilog.Ui.Web.Authorization;
+using Serilog.Ui.Web.Endpoints;
+using Serilog.Ui.Web.Tests.Utilities.Authorization;
 using Xunit;
 
-namespace Ui.Web.Tests.Endpoints
+namespace Serilog.Ui.Web.Tests.Endpoints
 {
     [Trait("Ui-Api-Decorators", "Web")]
     public class SerilogUiDecoratorsTest
     {
-        private readonly AuthorizationFilterService _authMock;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly List<IUiAuthorizationFilter> _syncFilters = [];
+
         private readonly ISerilogUiAppRoutes _appRoutesMock;
         private readonly ISerilogUiEndpoints _endpointMock;
         private readonly SerilogUiAppRoutesDecorator _sutRoutesDecorator;
         private readonly SerilogUiEndpointsDecorator _sutEndpointsDecorator;
+        private DefaultHttpContext _context;
 
         public SerilogUiDecoratorsTest()
         {
-            _authMock = new AuthorizationFilterService();
+            _context = new DefaultHttpContext();
+            _contextAccessor = Substitute.For<IHttpContextAccessor>();
+            _contextAccessor.HttpContext.Returns(_context);
+            
+            var authMock = new AuthorizationFilterService(_contextAccessor, _syncFilters, []);
+
             _appRoutesMock = Substitute.For<ISerilogUiAppRoutes>();
             _endpointMock = Substitute.For<ISerilogUiEndpoints>();
-            _appRoutesMock.GetHomeAsync(Arg.Any<HttpContext>());
-            _appRoutesMock.RedirectHomeAsync(Arg.Any<HttpContext>());
-            _endpointMock.GetLogsAsync(Arg.Any<HttpContext>());
-            _endpointMock.GetApiKeysAsync(Arg.Any<HttpContext>());
 
-            _sutRoutesDecorator = new SerilogUiAppRoutesDecorator(_appRoutesMock, _authMock);
-            _sutEndpointsDecorator = new SerilogUiEndpointsDecorator(_endpointMock, _authMock);
+            _sutRoutesDecorator = new SerilogUiAppRoutesDecorator(_contextAccessor, _appRoutesMock, authMock);
+            _sutEndpointsDecorator = new SerilogUiEndpointsDecorator(_endpointMock, authMock);
         }
 
         [Fact]
         public async Task It_forwards_the_call_to_app_endpoints_on_success_authentication()
         {
             // Arrange
-            _sutEndpointsDecorator.SetOptions(new());
+            _sutEndpointsDecorator.SetOptions(new UiOptions());
 
             // Act
-            await _sutEndpointsDecorator.GetLogsAsync(new DefaultHttpContext());
-            await _sutEndpointsDecorator.GetApiKeysAsync(new DefaultHttpContext());
+            await _sutEndpointsDecorator.GetLogsAsync();
+            await _sutEndpointsDecorator.GetApiKeysAsync();
 
             // Assert
-            await _endpointMock.Received().GetLogsAsync(Arg.Any<HttpContext>());
-            await _endpointMock.Received().GetApiKeysAsync(Arg.Any<HttpContext>());
+            await _endpointMock.Received().GetLogsAsync();
+            await _endpointMock.Received().GetApiKeysAsync();
         }
 
         [Fact]
-        public async Task It_forwards_the_call_to_app_routes_when_unauth_page_access_is_enabled()
+        public async Task It_forwards_the_call_to_app_routes_when_un_auth_page_access_is_enabled()
         {
             // Arrange
-            _sutRoutesDecorator.SetOptions(new() { });
+            _sutRoutesDecorator.SetOptions(new UiOptions());
 
             // Act
-            await _sutRoutesDecorator.GetHomeAsync(new DefaultHttpContext());
-            await _sutRoutesDecorator.RedirectHomeAsync(new DefaultHttpContext());
+            await _sutRoutesDecorator.GetHomeAsync();
+            await _sutRoutesDecorator.RedirectHomeAsync();
 
             // Assert
-            await _appRoutesMock.Received().GetHomeAsync(Arg.Any<HttpContext>());
-            await _appRoutesMock.Received().RedirectHomeAsync(Arg.Any<HttpContext>());
+            await _appRoutesMock.Received().GetHomeAsync();
+            await _appRoutesMock.Received().RedirectHomeAsync();
         }
 
         [Fact]
         public async Task It_blocks_the_call_on_failed_authentication()
         {
             // Arrange
-            var uiOpts = new UiOptions() { Authorization = new() { RunAuthorizationFilterOnAppRoutes = true } };
-            uiOpts.Authorization.Filters = new IUiAuthorizationFilter[] { new ForbidLocalRequestFilter() };
+            var uiOpts = new UiOptions { Authorization = new() { RunAuthorizationFilterOnAppRoutes = true } };
+            _syncFilters.Add(new ForbidLocalRequestFilter(_contextAccessor));
             _sutRoutesDecorator.SetOptions(uiOpts);
             _sutEndpointsDecorator.SetOptions(uiOpts);
 
             // Act
-            var defaultHttp = new DefaultHttpContext();
-            await _sutRoutesDecorator.RedirectHomeAsync(defaultHttp);
+            await _sutRoutesDecorator.RedirectHomeAsync();
             // Assert
-            defaultHttp.Response.StatusCode.Should().Be(403);
-            await _appRoutesMock.DidNotReceive().RedirectHomeAsync(Arg.Any<HttpContext>());
+            _context.Response.StatusCode.Should().Be(403);
+            await _appRoutesMock.DidNotReceive().RedirectHomeAsync();
 
             // Act
-            var defaultHttp2 = new DefaultHttpContext();
-            await _sutEndpointsDecorator.GetLogsAsync(defaultHttp2);
+            _context = new DefaultHttpContext();
+            await _sutEndpointsDecorator.GetLogsAsync();
             // Assert
-            defaultHttp2.Response.StatusCode.Should().Be(403);
-            await _endpointMock.DidNotReceive().GetLogsAsync(Arg.Any<HttpContext>());
+            _context.Response.StatusCode.Should().Be(403);
+            await _endpointMock.DidNotReceive().GetLogsAsync();
 
             // Act
-            var defaultHttp3 = new DefaultHttpContext();
-            await _sutEndpointsDecorator.GetApiKeysAsync(defaultHttp3);
+            _context = new DefaultHttpContext();
+            await _sutEndpointsDecorator.GetApiKeysAsync();
             // Assert
-            defaultHttp3.Response.StatusCode.Should().Be(403);
-            await _endpointMock.DidNotReceive().GetApiKeysAsync(Arg.Any<HttpContext>());
+            _context.Response.StatusCode.Should().Be(403);
+            await _endpointMock.DidNotReceive().GetApiKeysAsync();
         }
 
         [Fact]
@@ -100,21 +104,26 @@ namespace Ui.Web.Tests.Endpoints
         {
             // Arrange
             var uiOpts = new UiOptions() { Authorization = new() { RunAuthorizationFilterOnAppRoutes = true } };
-            uiOpts.Authorization.Filters = new IUiAuthorizationFilter[] { new ForbidLocalRequestFilter() };
+            _syncFilters.Add(new ForbidLocalRequestFilter(_contextAccessor));
             _sutRoutesDecorator.SetOptions(uiOpts);
             _sutEndpointsDecorator.SetOptions(uiOpts);
 
             // Act
-            var defaultHttp = new DefaultHttpContext();
-            defaultHttp.Response.Body = new MemoryStream();
-            await _sutRoutesDecorator.GetHomeAsync(defaultHttp);
+            _context = new DefaultHttpContext
+            {
+                Response =
+                {
+                    Body = new MemoryStream()
+                }
+            };
+            await _sutRoutesDecorator.GetHomeAsync();
 
             // Assert
-            defaultHttp.Response.StatusCode.Should().Be(403);
-            await _appRoutesMock.DidNotReceive().GetHomeAsync(Arg.Any<HttpContext>());
+            _context.Response.StatusCode.Should().Be(403);
+            await _appRoutesMock.DidNotReceive().GetHomeAsync();
 
-            defaultHttp.Response.Body.Seek(0, SeekOrigin.Begin);
-            var bodyWrite = await new StreamReader(defaultHttp.Response.Body).ReadToEndAsync();
+            _context.Response.Body.Seek(0, SeekOrigin.Begin);
+            var bodyWrite = await new StreamReader(_context.Response.Body).ReadToEndAsync();
             bodyWrite.Should().Be("<p>You don't have enough permission to access this page!</p>");
         }
     }

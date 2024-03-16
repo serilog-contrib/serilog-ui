@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
 
-namespace Ui.Web.Tests.Utilities.InMemoryDataProvider
+namespace Serilog.Ui.Web.Tests.Utilities.InMemoryDataProvider
 {
     /// <summary>
     ///   SQL Server data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
@@ -12,9 +12,10 @@ namespace Ui.Web.Tests.Utilities.InMemoryDataProvider
         ///   Configures the SerilogUi to connect to a InMemory sink.
         /// </summary>
         /// <param name="optionsBuilder">The options builder.</param>
-        public static void UseInMemory(this SerilogUiOptionsBuilder optionsBuilder)
+        public static ISerilogUiOptionsBuilder UseInMemory(this ISerilogUiOptionsBuilder optionsBuilder)
         {
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddScoped<IDataProvider, SerilogInMemoryDataProvider>();
+            optionsBuilder.Services.AddScoped<IDataProvider, SerilogInMemoryDataProvider>();
+            return optionsBuilder;
         }
     }
 }

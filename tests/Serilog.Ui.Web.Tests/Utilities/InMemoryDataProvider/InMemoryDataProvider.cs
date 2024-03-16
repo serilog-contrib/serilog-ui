@@ -1,14 +1,14 @@
-﻿using Serilog.Events;
-using Serilog.Sinks.InMemory;
-using Serilog.Ui.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Serilog.Events;
+using Serilog.Sinks.InMemory;
+using Serilog.Ui.Core;
 using Serilog.Ui.Core.Models;
 
-namespace Ui.Web.Tests.Utilities.InMemoryDataProvider;
+namespace Serilog.Ui.Web.Tests.Utilities.InMemoryDataProvider;
 
 public class SerilogInMemoryDataProvider : IDataProvider
 {

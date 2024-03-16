@@ -1,11 +1,11 @@
-using FluentAssertions;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Ui.Web.Tests.Utilities;
+using FluentAssertions;
+using Serilog.Ui.Web.Tests.Utilities;
 using Xunit;
 
-namespace Ui.Web.Tests
+namespace Serilog.Ui.Web.Tests
 {
     [Trait("Ui-Middleware", "Web")]
     public class SerilogUiMiddlewareTest :

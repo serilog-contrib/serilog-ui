@@ -1,13 +1,12 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Builder;
-using Serilog.Ui.Web;
-using System;
+﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Ui.Web.Tests.Utilities;
+using FluentAssertions;
+using Microsoft.AspNetCore.Builder;
+using Serilog.Ui.Web.Tests.Utilities;
 using Xunit;
 
-namespace Ui.Web.Tests.Extensions
+namespace Serilog.Ui.Web.Tests.Extensions
 {
     [Trait("Ui-ApplicationBuilder", "Web")]
     public class ApplicationBuilderExtensionsTest : IClassFixture<WebAppFactory.WithMocks>
@@ -23,7 +22,7 @@ namespace Ui.Web.Tests.Extensions
         public async Task It_register_ui_middleware()
         {
             // Act
-            var middlewareResponse = await _client.GetAsync("/serilog-ui/index.html");
+            var middlewareResponse = await _client.GetAsync("/serilog-ui/");
 
             // Assert
             middlewareResponse.StatusCode.Should().Be((System.Net.HttpStatusCode)418, "because that means that the middleware isn't intercepting the request");
