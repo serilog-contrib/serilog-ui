@@ -3,10 +3,11 @@ using System;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
+using Serilog.Ui.Core.Interfaces;
 
 namespace Serilog.Ui.Web.Authorization;
 
-public class BasicAuthenticationFilter : IUiAuthorizationFilter
+public class BasicAuthenticationFilter(IHttpContextAccessor httpContextAccessor) : IUiAuthorizationFilter
 {
     private const string AuthenticationScheme = "Basic";
     internal const string AuthenticationCookieName = "SerilogAuth";
@@ -15,8 +16,11 @@ public class BasicAuthenticationFilter : IUiAuthorizationFilter
 
     public string Password { get; set; }
 
-    public bool Authorize(HttpContext httpContext)
+    public bool Authorize()
     {
+        var httpContext = httpContextAccessor.HttpContext;
+        if (httpContext is null) return false;
+
         var header = httpContext.Request.Headers["Authorization"];
         var isAuthenticated = false;
 

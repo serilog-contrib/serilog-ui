@@ -6,9 +6,6 @@ namespace Serilog.Ui.Web.Authorization
 {
     internal interface IAuthorizationFilterService
     {
-        Task CheckAccessAsync(HttpContext httpContext,
-            UiOptions options,
-            Func<HttpContext, Task> onSuccess,
-            Func<HttpResponse, Task> onFailure = null);
+        Task CheckAccessAsync(Func<Task> onSuccess, Func<HttpResponse, Task> onFailure = null);
     }
 }

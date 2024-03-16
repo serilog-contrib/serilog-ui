@@ -5,8 +5,8 @@ namespace Serilog.Ui.Web.Endpoints
 {
     public interface ISerilogUiAppRoutes: ISerilogUiOptionsSetter
     {
-        Task GetHomeAsync(HttpContext httpContext);
+        Task GetHomeAsync();
 
-        Task RedirectHomeAsync(HttpContext httpContext);
+        Task RedirectHomeAsync();
     }
 }

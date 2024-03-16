@@ -10,7 +10,9 @@ using Ardalis.GuardClauses;
 
 namespace Serilog.Ui.Web.Endpoints
 {
-    internal class SerilogUiAppRoutes(IAppStreamLoader appStreamLoader) : ISerilogUiAppRoutes
+    internal class SerilogUiAppRoutes(
+        IHttpContextAccessor httpContextAccessor,
+        IAppStreamLoader appStreamLoader) : ISerilogUiAppRoutes
     {
         private static readonly JsonSerializerOptions JsonSerializerOptions = new()
         {
@@ -20,10 +22,11 @@ namespace Serilog.Ui.Web.Endpoints
 
         public UiOptions Options { get; private set; }
 
-        public async Task GetHomeAsync(HttpContext httpContext)
+        public async Task GetHomeAsync()
         {
             Guard.Against.Null(Options, nameof(Options));
-
+            var httpContext = Guard.Against.Null(httpContextAccessor.HttpContext);
+            
             var response = httpContext.Response;
 
             await using var stream = appStreamLoader.GetIndex();
@@ -41,8 +44,10 @@ namespace Serilog.Ui.Web.Endpoints
             await response.WriteAsync(htmlString, Encoding.UTF8);
         }
 
-        public Task RedirectHomeAsync(HttpContext httpContext)
+        public Task RedirectHomeAsync()
         {
+            var httpContext = Guard.Against.Null(httpContextAccessor.HttpContext);
+
             var indexUrl = httpContext.Request.GetEncodedUrl().Replace("index.html", "");
 
             httpContext.Response.StatusCode = 301;

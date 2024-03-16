@@ -45,15 +45,15 @@ namespace Serilog.Ui.Web
             uiAppRoutes.SetOptions(_options);
             uiEndpoints.SetOptions(_options);
 
-            if (CheckPath(path, "/api/keys/?")) return uiEndpoints.GetApiKeysAsync(httpContext);
-            if (CheckPath(path, "/api/logs/?")) return uiEndpoints.GetLogsAsync(httpContext);
-            if (CheckPath(path, "/index.html")) return uiAppRoutes.RedirectHomeAsync(httpContext);
+            if (CheckPath(path, "/api/keys/?")) return uiEndpoints.GetApiKeysAsync();
+            if (CheckPath(path, "/api/logs/?")) return uiEndpoints.GetLogsAsync();
+            if (CheckPath(path, "/index.html")) return uiAppRoutes.RedirectHomeAsync();
             if (CheckPath(path, "/(?:.*(.*/))(?:.*(assets/)).*"))
             {
                 ChangeAssetRequestPath(httpContext);
             }
 
-            return CheckPath(path, "/(?!.*(assets/)).*") ? uiAppRoutes.GetHomeAsync(httpContext) : _staticFileMiddleware.Invoke(httpContext);
+            return CheckPath(path, "/(?!.*(assets/)).*") ? uiAppRoutes.GetHomeAsync() : _staticFileMiddleware.Invoke(httpContext);
         }
 
         private StaticFileMiddleware CreateStaticFileMiddleware(
@@ -87,11 +87,11 @@ namespace Serilog.Ui.Web
         {
             var from = $"{_options.RoutePrefix}/";
             const string to = "assets/";
-            
+
             var startOfWrongAssetSubPath = httpContext.Request.Path.Value.IndexOf(from, StringComparison.Ordinal) + from.Length;
             var endOfWrongAssetSubPath = httpContext.Request.Path.Value.IndexOf(to, StringComparison.OrdinalIgnoreCase);
             var pathToRemove = httpContext.Request.Path.Value.Substring(startOfWrongAssetSubPath, endOfWrongAssetSubPath - startOfWrongAssetSubPath);
-            
+
             httpContext.Request.Path = httpContext.Request.Path.Value.Replace(pathToRemove, "");
         }
     }

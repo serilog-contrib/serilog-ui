@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Mvc;
 using static Serilog.Ui.Core.Models.SearchOptions;
 
@@ -15,16 +16,23 @@ namespace Serilog.Ui.Web.Endpoints
 {
     internal class SerilogUiEndpoints : ISerilogUiEndpoints
     {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
         private readonly ILogger<SerilogUiEndpoints> _logger;
+
         private readonly AggregateDataProvider _aggregateDataProvider;
 
-        public SerilogUiEndpoints(ILogger<SerilogUiEndpoints> logger, AggregateDataProvider aggregateDataProvider)
+        public SerilogUiEndpoints(IHttpContextAccessor httpContextAccessor,
+            ILogger<SerilogUiEndpoints> logger,
+            AggregateDataProvider aggregateDataProvider)
         {
+            _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             _aggregateDataProvider = aggregateDataProvider;
 
             _providerKeys = _aggregateDataProvider.Keys.ToArray();
         }
+
         private static readonly JsonSerializerOptions JsonSerializerOptions = new()
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
@@ -35,8 +43,10 @@ namespace Serilog.Ui.Web.Endpoints
 
         public UiOptions Options { get; private set; }
 
-        public async Task GetApiKeysAsync(HttpContext httpContext)
+        public async Task GetApiKeysAsync()
         {
+            var httpContext = Guard.Against.Null(_httpContextAccessor.HttpContext);
+
             try
             {
                 SetResponseContentType(httpContext);
@@ -51,8 +61,10 @@ namespace Serilog.Ui.Web.Endpoints
             }
         }
 
-        public async Task GetLogsAsync(HttpContext httpContext)
+        public async Task GetLogsAsync()
         {
+            var httpContext = Guard.Against.Null(_httpContextAccessor.HttpContext);
+
             try
             {
                 SetResponseContentType(httpContext);
@@ -88,7 +100,8 @@ namespace Serilog.Ui.Web.Endpoints
             return result;
         }
 
-        private static (int currPage, int count, string dbKey, string level, string textSearch, DateTime? start, DateTime? end, SortProperty sortOn, SortDirection sortBy) ParseQuery(IQueryCollection queryParams)
+        private static (int currPage, int count, string dbKey, string level, string textSearch, DateTime? start, DateTime? end, SortProperty sortOn,
+            SortDirection sortBy) ParseQuery(IQueryCollection queryParams)
         {
             var (currentPage, currentCount) = ParseRequiredParams(queryParams);
             var (outputStartDate, outputEndDate) = ParseDates(queryParams);

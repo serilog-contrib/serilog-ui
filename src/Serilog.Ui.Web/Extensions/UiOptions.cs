@@ -36,5 +36,7 @@
         /// </summary>
         /// <value>The head content.</value>
         internal string BodyContent { get; set; } = string.Empty;
+        
+        // internal bool ForceSortByTimestamp { get; private set; } = disableSort;
     }
 }

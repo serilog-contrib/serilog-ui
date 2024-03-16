@@ -31,6 +31,7 @@ namespace Serilog.Ui.Web
             var builder = new SerilogUiOptionsBuilder(services);
             optionsBuilder.Invoke(builder);
 
+            services.AddHttpContextAccessor();
             services.AddScoped<IAuthorizationFilterService, AuthorizationFilterService>();
             services.AddSingleton<IAppStreamLoader, AppStreamLoader>();
 
