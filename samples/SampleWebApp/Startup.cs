@@ -11,8 +11,10 @@ using SampleWebApp.Authentication;
 using SampleWebApp.Authentication.Jwt;
 using SampleWebApp.Data;
 using SampleWebApp.Services.HostedServices;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.MsSqlServerProvider;
 using Serilog.Ui.Web;
+using Serilog.Ui.Web.Extensions;
 
 namespace SampleWebApp
 {
@@ -43,6 +45,7 @@ namespace SampleWebApp
             services.AddSerilogUi(options => options
                 .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs")
                 .UseSqlServer(Configuration.GetConnectionString("SecondLogConnection"), "Logs2")
+                .AddScopedSyncAuthFilter<SerilogUiCustomAuthFilter>()
             );
 
             services.AddSwaggerGen();
@@ -66,6 +69,7 @@ namespace SampleWebApp
                 // scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
@@ -73,10 +77,7 @@ namespace SampleWebApp
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger
             // JSON endpoint.
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-            });
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
 
             app.UseRouting();
 
@@ -90,7 +91,6 @@ namespace SampleWebApp
                 options.Authorization = new AuthorizationOptions
                 {
                     AuthenticationType = AuthenticationType.Jwt,
-                    Filters = new[] { new SerilogUiCustomAuthFilter() }
                 };
             });
 
