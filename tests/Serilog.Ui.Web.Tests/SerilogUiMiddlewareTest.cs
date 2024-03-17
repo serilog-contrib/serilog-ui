@@ -19,8 +19,8 @@ namespace Serilog.Ui.Web.Tests
         [Theory]
         [InlineData("/serilog-ui/api/keys/", 417)]
         [InlineData("/serilog-ui/api/logs/", 409)]
-        [InlineData("/serilog-ui/", 400)]
-        [InlineData("/serilog-ui/index.html", 418)]
+        [InlineData("/serilog-ui/", 418)]
+        [InlineData("/serilog-ui/index.html", 400)]
         public async Task It_hits_ui_endpoint_when_request_matches_method_and_options_prefix(string pathReq, int statusCode)
         {
             // Act
@@ -33,8 +33,8 @@ namespace Serilog.Ui.Web.Tests
         [Theory]
         [InlineData("/test/api/keys/", 417)]
         [InlineData("/test/api/logs/", 409)]
-        [InlineData("/test/", 400)]
-        [InlineData("/test/index.html", 418)]
+        [InlineData("/test/", 418)]
+        [InlineData("/test/index.html", 400)]
         public async Task It_hits_ui_endpoint_when_request_matches_method_and_custom_options_prefix(string pathReq, int statusCode)
         {
             // Act
