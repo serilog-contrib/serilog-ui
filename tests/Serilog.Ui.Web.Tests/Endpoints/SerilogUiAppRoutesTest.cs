@@ -20,9 +20,14 @@ namespace Serilog.Ui.Web.Tests.Endpoints
 
         public SerilogUiAppRoutesTest()
         {
-            _testContext = new DefaultHttpContext();
-            _testContext.Request.Host = new HostString("test.dev");
-            _testContext.Request.Scheme = "https";
+            _testContext = new DefaultHttpContext
+            {
+                Request =
+                {
+                    Host = new HostString("test.dev"),
+                    Scheme = "https"
+                }
+            };
             _streamLoaderMock = Substitute.For<IAppStreamLoader>();
             _contextAccessor = Substitute.For<IHttpContextAccessor>();
             _contextAccessor.HttpContext.Returns(_testContext);
@@ -41,7 +46,7 @@ namespace Serilog.Ui.Web.Tests.Endpoints
                 RoutePrefix = "test",
                 HomeUrl = "home-url"
             });
-            _testContext.Request.Path = "/serilog-ui-url/index.html";
+            _testContext.Request.Path = "/serilog-ui-url/";
             _testContext.Response.Body = new MemoryStream();
 
             using var stream = new MemoryStream(Encoding.UTF8.GetBytes(
@@ -91,14 +96,14 @@ namespace Serilog.Ui.Web.Tests.Endpoints
         public async Task It_redirects_app_home()
         {
             // Arrange
-            _testContext.Request.Path = "/serilog-ui-url/";
+            _testContext.Request.Path = "/serilog-ui-url/index.html";
 
             // Act
             await _sut.RedirectHomeAsync();
 
             // Assert
             _testContext.Response.StatusCode.Should().Be(301);
-            _testContext.Response.Headers.Location[0].Should().Be("https://test.dev/serilog-ui-url/index.html");
+            _testContext.Response.Headers.Location[0].Should().Be("https://test.dev/serilog-ui-url/");
         }
 
         [Fact]

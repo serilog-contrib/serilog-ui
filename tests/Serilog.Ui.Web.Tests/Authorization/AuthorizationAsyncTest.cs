@@ -7,14 +7,9 @@ using Xunit;
 namespace Serilog.Ui.Web.Tests.Authorization;
 
 [Trait("Ui-Authorization", "Web")]
-public class AuthorizationAsyncTest : IClassFixture<WebAppFactory.WithForbidden.Async>
+public class AuthorizationAsyncTest(WebAppFactory.WithForbidden.Async factory) : IClassFixture<WebAppFactory.WithForbidden.Async>
 {
-    private readonly HttpClient _client;
-
-    public AuthorizationAsyncTest(WebAppFactory.WithForbidden.Async factory)
-    {
-        _client = factory.CreateClient();
-    }
+    private readonly HttpClient _client = factory.CreateClient();
 
     [Fact]
     public async Task Local_Requests_Are_Not_Allowed_By_Async_Filters()

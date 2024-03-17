@@ -7,15 +7,10 @@ using Xunit;
 namespace Serilog.Ui.Web.Tests.Authorization;
 
 [Trait("Ui-Authorization", "Web")]
-public class AuthorizationDefaultTest : IClassFixture<WebAppFactory.Default>
+public class AuthorizationDefaultTest(WebAppFactory.Default factory) : IClassFixture<WebAppFactory.Default>
 {
-    private readonly HttpClient _client;
-
-    public AuthorizationDefaultTest(WebAppFactory.Default factory)
-    {
-        _client = factory.CreateClient();
-    }
-
+    private readonly HttpClient _client = factory.CreateClient();
+    
     [Fact]
     public async Task Local_Requests_Are_Allowed_By_Default()
     {

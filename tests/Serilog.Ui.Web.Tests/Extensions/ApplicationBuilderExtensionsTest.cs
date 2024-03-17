@@ -9,14 +9,9 @@ using Xunit;
 namespace Serilog.Ui.Web.Tests.Extensions
 {
     [Trait("Ui-ApplicationBuilder", "Web")]
-    public class ApplicationBuilderExtensionsTest : IClassFixture<WebAppFactory.WithMocks>
+    public class ApplicationBuilderExtensionsTest(WebAppFactory.WithMocks program) : IClassFixture<WebAppFactory.WithMocks>
     {
-        private readonly HttpClient _client;
-
-        public ApplicationBuilderExtensionsTest(WebAppFactory.WithMocks program)
-        {
-            _client = program.CreateClient();
-        }
+        private readonly HttpClient _client = program.CreateClient();
 
         [Fact]
         public async Task It_register_ui_middleware()
@@ -35,7 +30,7 @@ namespace Serilog.Ui.Web.Tests.Extensions
             IApplicationBuilder builder = null!;
 
             // Act
-            var fail = () => builder.UseSerilogUi(null);
+            var fail = () => builder.UseSerilogUi();
 
             // Assert
             fail.Should().ThrowExactly<ArgumentNullException>();
@@ -48,7 +43,7 @@ namespace Serilog.Ui.Web.Tests.Extensions
             var webApp = WebApplication.CreateBuilder().Build();
 
             // Act
-            var fail = () => webApp.UseSerilogUi(null);
+            var fail = () => webApp.UseSerilogUi();
 
             // Assert
             fail.Should().NotThrow();

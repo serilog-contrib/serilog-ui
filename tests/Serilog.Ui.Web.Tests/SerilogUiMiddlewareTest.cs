@@ -8,18 +8,13 @@ using Xunit;
 namespace Serilog.Ui.Web.Tests
 {
     [Trait("Ui-Middleware", "Web")]
-    public class SerilogUiMiddlewareTest :
+    public class SerilogUiMiddlewareTest(WebAppFactory.WithMocks program, WebAppFactory.WithMocks.AndCustomOptions programOpts) :
         IClassFixture<WebAppFactory.WithMocks>,
         IClassFixture<WebAppFactory.WithMocks.AndCustomOptions>
     {
-        private readonly HttpClient _httpClient;
-        private readonly HttpClient _httpClientWithCustomOpts;
+        private readonly HttpClient _httpClient = program.CreateClient();
 
-        public SerilogUiMiddlewareTest(WebAppFactory.WithMocks program, WebAppFactory.WithMocks.AndCustomOptions programOpts)
-        {
-            _httpClient = program.CreateClient();
-            _httpClientWithCustomOpts = programOpts.CreateClient();
-        }
+        private readonly HttpClient _httpClientWithCustomOpts = programOpts.CreateClient();
 
         [Theory]
         [InlineData("/serilog-ui/api/keys/", 417)]
@@ -71,7 +66,8 @@ namespace Serilog.Ui.Web.Tests
         public async Task It_proceeds_onwards_when_request_is_not_a_get(string pathReq, int statusCode)
         {
             // Arrange
-            var methods = new HttpMethod[] {
+            var methods = new[]
+            {
                 HttpMethod.Connect, HttpMethod.Delete, HttpMethod.Head, HttpMethod.Options,
                 HttpMethod.Patch, HttpMethod.Post, HttpMethod.Put, HttpMethod.Trace,
             };
