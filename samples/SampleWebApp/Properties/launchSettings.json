@@ -10,11 +10,11 @@
     "SampleWebApp": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "http://localhost:7501/serilog-ui",
+      "launchUrl": "http://localhost:7501/serilog-ui/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "dotnetRunMessages": "true",
+      "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:44377;http://localhost:7501"
     }
   },

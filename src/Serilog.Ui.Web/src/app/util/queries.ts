@@ -7,7 +7,7 @@ import { AuthType } from 'types/types';
 export const determineHost = (routePrefix?: string) =>
   ['development', 'test'].includes(import.meta.env.MODE ?? '')
     ? 'https://localhost:3001'
-    : routePrefix || '';
+    : `${window.location.origin}/${routePrefix}`;
 
 export const createRequestInit = (
   uiProps: SerilogUiConfig,
