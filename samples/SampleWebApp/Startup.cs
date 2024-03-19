@@ -18,16 +18,11 @@ using Serilog.Ui.Web.Extensions;
 
 namespace SampleWebApp
 {
-    public class Startup
+    public class Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; } = configuration;
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -43,18 +38,23 @@ namespace SampleWebApp
             services.AddRazorPages();
 
             services.AddSerilogUi(options => options
+                /* samples: authorization filters */
+                // custom filter, sync
+                .AddScopedSyncAuthFilter<SerilogUiCustomAuthFilter>()
+                // default filter, async, checking a configured authorization policy
+                .AddScopedPolicyAuthFilter("test-policy")
+
+                /* sample: sql server - multiple registration */
                 .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs")
                 .UseSqlServer(Configuration.GetConnectionString("SecondLogConnection"), "Logs2")
-                .AddScopedSyncAuthFilter<SerilogUiCustomAuthFilter>()
             );
 
             services.AddSwaggerGen();
 
-            // Generate some dummy logs
+            // Generate dummy logs
             services.AddHostedService<SecondLogDummyLogGeneratorBackgroundService>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -75,8 +75,6 @@ namespace SampleWebApp
 
             app.UseSwagger();
 
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger
-            // JSON endpoint.
             app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
 
             app.UseRouting();
@@ -85,7 +83,6 @@ namespace SampleWebApp
             app.UseAuthorization();
             app.UseSerilogUi(options =>
             {
-                options.RoutePrefix = "serilog-ui";
                 options.HomeUrl = "/#Test";
                 options.InjectJavascript("/js/serilog-ui/custom.js");
                 options.Authorization = new AuthorizationOptions
@@ -109,6 +106,14 @@ namespace SampleWebApp
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services
+                .AddAuthorization(options =>
+                {
+                    options.AddPolicy("test-policy", (builder) =>
+                    {
+                        // a sample policy, checking for a custom claim
+                        builder.RequireClaim("example", "my-value");
+                    });
+                })
                 .AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

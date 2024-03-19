@@ -5,7 +5,7 @@ using System;
 namespace Serilog.Ui.PostgreSqlProvider
 {
     /// <summary>
-    ///     PostgreSQL data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
+    ///     PostgreSQL data provider specific extension methods for <see cref="ISerilogUiOptionsBuilder"/>.
     /// </summary>
     public static class SerilogUiOptionBuilderExtensions
     {
@@ -26,7 +26,7 @@ namespace Serilog.Ui.PostgreSqlProvider
         /// <exception cref="ArgumentNullException"> throw if connectionString is null </exception>
         /// <exception cref="ArgumentNullException"> throw is tableName is null </exception>
         public static void UseNpgSql(
-            this SerilogUiOptionsBuilder optionsBuilder,
+            this ISerilogUiOptionsBuilder optionsBuilder,
             PostgreSqlSinkType sinkType,
             string connectionString,
             string tableName,
@@ -49,8 +49,7 @@ namespace Serilog.Ui.PostgreSqlProvider
 
             QueryBuilder.SetSinkType(sinkType);
 
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services
-                .AddScoped<IDataProvider, PostgresDataProvider>(p => ActivatorUtilities.CreateInstance<PostgresDataProvider>(p, relationProvider));
+            optionsBuilder.Services.AddScoped<IDataProvider, PostgresDataProvider>(p => ActivatorUtilities.CreateInstance<PostgresDataProvider>(p, relationProvider));
         }
     }
 }

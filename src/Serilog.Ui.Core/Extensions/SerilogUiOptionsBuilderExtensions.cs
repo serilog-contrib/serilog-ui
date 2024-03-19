@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core.Interfaces;
 
 namespace Serilog.Ui.Core.Extensions;
@@ -9,7 +10,19 @@ namespace Serilog.Ui.Core.Extensions;
 public static class SerilogUiOptionsBuilderExtensions
 {
     /// <summary>
-    /// Add <see cref="T"/> as scoped service implementation of <see cref="IUiAsyncAuthorizationFilter"/>.
+    /// Add <typeparamref name="T"/> as scoped service implementation of <see cref="IUiAsyncAuthorizationFilter"/>,
+    /// using an implementation factory.
+    /// </summary>
+    public static ISerilogUiOptionsBuilder AddScopedAsyncAuthFilter<T>(this ISerilogUiOptionsBuilder builder,
+        Func<IServiceProvider, T> implementationFactory) where T : class, IUiAsyncAuthorizationFilter
+    {
+        builder.Services.AddScoped<IUiAsyncAuthorizationFilter, T>(implementationFactory);
+
+        return builder;
+    }
+
+    /// <summary>
+    /// Add <typeparamref name="T"/> as scoped service implementation of <see cref="IUiAsyncAuthorizationFilter"/>.
     /// </summary>
     public static ISerilogUiOptionsBuilder AddScopedAsyncAuthFilter<T>(this ISerilogUiOptionsBuilder builder)
         where T : class, IUiAsyncAuthorizationFilter
@@ -18,9 +31,21 @@ public static class SerilogUiOptionsBuilderExtensions
 
         return builder;
     }
-    
+
     /// <summary>
-    /// Add <see cref="T"/> as scoped service implementation of <see cref="IUiAuthorizationFilter"/>.
+    /// Add <typeparamref name="T"/> as scoped service implementation of <see cref="IUiAuthorizationFilter"/>,
+    /// using an implementation factory.
+    /// </summary>
+    public static ISerilogUiOptionsBuilder AddScopedSyncAuthFilter<T>(this ISerilogUiOptionsBuilder builder,
+        Func<IServiceProvider, T> implementationFactory) where T : class, IUiAuthorizationFilter
+    {
+        builder.Services.AddScoped<IUiAuthorizationFilter, T>(implementationFactory);
+
+        return builder;
+    }
+
+    /// <summary>
+    /// Add <typeparamref name="T"/> as scoped service implementation of <see cref="IUiAuthorizationFilter"/>.
     /// </summary>
     public static ISerilogUiOptionsBuilder AddScopedSyncAuthFilter<T>(this ISerilogUiOptionsBuilder builder)
         where T : class, IUiAuthorizationFilter

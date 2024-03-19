@@ -8,7 +8,7 @@ using System.Linq;
 namespace Serilog.Ui.MongoDbProvider
 {
     /// <summary>
-    ///   MongoDB data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
+    ///   MongoDB data provider specific extension methods for <see cref="ISerilogUiOptionsBuilder"/>.
     /// </summary>
     public static class SerilogUiOptionBuilderExtensions
     {
@@ -21,7 +21,7 @@ namespace Serilog.Ui.MongoDbProvider
         /// <exception cref="ArgumentNullException">throw if connectionString is null</exception>
         /// <exception cref="ArgumentNullException">throw is collectionName is null</exception>
         public static void UseMongoDb(
-            this SerilogUiOptionsBuilder optionsBuilder,
+            this ISerilogUiOptionsBuilder optionsBuilder,
             string connectionString,
             string collectionName
         )
@@ -44,16 +44,14 @@ namespace Serilog.Ui.MongoDbProvider
                 CollectionName = collectionName
             };
 
-            var builder = ((ISerilogUiOptionsBuilder)optionsBuilder);
+            optionsBuilder.Services.AddSingleton(mongoProvider);
+            optionsBuilder.Services.TryAddSingleton<IMongoClient>(o => new MongoClient(connectionString));
 
             // TODO Fixup MongoDb to allow multiple registrations. Think about multiple ES clients
             // (singletons) used in data providers (scoped)
-            if (builder.Services.Any(c => c.ImplementationType == typeof(MongoDbDataProvider)))
+            if (optionsBuilder.Services.Any(c => c.ImplementationType == typeof(MongoDbDataProvider)))
                 throw new NotSupportedException($"Adding multiple registrations of '{typeof(MongoDbDataProvider).FullName}' is not (yet) supported.");
-
-            builder.Services.AddSingleton(mongoProvider);
-            builder.Services.TryAddSingleton<IMongoClient>(o => new MongoClient(connectionString));
-            builder.Services.AddScoped<IDataProvider, MongoDbDataProvider>();
+            optionsBuilder.Services.AddScoped<IDataProvider, MongoDbDataProvider>();
         }
 
         /// <summary>
@@ -67,7 +65,7 @@ namespace Serilog.Ui.MongoDbProvider
         /// <exception cref="ArgumentNullException">throw is databaseName is null</exception>
         /// <exception cref="ArgumentNullException">throw is collectionName is null</exception>
         public static void UseMongoDb(
-            this SerilogUiOptionsBuilder optionsBuilder,
+            this ISerilogUiOptionsBuilder optionsBuilder,
             string connectionString,
             string databaseName,
             string collectionName
@@ -89,16 +87,14 @@ namespace Serilog.Ui.MongoDbProvider
                 CollectionName = collectionName
             };
 
-            var builder = ((ISerilogUiOptionsBuilder)optionsBuilder);
+            optionsBuilder.Services.AddSingleton(mongoProvider);
+            optionsBuilder.Services.TryAddSingleton<IMongoClient>(o => new MongoClient(connectionString));
 
             // TODO Fixup MongoDb to allow multiple registrations. Think about multiple ES clients
             // (singletons) used in data providers (scoped)
-            if (builder.Services.Any(c => c.ImplementationType == typeof(MongoDbDataProvider)))
+            if (optionsBuilder.Services.Any(c => c.ImplementationType == typeof(MongoDbDataProvider)))
                 throw new NotSupportedException($"Adding multiple registrations of '{typeof(MongoDbDataProvider).FullName}' is not (yet) supported.");
-
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddSingleton(mongoProvider);
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.TryAddSingleton<IMongoClient>(o => new MongoClient(connectionString));
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services.AddScoped<IDataProvider, MongoDbDataProvider>();
+            optionsBuilder.Services.AddScoped<IDataProvider, MongoDbDataProvider>();
         }
     }
 }

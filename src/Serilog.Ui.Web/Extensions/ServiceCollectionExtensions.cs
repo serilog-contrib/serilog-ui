@@ -18,12 +18,12 @@ namespace Serilog.Ui.Web
         /// </summary>
         /// <param name="services">The services.</param>
         /// <param name="optionsBuilder">
-        ///   An action to configure the <see cref="SerilogUiOptionsBuilder"/> for the SerilogUI.
+        ///   An action to configure the <see cref="ISerilogUiOptionsBuilder"/> for the SerilogUI.
         /// </param>
         /// <exception cref="ArgumentNullException">services</exception>
         /// <exception cref="ArgumentNullException">optionsBuilder</exception>
         /// <returns>The same service collection so that multiple calls can be chained.</returns>
-        public static IServiceCollection AddSerilogUi(this IServiceCollection services, Action<SerilogUiOptionsBuilder> optionsBuilder)
+        public static IServiceCollection AddSerilogUi(this IServiceCollection services, Action<ISerilogUiOptionsBuilder> optionsBuilder)
         {
             Guard.Against.Null(services, nameof(services));
             Guard.Against.Null(optionsBuilder, nameof(optionsBuilder));
@@ -40,7 +40,7 @@ namespace Serilog.Ui.Web
 
             services.AddScoped<ISerilogUiAppRoutes, SerilogUiAppRoutes>();
             services.Decorate<ISerilogUiAppRoutes, SerilogUiAppRoutesDecorator>();
-            
+
             services.TryAddScoped<AggregateDataProvider>();
 
             return services;

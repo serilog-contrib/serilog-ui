@@ -8,7 +8,7 @@ using Serilog.Ui.Web.Authorization.Filters;
 namespace Serilog.Ui.Web.Extensions;
 
 /// <summary>
-/// Extension methods for <see cref="SerilogUiOptionsBuilder"/>.
+/// Extension methods for <see cref="ISerilogUiOptionsBuilder"/>.
 /// </summary>
 public static class SerilogUiOptionBuilderExtensions
 {

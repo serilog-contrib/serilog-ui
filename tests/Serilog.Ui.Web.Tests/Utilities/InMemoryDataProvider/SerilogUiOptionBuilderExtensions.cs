@@ -3,10 +3,7 @@ using Serilog.Ui.Core;
 
 namespace Serilog.Ui.Web.Tests.Utilities.InMemoryDataProvider
 {
-    /// <summary>
-    ///   SQL Server data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
-    /// </summary>
-    public static class SerilogUiOptionBuilderExtensions
+    internal static class SerilogUiOptionBuilderExtensions
     {
         /// <summary>
         ///   Configures the SerilogUi to connect to a InMemory sink.

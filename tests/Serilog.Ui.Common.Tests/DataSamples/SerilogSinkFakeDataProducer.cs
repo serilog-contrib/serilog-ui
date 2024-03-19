@@ -54,7 +54,7 @@ namespace Serilog.Ui.Common.Tests.DataSamples
             return new LogModelPropsCollector(logs);
         }
 
-        private static LogModel Spawn(string level, int rowNum, string messageOverride = null)
+        private static LogModel Spawn(string level, int rowNum, string? messageOverride = null)
             => new()
             {
                 Exception = null,

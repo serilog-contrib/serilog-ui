@@ -5,7 +5,7 @@ using System;
 namespace Serilog.Ui.MySqlProvider
 {
     /// <summary>
-    /// MySQL data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
+    /// MySQL data provider specific extension methods for <see cref="ISerilogUiOptionsBuilder"/>.
     /// </summary>
     public static class SerilogUiOptionBuilderExtensions
     {
@@ -19,7 +19,7 @@ namespace Serilog.Ui.MySqlProvider
         /// <exception cref="ArgumentNullException"> throw if connectionString is null </exception>
         /// <exception cref="ArgumentNullException"> throw is tableName is null </exception>
         public static void UseMySqlServer(
-            this SerilogUiOptionsBuilder optionsBuilder,
+            this ISerilogUiOptionsBuilder optionsBuilder,
             string connectionString,
             string tableName
         )
@@ -36,8 +36,7 @@ namespace Serilog.Ui.MySqlProvider
                 TableName = tableName
             };
 
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services
-                .AddScoped<IDataProvider, MySqlDataProvider>(p => ActivatorUtilities.CreateInstance<MySqlDataProvider>(p, relationProvider));
+            optionsBuilder.Services.AddScoped<IDataProvider, MySqlDataProvider>(p => ActivatorUtilities.CreateInstance<MySqlDataProvider>(p, relationProvider));
         }
 
         /// <summary>
@@ -50,7 +49,7 @@ namespace Serilog.Ui.MySqlProvider
         /// <exception cref="ArgumentNullException"> throw if connectionString is null </exception>
         /// <exception cref="ArgumentNullException"> throw is tableName is null </exception>
         public static void UseMariaDbServer(
-            this SerilogUiOptionsBuilder optionsBuilder,
+            this ISerilogUiOptionsBuilder optionsBuilder,
             string connectionString,
             string tableName
         )
@@ -67,8 +66,7 @@ namespace Serilog.Ui.MySqlProvider
                 TableName = tableName
             };
 
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services
-                .AddScoped<IDataProvider, MariaDbDataProvider>(p => ActivatorUtilities.CreateInstance<MariaDbDataProvider>(p, relationProvider));
+            optionsBuilder.Services.AddScoped<IDataProvider, MariaDbDataProvider>(p => ActivatorUtilities.CreateInstance<MariaDbDataProvider>(p, relationProvider));
         }
     }
 }

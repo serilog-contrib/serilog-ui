@@ -7,7 +7,7 @@ namespace Serilog.Ui.MsSqlServerProvider
 #nullable enable
 {
     /// <summary>
-    /// SQL Server data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
+    /// SQL Server data provider specific extension methods for <see cref="ISerilogUiOptionsBuilder"/>.
     /// </summary>
     public static class SerilogUiOptionBuilderExtensions
     {
@@ -24,8 +24,8 @@ namespace Serilog.Ui.MsSqlServerProvider
         /// </param>
         /// <exception cref="ArgumentNullException"> throw if connectionString is null </exception>
         /// <exception cref="ArgumentNullException"> throw is tableName is null </exception>
-        public static SerilogUiOptionsBuilder UseSqlServer(
-            this SerilogUiOptionsBuilder optionsBuilder,
+        public static ISerilogUiOptionsBuilder UseSqlServer(
+            this ISerilogUiOptionsBuilder optionsBuilder,
             string connectionString,
             string tableName,
             string schemaName = "dbo",
@@ -47,7 +47,7 @@ namespace Serilog.Ui.MsSqlServerProvider
 
             SqlMapper.AddTypeHandler(new DapperDateTimeHandler(dateTimeCustomParsing));
 
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services
+            optionsBuilder.Services
                 .AddScoped<IDataProvider, SqlServerDataProvider>(p =>
                     ActivatorUtilities.CreateInstance<SqlServerDataProvider>(p, relationProvider));
 
