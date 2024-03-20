@@ -15,7 +15,7 @@ const useQueryLogs = () => {
     enabled: false,
     queryKey: ['get-logs'],
     queryFn: async () => {
-      return isObjectGuard(searchValues)
+      return isObjectGuard(searchValues) && searchValues.table
         ? await fetchLogs(searchValues, requestInit, routePrefix)
         : null;
     },

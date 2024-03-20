@@ -7,11 +7,12 @@ export const useQueryTableKeys = () => {
   const { routePrefix } = useSerilogUiProps();
   const { headers: requestInit, authHeader } = useQueryHeaders();
 
-  return useQuery<string[]>({
-    queryKey: ['get-keys', authHeader],
+  return useQuery({
+    queryKey: ['get-keys', authHeader, routePrefix],
     queryFn: async () => {
-      return await fetchKeys(requestInit, routePrefix);
+      return routePrefix ? await fetchKeys(requestInit, routePrefix) : [];
     },
+
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,

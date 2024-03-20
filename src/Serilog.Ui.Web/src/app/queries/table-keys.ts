@@ -12,12 +12,11 @@ export const fetchKeys = async (fetchOptions: RequestInit, routePrefix?: string)
 
     if (req.ok) return await (req.json() as Promise<string[]>);
 
-    return await Promise.reject(new Error('Failed to fetch.'));
+    return await Promise.reject({ code: req.status, message: 'Failed to fetch' });
   } catch (error) {
-    console.warn(error);
-    const err = error as Error & { status?: number; message?: string };
+    const err = error as Error & { code?: number; message?: string };
 
-    err?.status === 403 ? send403Notification() : sendUnexpectedNotification(err.message);
+    err?.code === 403 ? send403Notification() : sendUnexpectedNotification(err.message);
     return [];
   }
 };

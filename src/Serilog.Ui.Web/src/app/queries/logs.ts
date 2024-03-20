@@ -20,11 +20,10 @@ export const fetchLogs = async (
 
     if (req.ok) return await (req.json() as Promise<SearchResult>);
 
-    return await Promise.reject(new Error('Failed to fetch.'));
+    return await Promise.reject({ code: req.status, message: 'Failed to fetch' });
   } catch (error: unknown) {
-    console.warn(error);
-    const err = error as Error & { status?: number; message?: string };
-    err?.status === 403 ? send403Notification() : sendUnexpectedNotification(err.message);
+    const err = error as Error & { code?: number; message?: string };
+    err?.code === 403 ? send403Notification() : sendUnexpectedNotification(err.message);
   }
 };
 

@@ -51,8 +51,7 @@ namespace Serilog.Ui.Web.Endpoints
 
             var indexUrl = httpContext.Request.GetEncodedUrl().Replace("index.html", "");
 
-            httpContext.Response.StatusCode = 301;
-            httpContext.Response.Headers["Location"] = indexUrl;
+            httpContext.Response.Redirect(indexUrl, true);
 
             return Task.CompletedTask;
         }

@@ -8,13 +8,12 @@ import App from './app/App';
 /**
  * TODO:
 (branch/v3) 
-* [testing phase] remove index.html from end of url and intercept all calls towards
-
  * > change basic auth to receive data from ui (header) and check it with custom impl
  * [testing phase] sample with basic and jwt auth, that passes when receivin' from the modal auth header
- * >> if auth on index is active, redirect to unauth view instead of html page
+ * >> if auth on index is active, redirect to unauth view instead of html page (react router and unhaut page...)
 
  * > table props not setting default when fetching data (block log if no table key is set)
+ * > block api call if keys empty, block api call if ui path undefined -> send noitification if keys missg
  * > try running token check each {x} time and send notification if expired
 
 (branch/routing-by-id)
