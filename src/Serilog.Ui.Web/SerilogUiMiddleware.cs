@@ -10,6 +10,7 @@ using System;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.Extensions;
 using Serilog.Ui.Web.Models;
 
 namespace Serilog.Ui.Web
@@ -49,10 +50,7 @@ namespace Serilog.Ui.Web
             if (CheckPath(path, "/api/keys/?")) return uiEndpoints.GetApiKeysAsync();
             if (CheckPath(path, "/api/logs/?")) return uiEndpoints.GetLogsAsync();
             if (CheckPath(path, "/index.html")) return uiAppRoutes.RedirectHomeAsync();
-            if (CheckPath(path, "/(?:.*(.*/))(?:.*(assets/)).*"))
-            {
-                ChangeAssetRequestPath(httpContext);
-            }
+            if (CheckPath(path, "/(?:.*(.*/))(?:(assets/)).*")) return ChangeAssetRequestPath(httpContext);
 
             return CheckPath(path, "/(?!.*(assets/)).*") ? uiAppRoutes.GetHomeAsync() : _staticFileMiddleware.Invoke(httpContext);
         }
@@ -84,18 +82,21 @@ namespace Serilog.Ui.Web
         /// Example: if user opens [...]/serilog-ui/other-route/my-log-id,
         /// the FE would search for main.js into [...]/serilog-ui/other-route/main.js instead of [...]/serilog-ui/main.js.
         /// </summary>
-        private void ChangeAssetRequestPath(HttpContext httpContext)
+        private Task ChangeAssetRequestPath(HttpContext httpContext)
         {
             var from = $"{_options.RoutePrefix}/";
             const string to = "assets/";
 
-            var requestPath = httpContext.Request.Path.Value ?? string.Empty;
+            var requestPath = httpContext.Request.GetEncodedUrl();
             var startOfWrongAssetSubPath = requestPath.IndexOf(from, StringComparison.Ordinal) + from.Length;
             var endOfWrongAssetSubPath = requestPath.IndexOf(to, StringComparison.OrdinalIgnoreCase);
             var pathToRemove = requestPath.Substring(startOfWrongAssetSubPath, endOfWrongAssetSubPath - startOfWrongAssetSubPath);
-            
+
             var newPath = requestPath.Replace(pathToRemove, string.Empty);
-            httpContext.Request.Path = newPath;
+
+            httpContext.Response.Redirect(newPath, true);
+
+            return Task.CompletedTask;
         }
     }
 }
