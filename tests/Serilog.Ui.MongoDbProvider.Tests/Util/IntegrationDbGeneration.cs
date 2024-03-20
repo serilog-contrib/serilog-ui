@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using Serilog.Ui.MongoDbProvider;
 using System;
+using Serilog.Ui.Core.OptionsBuilder;
 
 namespace MongoDb.Tests.Util
 {
@@ -17,7 +18,7 @@ namespace MongoDb.Tests.Util
             var settings = MongoClientSettings.FromConnectionString(runner.ConnectionString);
             settings.ServerSelectionTimeout = TimeSpan.FromSeconds(10);
             var client = new MongoClient(settings);
-            options.ConnectionString = runner.ConnectionString;
+            options.WithConnectionString(runner.ConnectionString);
             return (runner, client);
         }
     }

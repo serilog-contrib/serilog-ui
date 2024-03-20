@@ -5,6 +5,8 @@ using Serilog.Ui.PostgreSqlProvider;
 using Serilog.Ui.Web.Extensions;
 using System;
 using System.Collections.Generic;
+using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.PostgreSqlProvider.Extensions;
 using Xunit;
 
 namespace Postgres.Tests.Extensions
@@ -12,16 +14,16 @@ namespace Postgres.Tests.Extensions
     [Trait("DI-DataProvider", "Postgres")]
     public class SerilogUiOptionBuilderExtensionsTest
     {
-        private readonly ServiceCollection _serviceCollection = new();
+        private readonly ServiceCollection _serviceCollection = [];
 
-        [Theory]
-        [InlineData(null)]
-        [InlineData("schema")]
-        public void It_registers_provider_and_dependencies(string? schemaName)
+        [Fact]
+        public void It_registers_provider_and_dependencies()
         {
-            _serviceCollection.AddSerilogUi((builder) =>
+            _serviceCollection.AddSerilogUi(builder =>
             {
-                builder.UseNpgSql(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative, "https://npgsql.example.com", "my-table", schemaName);
+                builder.UseNpgSql(opt => opt
+                    .WithConnectionString("https://npgsql.example.com")
+                    .WithTable("my-table"));
             });
 
             var serviceProvider = _serviceCollection.BuildServiceProvider();
@@ -36,17 +38,25 @@ namespace Postgres.Tests.Extensions
         {
             var nullables = new List<Func<IServiceCollection>>
             {
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative, null, "name")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative," ", "name")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative,"", "name")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative,"name", null)),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative,"name", " ")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseNpgSql(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative,"name", "")),
+                () => _serviceCollection.AddSerilogUi(builder => builder.UseNpgSql(opt => opt.WithConnectionString(null!).WithTable("my-table"))),
+                () => _serviceCollection.AddSerilogUi(builder => builder.UseNpgSql(opt => opt.WithConnectionString(" ").WithTable("my-table"))),
+                () => _serviceCollection.AddSerilogUi(builder =>
+                    builder.UseNpgSql(opt => opt.WithConnectionString(string.Empty).WithTable("my-table"))),
+                () => _serviceCollection.AddSerilogUi(builder => builder.UseNpgSql(opt => opt.WithConnectionString("conn").WithTable(null!))),
+                () => _serviceCollection.AddSerilogUi(builder => builder.UseNpgSql(opt => opt.WithConnectionString("conn").WithTable(" "))),
+                () => _serviceCollection.AddSerilogUi(builder => builder.UseNpgSql(opt => opt.WithConnectionString("conn").WithTable(string.Empty))),
+                // if user sets an invalid schema, default value will be overridden an validation should fail
+                () => _serviceCollection.AddSerilogUi(builder =>
+                    builder.UseNpgSql(opt => opt.WithConnectionString("conn").WithTable("ok").WithSchema(null!))),
+                () => _serviceCollection.AddSerilogUi(builder =>
+                    builder.UseNpgSql(opt => opt.WithConnectionString("conn").WithTable("ok").WithSchema(" "))),
+                () => _serviceCollection.AddSerilogUi(builder =>
+                    builder.UseNpgSql(opt => opt.WithConnectionString("conn").WithTable("ok").WithSchema(string.Empty))),
             };
 
             foreach (var nullable in nullables)
             {
-                nullable.Should().ThrowExactly<ArgumentNullException>();
+                nullable.Should().Throw<ArgumentException>();
             }
         }
     }

@@ -6,6 +6,7 @@ using Serilog.Ui.PostgreSqlProvider;
 using System.Threading.Tasks;
 using Serilog;
 using Serilog.Events;
+using Serilog.Ui.Core.OptionsBuilder;
 using Testcontainers.PostgreSql;
 using Xunit;
 
@@ -13,7 +14,8 @@ namespace Postgres.Tests.Util
 {
     [CollectionDefinition(nameof(PostgresDataProvider))]
     public class PostgresCollection : ICollectionFixture<PostgresTestProvider>
-    { } 
+    {
+    }
 
     public sealed class PostgresTestProvider : DatabaseInstance
     {
@@ -25,27 +27,25 @@ namespace Postgres.Tests.Util
             QueryBuilder.SetSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative);
         }
 
-        public PostgreSqlDbOptions DbOptions { get; set; } = new()
-        {
-            TableName = "logs",
-            Schema = "public",
-            SinkType = PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative
-        };
+        public PostgreSqlDbOptions DbOptions { get; set; } = new PostgreSqlDbOptions("public")
+            .WithTable("logs")
+            .WithSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative);
 
         protected override async Task CheckDbReadinessAsync()
         {
-            DbOptions.ConnectionString = (Container as PostgreSqlContainer)?.GetConnectionString() ?? string.Empty;
+            DbOptions.WithConnectionString((Container as PostgreSqlContainer)?.GetConnectionString());
 
             await using var dataContext = new NpgsqlConnection(DbOptions.ConnectionString);
 
             await dataContext.ExecuteAsync("SELECT 1");
         }
 
-        protected override  Task InitializeAdditionalAsync()
+        protected override Task InitializeAdditionalAsync()
         {
             var serilog = new SerilogSinkSetup(logger =>
             {
-                logger.WriteTo.PostgreSQL(DbOptions.ConnectionString, "logs", null, LogEventLevel.Verbose, schemaName: "public", needAutoCreateTable: true, batchSizeLimit: 1);
+                logger.WriteTo.PostgreSQL(DbOptions.ConnectionString, "logs", null, LogEventLevel.Verbose, schemaName: "public",
+                    needAutoCreateTable: true, batchSizeLimit: 1);
             });
 
             Collector = serilog.InitializeLogs();

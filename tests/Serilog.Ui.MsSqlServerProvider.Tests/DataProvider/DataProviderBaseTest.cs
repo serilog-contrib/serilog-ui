@@ -4,6 +4,7 @@ using Serilog.Ui.MsSqlServerProvider;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Serilog.Ui.Core.OptionsBuilder;
 using Xunit;
 
 namespace MsSql.Tests.DataProvider
@@ -25,7 +26,7 @@ namespace MsSql.Tests.DataProvider
         [Fact]
         public Task It_logs_and_throws_when_db_read_breaks_down()
         {
-            var sut = new SqlServerDataProvider(new() { ConnectionString = "connString", Schema = "dbo", TableName = "logs" });
+            var sut = new SqlServerDataProvider(new RelationalDbOptions("dbo").WithConnectionString("connString").WithTable("logs"));
 
             var assert = () => sut.FetchDataAsync(1, 10);
             return assert.Should().ThrowExactlyAsync<ArgumentException>();

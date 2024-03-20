@@ -23,7 +23,7 @@ namespace MongoDb.Tests.Util
 
         public virtual async Task InitializeAsync()
         {
-            Builder = await MongoDbDataProviderBuilder.Build(false);
+            Builder = await MongoDbDataProviderBuilder.Build();
         }
 
         public IDataProvider GetDataProvider() => Guard.Against.Null(Builder?.Sut)!;

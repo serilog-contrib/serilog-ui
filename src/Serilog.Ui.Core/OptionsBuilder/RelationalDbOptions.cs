@@ -1,23 +1,90 @@
-﻿namespace Serilog.Ui.Core
+﻿using System;
+using Ardalis.GuardClauses;
+
+namespace Serilog.Ui.Core.OptionsBuilder;
+
+/// <summary>
+/// RelationDbOptions class
+/// </summary>
+public class RelationalDbOptions : BaseDbOptions
 {
     /// <summary>
-    /// RelationDbOptions class
+    /// Creates a new instance of the class, setting a default schema name.
     /// </summary>
-    public class RelationalDbOptions
+    /// <param name="defaultSchemaName"></param>
+    public RelationalDbOptions(string defaultSchemaName)
     {
-        /// <summary>
-        /// It gets or sets ConnectionString.
-        /// </summary>
-        public string ConnectionString { get; set; }
+        Schema = defaultSchemaName;
+    }
 
-        /// <summary>
-        /// It gets or sets TableName.
-        /// </summary>
-        public string TableName { get; set; }
+    /// <summary>
+    /// Required parameter.
+    /// </summary>
+    public string TableName { get; private set; } = string.Empty;
 
-        /// <summary>
-        /// It gets or sets Schema.
-        /// </summary>
-        public string Schema { get; set; }
+    /// <summary>
+    /// Optional parameter, defaults to dbo.
+    /// </summary>
+    public string Schema { get; private set; }
+
+    /// <summary>
+    /// Throws if ConnectionString, TableName, Schema is null or whitespace.
+    /// </summary>
+    /// <exception cref="ArgumentException"></exception>
+    public override void Validate()
+    {
+        Guard.Against.NullOrWhiteSpace(TableName);
+        Guard.Against.NullOrWhiteSpace(Schema);
+
+        base.Validate();
+    }
+
+
+    /// <summary>
+    /// Fluently sets TableName.
+    /// </summary>
+    /// <param name="tableName"></param>
+    internal void WithTable(string tableName)
+    {
+        TableName = tableName;
+    }
+
+    /// <summary>
+    /// Fluently sets SchemaName.
+    /// </summary>
+    /// <param name="schemaName"></param>
+    internal void WithSchema(string schemaName)
+    {
+        Schema = schemaName;
+    }
+}
+
+/// <summary>
+/// RelationalDbOptionsExtensions.
+/// </summary>
+public static class RelationalDbOptionsExtensions
+{
+    /// <summary>
+    /// Fluently sets TableName.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="tableName"></param>
+    public static T WithTable<T>(this T options, string tableName)
+        where T : RelationalDbOptions
+    {
+        options.WithTable(tableName);
+        return options;
+    }
+
+    /// <summary>
+    /// Fluently sets SchemaName.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <param name="schemaName"></param>
+    public static T WithSchema<T>(this T options, string schemaName)
+        where T : RelationalDbOptions
+    {
+        options.WithSchema(schemaName);
+        return options;
     }
 }

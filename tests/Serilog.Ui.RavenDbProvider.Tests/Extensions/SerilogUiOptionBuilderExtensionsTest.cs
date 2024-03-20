@@ -11,7 +11,7 @@ namespace RavenDb.Tests.Extensions;
 [Trait("DI-DataProvider", "RavenDb")]
 public class SerilogUiOptionBuilderExtensionsTest
 {
-    private readonly IServiceCollection _serviceCollection = new ServiceCollection();
+    private readonly ServiceCollection _serviceCollection = [];
 
     [Fact]
     public void It_registers_provider_and_dependencies_with_documentStore()
@@ -22,7 +22,7 @@ public class SerilogUiOptionBuilderExtensionsTest
         _serviceCollection.AddSerilogUi(builder =>
         {
             IDocumentStore documentStore = new DocumentStore { Urls = ["http://localhost:8080"], Database = dbName };
-            builder.UseRavenDb(documentStore);
+            builder.UseRavenDb(opt => opt.WithDocumentStore(documentStore));
         });
 
         var services = _serviceCollection.BuildServiceProvider();
@@ -42,17 +42,37 @@ public class SerilogUiOptionBuilderExtensionsTest
     public void It_throws_on_invalid_registration()
     {
         // Act
-        var act = () => _serviceCollection.AddSerilogUi(builder => builder.UseRavenDb(null!));
-        var act2 = () => _serviceCollection.AddSerilogUi(builder => builder.UseRavenDb(new DocumentStore { Database = "Test" }));
-        var act3 = () => _serviceCollection.AddSerilogUi(builder => builder.UseRavenDb(new DocumentStore { Urls = ["http://localhost:8080"] }));
-        var act4 = () =>
-            _serviceCollection.AddSerilogUi(builder =>
-                builder.UseRavenDb(new DocumentStore { Urls = ["http://localhost:8080"], Database = "Test" }, null!));
+        var nullables = new List<Func<IServiceCollection>>
+        {
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseRavenDb(_ => { })),
+            () => _serviceCollection.AddSerilogUi(
+                builder => builder.UseRavenDb(opt => opt.WithDocumentStore(new DocumentStore { Urls = null!, Database = "Test" }))),
+            () => _serviceCollection.AddSerilogUi(
+                builder => builder.UseRavenDb(opt => opt.WithDocumentStore(new DocumentStore { Urls = [], Database = "Test" }))),
+            () => _serviceCollection.AddSerilogUi(builder =>
+                builder.UseRavenDb(opt => opt.WithDocumentStore(new DocumentStore { Urls = ["http://localhost:8080"], Database = null! }))),
+            () => _serviceCollection.AddSerilogUi(builder =>
+                builder.UseRavenDb(opt => opt.WithDocumentStore(new DocumentStore { Urls = ["http://localhost:8080"], Database = " " }))),
+            () => _serviceCollection.AddSerilogUi(builder =>
+                builder.UseRavenDb(opt => opt.WithDocumentStore(new DocumentStore { Urls = ["http://localhost:8080"], Database = string.Empty }))),
+            () => _serviceCollection.AddSerilogUi(builder =>
+                builder.UseRavenDb(opt => opt
+                    .WithDocumentStore(new DocumentStore { Urls = ["http://localhost:8080"], Database = "db" })
+                    .WithCollectionName(null!))),
+            () => _serviceCollection.AddSerilogUi(builder =>
+                builder.UseRavenDb(opt => opt
+                    .WithDocumentStore(new DocumentStore { Urls = ["http://localhost:8080"], Database = "db" })
+                    .WithCollectionName(" "))),
+            () => _serviceCollection.AddSerilogUi(builder =>
+                builder.UseRavenDb(opt => opt
+                    .WithDocumentStore(new DocumentStore { Urls = ["http://localhost:8080"], Database = "db" })
+                    .WithCollectionName(string.Empty)))
+        };
 
         // Assert
-        act.Should().ThrowExactly<ArgumentNullException>();
-        act2.Should().ThrowExactly<ArgumentException>();
-        act3.Should().ThrowExactly<ArgumentNullException>();
-        act4.Should().ThrowExactly<ArgumentNullException>();
+        foreach (var nullable in nullables)
+        {
+            nullable.Should().Throw<ArgumentException>();
+        }
     }
 }

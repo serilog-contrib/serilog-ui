@@ -12,9 +12,9 @@ internal static class QueryBuilder
 
     internal static void SetSinkType(PostgreSqlSinkType sinkType)
     {
-        _columns = sinkType == PostgreSqlSinkType.SerilogSinksPostgreSQL
-            ? new PostgreSqlSinkColumnNames()
-            : new PostgreSqlAlternativeSinkColumnNames();
+        _columns = sinkType == PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative
+            ? new PostgreSqlAlternativeSinkColumnNames()
+            : new PostgreSqlSinkColumnNames();
     }
 
     internal static string BuildFetchLogsQuery(

@@ -3,10 +3,10 @@ using Dapper;
 using MySqlConnector;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
-using Serilog.Ui.Core;
 using Serilog.Ui.MySqlProvider;
 using System.Threading.Tasks;
 using Serilog;
+using Serilog.Ui.Core.OptionsBuilder;
 using Testcontainers.MySql;
 using Xunit;
 
@@ -26,17 +26,13 @@ namespace MySql.Tests.Util
             Container = new MySqlBuilder().Build();
         }
 
-        public RelationalDbOptions DbOptions { get; set; } = new()
-        {
-            TableName = "Logs",
-            Schema = "dbo"
-        };
+        public RelationalDbOptions DbOptions { get; set; } = new RelationalDbOptions("dbo").WithTable("Logs");
 
         protected override async Task CheckDbReadinessAsync()
         {
             Guard.Against.Null(Container);
 
-            DbOptions.ConnectionString = (Container as MySqlContainer)?.GetConnectionString();
+            DbOptions.WithConnectionString((Container as MySqlContainer)?.GetConnectionString());
 
             await using var dataContext = new MySqlConnection(DbOptions.ConnectionString);
 

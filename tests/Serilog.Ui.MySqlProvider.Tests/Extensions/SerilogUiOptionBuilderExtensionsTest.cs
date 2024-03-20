@@ -5,6 +5,8 @@ using Serilog.Ui.MySqlProvider;
 using Serilog.Ui.Web.Extensions;
 using System;
 using System.Collections.Generic;
+using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.MySqlProvider.Extensions;
 using Xunit;
 
 namespace MySql.Tests.Extensions;
@@ -19,7 +21,7 @@ public class SerilogUiOptionBuilderExtensionsMySqlTest
     {
         _serviceCollection.AddSerilogUi(builder =>
         {
-            builder.UseMySqlServer("https://mysqlserver.example.com", "my-table");
+            builder.UseMySqlServer(opt => opt.WithConnectionString("https://mysqlserver.example.com").WithTable("my-table"));
         });
 
         var serviceProvider = _serviceCollection.BuildServiceProvider();
@@ -34,17 +36,25 @@ public class SerilogUiOptionBuilderExtensionsMySqlTest
     {
         var nullables = new List<Func<IServiceCollection>>
         {
-            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer(null, "name")),
-            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer(" ", "name")),
-            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer("", "name")),
-            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer("name", null)),
-            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer("name", " ")),
-            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer("name", "")),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer(opt => opt.WithConnectionString(null!).WithTable("my-table"))),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer(opt => opt.WithConnectionString(" ").WithTable("my-table"))),
+            () => _serviceCollection.AddSerilogUi(builder =>
+                builder.UseMySqlServer(opt => opt.WithConnectionString(string.Empty).WithTable("my-table"))),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer(opt => opt.WithConnectionString("conn").WithTable(null!))),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer(opt => opt.WithConnectionString("conn").WithTable(" "))),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMySqlServer(opt => opt.WithConnectionString("conn").WithTable(string.Empty))),
+            // if user sets an invalid schema, default value will be overridden an validation should fail
+            () => _serviceCollection.AddSerilogUi(builder =>
+                builder.UseMySqlServer(opt => opt.WithConnectionString("conn").WithTable("ok").WithSchema(null!))),
+            () => _serviceCollection.AddSerilogUi(builder =>
+                builder.UseMySqlServer(opt => opt.WithConnectionString("conn").WithTable("ok").WithSchema(" "))),
+            () => _serviceCollection.AddSerilogUi(builder =>
+                builder.UseMySqlServer(opt => opt.WithConnectionString("conn").WithTable("ok").WithSchema(string.Empty))),
         };
 
         foreach (var nullable in nullables)
         {
-            nullable.Should().ThrowExactly<ArgumentNullException>();
+            nullable.Should().Throw<ArgumentException>();
         }
     }
 }
@@ -59,9 +69,9 @@ public class SerilogUiOptionBuilderExtensionsMariaDbTest
     {
         _serviceCollection.AddSerilogUi(builder =>
         {
-            builder.UseMariaDbServer("https://mysqlserver.example.com", "my-table");
+            builder.UseMariaDbServer(opt => opt.WithConnectionString("https://mysqlserver.example.com").WithTable("my-table"));
         });
-        
+
         var serviceProvider = _serviceCollection.BuildServiceProvider();
         using var scope = serviceProvider.CreateScope();
 
@@ -74,17 +84,26 @@ public class SerilogUiOptionBuilderExtensionsMariaDbTest
     {
         var nullables = new List<Func<IServiceCollection>>
         {
-            () => _serviceCollection.AddSerilogUi(builder => builder.UseMariaDbServer(null, "name")),
-            () => _serviceCollection.AddSerilogUi(builder => builder.UseMariaDbServer(" ", "name")),
-            () => _serviceCollection.AddSerilogUi(builder => builder.UseMariaDbServer("", "name")),
-            () => _serviceCollection.AddSerilogUi(builder => builder.UseMariaDbServer("name", null)),
-            () => _serviceCollection.AddSerilogUi(builder => builder.UseMariaDbServer("name", " ")),
-            () => _serviceCollection.AddSerilogUi(builder => builder.UseMariaDbServer("name", "")),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMariaDbServer(opt => opt.WithConnectionString(null!).WithTable("my-table"))),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMariaDbServer(opt => opt.WithConnectionString(" ").WithTable("my-table"))),
+            () => _serviceCollection.AddSerilogUi(builder =>
+                builder.UseMariaDbServer(opt => opt.WithConnectionString(string.Empty).WithTable("my-table"))),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMariaDbServer(opt => opt.WithConnectionString("conn").WithTable(null!))),
+            () => _serviceCollection.AddSerilogUi(builder => builder.UseMariaDbServer(opt => opt.WithConnectionString("conn").WithTable(" "))),
+            () => _serviceCollection.AddSerilogUi(
+                builder => builder.UseMariaDbServer(opt => opt.WithConnectionString("conn").WithTable(string.Empty))),
+            // if user sets an invalid schema, default value will be overridden an validation should fail
+            () => _serviceCollection.AddSerilogUi(builder =>
+                builder.UseMariaDbServer(opt => opt.WithConnectionString("conn").WithTable("ok").WithSchema(null!))),
+            () => _serviceCollection.AddSerilogUi(builder =>
+                builder.UseMariaDbServer(opt => opt.WithConnectionString("conn").WithTable("ok").WithSchema(" "))),
+            () => _serviceCollection.AddSerilogUi(builder =>
+                builder.UseMariaDbServer(opt => opt.WithConnectionString("conn").WithTable("ok").WithSchema(string.Empty))),
         };
 
         foreach (var nullable in nullables)
         {
-            nullable.Should().ThrowExactly<ArgumentNullException>();
+            nullable.Should().Throw<ArgumentException>();
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
-using System;
+using Serilog.Ui.Core.OptionsBuilder;
 
-namespace Serilog.Ui.MySqlProvider
+namespace Serilog.Ui.MySqlProvider.Extensions
 {
     /// <summary>
     /// MySQL data provider specific extension methods for <see cref="ISerilogUiOptionsBuilder"/>.
@@ -14,29 +15,18 @@ namespace Serilog.Ui.MySqlProvider
         /// Provider expects sink to store timestamp in utc.
         /// </summary>
         /// <param name="optionsBuilder"> The options builder. </param>
-        /// <param name="connectionString"> The connection string. </param>
-        /// <param name="tableName"> Name of the table. </param>
-        /// <exception cref="ArgumentNullException"> throw if connectionString is null </exception>
-        /// <exception cref="ArgumentNullException"> throw is tableName is null </exception>
+        /// <param name="setupOptions">The MySql options action.</param>
         public static void UseMySqlServer(
             this ISerilogUiOptionsBuilder optionsBuilder,
-            string connectionString,
-            string tableName
+            Action<RelationalDbOptions> setupOptions
         )
         {
-            if (string.IsNullOrWhiteSpace(connectionString))
-                throw new ArgumentNullException(nameof(connectionString));
+            var dbOptions = new RelationalDbOptions("dbo");
+            setupOptions(dbOptions);
+            dbOptions.Validate();
 
-            if (string.IsNullOrWhiteSpace(tableName))
-                throw new ArgumentNullException(nameof(tableName));
-
-            var relationProvider = new RelationalDbOptions
-            {
-                ConnectionString = connectionString,
-                TableName = tableName
-            };
-
-            optionsBuilder.Services.AddScoped<IDataProvider, MySqlDataProvider>(p => ActivatorUtilities.CreateInstance<MySqlDataProvider>(p, relationProvider));
+            optionsBuilder.Services.AddScoped<IDataProvider, MySqlDataProvider>(p =>
+                ActivatorUtilities.CreateInstance<MySqlDataProvider>(p, dbOptions));
         }
 
         /// <summary>
@@ -44,29 +34,17 @@ namespace Serilog.Ui.MySqlProvider
         /// Provider expects sink to store timestamp in utc.
         /// </summary>
         /// <param name="optionsBuilder"> The options builder. </param>
-        /// <param name="connectionString"> The connection string. </param>
-        /// <param name="tableName"> Name of the table. </param>
-        /// <exception cref="ArgumentNullException"> throw if connectionString is null </exception>
-        /// <exception cref="ArgumentNullException"> throw is tableName is null </exception>
+        /// <param name="setupOptions">The MySql options action.</param>
         public static void UseMariaDbServer(
             this ISerilogUiOptionsBuilder optionsBuilder,
-            string connectionString,
-            string tableName
+            Action<RelationalDbOptions> setupOptions
         )
         {
-            if (string.IsNullOrWhiteSpace(connectionString))
-                throw new ArgumentNullException(nameof(connectionString));
+            var dbOptions = new RelationalDbOptions("dbo");
+            setupOptions(dbOptions);
+            dbOptions.Validate();
 
-            if (string.IsNullOrWhiteSpace(tableName))
-                throw new ArgumentNullException(nameof(tableName));
-
-            var relationProvider = new RelationalDbOptions
-            {
-                ConnectionString = connectionString,
-                TableName = tableName
-            };
-
-            optionsBuilder.Services.AddScoped<IDataProvider, MariaDbDataProvider>(p => ActivatorUtilities.CreateInstance<MariaDbDataProvider>(p, relationProvider));
+            optionsBuilder.Services.AddScoped<IDataProvider, MariaDbDataProvider>(p => ActivatorUtilities.CreateInstance<MariaDbDataProvider>(p, dbOptions));
         }
     }
 }

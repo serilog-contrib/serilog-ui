@@ -1,4 +1,6 @@
-﻿namespace Serilog.Ui.Core
+﻿using Serilog.Ui.Core.OptionsBuilder;
+
+namespace Serilog.Ui.Core
 {
     /// <summary>
     /// Relational Db Options extensions.

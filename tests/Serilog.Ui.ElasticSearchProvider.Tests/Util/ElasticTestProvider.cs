@@ -17,10 +17,8 @@ namespace ElasticSearch.Tests.Util
 
         public ElasticTestProvider(Elasticsearch7XCluster cl) : base(cl)
         {
-            _provider = new ElasticSearchDbDataProvider(Client, new ElasticSearchDbOptions
-            {
-                IndexName = $"{Elasticsearch7XCluster.IndexPrefix}{DateTime.UtcNow:yyyy.MM.dd}"
-            });
+            _provider = new ElasticSearchDbDataProvider(Client,
+                new ElasticSearchDbOptions().WithIndex($"{Elasticsearch7XCluster.IndexPrefix}{DateTime.UtcNow:yyyy.MM.dd}"));
         }
 
         public Task DisposeAsync()

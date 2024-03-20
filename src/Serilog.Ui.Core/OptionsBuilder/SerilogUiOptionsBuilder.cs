@@ -9,8 +9,6 @@ namespace Serilog.Ui.Core
     /// <param name="services">Service collection.</param>
     public class SerilogUiOptionsBuilder(IServiceCollection services) : ISerilogUiOptionsBuilder
     {
-        private readonly IServiceCollection _services = services;
-
-        IServiceCollection ISerilogUiOptionsBuilder.Services => _services;
+        IServiceCollection ISerilogUiOptionsBuilder.Services { get; } = services;
     }
 }

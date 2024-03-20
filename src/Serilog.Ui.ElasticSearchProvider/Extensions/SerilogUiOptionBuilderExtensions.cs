@@ -1,11 +1,11 @@
-﻿using Elasticsearch.Net;
+﻿using System;
+using System.Linq;
+using Elasticsearch.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
 using Serilog.Ui.Core;
-using System;
-using System.Linq;
 
-namespace Serilog.Ui.ElasticSearchProvider
+namespace Serilog.Ui.ElasticSearchProvider.Extensions
 {
     /// <summary>
     /// ElasticSearch data provider specific extension methods for <see cref="ISerilogUiOptionsBuilder"/>.
@@ -17,26 +17,18 @@ namespace Serilog.Ui.ElasticSearchProvider
         /// Configures the SerilogUi to connect to a Elastic Search database.
         /// </summary>
         /// <param name="optionsBuilder"> The options builder. </param>
-        /// <param name="endpoint"> The url of ElasticSearch server. </param>
-        /// <param name="indexName"> Name of the log index. </param>
+        /// <param name="setupOptions">The ElasticSearch options action.</param>
         /// <exception cref="ArgumentNullException"> throw if endpoint is null </exception>
         /// <exception cref="ArgumentNullException"> throw is indexName is null </exception>
-        public static void UseElasticSearchDb(this ISerilogUiOptionsBuilder optionsBuilder, Uri endpoint, string indexName)
+        public static void UseElasticSearchDb(this ISerilogUiOptionsBuilder optionsBuilder, Action<ElasticSearchDbOptions> setupOptions)
         {
-            if (endpoint == null)
-                throw new ArgumentNullException(nameof(endpoint));
-
-            if (string.IsNullOrWhiteSpace(indexName))
-                throw new ArgumentNullException(nameof(indexName));
-
-            var options = new ElasticSearchDbOptions
-            {
-                IndexName = indexName
-            };
+            var options = new ElasticSearchDbOptions();
+            setupOptions.Invoke(options);
+            options.Validate();
 
             optionsBuilder.Services.AddSingleton(options);
 
-            var pool = new SingleNodeConnectionPool(endpoint);
+            var pool = new SingleNodeConnectionPool(options.Endpoint);
             var connectionSettings = new ConnectionSettings(pool, sourceSerializer: (_, _) => new VanillaSerializer());
 
             optionsBuilder.Services.AddSingleton<IElasticClient>(o => new ElasticClient(connectionSettings));

@@ -5,6 +5,8 @@ using Serilog.Ui.MsSqlServerProvider;
 using Serilog.Ui.Web.Extensions;
 using System;
 using System.Collections.Generic;
+using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.MsSqlServerProvider.Extensions;
 using Xunit;
 
 namespace MsSql.Tests.Extensions
@@ -14,14 +16,14 @@ namespace MsSql.Tests.Extensions
     {
         private readonly ServiceCollection _serviceCollection = new();
 
-        [Theory]
-        [InlineData(null)]
-        [InlineData("schema")]
-        public void It_registers_provider_and_dependencies(string? schemaName)
+        [Fact]
+        public void It_registers_provider_and_dependencies()
         {
-            _serviceCollection.AddSerilogUi((builder) =>
+            _serviceCollection.AddSerilogUi(builder =>
             {
-                builder.UseSqlServer("https://sqlserver.example.com", "my-table", schemaName!);
+                builder.UseSqlServer(opt => opt
+                    .WithConnectionString("https://sqlserver.example.com")
+                    .WithTable("my-table"));
             });
 
             var serviceProvider = _serviceCollection.BuildServiceProvider();
@@ -36,17 +38,30 @@ namespace MsSql.Tests.Extensions
         {
             var nullables = new List<Func<IServiceCollection>>
             {
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer(null!, "name")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer(" ", "name")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("", "name")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("name", null!)),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("name", " ")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseSqlServer("name", "")),
+                () => _serviceCollection.AddSerilogUi(builder => builder.UseSqlServer(opt =>
+                    opt.WithConnectionString(null!).WithTable("my-table"))),
+                () => _serviceCollection.AddSerilogUi(builder => builder.UseSqlServer(opt =>
+                    opt.WithConnectionString(" ").WithTable("my-table"))),
+                () => _serviceCollection.AddSerilogUi(builder => builder.UseSqlServer(opt =>
+                    opt.WithConnectionString(string.Empty).WithTable("my-table"))),
+                () => _serviceCollection.AddSerilogUi(builder => builder.UseSqlServer(opt =>
+                    opt.WithConnectionString("name").WithTable(null!))),
+                () => _serviceCollection.AddSerilogUi(builder => builder.UseSqlServer(opt =>
+                    opt.WithConnectionString("name").WithTable(" "))),
+                () => _serviceCollection.AddSerilogUi(builder => builder.UseSqlServer(opt =>
+                    opt.WithConnectionString("name").WithTable(string.Empty))),
+                // if user sets an invalid schema, default value will be overridden an validation should fail
+                () => _serviceCollection.AddSerilogUi(builder =>
+                    builder.UseSqlServer(opt => opt.WithConnectionString("conn").WithTable("ok").WithSchema(null!))),
+                () => _serviceCollection.AddSerilogUi(builder =>
+                    builder.UseSqlServer(opt => opt.WithConnectionString("conn").WithTable("ok").WithSchema(" "))),
+                () => _serviceCollection.AddSerilogUi(builder =>
+                    builder.UseSqlServer(opt => opt.WithConnectionString("conn").WithTable("ok").WithSchema(string.Empty))),
             };
 
             foreach (var nullable in nullables)
             {
-                nullable.Should().ThrowExactly<ArgumentNullException>();
+                nullable.Should().Throw<ArgumentException>();
             }
         }
     }

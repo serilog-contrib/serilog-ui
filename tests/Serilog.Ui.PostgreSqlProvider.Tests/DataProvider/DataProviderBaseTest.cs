@@ -4,6 +4,7 @@ using Serilog.Ui.PostgreSqlProvider;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Serilog.Ui.Core.OptionsBuilder;
 using Xunit;
 
 namespace Postgres.Tests.DataProvider
@@ -19,14 +20,16 @@ namespace Postgres.Tests.DataProvider
                 () => new PostgresDataProvider(null),
             };
 
-            sut.ForEach(sut => sut.Should().ThrowExactly<ArgumentNullException>());
+            sut.ForEach(s => s.Should().ThrowExactly<ArgumentNullException>());
         }
 
         [Fact]
         public Task It_logs_and_throws_when_db_read_breaks_down()
         {
-            QueryBuilder.SetSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQL);
-            var sut = new PostgresDataProvider(new() { ConnectionString = "connString", Schema = "dbo", TableName = "logs" });
+            QueryBuilder.SetSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative);
+            var sut = new PostgresDataProvider(new PostgreSqlDbOptions("dbo")
+                .WithConnectionString("connString")
+                .WithTable("logs"));
 
             var assert = () => sut.FetchDataAsync(1, 10);
             return assert.Should().ThrowExactlyAsync<ArgumentException>();

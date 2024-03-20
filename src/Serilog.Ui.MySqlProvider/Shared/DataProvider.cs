@@ -7,6 +7,7 @@ using Dapper;
 using MySqlConnector;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Models;
+using Serilog.Ui.Core.OptionsBuilder;
 
 namespace Serilog.Ui.MySqlProvider.Shared;
 

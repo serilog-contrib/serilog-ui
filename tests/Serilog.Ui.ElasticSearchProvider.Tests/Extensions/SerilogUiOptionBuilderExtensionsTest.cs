@@ -6,7 +6,7 @@ using Serilog.Ui.Core;
 using Serilog.Ui.ElasticSearchProvider;
 using Serilog.Ui.Web.Extensions;
 using System;
-using System.Collections.Generic;
+using Serilog.Ui.ElasticSearchProvider.Extensions;
 using Xunit;
 
 namespace ElasticSearch.Tests.Extensions
@@ -14,14 +14,16 @@ namespace ElasticSearch.Tests.Extensions
     [Trait("DI-DataProvider", "Elastic")]
     public class SerilogUiOptionBuilderExtensionsTest : IClusterFixture<Elasticsearch7XCluster>
     {
-        private readonly ServiceCollection _serviceCollection = new();
+        private readonly ServiceCollection _serviceCollection = [];
 
         [U]
         public void It_registers_provider_and_dependencies()
         {
-            _serviceCollection.AddSerilogUi((builder) =>
+            _serviceCollection.AddSerilogUi(builder =>
             {
-                builder.UseElasticSearchDb(new Uri("https://elastic.example.com"), "my-index");
+                builder.UseElasticSearchDb(options => options
+                    .WithEndpoint(new Uri("https://elastic.example.com"))
+                    .WithIndex("my-index"));
             });
             var services = _serviceCollection.BuildServiceProvider();
 
@@ -35,18 +37,9 @@ namespace ElasticSearch.Tests.Extensions
         public void It_throws_on_invalid_registration()
         {
             var uri = new Uri("https://elastic.example.com");
-            var nullables = new List<Func<IServiceCollection>>
-            {
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseElasticSearchDb(null, "name")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseElasticSearchDb(uri, null)),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseElasticSearchDb(uri, " ")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseElasticSearchDb(uri, "")),
-            };
+            var nullable = () => _serviceCollection.AddSerilogUi(builder => builder.UseElasticSearchDb(options => options.WithEndpoint(uri)));
 
-            foreach (var nullable in nullables)
-            {
-                nullable.Should().ThrowExactly<ArgumentNullException>();
-            }
+            nullable.Should().ThrowExactly<ArgumentNullException>();
         }
     }
 }

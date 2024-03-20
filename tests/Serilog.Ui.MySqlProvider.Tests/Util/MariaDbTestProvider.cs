@@ -6,7 +6,7 @@ using Serilog.Sinks.MariaDB;
 using Serilog.Sinks.MariaDB.Extensions;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
-using Serilog.Ui.Core;
+using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.MySqlProvider;
 using Testcontainers.MariaDb;
 using Xunit;
@@ -27,17 +27,13 @@ public sealed class MariaDbTestProvider : DatabaseInstance
         Container = new MariaDbBuilder().Build();
     }
 
-    public RelationalDbOptions DbOptions { get; set; } = new()
-    {
-        TableName = "Logs",
-        Schema = "dbo"
-    };
+    public RelationalDbOptions DbOptions { get; set; } = new RelationalDbOptions("dbo").WithTable("Logs");
 
     protected override async Task CheckDbReadinessAsync()
     {
         Guard.Against.Null(Container);
 
-        DbOptions.ConnectionString = (Container as MariaDbContainer)?.GetConnectionString();
+        DbOptions.WithConnectionString((Container as MariaDbContainer)?.GetConnectionString());
 
         await using var dataContext = new MySqlConnection(DbOptions.ConnectionString);
 

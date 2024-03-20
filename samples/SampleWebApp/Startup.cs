@@ -12,7 +12,8 @@ using SampleWebApp.Authentication.Jwt;
 using SampleWebApp.Data;
 using SampleWebApp.Services.HostedServices;
 using Serilog.Ui.Core.Extensions;
-using Serilog.Ui.MsSqlServerProvider;
+using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.MsSqlServerProvider.Extensions;
 using Serilog.Ui.Web.Extensions;
 using Serilog.Ui.Web.Models;
 
@@ -43,8 +44,8 @@ namespace SampleWebApp
                 // default filter, async, checking a configured authorization policy
                 .AddScopedPolicyAuthFilter("test-policy")
                 /* sample: sql server - multiple registration */
-                .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs")
-                .UseSqlServer(Configuration.GetConnectionString("SecondLogConnection"), "Logs2")
+                .UseSqlServer(opt => opt.WithConnectionString(Configuration.GetConnectionString("DefaultConnection")).WithTable("Logs"))
+                .UseSqlServer(opt => opt.WithConnectionString(Configuration.GetConnectionString("SecondLogConnection")).WithTable("Logs2"))
             );
 
             services.AddSwaggerGen();

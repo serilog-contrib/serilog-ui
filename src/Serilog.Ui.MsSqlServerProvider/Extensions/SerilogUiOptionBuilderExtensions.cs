@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Serilog.Ui.Core;
+﻿#nullable enable
 using System;
 using Dapper;
+using Microsoft.Extensions.DependencyInjection;
+using Serilog.Ui.Core;
+using Serilog.Ui.Core.OptionsBuilder;
 
-namespace Serilog.Ui.MsSqlServerProvider
-#nullable enable
+namespace Serilog.Ui.MsSqlServerProvider.Extensions
 {
     /// <summary>
     /// SQL Server data provider specific extension methods for <see cref="ISerilogUiOptionsBuilder"/>.
@@ -13,43 +14,26 @@ namespace Serilog.Ui.MsSqlServerProvider
     {
         /// <summary>Configures the SerilogUi to connect to a SQL Server database.</summary>
         /// <param name="optionsBuilder"> The options builder. </param>
-        /// <param name="connectionString"> The connection string. </param>
-        /// <param name="tableName"> Name of the table. </param>
-        /// <param name="schemaName">
-        /// Name of the table schema. default value is <c> dbo </c>
-        /// </param>
+        /// <param name="setupOptions">The Ms Sql options action.</param>
         /// <param name="dateTimeCustomParsing">
         /// Delegate to customize the DateTime parsing.
         /// It throws <see cref="InvalidOperationException" /> if the return DateTime isn't UTC kind.
         /// </param>
-        /// <exception cref="ArgumentNullException"> throw if connectionString is null </exception>
-        /// <exception cref="ArgumentNullException"> throw is tableName is null </exception>
         public static ISerilogUiOptionsBuilder UseSqlServer(
             this ISerilogUiOptionsBuilder optionsBuilder,
-            string connectionString,
-            string tableName,
-            string schemaName = "dbo",
+            Action<RelationalDbOptions> setupOptions,
             Func<string, DateTime>? dateTimeCustomParsing = null
         )
         {
-            if (string.IsNullOrWhiteSpace(connectionString))
-                throw new ArgumentNullException(nameof(connectionString));
-
-            if (string.IsNullOrWhiteSpace(tableName))
-                throw new ArgumentNullException(nameof(tableName));
-
-            var relationProvider = new RelationalDbOptions
-            {
-                ConnectionString = connectionString,
-                TableName = tableName,
-                Schema = !string.IsNullOrWhiteSpace(schemaName) ? schemaName : "dbo"
-            };
+            var dbOptions = new RelationalDbOptions("dbo");
+            setupOptions(dbOptions);
+            dbOptions.Validate();
 
             SqlMapper.AddTypeHandler(new DapperDateTimeHandler(dateTimeCustomParsing));
 
             optionsBuilder.Services
                 .AddScoped<IDataProvider, SqlServerDataProvider>(p =>
-                    ActivatorUtilities.CreateInstance<SqlServerDataProvider>(p, relationProvider));
+                    ActivatorUtilities.CreateInstance<SqlServerDataProvider>(p, dbOptions));
 
             return optionsBuilder;
         }

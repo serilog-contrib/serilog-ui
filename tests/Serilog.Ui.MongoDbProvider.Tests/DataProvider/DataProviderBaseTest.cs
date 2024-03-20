@@ -7,6 +7,7 @@ using Serilog.Ui.MongoDbProvider;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Serilog.Ui.Core.OptionsBuilder;
 using Xunit;
 
 namespace MongoDb.Tests.DataProvider
@@ -40,7 +41,7 @@ namespace MongoDb.Tests.DataProvider
             mongoCollectionMock.Indexes.Throws(new ArithmeticException());
 
             var sut = new MongoDbDataProvider(mongoClientMock,
-                new MongoDbOptions() { CollectionName = "coll", ConnectionString = "some", DatabaseName = "db" });
+                new MongoDbOptions().WithConnectionString("some").WithCollectionName("coll").WithDatabaseName("db"));
             var assert = () => sut.FetchDataAsync(1, 10, searchCriteria: "break-db");
             return assert.Should().ThrowAsync<ArithmeticException>();
         }

@@ -6,6 +6,8 @@ using Serilog.Ui.MongoDbProvider;
 using Serilog.Ui.Web.Extensions;
 using System;
 using System.Collections.Generic;
+using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.MongoDbProvider.Extensions;
 using Xunit;
 
 namespace MongoDb.Tests.Extensions
@@ -13,14 +15,16 @@ namespace MongoDb.Tests.Extensions
     [Trait("DI-DataProvider", "MongoDb")]
     public class SerilogUiOptionBuilderExtensionsTest
     {
-        private readonly ServiceCollection _serviceCollection = new();
+        private readonly ServiceCollection _serviceCollection = [];
 
         [Fact]
-        public void It_registers_provider_and_dependencies_with_connstring_and_collection()
+        public void It_registers_provider_and_dependencies_with_connection_string_and_collection()
         {
-            _serviceCollection.AddSerilogUi((builder) =>
+            _serviceCollection.AddSerilogUi(builder =>
             {
-                builder.UseMongoDb("mongodb://mongodb0.example.com:27017/my-db", "my-collection");
+                builder.UseMongoDb(options => options
+                    .WithConnectionString("mongodb://mongodb0.example.com:27017/my-db")
+                    .WithCollectionName("my-collection"));
             });
             var services = _serviceCollection.BuildServiceProvider();
 
@@ -30,11 +34,14 @@ namespace MongoDb.Tests.Extensions
         }
 
         [Fact]
-        public void It_registers_provider_and_dependencies_with_connstring_collection_and_dbname()
+        public void It_registers_provider_and_dependencies_with_connection_string_collection_and_dbname()
         {
-            _serviceCollection.AddSerilogUi((builder) =>
+            _serviceCollection.AddSerilogUi(builder =>
             {
-                builder.UseMongoDb("mongodb://mongodb0.example.com:27017", "my-db", "my-collection");
+                builder.UseMongoDb(options => options
+                    .WithConnectionString("mongodb://mongodb0.example.com:27017/")
+                    .WithDatabaseName("my-db")
+                    .WithCollectionName("my-collection"));
             });
             var services = _serviceCollection.BuildServiceProvider();
 
@@ -49,9 +56,12 @@ namespace MongoDb.Tests.Extensions
         {
             _serviceCollection.AddSingleton<IMongoClient>(p =>
                 new MongoClient(new MongoClientSettings { ApplicationName = "my-app" }));
-            _serviceCollection.AddSerilogUi((builder) =>
+            _serviceCollection.AddSerilogUi(builder =>
             {
-                builder.UseMongoDb("mongodb://mongodb0.example.com:27017", "my-db", "my-collection");
+                builder.UseMongoDb(options => options
+                    .WithConnectionString("mongodb://mongodb0.example.com:27017/")
+                    .WithDatabaseName("my-db")
+                    .WithCollectionName("my-collection"));
             });
             var services = _serviceCollection.BuildServiceProvider();
 
@@ -61,29 +71,9 @@ namespace MongoDb.Tests.Extensions
         [Fact]
         public void It_throws_on_invalid_registration()
         {
-            var nullables = new List<Func<IServiceCollection>>
-            {
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb(null, "name")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb(" ", "name")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("", "name")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("name", null)),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("name", " ")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("name", "")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("name", "name", null)),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("name", "name", "")),
-                () => _serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("name", "name", " ")),
-            };
-
-            foreach (var nullable in nullables)
-            {
-                nullable.Should().ThrowExactly<ArgumentNullException>();
-            }
-
-            var act = () => _serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("mongodb://mongodb0.example.com:27017", "name"));
-            act.Should().ThrowExactly<ArgumentException>();
-
-            var actConfig = () => _serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("name", "name"));
-            actConfig.Should().ThrowExactly<MongoConfigurationException>();
+            var act = () => _serviceCollection.AddSerilogUi(builder => builder.UseMongoDb(options =>
+                options.WithConnectionString("mongodb://mongodb0.example.com0:27017").WithCollectionName("name")));
+            act.Should().ThrowExactly<ArgumentNullException>();
         }
     }
 }

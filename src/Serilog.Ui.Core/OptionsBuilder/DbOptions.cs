@@ -1,6 +1,12 @@
-﻿namespace Serilog.Ui.Core;
+﻿namespace Serilog.Ui.Core.OptionsBuilder;
 
-public class DbOptions
+/// <summary>
+/// IDbOptions interface.
+/// </summary>
+public interface IDbOptions
 {
-    
+    /// <summary>
+    /// Validate the options after the configuration.
+    /// </summary>
+    void Validate();
 }

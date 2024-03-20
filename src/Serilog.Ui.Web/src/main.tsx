@@ -12,12 +12,10 @@ import App from './app/App';
 
  * > change basic auth to receive data from ui (header) and check it with custom impl
  * [testing phase] sample with basic and jwt auth, that passes when receivin' from the modal auth header
-* >> if auth on index is active, redirect to unauth view instead of html page
+ * >> if auth on index is active, redirect to unauth view instead of html page
 
  * > table props not setting default when fetching data (block log if no table key is set)
  * > try running token check each {x} time and send notification if expired
-
- * >> change options registration to fluent interface on all DI registration
 
 (branch/routing-by-id)
  * >> react router setup to catch id routing

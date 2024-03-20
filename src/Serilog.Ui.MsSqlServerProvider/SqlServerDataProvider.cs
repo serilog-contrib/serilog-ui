@@ -7,6 +7,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog.Ui.Core.OptionsBuilder;
 using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.MsSqlServerProvider
