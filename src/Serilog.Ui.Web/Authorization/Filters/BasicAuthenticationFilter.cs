@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 using Serilog.Ui.Core.Interfaces;
 
-namespace Serilog.Ui.Web.Authorization;
+namespace Serilog.Ui.Web.Authorization.Filters;
 
 public class BasicAuthenticationFilter(IHttpContextAccessor httpContextAccessor) : IUiAuthorizationFilter
 {

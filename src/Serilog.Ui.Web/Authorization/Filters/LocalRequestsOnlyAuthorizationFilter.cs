@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Serilog.Ui.Core.Interfaces;
 
-namespace Serilog.Ui.Web.Authorization
+namespace Serilog.Ui.Web.Authorization.Filters
 {
     public class LocalRequestsOnlyAuthorizationFilter(IHttpContextAccessor httpContextAccessor) : IUiAuthorizationFilter
     {

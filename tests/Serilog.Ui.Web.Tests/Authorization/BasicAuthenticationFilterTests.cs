@@ -3,7 +3,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 using NSubstitute;
-using Serilog.Ui.Web.Authorization;
+using Serilog.Ui.Web.Authorization.Filters;
 using Xunit;
 
 namespace Serilog.Ui.Web.Tests.Authorization;

@@ -25,4 +25,24 @@ public static class SerilogUiOptionBuilderExtensions
 
         return builder;
     }
+
+    /// <summary>
+    /// Add <see cref="LocalRequestsOnlyAuthorizationFilter"/> as scoped service implementation of <see cref="IUiAuthorizationFilter"/>.
+    /// </summary>
+    public static ISerilogUiOptionsBuilder AddScopedAuthorizeLocalRequestsAuthFilter(this ISerilogUiOptionsBuilder builder)
+    {
+        builder.Services.AddScoped<IUiAuthorizationFilter, LocalRequestsOnlyAuthorizationFilter>();
+
+        return builder;
+    }
+
+    /// <summary>
+    /// Add <see cref="BasicAuthenticationFilter"/> as scoped service implementation of <see cref="IUiAuthorizationFilter"/>.
+    /// </summary>
+    public static ISerilogUiOptionsBuilder AddScopedBasicAuthFilter(this ISerilogUiOptionsBuilder builder)
+    {
+        builder.Services.AddScoped<IUiAuthorizationFilter, BasicAuthenticationFilter>();
+
+        return builder;
+    }
 }

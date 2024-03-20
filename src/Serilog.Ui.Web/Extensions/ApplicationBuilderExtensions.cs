@@ -21,7 +21,7 @@ namespace Serilog.Ui.Web
         public static IApplicationBuilder UseSerilogUi(this IApplicationBuilder applicationBuilder, Action<UiOptions> options = null)
         {
             Guard.Against.Null(applicationBuilder, nameof(applicationBuilder));
-
+            // TODO disable timestamp in case of elastic...
             var uiOptions = new UiOptions();
             options?.Invoke(uiOptions);
 
