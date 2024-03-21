@@ -13,14 +13,13 @@ using SampleWebApp.Data;
 using SampleWebApp.Services.HostedServices;
 using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.MsSqlServerProvider;
-using Serilog.Ui.Web;
 using Serilog.Ui.Web.Extensions;
+using Serilog.Ui.Web.Models;
 
 namespace SampleWebApp
 {
     public class Startup(IConfiguration configuration)
     {
-
         public IConfiguration Configuration { get; } = configuration;
 
         public void ConfigureServices(IServiceCollection services)
@@ -43,7 +42,6 @@ namespace SampleWebApp
                 .AddScopedSyncAuthFilter<SerilogUiCustomAuthFilter>()
                 // default filter, async, checking a configured authorization policy
                 .AddScopedPolicyAuthFilter("test-policy")
-
                 /* sample: sql server - multiple registration */
                 .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs")
                 .UseSqlServer(Configuration.GetConnectionString("SecondLogConnection"), "Logs2")

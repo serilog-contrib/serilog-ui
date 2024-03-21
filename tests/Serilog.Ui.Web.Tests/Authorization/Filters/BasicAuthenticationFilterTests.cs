@@ -6,9 +6,9 @@ using NSubstitute;
 using Serilog.Ui.Web.Authorization.Filters;
 using Xunit;
 
-namespace Serilog.Ui.Web.Tests.Authorization;
+namespace Serilog.Ui.Web.Tests.Authorization.Filters;
 
-[Trait("Ui-Authorization", "Web")]
+[Trait("Ui-Authorization-Filters", "Web")]
 public class BasicAuthenticationFilterTests
 {
     [Fact]

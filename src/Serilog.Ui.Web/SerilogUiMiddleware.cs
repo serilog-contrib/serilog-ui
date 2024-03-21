@@ -10,6 +10,7 @@ using System;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Serilog.Ui.Web.Models;
 
 namespace Serilog.Ui.Web
 {
@@ -88,11 +89,13 @@ namespace Serilog.Ui.Web
             var from = $"{_options.RoutePrefix}/";
             const string to = "assets/";
 
-            var startOfWrongAssetSubPath = httpContext.Request.Path.Value.IndexOf(from, StringComparison.Ordinal) + from.Length;
-            var endOfWrongAssetSubPath = httpContext.Request.Path.Value.IndexOf(to, StringComparison.OrdinalIgnoreCase);
-            var pathToRemove = httpContext.Request.Path.Value.Substring(startOfWrongAssetSubPath, endOfWrongAssetSubPath - startOfWrongAssetSubPath);
-
-            httpContext.Request.Path = httpContext.Request.Path.Value.Replace(pathToRemove, "");
+            var requestPath = httpContext.Request.Path.Value ?? string.Empty;
+            var startOfWrongAssetSubPath = requestPath.IndexOf(from, StringComparison.Ordinal) + from.Length;
+            var endOfWrongAssetSubPath = requestPath.IndexOf(to, StringComparison.OrdinalIgnoreCase);
+            var pathToRemove = requestPath.Substring(startOfWrongAssetSubPath, endOfWrongAssetSubPath - startOfWrongAssetSubPath);
+            
+            var newPath = requestPath.Replace(pathToRemove, string.Empty);
+            httpContext.Request.Path = newPath;
         }
     }
 }

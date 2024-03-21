@@ -8,6 +8,7 @@ using NSubstitute.ClearExtensions;
 using Serilog.Ui.Core.Interfaces;
 using Serilog.Ui.Web.Authorization;
 using Serilog.Ui.Web.Endpoints;
+using Serilog.Ui.Web.Models;
 using Serilog.Ui.Web.Tests.Utilities.Authorization;
 using Xunit;
 

@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
+using Serilog.Ui.Web.Models;
 
 namespace Serilog.Ui.Web.Endpoints
 {
@@ -26,7 +27,7 @@ namespace Serilog.Ui.Web.Endpoints
         {
             Guard.Against.Null(Options, nameof(Options));
             var httpContext = Guard.Against.Null(httpContextAccessor.HttpContext);
-            
+
             var response = httpContext.Response;
 
             await using var stream = appStreamLoader.GetIndex();

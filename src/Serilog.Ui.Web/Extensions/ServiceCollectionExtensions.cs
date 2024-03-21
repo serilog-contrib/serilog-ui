@@ -1,12 +1,12 @@
-﻿using Ardalis.GuardClauses;
+﻿using System;
+using Ardalis.GuardClauses;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog.Ui.Core;
 using Serilog.Ui.Web.Authorization;
 using Serilog.Ui.Web.Endpoints;
-using System;
 
-namespace Serilog.Ui.Web
+namespace Serilog.Ui.Web.Extensions
 {
     /// <summary>
     ///   Extension methods for setting up SerilogUI related services in an <see cref="IServiceCollection"/>.

@@ -1,4 +1,4 @@
-﻿namespace Serilog.Ui.Web
+﻿namespace Serilog.Ui.Web.Models
 {
     /// <summary>
     /// Options used by SerilogUI to configure the log dashboard.
@@ -22,7 +22,7 @@
         ///   Gets or sets the type of the Filters.
         /// </summary>
         /// <value>The type of the authentication.</value>
-        public AuthorizationOptions Authorization { get; set; } = new AuthorizationOptions();
+        public AuthorizationOptions Authorization { get; set; } = new();
 
         /// <summary>
         ///   Gets or sets the head content, a string that will be placed in the &lt;head&gt; of the index.html

@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using Serilog.Ui.Web.Extensions;
+using Serilog.Ui.Web.Models;
 using Xunit;
 
 namespace Serilog.Ui.Web.Tests.Extensions

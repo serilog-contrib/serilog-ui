@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
+using Serilog.Ui.Web.Extensions;
 using Xunit;
 
 namespace Serilog.Ui.Web.Tests.Extensions

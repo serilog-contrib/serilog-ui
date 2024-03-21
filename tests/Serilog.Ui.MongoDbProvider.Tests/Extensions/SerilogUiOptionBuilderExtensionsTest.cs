@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using Serilog.Ui.Core;
 using Serilog.Ui.MongoDbProvider;
-using Serilog.Ui.Web;
+using Serilog.Ui.Web.Extensions;
 using System;
 using System.Collections.Generic;
 using Xunit;

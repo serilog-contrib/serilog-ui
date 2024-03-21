@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using Serilog.Ui.Web.Endpoints;
+using Serilog.Ui.Web.Models;
 using Xunit;
 
 namespace Serilog.Ui.Web.Tests.Endpoints

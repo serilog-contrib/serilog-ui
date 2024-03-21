@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Serilog.Ui.Core.Interfaces;
+using Serilog.Ui.Web.Extensions;
 
 namespace Serilog.Ui.Web.Tests.Utilities.Authorization
 {

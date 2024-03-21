@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Serilog.Ui.Web.Authorization;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog.Ui.Web.Models;
 
 namespace Serilog.Ui.Web.Endpoints
 {
@@ -31,7 +32,7 @@ namespace Serilog.Ui.Web.Endpoints
         public Task RedirectHomeAsync()
         {
             Guard.Against.Null(Options, nameof(Options));
-            
+
             return Options.Authorization.RunAuthorizationFilterOnAppRoutes
                 ? authFilterService.CheckAccessAsync(decoratedService.RedirectHomeAsync)
                 : decoratedService.RedirectHomeAsync();

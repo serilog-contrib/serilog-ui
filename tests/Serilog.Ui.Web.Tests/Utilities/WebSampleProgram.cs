@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog.Sinks.InMemory;
 using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Web.Endpoints;
+using Serilog.Ui.Web.Extensions;
+using Serilog.Ui.Web.Models;
 using Serilog.Ui.Web.Tests.Utilities.Authorization;
 using Serilog.Ui.Web.Tests.Utilities.InMemoryDataProvider;
 

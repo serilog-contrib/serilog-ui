@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Serilog.Ui.Core.Interfaces;
+using Serilog.Ui.Web.Extensions;
 
 namespace Serilog.Ui.Web.Authorization.Filters
 {

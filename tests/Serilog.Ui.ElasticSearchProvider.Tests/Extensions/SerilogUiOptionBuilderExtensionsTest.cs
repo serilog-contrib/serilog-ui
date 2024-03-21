@@ -4,7 +4,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
 using Serilog.Ui.ElasticSearchProvider;
-using Serilog.Ui.Web;
+using Serilog.Ui.Web.Extensions;
 using System;
 using System.Collections.Generic;
 using Xunit;

@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Mvc;
 using static Serilog.Ui.Core.Models.SearchOptions;
+using Serilog.Ui.Web.Models;
+using Serilog.Ui.Web.Extensions;
 
 namespace Serilog.Ui.Web.Endpoints
 {

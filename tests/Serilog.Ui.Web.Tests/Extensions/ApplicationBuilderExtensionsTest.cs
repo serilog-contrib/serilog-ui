@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
+using Serilog.Ui.Web.Extensions;
 using Serilog.Ui.Web.Tests.Utilities;
 using Xunit;
 

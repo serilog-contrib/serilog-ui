@@ -1,8 +1,9 @@
+using System;
 using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Builder;
-using System;
+using Serilog.Ui.Web.Models;
 
-namespace Serilog.Ui.Web
+namespace Serilog.Ui.Web.Extensions
 {
     /// <summary>
     ///   Contains extensions for configuring routing on an <see cref="IApplicationBuilder"/>.
