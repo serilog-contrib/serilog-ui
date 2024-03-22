@@ -24,7 +24,8 @@ namespace SampleWebApp.Authentication.Jwt
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new(ClaimTypes.Name, user.UserName),
                 new(ClaimTypes.NameIdentifier, user.UserName),
-                new(ClaimTypes.UserData, user.Id)
+                new(ClaimTypes.UserData, user.Id),
+                new("example", "my-value") // used by the sample authorization policy
             };
 
             var key = JwtKeyGenerator.Generate(_configuration["Jwt:SecretKey"]);

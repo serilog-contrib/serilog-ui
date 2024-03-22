@@ -31,7 +31,7 @@ namespace Serilog.Ui.ElasticSearchProvider
                 RowNo = index,
                 Level = Level,
                 Message = Message,
-                Timestamp = Timestamp,
+                Timestamp = Timestamp.ToUniversalTime(),
                 Exception = Exceptions?.Count > 0 ? BuildExceptionMessage(Exceptions[0]) : null,
                 Properties = JsonConvert.SerializeObject(Fields),
                 PropertyType = "json"

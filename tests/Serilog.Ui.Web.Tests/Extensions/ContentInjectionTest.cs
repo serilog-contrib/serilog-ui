@@ -1,9 +1,10 @@
-﻿using FluentAssertions;
-using Serilog.Ui.Web;
-using System;
+﻿using System;
+using FluentAssertions;
+using Serilog.Ui.Web.Extensions;
+using Serilog.Ui.Web.Models;
 using Xunit;
 
-namespace Ui.Web.Tests.Extensions
+namespace Serilog.Ui.Web.Tests.Extensions
 {
     [Trait("Ui-Injection", "Web")]
     public class ContentInjectionTest

@@ -17,8 +17,8 @@ namespace SampleWebApp
                 {
                     webBuilder.UseStartup<Startup>();
                 })
-                .UseSerilog((hostingContext, loggerConfiguration) =>
-                    loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration)
-                        .Enrich.FromLogContext());
+                .UseSerilog((hostingContext, loggerConfiguration) => loggerConfiguration
+                    .ReadFrom.Configuration(hostingContext.Configuration)
+                    .Enrich.FromLogContext());
     }
 }

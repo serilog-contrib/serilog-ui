@@ -1,9 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<IsPackable>false</IsPackable>
 		<AssemblyName>ElasticSearch.Tests</AssemblyName>
 		<RootNamespace>ElasticSearch.Tests</RootNamespace>
 	</PropertyGroup>
@@ -11,9 +8,9 @@
 	<ItemGroup>
 		<PackageReference Include="Elastic.Elasticsearch.Xunit" Version="0.4.3" />
 		<PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
-		<PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.4.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+		<PackageReference Include="Serilog.Sinks.Elasticsearch" Version="9.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>

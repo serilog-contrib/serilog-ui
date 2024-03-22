@@ -11,21 +11,17 @@ using SampleWebApp.Authentication;
 using SampleWebApp.Authentication.Jwt;
 using SampleWebApp.Data;
 using SampleWebApp.Services.HostedServices;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.MsSqlServerProvider;
-using Serilog.Ui.Web;
+using Serilog.Ui.Web.Extensions;
+using Serilog.Ui.Web.Models;
 
 namespace SampleWebApp
 {
-    public class Startup
+    public class Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public IConfiguration Configuration { get; } = configuration;
 
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -41,17 +37,22 @@ namespace SampleWebApp
             services.AddRazorPages();
 
             services.AddSerilogUi(options => options
+                /* samples: authorization filters */
+                // custom filter, sync
+                .AddScopedSyncAuthFilter<SerilogUiCustomAuthFilter>()
+                // default filter, async, checking a configured authorization policy
+                .AddScopedPolicyAuthFilter("test-policy")
+                /* sample: sql server - multiple registration */
                 .UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), "Logs")
                 .UseSqlServer(Configuration.GetConnectionString("SecondLogConnection"), "Logs2")
             );
 
             services.AddSwaggerGen();
 
-            // Generate some dummy logs
+            // Generate dummy logs
             services.AddHostedService<SecondLogDummyLogGeneratorBackgroundService>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -66,17 +67,13 @@ namespace SampleWebApp
                 // scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseSwagger();
 
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger
-            // JSON endpoint.
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-            });
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); });
 
             app.UseRouting();
 
@@ -84,13 +81,11 @@ namespace SampleWebApp
             app.UseAuthorization();
             app.UseSerilogUi(options =>
             {
-                options.RoutePrefix = "serilog-ui";
                 options.HomeUrl = "/#Test";
                 options.InjectJavascript("/js/serilog-ui/custom.js");
                 options.Authorization = new AuthorizationOptions
                 {
                     AuthenticationType = AuthenticationType.Jwt,
-                    Filters = new[] { new SerilogUiCustomAuthFilter() }
                 };
             });
 
@@ -109,6 +104,14 @@ namespace SampleWebApp
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services
+                .AddAuthorization(options =>
+                {
+                    options.AddPolicy("test-policy", (builder) =>
+                    {
+                        // a sample policy, checking for a custom claim
+                        builder.RequireClaim("example", "my-value");
+                    });
+                })
                 .AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

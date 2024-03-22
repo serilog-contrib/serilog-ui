@@ -4,35 +4,33 @@ using System.Text.Json;
 using System;
 using System.IO;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
+using Serilog.Ui.Web.Models;
 
 namespace Serilog.Ui.Web.Endpoints
 {
-    internal class SerilogUiAppRoutes : ISerilogUiAppRoutes
+    internal class SerilogUiAppRoutes(
+        IHttpContextAccessor httpContextAccessor,
+        IAppStreamLoader appStreamLoader) : ISerilogUiAppRoutes
     {
         private static readonly JsonSerializerOptions JsonSerializerOptions = new()
         {
-            IgnoreNullValues = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        private readonly IAppStreamLoader _streamLoader;
-
-        public SerilogUiAppRoutes(IAppStreamLoader appStreamLoader)
-        {
-            _streamLoader = appStreamLoader;
-        }
-
         public UiOptions Options { get; private set; }
 
-        public async Task GetHomeAsync(HttpContext httpContext)
+        public async Task GetHomeAsync()
         {
             Guard.Against.Null(Options, nameof(Options));
+            var httpContext = Guard.Against.Null(httpContextAccessor.HttpContext);
 
             var response = httpContext.Response;
 
-            using var stream = _streamLoader.GetIndex();
+            await using var stream = appStreamLoader.GetIndex();
             if (stream is null)
             {
                 response.StatusCode = 500;
@@ -47,9 +45,11 @@ namespace Serilog.Ui.Web.Endpoints
             await response.WriteAsync(htmlString, Encoding.UTF8);
         }
 
-        public Task RedirectHomeAsync(HttpContext httpContext)
+        public Task RedirectHomeAsync()
         {
-            var indexUrl = httpContext.Request.GetEncodedUrl().TrimEnd('/') + "/index.html";
+            var httpContext = Guard.Against.Null(httpContextAccessor.HttpContext);
+
+            var indexUrl = httpContext.Request.GetEncodedUrl().Replace("index.html", "");
 
             httpContext.Response.StatusCode = 301;
             httpContext.Response.Headers["Location"] = indexUrl;

@@ -8,14 +8,14 @@ namespace Serilog.Ui.Common.Tests.FakeObjectModels
 {
     internal class Properties
     {
-        public string SourceContext { get; set; }
+        public string SourceContext { get; set; } = string.Empty;
 
         [JsonConverter(typeof(EventIdConverter))]
         public EventId EventId { get; set; }
 
-        public string Protocol { get; set; }
+        public string Protocol { get; set; } = string.Empty;
 
-        public string Host { get; set; }
+        public string Host { get; set; } = string.Empty;
     }
 
     /// <summary>
@@ -26,7 +26,7 @@ namespace Serilog.Ui.Common.Tests.FakeObjectModels
     {
         public override EventId Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            var obj = (JsonObject) JsonNode.Parse(ref reader) ?? throw new JsonException();
+            var obj = (JsonObject)JsonNode.Parse(ref reader)! ?? throw new JsonException();
 
             var id = (obj[nameof(EventId.Id)] ?? throw new JsonException()).GetValue<int>();
             var name = (obj[nameof(EventId.Name)] ?? throw new JsonException()).GetValue<string>();

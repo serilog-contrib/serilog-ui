@@ -7,27 +7,25 @@ namespace Serilog.Ui.MsSqlServerProvider
 #nullable enable
 {
     /// <summary>
-    ///     SQL Server data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
+    /// SQL Server data provider specific extension methods for <see cref="ISerilogUiOptionsBuilder"/>.
     /// </summary>
     public static class SerilogUiOptionBuilderExtensions
     {
-        /// <summary>
-        ///     Configures the SerilogUi to connect to a SQL Server database.
-        /// </summary>
+        /// <summary>Configures the SerilogUi to connect to a SQL Server database.</summary>
         /// <param name="optionsBuilder"> The options builder. </param>
         /// <param name="connectionString"> The connection string. </param>
         /// <param name="tableName"> Name of the table. </param>
         /// <param name="schemaName">
-        ///     Name of the table schema. default value is <c> dbo </c>
+        /// Name of the table schema. default value is <c> dbo </c>
         /// </param>
         /// <param name="dateTimeCustomParsing">
         /// Delegate to customize the DateTime parsing.
-        ///  It throws <see cref="InvalidOperationException" /> if the return DateTime isn't UTC kind.
+        /// It throws <see cref="InvalidOperationException" /> if the return DateTime isn't UTC kind.
         /// </param>
         /// <exception cref="ArgumentNullException"> throw if connectionString is null </exception>
         /// <exception cref="ArgumentNullException"> throw is tableName is null </exception>
-        public static SerilogUiOptionsBuilder UseSqlServer(
-            this SerilogUiOptionsBuilder optionsBuilder,
+        public static ISerilogUiOptionsBuilder UseSqlServer(
+            this ISerilogUiOptionsBuilder optionsBuilder,
             string connectionString,
             string tableName,
             string schemaName = "dbo",
@@ -49,7 +47,7 @@ namespace Serilog.Ui.MsSqlServerProvider
 
             SqlMapper.AddTypeHandler(new DapperDateTimeHandler(dateTimeCustomParsing));
 
-            ((ISerilogUiOptionsBuilder) optionsBuilder).Services
+            optionsBuilder.Services
                 .AddScoped<IDataProvider, SqlServerDataProvider>(p =>
                     ActivatorUtilities.CreateInstance<SqlServerDataProvider>(p, relationProvider));
 

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Serilog.Ui.Web.Models;
 
 namespace Serilog.Ui.Web.Endpoints
 {

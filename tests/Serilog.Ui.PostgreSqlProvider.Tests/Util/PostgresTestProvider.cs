@@ -3,8 +3,9 @@ using Npgsql;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
 using Serilog.Ui.PostgreSqlProvider;
-using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
+using Serilog.Events;
 using Testcontainers.PostgreSql;
 using Xunit;
 
@@ -12,7 +13,7 @@ namespace Postgres.Tests.Util
 {
     [CollectionDefinition(nameof(PostgresDataProvider))]
     public class PostgresCollection : ICollectionFixture<PostgresTestProvider>
-    { }
+    { } 
 
     public sealed class PostgresTestProvider : DatabaseInstance
     {
@@ -21,7 +22,7 @@ namespace Postgres.Tests.Util
         public PostgresTestProvider()
         {
             Container = new PostgreSqlBuilder().Build();
-            QueryBuilder.SetSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQL);
+            QueryBuilder.SetSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative);
         }
 
         public PostgreSqlDbOptions DbOptions { get; set; } = new()
@@ -35,37 +36,22 @@ namespace Postgres.Tests.Util
         {
             DbOptions.ConnectionString = (Container as PostgreSqlContainer)?.GetConnectionString() ?? string.Empty;
 
-            using var dataContext = new NpgsqlConnection(DbOptions.ConnectionString);
+            await using var dataContext = new NpgsqlConnection(DbOptions.ConnectionString);
 
             await dataContext.ExecuteAsync("SELECT 1");
         }
 
-        protected override async Task InitializeAdditionalAsync()
+        protected override  Task InitializeAdditionalAsync()
         {
-            var logs = LogModelFaker.Logs(100)
-                .ToList();
-
-            // manual conversion due to current implementation, based on a INT level column
-            var postgresTableLogs = logs.Select(p => new
+            var serilog = new SerilogSinkSetup(logger =>
             {
-                p.RowNo,
-                Level = LogLevelConverter.GetLevelValue(p.Level),
-                p.Message,
-                p.Exception,
-                p.PropertyType,
-                p.Properties,
-                p.Timestamp,
+                logger.WriteTo.PostgreSQL(DbOptions.ConnectionString, "logs", null, LogEventLevel.Verbose, schemaName: "public", needAutoCreateTable: true, batchSizeLimit: 1);
             });
 
-            Collector = new LogModelPropsCollector(logs);
-
-            using var dataContext = new NpgsqlConnection(DbOptions.ConnectionString);
-
-            await dataContext.ExecuteAsync(Costants.PostgresCreateTable);
-
-            await dataContext.ExecuteAsync(Costants.PostgresInsertFakeData, postgresTableLogs);
+            Collector = serilog.InitializeLogs();
 
             Provider = new PostgresDataProvider(DbOptions);
+            return Task.CompletedTask;
         }
     }
 }

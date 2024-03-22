@@ -1,31 +1,26 @@
-using FluentAssertions;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Ui.Web.Tests.Utilities;
+using FluentAssertions;
+using Serilog.Ui.Web.Tests.Utilities;
 using Xunit;
 
-namespace Ui.Web.Tests
+namespace Serilog.Ui.Web.Tests
 {
     [Trait("Ui-Middleware", "Web")]
-    public class SerilogUiMiddlewareTest :
+    public class SerilogUiMiddlewareTest(WebAppFactory.WithMocks program, WebAppFactory.WithMocks.AndCustomOptions programOpts) :
         IClassFixture<WebAppFactory.WithMocks>,
         IClassFixture<WebAppFactory.WithMocks.AndCustomOptions>
     {
-        private readonly HttpClient _httpClient;
-        private readonly HttpClient _httpClientWithCustomOpts;
+        private readonly HttpClient _httpClient = program.CreateClient();
 
-        public SerilogUiMiddlewareTest(WebAppFactory.WithMocks program, WebAppFactory.WithMocks.AndCustomOptions programOpts)
-        {
-            _httpClient = program.CreateClient();
-            _httpClientWithCustomOpts = programOpts.CreateClient();
-        }
+        private readonly HttpClient _httpClientWithCustomOpts = programOpts.CreateClient();
 
         [Theory]
         [InlineData("/serilog-ui/api/keys/", 417)]
         [InlineData("/serilog-ui/api/logs/", 409)]
-        [InlineData("/serilog-ui/", 400)]
-        [InlineData("/serilog-ui/index.html", 418)]
+        [InlineData("/serilog-ui/", 418)]
+        [InlineData("/serilog-ui/index.html", 400)]
         public async Task It_hits_ui_endpoint_when_request_matches_method_and_options_prefix(string pathReq, int statusCode)
         {
             // Act
@@ -38,8 +33,8 @@ namespace Ui.Web.Tests
         [Theory]
         [InlineData("/test/api/keys/", 417)]
         [InlineData("/test/api/logs/", 409)]
-        [InlineData("/test/", 400)]
-        [InlineData("/test/index.html", 418)]
+        [InlineData("/test/", 418)]
+        [InlineData("/test/index.html", 400)]
         public async Task It_hits_ui_endpoint_when_request_matches_method_and_custom_options_prefix(string pathReq, int statusCode)
         {
             // Act
@@ -71,7 +66,8 @@ namespace Ui.Web.Tests
         public async Task It_proceeds_onwards_when_request_is_not_a_get(string pathReq, int statusCode)
         {
             // Arrange
-            var methods = new HttpMethod[] {
+            var methods = new[]
+            {
                 HttpMethod.Connect, HttpMethod.Delete, HttpMethod.Head, HttpMethod.Options,
                 HttpMethod.Patch, HttpMethod.Post, HttpMethod.Put, HttpMethod.Trace,
             };

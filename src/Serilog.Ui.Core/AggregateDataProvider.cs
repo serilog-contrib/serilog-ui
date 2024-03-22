@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
+using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.Core
 {
@@ -77,9 +78,11 @@ namespace Serilog.Ui.Core
             string level = null,
             string searchCriteria = null,
             DateTime? startDate = null,
-            DateTime? endDate = null)
+            DateTime? endDate = null,
+            SortProperty sortOn = SortProperty.Timestamp,
+            SortDirection sortBy = SortDirection.Desc)
         {
-            return SelectedDataProvider.FetchDataAsync(page, count, level, searchCriteria, startDate, endDate);
+            return SelectedDataProvider.FetchDataAsync(page, count, level, searchCriteria, startDate, endDate, sortOn, sortBy);
         }
     }
 }

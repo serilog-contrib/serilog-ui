@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Serilog.Ui.Web.Authorization;
+using Serilog.Ui.Core.Interfaces;
 
 namespace SampleWebApp.Authentication;
 
-public class SerilogUiCustomAuthFilter : IUiAuthorizationFilter
+public class SerilogUiCustomAuthFilter(IHttpContextAccessor httpContextAccessor) : IUiAuthorizationFilter
 {
-    public bool Authorize(HttpContext httpContext)
+    public bool Authorize()
     {
-        return httpContext.User.Identity is { IsAuthenticated: true };
+        return httpContextAccessor.HttpContext?.User.Identity is { IsAuthenticated: true };
     }
 }

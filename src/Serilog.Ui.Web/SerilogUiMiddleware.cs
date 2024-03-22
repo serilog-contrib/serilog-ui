@@ -10,13 +10,16 @@ using System;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Serilog.Ui.Web.Models;
 
 namespace Serilog.Ui.Web
 {
     public class SerilogUiMiddleware
     {
         private const string EmbeddedFileNamespace = "Serilog.Ui.Web.wwwroot.dist";
+
         private readonly UiOptions _options;
+
         private readonly StaticFileMiddleware _staticFileMiddleware;
 
         public SerilogUiMiddleware(
@@ -43,12 +46,15 @@ namespace Serilog.Ui.Web
             uiAppRoutes.SetOptions(_options);
             uiEndpoints.SetOptions(_options);
 
-            if (CheckPath(path, "/api/keys/?")) return uiEndpoints.GetApiKeysAsync(httpContext);
-            if (CheckPath(path, "/api/logs/?")) return uiEndpoints.GetLogsAsync(httpContext);
-            if (CheckPath(path, "/?")) return uiAppRoutes.RedirectHomeAsync(httpContext);
-            if (CheckPath(path, "/?index.html")) return uiAppRoutes.GetHomeAsync(httpContext);
+            if (CheckPath(path, "/api/keys/?")) return uiEndpoints.GetApiKeysAsync();
+            if (CheckPath(path, "/api/logs/?")) return uiEndpoints.GetLogsAsync();
+            if (CheckPath(path, "/index.html")) return uiAppRoutes.RedirectHomeAsync();
+            if (CheckPath(path, "/(?:.*(.*/))(?:.*(assets/)).*"))
+            {
+                ChangeAssetRequestPath(httpContext);
+            }
 
-            return _staticFileMiddleware.Invoke(httpContext);
+            return CheckPath(path, "/(?!.*(assets/)).*") ? uiAppRoutes.GetHomeAsync() : _staticFileMiddleware.Invoke(httpContext);
         }
 
         private StaticFileMiddleware CreateStaticFileMiddleware(
@@ -65,7 +71,31 @@ namespace Serilog.Ui.Web
             return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
         }
 
-        private bool CheckPath(string currentPath, string OnPath)
-            => Regex.IsMatch(currentPath, $"^/{Regex.Escape(_options.RoutePrefix)}{OnPath}$", RegexOptions.IgnoreCase, TimeSpan.FromSeconds(5));
+        private bool CheckPath(string currentPath, string onPath)
+            => Regex.IsMatch(currentPath, $"^/{Regex.Escape(_options.RoutePrefix)}{onPath}$", RegexOptions.IgnoreCase, TimeSpan.FromSeconds(5));
+
+        /// <summary>
+        /// Since the FE app includes compiled js assets as relative urls, when the page has sub-paths the app tries to access the asset
+        /// from the whole sub-paths url.
+        /// <br/>
+        /// The StaticFileMiddleware always expose it from the serilog-ui route prefix. We remove the sub-paths from the path value and let the middleware do its job.
+        /// <br />
+        /// <br />
+        /// Example: if user opens [...]/serilog-ui/other-route/my-log-id,
+        /// the FE would search for main.js into [...]/serilog-ui/other-route/main.js instead of [...]/serilog-ui/main.js.
+        /// </summary>
+        private void ChangeAssetRequestPath(HttpContext httpContext)
+        {
+            var from = $"{_options.RoutePrefix}/";
+            const string to = "assets/";
+
+            var requestPath = httpContext.Request.Path.Value ?? string.Empty;
+            var startOfWrongAssetSubPath = requestPath.IndexOf(from, StringComparison.Ordinal) + from.Length;
+            var endOfWrongAssetSubPath = requestPath.IndexOf(to, StringComparison.OrdinalIgnoreCase);
+            var pathToRemove = requestPath.Substring(startOfWrongAssetSubPath, endOfWrongAssetSubPath - startOfWrongAssetSubPath);
+            
+            var newPath = requestPath.Replace(pathToRemove, string.Empty);
+            httpContext.Request.Path = newPath;
+        }
     }
 }

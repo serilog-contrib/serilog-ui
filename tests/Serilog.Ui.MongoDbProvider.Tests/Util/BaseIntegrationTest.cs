@@ -17,26 +17,26 @@ namespace MongoDb.Tests.Util
     {
         private bool _disposedValue;
 
-        internal BaseServiceBuilder? _builder;
+        internal BaseServiceBuilder? Builder;
 
         public Task DisposeAsync() => Task.CompletedTask;
 
         public virtual async Task InitializeAsync()
         {
-            _builder = await MongoDbDataProviderBuilder.Build(false);
+            Builder = await MongoDbDataProviderBuilder.Build(false);
         }
 
-        public IDataProvider GetDataProvider() => Guard.Against.Null(_builder?._sut)!;
+        public IDataProvider GetDataProvider() => Guard.Against.Null(Builder?.Sut)!;
 
-        public LogModelPropsCollector GetPropsCollector() => Guard.Against.Null(_builder?._collector)!;
+        public LogModelPropsCollector GetPropsCollector() => Guard.Against.Null(Builder?.Collector)!;
 
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
             {
-                if (disposing && _builder != null)
+                if (disposing && Builder != null)
                 {
-                    _builder._runner.Dispose();
+                    Builder.Runner.Dispose();
                 }
 
                 _disposedValue = true;

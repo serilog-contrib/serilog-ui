@@ -1,8 +1,9 @@
+using System;
 using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Builder;
-using System;
+using Serilog.Ui.Web.Models;
 
-namespace Serilog.Ui.Web
+namespace Serilog.Ui.Web.Extensions
 {
     /// <summary>
     ///   Contains extensions for configuring routing on an <see cref="IApplicationBuilder"/>.
@@ -21,7 +22,7 @@ namespace Serilog.Ui.Web
         public static IApplicationBuilder UseSerilogUi(this IApplicationBuilder applicationBuilder, Action<UiOptions> options = null)
         {
             Guard.Against.Null(applicationBuilder, nameof(applicationBuilder));
-
+            // TODO disable timestamp in case of elastic...
             var uiOptions = new UiOptions();
             options?.Invoke(uiOptions);
 
