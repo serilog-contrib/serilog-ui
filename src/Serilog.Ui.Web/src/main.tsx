@@ -7,18 +7,31 @@ import App from './app/App';
 
 /**
  * TODO:
- * - remove index.html from end of url and intercept all calls towards
+(branch/v3) 
+* [testing phase] remove index.html from end of url and intercept all calls towards
+
  * > change basic auth to receive data from ui (header) and check it with custom impl
- * > sample with basic and jwt auth, that passes when receivin' from the modal auth header
+ * [testing phase] sample with basic and jwt auth, that passes when receivin' from the modal auth header
+* >> if auth on index is active, redirect to unauth view instead of html page
+
  * > table props not setting default when fetching data (block log if no table key is set)
  * > try running token check each {x} time and send notification if expired
+
  * >> change options registration to fluent interface on all DI registration
- * >> let mongo registers {n} logs pages
- * >> if auth on index is active, redirect to unauth view instead of html page
+
+(branch/routing-by-id)
+ * >> react router setup to catch id routing
+ * >> endpoint and additional model property
  * >> filter by _id (react router and opening log by itself)
+
+(branch/custom-columns)
  * >> custom columns
+
+(branch/clean-sample)
  * >> clean sample and install samples with each provider
- * >> remove net 5
+
+(extras)
+ * >>> let mongo registers {n} logs pages
  */
 
 const main = async () => {
