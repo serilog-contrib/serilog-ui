@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<IsPackable>false</IsPackable>
+		<AssemblyName>RavenDb.Tests</AssemblyName>
+		<RootNamespace>RavenDb.Tests</RootNamespace>
+	</PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog.Sinks.RavenDB" Version="3.0.0" />
+    <PackageReference Include="Testcontainers.RavenDb " Version="3.4.0" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<Content Include="./../Serilog.Ui.Common.Tests/xunit.runner.json">
+			<Link>%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+  <ItemGroup>
+	  <ProjectReference Include="..\..\src\Serilog.Ui.RavenDbProvider\Serilog.Ui.RavenDbProvider.csproj" />
+	  <ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj" />
+	  <ProjectReference Include="..\Serilog.Ui.Common.Tests\Serilog.Ui.Common.Tests.csproj" />
+  </ItemGroup>
+
+</Project>

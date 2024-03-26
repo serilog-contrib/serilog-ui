@@ -37,17 +37,17 @@ namespace Serilog.Ui.MongoDbProvider
             if (string.IsNullOrWhiteSpace(databaseName))
                 throw new ArgumentException(nameof(MongoUrl.DatabaseName));
 
-            var mongoProvider = new MongoDbOptions
+            var dbOptions = new MongoDbOptions
             {
                 ConnectionString = connectionString,
                 DatabaseName = databaseName,
                 CollectionName = collectionName
             };
 
-            optionsBuilder.Services.AddSingleton(mongoProvider);
+            optionsBuilder.Services.AddSingleton(dbOptions);
             optionsBuilder.Services.TryAddSingleton<IMongoClient>(o => new MongoClient(connectionString));
 
-            // TODO Fixup MongoDb to allow multiple registrations. Think about multiple ES clients
+            // TODO Fix up MongoDB to allow multiple registrations. Think about multiple MongoDB clients
             // (singletons) used in data providers (scoped)
             if (optionsBuilder.Services.Any(c => c.ImplementationType == typeof(MongoDbDataProvider)))
                 throw new NotSupportedException($"Adding multiple registrations of '{typeof(MongoDbDataProvider).FullName}' is not (yet) supported.");
@@ -80,17 +80,17 @@ namespace Serilog.Ui.MongoDbProvider
             if (string.IsNullOrWhiteSpace(collectionName))
                 throw new ArgumentNullException(nameof(collectionName));
 
-            var mongoProvider = new MongoDbOptions
+            var dbOptions = new MongoDbOptions
             {
                 ConnectionString = connectionString,
                 DatabaseName = databaseName,
                 CollectionName = collectionName
             };
 
-            optionsBuilder.Services.AddSingleton(mongoProvider);
+            optionsBuilder.Services.AddSingleton(dbOptions);
             optionsBuilder.Services.TryAddSingleton<IMongoClient>(o => new MongoClient(connectionString));
 
-            // TODO Fixup MongoDb to allow multiple registrations. Think about multiple ES clients
+            // TODO Fix up MongoDB to allow multiple registrations. Think about multiple MongoDB clients
             // (singletons) used in data providers (scoped)
             if (optionsBuilder.Services.Any(c => c.ImplementationType == typeof(MongoDbDataProvider)))
                 throw new NotSupportedException($"Adding multiple registrations of '{typeof(MongoDbDataProvider).FullName}' is not (yet) supported.");
