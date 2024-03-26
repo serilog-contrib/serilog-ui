@@ -4,7 +4,7 @@ using Raven.Client.Documents;
 using Serilog.Ui.Core;
 using Serilog.Ui.RavenDbProvider;
 using Serilog.Ui.RavenDbProvider.Extensions;
-using Serilog.Ui.Web;
+using Serilog.Ui.Web.Extensions;
 
 namespace RavenDb.Tests.Extensions;
 
@@ -19,9 +19,9 @@ public class SerilogUiOptionBuilderExtensionsTest
         // Arrange
         const string dbName = "test";
 
-        _serviceCollection.AddSerilogUi((builder) =>
+        _serviceCollection.AddSerilogUi(builder =>
         {
-            IDocumentStore documentStore = new DocumentStore { Urls = new[] { "http://localhost:8080" }, Database = dbName };
+            IDocumentStore documentStore = new DocumentStore { Urls = ["http://localhost:8080"], Database = dbName };
             builder.UseRavenDb(documentStore);
         });
 
@@ -42,14 +42,12 @@ public class SerilogUiOptionBuilderExtensionsTest
     public void It_throws_on_invalid_registration()
     {
         // Act
-        var act = () => _serviceCollection.AddSerilogUi(builder => builder.UseRavenDb(null));
-        var act2 = () => _serviceCollection.AddSerilogUi(builder => builder.UseRavenDb(new DocumentStore() { Database = "Test" }));
-        var act3 = () => _serviceCollection.AddSerilogUi(builder => builder.UseRavenDb(new DocumentStore { Urls = new[] { "http://localhost:8080" } }));
-        var act4 = () => _serviceCollection.AddSerilogUi(builder => builder.UseRavenDb(new DocumentStore
-        {
-            Urls = new[] { "http://localhost:8080" },
-            Database = "Test"
-        }, null));
+        var act = () => _serviceCollection.AddSerilogUi(builder => builder.UseRavenDb(null!));
+        var act2 = () => _serviceCollection.AddSerilogUi(builder => builder.UseRavenDb(new DocumentStore { Database = "Test" }));
+        var act3 = () => _serviceCollection.AddSerilogUi(builder => builder.UseRavenDb(new DocumentStore { Urls = ["http://localhost:8080"] }));
+        var act4 = () =>
+            _serviceCollection.AddSerilogUi(builder =>
+                builder.UseRavenDb(new DocumentStore { Urls = ["http://localhost:8080"], Database = "Test" }, null!));
 
         // Assert
         act.Should().ThrowExactly<ArgumentNullException>();

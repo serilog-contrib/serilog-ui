@@ -23,7 +23,7 @@ internal class RavenDbLogModel
         RowNo = rowNo,
         Level = Level,
         Message = RenderedMessage,
-        Timestamp = Timestamp.ToUniversalTime().DateTime,
+        Timestamp = Timestamp.DateTime.ToUniversalTime(),
         Exception = Exception?.ToString(Formatting.None),
         Properties = JsonConvert.SerializeObject(Properties),
         PropertyType = "json"

@@ -6,7 +6,7 @@ using Serilog.Ui.Core;
 namespace Serilog.Ui.RavenDbProvider.Extensions;
 
 /// <summary>
-///   RavenDB's data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
+///   RavenDB's data provider specific extension methods for <see cref="ISerilogUiOptionsBuilder"/>.
 /// </summary>
 public static class SerilogUiOptionBuilderExtensions
 {
@@ -17,23 +17,21 @@ public static class SerilogUiOptionBuilderExtensions
     /// <param name="documentStore">A DocumentStore for a RavenDB database.</param>
     /// <param name="collectionName"> Name of the collection to query logs. default value is <c>LogEvents</c>.</param>
     /// <exception cref="ArgumentNullException">throw if documentStore is null</exception>
-    public static void UseRavenDb(this SerilogUiOptionsBuilder optionsBuilder, IDocumentStore documentStore, string collectionName = "LogEvents")
+    public static void UseRavenDb(this ISerilogUiOptionsBuilder optionsBuilder, IDocumentStore documentStore, string collectionName = "LogEvents")
     {
         Guard.Against.Null(documentStore, nameof(documentStore));
         Guard.Against.NullOrEmpty(documentStore.Urls, nameof(documentStore.Urls));
         Guard.Against.NullOrEmpty(documentStore.Database, nameof(documentStore.Database));
         Guard.Against.NullOrEmpty(collectionName, nameof(collectionName));
 
-        var builder = ((ISerilogUiOptionsBuilder)optionsBuilder);
-
         // TODO: Fix up RavenDB to allow multiple registrations. Think about multiple RavenDB clients
         // (singletons) used in data providers (scoped)
-        if (builder.Services.Any(c => c.ImplementationType == typeof(RavenDbDataProvider)))
+        if (optionsBuilder.Services.Any(c => c.ImplementationType == typeof(RavenDbDataProvider)))
         {
             throw new NotSupportedException($"Adding multiple registrations of '{typeof(RavenDbDataProvider).FullName}' is not (yet) supported.");
         }
 
-        builder.Services.AddSingleton(documentStore);
-        builder.Services.AddScoped<IDataProvider>(_ => new RavenDbDataProvider(documentStore, collectionName));
+        optionsBuilder.Services.AddSingleton(documentStore);
+        optionsBuilder.Services.AddScoped<IDataProvider>(_ => new RavenDbDataProvider(documentStore, collectionName));
     }
 }

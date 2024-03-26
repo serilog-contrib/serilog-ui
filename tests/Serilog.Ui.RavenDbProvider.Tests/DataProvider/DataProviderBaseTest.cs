@@ -1,0 +1,31 @@
+﻿using FluentAssertions;
+using Raven.Client.Documents;
+using Serilog.Ui.Common.Tests.TestSuites;
+using Serilog.Ui.RavenDbProvider;
+
+namespace RavenDb.Tests.DataProvider;
+
+[Trait("Unit-Base", "RavenDb")]
+public class DataProviderBaseTest : IUnitBaseTests
+{
+    [Fact]
+    public void It_throws_when_any_dependency_is_null()
+    {
+        var suts = new List<Func<RavenDbDataProvider>>
+        {
+            () => new RavenDbDataProvider(null!, "collection"),
+            () => new RavenDbDataProvider(new DocumentStore(), null!)
+        };
+
+        suts.ForEach(sut => sut.Should().ThrowExactly<ArgumentNullException>());
+    }
+
+    [Fact]
+    public Task It_logs_and_throws_when_db_read_breaks_down()
+    {
+        var sut = new RavenDbDataProvider(new DocumentStore(), "collection");
+
+        var assert = () => sut.FetchDataAsync(1, 10);
+        return assert.Should().ThrowExactlyAsync<InvalidOperationException>();
+    }
+}
