@@ -37,13 +37,13 @@ export const useSearchForm = () => {
   };
 
   useEffect(() => {
-    const tableValue = methods.getValues('table');
+    if (!useSearchContext) return;
 
-    if (isSuccess && data && !data.includes(tableValue)) {
-      methods.resetField('table', { defaultValue: tableKeysDefaultValue });
-      methods.setValue('table', tableKeysDefaultValue);
+    const tableValue = useSearchContext.getValues('table');
+    if (isSuccess && data && !tableValue) {
+      useSearchContext.setValue('table', tableKeysDefaultValue);
     }
-  }, [data, isSuccess, methods, tableKeysDefaultValue]);
+  }, [data, isSuccess, tableKeysDefaultValue, useSearchContext]);
 
   return { methods, ...useSearchContext, reset: resetForm };
 };

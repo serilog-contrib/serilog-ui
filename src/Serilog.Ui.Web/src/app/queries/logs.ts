@@ -7,13 +7,20 @@ import {
   sendUnexpectedNotification,
 } from '../util/queries';
 
+const defaultReturn = {
+  count: 0,
+  currentPage: 1,
+  logs: [],
+  total: 0,
+};
+
 export const fetchLogs = async (
   values: SearchForm,
   fetchOptions: RequestInit,
   routePrefix?: string,
-) => {
+): Promise<SearchResult> => {
   const prepareUrl = prepareSearchUrl(values, routePrefix);
-  if (!prepareUrl.areDatesAdmitted) return;
+  if (!prepareUrl.areDatesAdmitted) return defaultReturn;
 
   try {
     const req = await fetch(prepareUrl.url, fetchOptions);
@@ -24,6 +31,8 @@ export const fetchLogs = async (
   } catch (error: unknown) {
     const err = error as Error & { code?: number; message?: string };
     err?.code === 403 ? send403Notification() : sendUnexpectedNotification(err.message);
+
+    return defaultReturn;
   }
 };
 

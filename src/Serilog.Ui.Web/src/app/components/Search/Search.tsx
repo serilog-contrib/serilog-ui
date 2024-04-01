@@ -51,6 +51,7 @@ const Search = () => {
             <Select
               label="Table"
               data={queryTableKeys?.map((d) => ({ value: d, label: d })) ?? []}
+              allowDeselect={false}
               {...field}
               disabled={isTableDisabled}
             ></Select>
