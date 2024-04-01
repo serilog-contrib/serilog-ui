@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.MongoDbProvider"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{157CA77C-513A-409F-8045-E68739AAC8C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleWebApp", "samples\SampleWebApp\SampleWebApp.csproj", "{30C8AE36-8117-4E52-8140-8440D3C9AD39}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.ElasticSearchProvider", "src\Serilog.Ui.ElasticSearchProvider\Serilog.Ui.ElasticSearchProvider.csproj", "{4CC537BE-8695-4976-BA43-B8484664C169}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.MySqlProvider", "src\Serilog.Ui.MySqlProvider\Serilog.Ui.MySqlProvider.csproj", "{3363E5F5-54A0-413D-807C-D27DBFD52CC8}"
@@ -63,6 +61,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.RavenDbProvider", "src\Serilog.Ui.RavenDbProvider\Serilog.Ui.RavenDbProvider.csproj", "{8973E5F5-FD9B-41B1-B2D6-8B281754C443}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.RavenDbProvider.Tests", "tests\Serilog.Ui.RavenDbProvider.Tests\Serilog.Ui.RavenDbProvider.Tests.csproj", "{B785845B-D858-4562-B224-67468B4FEE41}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "samples\WebApp\WebApp.csproj", "{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -140,6 +140,10 @@ Global
 		{B785845B-D858-4562-B224-67468B4FEE41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B785845B-D858-4562-B224-67468B4FEE41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B785845B-D858-4562-B224-67468B4FEE41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -164,6 +168,7 @@ Global
 		{DCB452AD-2E0E-4D6A-B46D-72D0AF247381} = {83E91BE7-19B3-4AE0-992C-9DFF30FC409E}
 		{8973E5F5-FD9B-41B1-B2D6-8B281754C443} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
 		{B785845B-D858-4562-B224-67468B4FEE41} = {75F9223B-15F2-4465-B01D-2A5A49FCD000}
+		{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765} = {157CA77C-513A-409F-8045-E68739AAC8C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {88374732-FEAD-4375-9CF1-75331A37CF07}
