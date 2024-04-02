@@ -40,10 +40,10 @@ class CustomGithubActionsAttribute(string name, GitHubActionsImage image, params
                     newSteps.Add(new GithubActionSonarCloud());
                     break;
                 case GithubAction.Frontend_Artifact:
-                    newSteps.Add(new GithubActionUploadArtifact("'**/jest-*.xml'"));
+                    newSteps.Add(new GithubActionUploadArtifact("'**/test-report.xml'"));
                     break;
                 case GithubAction.Frontend_Reporter:
-                    newSteps.Add(new GithubActionReporter("JS - Tests", "'**/jest-*.xml'", "jest-junit"));
+                    newSteps.Add(new GithubActionReporter("JS - Tests", "'**/test-report.xml'", "jest-junit"));
                     break;
                 case GithubAction.Backend_Artifact:
                     newSteps.Add(new GithubActionUploadArtifact("'**/test-results.trx'"));
@@ -68,7 +68,7 @@ class GitHubActionSetupJava17 : GitHubActionsStep
     {
         writer.WriteLine(); // empty line to separate tasks
 
-        writer.WriteLine("- uses: actions/setup-java@v3");
+        writer.WriteLine("- uses: actions/setup-java@v4");
 
         using (writer.Indent())
         {
@@ -89,7 +89,7 @@ class GithubActionUploadArtifact(string path) : GitHubActionsStep
     {
         writer.WriteLine(); // empty line to separate tasks
 
-        writer.WriteLine("- uses: actions/upload-artifact@v3");
+        writer.WriteLine("- uses: actions/upload-artifact@v4");
 
         using (writer.Indent())
         {
@@ -158,7 +158,7 @@ class GithubActionReporter(string name, string path, string reporter) : GitHubAc
     {
         writer.WriteLine(); // empty line to separate tasks
 
-        writer.WriteLine("- uses: phoenix-actions/test-reporting@v9");
+        writer.WriteLine("- uses: phoenix-actions/test-reporting@v14");
 
         using (writer.Indent())
         {
