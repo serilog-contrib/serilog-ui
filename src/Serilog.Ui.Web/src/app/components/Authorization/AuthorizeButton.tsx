@@ -11,9 +11,9 @@ const BasicModal = loadable(() => import('./BasicModal'));
 const JwtModal = loadable(() => import('./JwtModal'));
 
 const AuthorizeButton = ({ customStyle }: { customStyle?: string }) => {
+  const [opened, { open, close }] = useDisclosure(false);
   const { authType } = useSerilogUiProps();
   const { authHeader } = useAuthProperties();
-  const [opened, { open, close }] = useDisclosure(false);
 
   if (![AuthType.Basic, AuthType.Jwt].includes(authType ?? AuthType.Custom)) return null;
 

@@ -81,7 +81,7 @@ const setAuthDataValue = (
 /**
  * Validate a value based on the data key.
  */
-const validateKey = (key: keyof IAuthPropertiesData, value: string) => {
+export const validateKey = (key: keyof IAuthPropertiesData, value: string) => {
   switch (key) {
     case 'jwt_bearerToken':
       return validateBearerToken(value);

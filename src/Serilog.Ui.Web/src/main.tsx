@@ -7,9 +7,6 @@ import App from './app/App';
 
 /**
  * TODO:
-(branch/v3) 
- * > try running token check each {x} time and send notification if expired
-
 (branch/routing-by-id)
  * >> if auth on index is active, redirect to unauth route instead of empty html page (react router)
  * >> react router setup to catch id routing
