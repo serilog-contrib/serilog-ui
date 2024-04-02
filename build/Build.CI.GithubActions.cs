@@ -48,7 +48,7 @@ using static CustomGithubActionsAttribute;
         nameof(Ui),
     }
 )]
-partial class Build : NukeBuild
+partial class Build
 {
     [Parameter][Secret] readonly string SonarToken;
     [Parameter][Secret] readonly string SonarTokenUi;
@@ -87,16 +87,18 @@ partial class Build : NukeBuild
             SonarScannerTasks.SonarScannerBegin(new SonarScannerBeginSettings()
                 .SetExcludeTestProjects(true)
                 .SetFramework("net5.0")
-                .SetAdditionalParameter("sonar.token", SonarToken) // replace deprecated .login
+                .SetToken(SonarToken)
                 .SetOrganization(SonarCloudInfo.Organization)
                 .SetProjectKey(SonarCloudInfo.BackendProjectKey)
                 .SetServer("https://sonarcloud.io")
                 .SetSourceInclusions("src/**/*")
                 .SetSourceExclusions(
-                    "src/Serilog.Ui.Web/assets/**/*",
+                    "src/Serilog.Ui.Web/src/**/*",
                     "src/Serilog.Ui.Web/wwwroot/**/*",
                     "src/Serilog.Ui.Web/node_modules/**/*",
                     "src/Serilog.Ui.Web/*.js",
+                    "src/Serilog.Ui.Web/*.ts",
+                    "src/Serilog.Ui.Web/*.tsx",
                     "src/Serilog.Ui.Web/*.json")
                 .SetVisualStudioCoveragePaths("coverage.xml", "**/coverage.xml", "./**/coverage.xml")
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
@@ -114,7 +116,7 @@ partial class Build : NukeBuild
         {
             SonarScannerTasks.SonarScannerEnd(new SonarScannerEndSettings()
                 .SetFramework("net5.0")
-                .SetProcessArgumentConfigurator(_ => _.Add("/d:sonar.token={value}", SonarToken, secret: true))
+                .SetToken(SonarToken)
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
                 .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken));
         });

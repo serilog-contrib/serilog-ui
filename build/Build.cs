@@ -3,7 +3,6 @@ using Nuke.Common.IO;
 using Nuke.Common.Tools.DotNet;
 using Nuke.Common.ProjectModel;
 using Nuke.Common.Git;
-using GlobExpressions;
 using Nuke.Common.Utilities.Collections;
 using System.Linq;
 
@@ -64,7 +63,7 @@ partial class Build : NukeBuild
         .Executes(() =>
         {
             var localOutput = RootDirectory / "nugets-output";
-            if (IsLocalBuild) AbsolutePathExtensions.CreateDirectory(localOutput);
+            if (IsLocalBuild) localOutput.CreateDirectory();
 
             OutputDirectory.GlobFiles("*.nupkg")
             .ForEach(filePath =>

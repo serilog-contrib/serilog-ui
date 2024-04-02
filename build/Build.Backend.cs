@@ -4,7 +4,7 @@ using Nuke.Common.Tools.DotNet;
 using Nuke.Common.Utilities.Collections;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
-partial class Build : NukeBuild
+partial class Build
 {
     Target Backend_Clean => _ => _
         .Executes(() =>

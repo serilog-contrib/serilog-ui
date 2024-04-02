@@ -1,4 +1,5 @@
 ﻿// Generated from https://github.com/nuke-build/nuke/blob/master/source/Nuke.Common/Tools/Yarn/Yarn.json
+// TODO: replace with official implementation when ready 
 
 using JetBrains.Annotations;
 using Nuke.Common.Tooling;
@@ -8,8 +9,7 @@ using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Nuke.Common.IO;
-
-namespace Nuke.Common.Tools.Yarn;
+// ReSharper disable All
 
 /// <summary>
 ///   <p>Yarn is a package manager that doubles down as project manager. Whether you work on one-shot projects or large monorepos, as a hobbyist or an enterprise user, we've got you covered.</p>

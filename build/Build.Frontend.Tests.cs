@@ -1,19 +1,13 @@
-using System;
 using Nuke.Common;
 using Nuke.Common.Tooling;
-using Nuke.Common.Tools.Npm;
-using Nuke.Common.Tools.Yarn;
 
-partial class Build : NukeBuild
+partial class Build
 {
     Target Frontend_Tests => _ => _
         .DependsOn(Frontend_Build)
         .Executes(() =>
         {
-            // NpmTasks.NpmLogger = CustomLogger;
             YarnTasks.YarnRun(s => s
-
-                // NpmTasks.NpmRun(s => s
                 .SetProcessWorkingDirectory(FrontendWorkingDirectory)
                 .SetCommand("test")
             );
@@ -24,41 +18,9 @@ partial class Build : NukeBuild
         .ProceedAfterFailure()
         .Executes(() =>
         {
-            // NpmTasks.NpmLogger = CustomLogger;
-
             YarnTasks.YarnRun(s => s
-                // NpmTasks.NpmRun(s => s
                 .SetProcessWorkingDirectory(FrontendWorkingDirectory)
                 .SetCommand("test:ci")
             );
         });
-
-    /// <summary>
-    /// from: https://dev.to/damikun/the-cross-platform-build-automation-with-nuke-1kmc
-    /// </summary>
-    public static void CustomLogger(OutputType type, string output)
-    {
-        switch (type)
-        {
-            case OutputType.Std:
-                Serilog.Log.Debug(output);
-                break;
-            case OutputType.Err:
-            {
-                if (
-                    output.Contains(
-                        "npmWARN",
-                        StringComparison.OrdinalIgnoreCase
-                    ) ||
-                    output.Contains(
-                        "npm WARN",
-                        StringComparison.OrdinalIgnoreCase
-                    ))
-                    Serilog.Log.Warning(output);
-                else
-                    Serilog.Log.Error(output);
-                break;
-            }
-        }
-    }
 }

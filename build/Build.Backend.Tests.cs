@@ -5,7 +5,7 @@ using Nuke.Common.Tools.Docker;
 using Nuke.Common.Tools.DotNet;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
-partial class Build : NukeBuild
+partial class Build
 {
     [NuGetPackage(
         packageId: "dotnet-coverage",

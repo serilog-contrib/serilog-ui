@@ -1,8 +1,6 @@
 using Nuke.Common;
 using Nuke.Common.IO;
 using Nuke.Common.Tooling;
-using Nuke.Common.Tools.Npm;
-using Nuke.Common.Tools.Yarn;
 using Nuke.Common.Utilities.Collections;
 
 partial class Build
@@ -21,20 +19,17 @@ partial class Build
         .Executes(() =>
         {
             YarnTasks.YarnInstall(s => s
-                // )
-            // NpmTasks.NpmCi(s => s
                 .SetProcessWorkingDirectory(FrontendWorkingDirectory)
             );
         });
 
     Target Frontend_Build => _ => _
-    .DependsOn(Frontend_Restore)
-    .Executes(() =>
-    {
-        YarnTasks.YarnRun(s => s
-        // NpmTasks.NpmRun(s => s
-            .SetProcessWorkingDirectory(FrontendWorkingDirectory)
-            .SetCommand("build")
-        );
-    });
+        .DependsOn(Frontend_Restore)
+        .Executes(() =>
+        {
+            YarnTasks.YarnRun(s => s
+                .SetProcessWorkingDirectory(FrontendWorkingDirectory)
+                .SetCommand("build")
+            );
+        });
 }
