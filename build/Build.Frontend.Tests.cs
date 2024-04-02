@@ -2,6 +2,7 @@ using System;
 using Nuke.Common;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Npm;
+using Nuke.Common.Tools.Yarn;
 
 partial class Build : NukeBuild
 {
@@ -9,26 +10,28 @@ partial class Build : NukeBuild
         .DependsOn(Frontend_Build)
         .Executes(() =>
         {
-            NpmTasks.NpmLogger = CustomLogger;
+            // NpmTasks.NpmLogger = CustomLogger;
+            YarnTasks.YarnRun(s => s
 
-            NpmTasks.NpmRun(s => s
+                // NpmTasks.NpmRun(s => s
                 .SetProcessWorkingDirectory(FrontendWorkingDirectory)
                 .SetCommand("test")
             );
         });
 
     Target Frontend_Tests_Ci => _ => _
-    .DependsOn(Frontend_Build)
-    .ProceedAfterFailure()
-    .Executes(() =>
-    {
-        NpmTasks.NpmLogger = CustomLogger;
+        .DependsOn(Frontend_Build)
+        .ProceedAfterFailure()
+        .Executes(() =>
+        {
+            // NpmTasks.NpmLogger = CustomLogger;
 
-        NpmTasks.NpmRun(s => s
-            .SetProcessWorkingDirectory(FrontendWorkingDirectory)
-            .SetCommand("test:ci")
-        );
-    });
+            YarnTasks.YarnRun(s => s
+                // NpmTasks.NpmRun(s => s
+                .SetProcessWorkingDirectory(FrontendWorkingDirectory)
+                .SetCommand("test:ci")
+            );
+        });
 
     /// <summary>
     /// from: https://dev.to/damikun/the-cross-platform-build-automation-with-nuke-1kmc
@@ -41,21 +44,21 @@ partial class Build : NukeBuild
                 Serilog.Log.Debug(output);
                 break;
             case OutputType.Err:
-                {
-                    if (
-                        output.Contains(
-                            "npmWARN",
-                            StringComparison.OrdinalIgnoreCase
-                        ) ||
-                        output.Contains(
-                            "npm WARN",
-                            StringComparison.OrdinalIgnoreCase
-                        ))
-                        Serilog.Log.Warning(output);
-                    else
-                        Serilog.Log.Error(output);
-                    break;
-                }
+            {
+                if (
+                    output.Contains(
+                        "npmWARN",
+                        StringComparison.OrdinalIgnoreCase
+                    ) ||
+                    output.Contains(
+                        "npm WARN",
+                        StringComparison.OrdinalIgnoreCase
+                    ))
+                    Serilog.Log.Warning(output);
+                else
+                    Serilog.Log.Error(output);
+                break;
+            }
         }
     }
 }
