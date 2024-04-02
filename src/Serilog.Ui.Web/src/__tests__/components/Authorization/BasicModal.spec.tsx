@@ -2,6 +2,7 @@ import { render, screen, userEvent } from '__tests__/_setup/testing-utils';
 import BasicModal from 'app/components/Authorization/BasicModal';
 import { IAuthPropertiesStorageKeys } from 'app/util/auth';
 import { byLabelText, byRole } from 'testing-library-selector';
+import { AuthType } from 'types/types';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const ui = {
@@ -22,7 +23,7 @@ describe('Basic Modal', () => {
 
   it('renders without saved info', async () => {
     const closeMock = vi.fn();
-    render(<BasicModal onClose={closeMock} />);
+    render(<BasicModal onClose={closeMock} />, AuthType.Basic);
 
     expect(screen.getAllByRole('button')).toHaveLength(2);
 
@@ -39,7 +40,7 @@ describe('Basic Modal', () => {
     sessionStorage.setItem(IAuthPropertiesStorageKeys.basic_user, 'my test user');
     sessionStorage.setItem(IAuthPropertiesStorageKeys.basic_pwd, 'my test password');
 
-    render(<BasicModal onClose={vi.fn()} />);
+    render(<BasicModal onClose={vi.fn()} />, AuthType.Basic);
 
     expect(username()).toHaveValue('my test user');
     expect(pwd()).toBeEmptyDOMElement();
@@ -50,7 +51,7 @@ describe('Basic Modal', () => {
   });
 
   it('updates inputs, without saving them to the session storage', async () => {
-    const {} = render(<BasicModal onClose={vi.fn()} />);
+    const {} = render(<BasicModal onClose={vi.fn()} />, AuthType.Basic);
 
     await userEvent.type(username(), 'my test user');
     await userEvent.type(pwd(), 'my test password');
@@ -63,7 +64,7 @@ describe('Basic Modal', () => {
   });
 
   it('saves inputs value to the session storage', async () => {
-    render(<BasicModal onClose={vi.fn()} />);
+    render(<BasicModal onClose={vi.fn()} />, AuthType.Basic);
 
     await userEvent.type(username(), 'my test user');
     await userEvent.type(pwd(), 'my test password');
@@ -85,7 +86,7 @@ describe('Basic Modal', () => {
   });
 
   it('resets saved input and clears them from the session storage', async () => {
-    render(<BasicModal onClose={vi.fn()} />);
+    render(<BasicModal onClose={vi.fn()} />, AuthType.Basic);
 
     await userEvent.type(username(), 'my test user');
     await userEvent.type(pwd(), 'my test password');

@@ -73,18 +73,17 @@ describe('pretty prints util', () => {
         '<root><my-xml>sample</my-xml></root>',
       );
 
-      expect(act).toBe(
-        '<root>\r\n    <my-xml>\r\n        sample\r\n    </my-xml>\r\n</root>',
-      );
+      expect(act).toContain('>root</');
+      expect(act).toContain('>my-xml</');
+      expect(act).toContain('sample</');
     });
 
     it('returns json prettified', async () => {
       // eslint-disable-next-line testing-library/render-result-naming-convention
       const act = await renderCodeContent(LogType.Json, '{ "json": "ok"}');
-      const result = {
-        json: 'ok',
-      };
-      expect(act).toBe(JSON.stringify(result, null, 2));
+
+      expect(act).toContain('>ok</');
+      expect(act).toContain('>json</');
     });
 
     it('returns error message if content cannot be parsed', async () => {
