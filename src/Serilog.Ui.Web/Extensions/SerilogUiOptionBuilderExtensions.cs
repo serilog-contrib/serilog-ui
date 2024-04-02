@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Interfaces;
@@ -37,11 +38,34 @@ public static class SerilogUiOptionBuilderExtensions
     }
 
     /// <summary>
-    /// Add <see cref="BasicAuthenticationFilter"/> as scoped service implementation of <see cref="IUiAuthorizationFilter"/>.
+    /// Add <see cref="BasicAuthenticationFilter"/> as scoped service implementation of <see cref="IUiAuthorizationFilter"/>,
+    /// with a simple implementation that checks Basic Auth against a predefined user-password. <br />
+    /// It expects in the <see cref="IConfiguration"/> an object with this structure:
+    /// <code>
+    /// ...
+    /// "SerilogUi": {
+    ///     "UserName": "user-sample",
+    ///     "Password": "sample"
+    /// }, ...
+    /// </code>
     /// </summary>
     public static ISerilogUiOptionsBuilder AddScopedBasicAuthFilter(this ISerilogUiOptionsBuilder builder)
     {
-        builder.Services.AddScoped<IUiAuthorizationFilter, BasicAuthenticationFilter>();
+        builder.Services.AddScoped<IBasicAuthenticationService, BasicAuthServiceByConfiguration>();
+        builder.Services.AddScoped<IUiAsyncAuthorizationFilter, BasicAuthenticationFilter>();
+
+        return builder;
+    }
+
+    /// <summary>
+    /// Add <see cref="BasicAuthenticationFilter"/> as scoped service implementation of <see cref="IUiAuthorizationFilter"/>,
+    /// registering a scoped custom implementation of <see cref="IBasicAuthenticationService"/>.
+    /// </summary>
+    public static ISerilogUiOptionsBuilder AddScopedBasicAuthFilter<T>(this ISerilogUiOptionsBuilder builder)
+        where T : class, IBasicAuthenticationService
+    {
+        builder.Services.AddScoped<IBasicAuthenticationService, T>();
+        builder.Services.AddScoped<IUiAsyncAuthorizationFilter, BasicAuthenticationFilter>();
 
         return builder;
     }

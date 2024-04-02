@@ -9,8 +9,8 @@
         ///   Gets or sets the type of the authentication.
         /// </summary>
         /// <value>The type of the authentication.</value>
-        public AuthenticationType AuthenticationType { get; set; } = AuthenticationType.Cookie;
-        
+        public AuthenticationType AuthenticationType { get; set; } = AuthenticationType.Custom;
+
         /// <summary>
         /// Set to true if the authorization filters should be run
         /// when accessing the serilog-ui main pages.
@@ -21,8 +21,10 @@
 
     public enum AuthenticationType
     {
-        Cookie,
+        Custom,
+
+        Basic,
+
         Jwt,
-        Windows
     }
 }

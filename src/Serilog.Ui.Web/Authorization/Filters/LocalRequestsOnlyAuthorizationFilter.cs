@@ -4,7 +4,7 @@ using Serilog.Ui.Web.Extensions;
 
 namespace Serilog.Ui.Web.Authorization.Filters
 {
-    public class LocalRequestsOnlyAuthorizationFilter(IHttpContextAccessor httpContextAccessor) : IUiAuthorizationFilter
+    internal class LocalRequestsOnlyAuthorizationFilter(IHttpContextAccessor httpContextAccessor) : IUiAuthorizationFilter
     {
         public bool Authorize()
         {

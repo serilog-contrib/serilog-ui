@@ -13,7 +13,7 @@ export const createRequestInit = (
   uiProps: SerilogUiConfig,
   header?: string,
 ): RequestInit => {
-  const notWindowsAuth = uiProps.authType !== AuthType.Windows;
+  const notWindowsAuth = uiProps.authType !== AuthType.Custom;
 
   const headers: Headers = new Headers();
 

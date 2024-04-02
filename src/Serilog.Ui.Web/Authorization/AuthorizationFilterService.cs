@@ -8,7 +8,7 @@ using Serilog.Ui.Core.Interfaces;
 
 namespace Serilog.Ui.Web.Authorization
 {
-    internal class AuthorizationFilterService(
+    internal sealed class AuthorizationFilterService(
         IHttpContextAccessor httpContextAccessor,
         IEnumerable<IUiAuthorizationFilter> syncFilters,
         IEnumerable<IUiAsyncAuthorizationFilter> asyncFilters) : IAuthorizationFilterService

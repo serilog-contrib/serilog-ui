@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Serilog;
 using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.MongoDbProvider.Extensions;
-using Serilog.Ui.Web.Authorization.Filters;
 using Serilog.Ui.Web.Extensions;
 using WebApp.Authentication;
 using WebApp.Authentication.Jwt;
@@ -18,10 +16,10 @@ internal static class ServiceCollectionExtensions
         services
             .AddAuthorizationBuilder()
             .AddPolicy("test-policy", (builder) =>
-                {
-                    // a sample policy, checking for a custom claim
-                    builder.RequireClaim("example", "my-value");
-                });
+            {
+                // a sample policy, checking for a custom claim
+                builder.RequireClaim("example", "my-value");
+            });
 
         services
             .AddScoped<JwtTokenGenerator>()
@@ -56,24 +54,26 @@ internal static class ServiceCollectionExtensions
     /// <param name="configuration"></param>
     /// <returns></returns>
     internal static IServiceCollection AddSerilogUiSample(this IServiceCollection services, IConfiguration configuration)
-    => services
-        .AddSerilogUi(options =>
-        {
-            options
-            /* samples: authorization filters */
-            // custom filter implementation, sync
-            .AddScopedSyncAuthFilter<SerilogUiCustomAuthFilter>()
-            // default filter, async, checks a configured authorization policy
-            .AddScopedPolicyAuthFilter("test-policy")
-            /* sample provider registration: MongoDb, Fluent interface */
-            .UseMongoDb(opt => opt
-                .WithConnectionString(configuration.GetConnectionString("MongoDbDefaultConnection"))
-                .WithCollectionName("logs"));
+        => services
+            .AddSerilogUi(options =>
+                {
+                    options
+                        /* samples: authorization filters */
+                        // a] custom filter implementation, sync, checks that user is Authenticated
+                        .AddScopedSyncAuthFilter<SerilogUiCustomAuthFilter>()
+                        // b] default filter, async, checks against configured authorization policy
+                        .AddScopedPolicyAuthFilter("test-policy")
+                        // c] default filter, async, checks a basic header against a predefined IConfiguration user-password
+                        // .AddScopedBasicAuthFilter()
 
-            /* sample provider registration: Sql Server [multiple], Fluent interface
-             * .UseSqlServer(opt => opt.WithConnectionString(builder.Configuration.GetConnectionString("MsSqlDefaultConnection")).WithTable("Logs"))
-             * .UseSqlServer(opt => opt.WithConnectionString(builder.Configuration.GetConnectionString("MsSqlBackupConnection")).WithTable("LogsBackup"))
-             */
-        }
-);
+                        /* sample provider registration: MongoDb, Fluent interface */
+                        .UseMongoDb(opt => opt
+                            .WithConnectionString(configuration.GetConnectionString("MongoDbDefaultConnection"))
+                            .WithCollectionName("logs"));
+                        /* sample provider registration: Sql Server [multiple], Fluent interface
+                         * .UseSqlServer(opt => opt.WithConnectionString(builder.Configuration.GetConnectionString("MsSqlDefaultConnection")).WithTable("Logs"))
+                         * .UseSqlServer(opt => opt.WithConnectionString(builder.Configuration.GetConnectionString("MsSqlBackupConnection")).WithTable("LogsBackup"))
+                         */
+                }
+            );
 }

@@ -1,5 +1,8 @@
-﻿using FluentAssertions;
+﻿using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Serilog.Ui.Core;
@@ -21,22 +24,48 @@ public class SerilogUiOptionBuilderExtensionsTest
     {
         _services.AddHttpContextAccessor();
         _services.AddScoped<IAuthorizationService>(_ => Substitute.For<IAuthorizationService>());
-        
+
         _builder = new SerilogUiOptionsBuilder(_services);
     }
 
     [Fact]
-    public void It_registers_basic_filter()
+    public void It_registers_basic_filter_with_default_implementation()
     {
         // Act
         _builder.AddScopedBasicAuthFilter();
+        var config = Substitute.For<IConfiguration>();
+        var serviceProvider = _services.AddScoped<IConfiguration>((_) => config).BuildServiceProvider();
+
+        // Assert
+        using var scope = serviceProvider.CreateScope();
+        scope.ServiceProvider.GetService<IUiAsyncAuthorizationFilter>()
+            .Should().NotBeNull()
+            .And.BeOfType<BasicAuthenticationFilter>();
+        scope.ServiceProvider.GetService<IBasicAuthenticationService>()
+            .Should().NotBeNull()
+            .And.BeOfType<BasicAuthServiceByConfiguration>();
+    }
+
+    [Fact]
+    public void It_registers_basic_filter_with_custom_implementation()
+    {
+        // Act
+        _builder.AddScopedBasicAuthFilter<BasicService>();
         var serviceProvider = _services.BuildServiceProvider();
 
         // Assert
         using var scope = serviceProvider.CreateScope();
-        scope.ServiceProvider.GetService<IUiAuthorizationFilter>()
+        scope.ServiceProvider.GetService<IUiAsyncAuthorizationFilter>()
             .Should().NotBeNull()
             .And.BeOfType<BasicAuthenticationFilter>();
+        scope.ServiceProvider.GetService<IBasicAuthenticationService>()
+            .Should().NotBeNull()
+            .And.BeOfType<BasicService>();
+    }
+
+    private class BasicService : IBasicAuthenticationService
+    {
+        public Task<bool> CanAccessAsync(AuthenticationHeaderValue basicHeader) => Task.FromResult(true);
     }
 
     [Fact]

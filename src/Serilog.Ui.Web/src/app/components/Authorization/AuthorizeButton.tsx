@@ -15,7 +15,7 @@ const AuthorizeButton = ({ customStyle }: { customStyle?: string }) => {
   const { authHeader } = useAuthProperties();
   const [opened, { open, close }] = useDisclosure(false);
 
-  if (![AuthType.Basic, AuthType.Jwt].includes(authType ?? AuthType.Windows)) return null;
+  if (![AuthType.Basic, AuthType.Jwt].includes(authType ?? AuthType.Custom)) return null;
 
   const isHeaderReady = isStringGuard(authHeader);
 

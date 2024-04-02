@@ -8,22 +8,16 @@ import App from './app/App';
 /**
  * TODO:
 (branch/v3) 
- * > change basic auth to receive data from ui (header) and check it with custom impl
- * [testing phase] sample with basic and jwt auth, that passes when receivin' from the modal auth header
- * >> if auth on index is active, redirect to unauth view instead of html page (react router and unhaut page...)
-
  * > try running token check each {x} time and send notification if expired
 
 (branch/routing-by-id)
+ * >> if auth on index is active, redirect to unauth route instead of empty html page (react router)
  * >> react router setup to catch id routing
  * >> endpoint and additional model property
  * >> filter by _id (react router and opening log by itself)
 
 (branch/custom-columns)
  * >> custom columns
-
-(branch/clean-sample)
- * >> clean sample and install samples with each provider
 
 (extras)
  * >>> let mongo registers {n} logs pages

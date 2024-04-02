@@ -5,7 +5,7 @@ using Serilog.Ui.Core.Interfaces;
 
 namespace Serilog.Ui.Web.Authorization.Filters;
 
-public class PolicyAuthorizationFilter(
+internal class PolicyAuthorizationFilter(
     IHttpContextAccessor httpContextAccessor,
     IAuthorizationService authorizationService,
     string policy)

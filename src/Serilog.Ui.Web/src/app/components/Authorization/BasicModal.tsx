@@ -25,16 +25,25 @@ const BasicModal = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <>
-      <Fieldset
-        component="form"
-        legend="Basic Authentication"
-        mb="md"
-        disabled={isHeaderReady}
-      >
+      <Fieldset component="form" legend="Basic Authentication" mb="md">
+        <Alert
+          radius="md"
+          color="yellow"
+          variant="light"
+          icon={<IconAlertTriangleFilled />}
+          ta="justify"
+          mt="xs"
+          mb="md"
+        >
+          Basic authentication should be used only for testing and development purposes.
+          <br />
+          Using Basic authentication is highly discouraged in production environments!
+        </Alert>
         <TextInput
           placeholder="admin"
           label="Username"
           value={basic_user}
+          disabled={isHeaderReady}
           onChange={(event) => {
             updateAuthKey('basic_user', event.currentTarget.value);
           }}
@@ -42,6 +51,7 @@ const BasicModal = ({ onClose }: { onClose: () => void }) => {
         <PasswordInput
           placeholder="admin"
           label="Password"
+          disabled={isHeaderReady}
           radius="sm"
           size="sm"
           style={{ flexGrow: 1 }}
@@ -53,20 +63,6 @@ const BasicModal = ({ onClose }: { onClose: () => void }) => {
           }}
         />
       </Fieldset>
-      <Alert
-        radius="md"
-        color="yellow"
-        variant="light"
-        icon={<IconAlertTriangleFilled />}
-        ta="justify"
-        mt="xs"
-        mb="md"
-      >
-        Basic authorization should be used only for testing and development purposes.
-        <br />
-        It is highly discouraged the usage of Basic authorization on production
-        environments!
-      </Alert>
       <Group display="flex" justify="right">
         <Button
           display={isHeaderReady ? 'none' : 'inherit'}
