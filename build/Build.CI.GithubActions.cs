@@ -106,7 +106,7 @@ partial class Build : NukeBuild
 
     Target Backend_SonarScan_End => _ => _
         .DependsOn(Backend_Test_Ci)
-        .OnlyWhenStatic(() => OnGithubActionRun && !IsPr &&
+        .OnlyWhenStatic(() => OnGithubActionRun &&
             !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
             !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
         )
