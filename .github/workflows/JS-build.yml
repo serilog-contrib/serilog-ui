@@ -65,7 +65,7 @@ jobs:
             -Dsonar.tests=src/Serilog.Ui.Web/src/
             -Dsonar.exclusions=src/Serilog.Ui.Web/src/__tests__/**/*
             -Dsonar.test.inclusions=src/Serilog.Ui.Web/src/__tests__/**/*
-            -Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/coverage/lcov.info
+            -Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/src/reports/coverage/lcov.info
 
       - uses: actions/upload-artifact@v3
         if: always()

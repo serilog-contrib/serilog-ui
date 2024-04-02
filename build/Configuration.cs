@@ -2,7 +2,7 @@ using System.ComponentModel;
 using Nuke.Common.Tooling;
 
 [TypeConverter(typeof(TypeConverter<Configuration>))]
-internal class Configuration : Enumeration
+class Configuration : Enumeration
 {
     public static readonly Configuration Debug = new() { Value = nameof(Debug) };
     public static readonly Configuration Release = new() { Value = nameof(Release) };
@@ -16,7 +16,7 @@ internal class Configuration : Enumeration
 /// <summary>
 /// TODO: set the 3 values when SonarCloud project is created.
 /// </summary>
-internal static class SonarCloudInfo
+static class SonarCloudInfo
 {
     internal const string Organization = "followynne";
     internal const string BackendProjectKey = "followynne_serilog-ui";

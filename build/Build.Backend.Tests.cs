@@ -13,7 +13,7 @@ partial class Build
     )]
     readonly Tool DotnetCoverage;
 
-    Target Backend_Test => _ => _
+    Target Backend_Test => targetDefinition => targetDefinition
         .DependsOn(Backend_Compile)
         .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Any())
         .Description("Runs dotnet test")
@@ -24,7 +24,7 @@ partial class Build
                 .SetNoBuild(true));
         });
 
-    Target Backend_Test_Ci => _ => _
+    Target Backend_Test_Ci => targetDefinition => targetDefinition
         .DependsOn(Backend_Compile)
         .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Any())
         .Description("Runs dotnet-coverage collect, with coverlet coverage")

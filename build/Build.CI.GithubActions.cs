@@ -60,25 +60,25 @@ partial class Build
     [Parameter] readonly string PostgresProvider = string.Empty;
     [Parameter] readonly string Ui = string.Empty;
 
-    public ReleaseParams[] ReleaseInfos() => new ReleaseParams[]
-    {
+    ReleaseParams[] ReleaseInfos() =>
+    [
         new(nameof(ElasticProvider), ElasticProvider, "Serilog.Ui.ElasticSearchProvider"),
         new(nameof(MongoProvider), MongoProvider, "Serilog.Ui.MongoDbProvider"),
         new(nameof(MsSqlProvider), MsSqlProvider, "Serilog.Ui.MsSqlServerProvider"),
         new(nameof(MySqlProvider), MySqlProvider, "Serilog.Ui.MySqlProvider"),
         new(nameof(PostgresProvider), PostgresProvider, "Serilog.Ui.PostgreSqlProvider"),
-        new(nameof(Ui), Ui, "Serilog.Ui.Web"),
-    };
+        new(nameof(Ui), Ui, "Serilog.Ui.Web")
+    ];
 
-    public bool OnGithubActionRun = GitHubActions.Instance != null &&
-            !string.IsNullOrWhiteSpace(GitHubActions.Instance.RunId.ToString());
+    readonly bool OnGithubActionRun = GitHubActions.Instance != null &&
+                                      !string.IsNullOrWhiteSpace(GitHubActions.Instance.RunId.ToString());
 
-    public bool IsPr = GitHubActions.Instance != null &&
-        GitHubActions.Instance.IsPullRequest;
+    readonly bool IsPr = GitHubActions.Instance != null &&
+                         GitHubActions.Instance.IsPullRequest;
 
-    Target Backend_SonarScan_Start => _ => _
+    Target Backend_SonarScan_Start => targetDefinition => targetDefinition
         .DependsOn(Backend_Restore)
-        .OnlyWhenStatic(() => OnGithubActionRun &&
+        .OnlyWhenStatic(() => OnGithubActionRun && !IsPr &&
             !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
             !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
         )
@@ -86,7 +86,6 @@ partial class Build
         {
             SonarScannerTasks.SonarScannerBegin(new SonarScannerBeginSettings()
                 .SetExcludeTestProjects(true)
-                .SetFramework("net5.0")
                 .SetToken(SonarToken)
                 .SetOrganization(SonarCloudInfo.Organization)
                 .SetProjectKey(SonarCloudInfo.BackendProjectKey)
@@ -106,16 +105,15 @@ partial class Build
             );
         });
 
-    Target Backend_SonarScan_End => _ => _
+    Target Backend_SonarScan_End => targetDefinition => targetDefinition
         .DependsOn(Backend_Test_Ci)
-        .OnlyWhenStatic(() => OnGithubActionRun &&
+        .OnlyWhenStatic(() => OnGithubActionRun && !IsPr &&
             !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
             !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
         )
         .Executes(() =>
         {
             SonarScannerTasks.SonarScannerEnd(new SonarScannerEndSettings()
-                .SetFramework("net5.0")
                 .SetToken(SonarToken)
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
                 .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken));

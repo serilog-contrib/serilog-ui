@@ -6,7 +6,7 @@ using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
 partial class Build
 {
-    Target Backend_Clean => _ => _
+    Target Backend_Clean => targetDefinition => targetDefinition
         .Executes(() =>
         {
             SourceDirectory.GlobDirectories("**/bin", "**/obj").ForEach(AbsolutePathExtensions.DeleteDirectory);
@@ -14,7 +14,7 @@ partial class Build
             DotNetClean();
         });
 
-    Target Backend_Restore => _ => _
+    Target Backend_Restore => targetDefinition => targetDefinition
         .DependsOn(Clean, Frontend_Build)
         .Executes(() =>
         {
@@ -23,7 +23,7 @@ partial class Build
             );
         });
 
-    Target Backend_Compile => _ => _
+    Target Backend_Compile => targetDefinition => targetDefinition
         .DependsOn(Backend_Restore, Backend_SonarScan_Start)
         .Executes(() =>
         {

@@ -5,7 +5,7 @@ using Nuke.Common.Utilities.Collections;
 
 partial class Build
 {
-    Target Frontend_Clean => _ => _
+    Target Frontend_Clean => targetDefinition => targetDefinition
         .Executes(() =>
         {
             FrontendWorkingDirectory
@@ -13,7 +13,7 @@ partial class Build
                 .ForEach(AbsolutePathExtensions.DeleteDirectory);
         });
 
-    Target Frontend_Restore => _ => _
+    Target Frontend_Restore => targetDefinition => targetDefinition
         .DependsOn(Clean)
         .Before(Backend_Restore)
         .Executes(() =>
@@ -23,7 +23,7 @@ partial class Build
             );
         });
 
-    Target Frontend_Build => _ => _
+    Target Frontend_Build => targetDefinition => targetDefinition
         .DependsOn(Frontend_Restore)
         .Executes(() =>
         {

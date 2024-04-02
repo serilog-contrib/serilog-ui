@@ -3,7 +3,7 @@ using Nuke.Common.Tooling;
 
 partial class Build
 {
-    Target Frontend_Tests => _ => _
+    Target Frontend_Tests => targetDefinition => targetDefinition
         .DependsOn(Frontend_Build)
         .Executes(() =>
         {
@@ -13,7 +13,7 @@ partial class Build
             );
         });
 
-    Target Frontend_Tests_Ci => _ => _
+    Target Frontend_Tests_Ci => targetDefinition => targetDefinition
         .DependsOn(Frontend_Build)
         .ProceedAfterFailure()
         .Executes(() =>

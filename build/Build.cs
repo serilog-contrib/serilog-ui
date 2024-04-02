@@ -28,14 +28,14 @@ partial class Build : NukeBuild
     static AbsolutePath TestsDirectory => RootDirectory / "tests";
     bool IsReleaseOrMasterBranch => Repository.IsOnReleaseBranch() || Repository.IsOnMainOrMasterBranch();
 
-    Target Clean => _ => _
+    Target Clean => targetDefinition => targetDefinition
         .DependsOn(Backend_Clean, Frontend_Clean)
         .Executes(() =>
         {
             Serilog.Log.Information("--- Clean operations completed ---");
         });
 
-    Target Pack => _ => _
+    Target Pack => targetDefinition => targetDefinition
         .DependsOn(Backend_SonarScan_End, Frontend_Tests_Ci)
         .OnlyWhenStatic(() => IsReleaseOrMasterBranch)
         .Executes(() =>
@@ -57,7 +57,7 @@ partial class Build : NukeBuild
             }
         });
 
-    Target Publish => _ => _
+    Target Publish => targetDefinition => targetDefinition
         .DependsOn(Pack)
         .OnlyWhenStatic(() => IsReleaseOrMasterBranch)
         .Executes(() =>
