@@ -78,7 +78,7 @@ partial class Build
 
     Target Backend_SonarScan_Start => targetDefinition => targetDefinition
         .DependsOn(Backend_Restore)
-        .OnlyWhenStatic(() => OnGithubActionRun && !IsPr &&
+        .OnlyWhenStatic(() => OnGithubActionRun &&
             !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
             !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
         )
@@ -107,7 +107,7 @@ partial class Build
 
     Target Backend_SonarScan_End => targetDefinition => targetDefinition
         .DependsOn(Backend_Test_Ci)
-        .OnlyWhenStatic(() => OnGithubActionRun && !IsPr &&
+        .OnlyWhenStatic(() => OnGithubActionRun &&
             !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
             !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
         )
