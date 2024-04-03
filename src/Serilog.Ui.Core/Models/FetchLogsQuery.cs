@@ -148,8 +148,8 @@ public class FetchLogsQuery
         var couldConvertStart = DateTime.TryParse(startDateStar, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var startDate);
         var couldConvertEnd = DateTime.TryParse(endDateStar, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var endDate);
 
-        var outputStartDate = couldConvertStart ? (DateTime?)null : startDate;
-        var outputEndDate = couldConvertEnd ? (DateTime?)null : endDate;
+        var outputStartDate = !couldConvertStart ? (DateTime?)null : startDate;
+        var outputEndDate = !couldConvertEnd ? (DateTime?)null : endDate;
 
         return (outputStartDate, outputEndDate);
     }
@@ -159,9 +159,10 @@ public class FetchLogsQuery
         queryParams.TryGetValue("sortOn", out var sortStrOn);
         queryParams.TryGetValue("sortBy", out var sortStrBy);
 
-        Enum.TryParse<SearchOptions.SortProperty>(sortStrOn, out var sortProperty);
-        Enum.TryParse<SearchOptions.SortDirection>(sortStrBy, out var sortDirection);
+        var couldConvertProp = Enum.TryParse<SearchOptions.SortProperty>(sortStrOn, out var sortProperty);
+        var couldConvertBy = Enum.TryParse<SearchOptions.SortDirection>(sortStrBy, out var sortDirection);
 
-        return (sortProperty, sortDirection);
+        return (couldConvertProp ? sortProperty : SearchOptions.SortProperty.Timestamp,
+            couldConvertBy ? sortDirection : SearchOptions.SortDirection.Desc);
     }
 }
