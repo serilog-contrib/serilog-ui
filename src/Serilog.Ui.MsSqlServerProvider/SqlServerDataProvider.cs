@@ -16,11 +16,11 @@ namespace Serilog.Ui.MsSqlServerProvider
 {
     public class SqlServerDataProvider(RelationalDbOptions options) : IDataProvider
     {
-        private const string ColumnTimestampName = "[TimeStamp]";
+        private const string ColumnTimestampName = "TimeStamp";
 
-        private const string ColumnLevelName = "[Level]";
+        private const string ColumnLevelName = "Level";
 
-        private const string ColumnMessageName = "[Message]";
+        private const string ColumnMessageName = "Message";
 
         private readonly RelationalDbOptions _options = options ?? throw new ArgumentNullException(nameof(options));
 
@@ -42,14 +42,14 @@ namespace Serilog.Ui.MsSqlServerProvider
         private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
         {
             var queryBuilder = new StringBuilder();
-            queryBuilder.Append($"SELECT [Id], {ColumnMessageName}, {ColumnLevelName}, {ColumnTimestampName}, [Exception], [Properties] ");
+            queryBuilder.Append($"SELECT [Id], [{ColumnMessageName}], [{ColumnLevelName}], [{ColumnTimestampName}], [Exception], [Properties] ");
             queryBuilder.Append($"FROM [{_options.Schema}].[{_options.TableName}] ");
 
             GenerateWhereClause(queryBuilder, queryParams);
 
             var sortOnCol = GetColumnName(queryParams.SortOn);
             var sortByCol = queryParams.SortBy.ToString().ToUpper();
-            queryBuilder.Append($"ORDER BY {sortOnCol} {sortByCol} OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY");
+            queryBuilder.Append($"ORDER BY [{sortOnCol}] {sortByCol} OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY");
 
             var rowNoStart = queryParams.Page * queryParams.Count;
 

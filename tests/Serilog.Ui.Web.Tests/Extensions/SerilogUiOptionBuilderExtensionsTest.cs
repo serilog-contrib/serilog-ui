@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Interfaces;
 using Serilog.Ui.Web.Authorization.Filters;
 using Serilog.Ui.Web.Extensions;
@@ -26,6 +27,62 @@ public class SerilogUiOptionBuilderExtensionsTest
         _services.AddScoped<IAuthorizationService>(_ => Substitute.For<IAuthorizationService>());
 
         _builder = new SerilogUiOptionsBuilder(_services);
+    }
+
+    [Fact]
+    public void It_registers_async_filter()
+    {
+        // Act
+        _builder.AddScopedAsyncAuthFilter<SampleFilter>();
+        var serviceProvider = _services.BuildServiceProvider();
+
+        // Assert
+        using var scope = serviceProvider.CreateScope();
+        var service = scope.ServiceProvider.GetService<IUiAsyncAuthorizationFilter>();
+        service.Should().NotBeNull().And.BeOfType<SampleFilter>();
+        service.As<SampleFilter>().Test.Should().BeNull();
+    }
+
+    [Fact]
+    public void It_registers_async_filter_with_implementation_factory()
+    {
+        // Act
+        _builder.AddScopedAsyncAuthFilter<SampleFilter>(_ => new SampleFilter("my-test"));
+        var serviceProvider = _services.BuildServiceProvider();
+
+        // Assert
+        using var scope = serviceProvider.CreateScope();
+        var service = scope.ServiceProvider.GetService<IUiAsyncAuthorizationFilter>();
+        service.Should().NotBeNull().And.BeOfType<SampleFilter>();
+        service.As<SampleFilter>().Test.Should().Be("my-test");
+    }
+
+    [Fact]
+    public void It_registers_sync_filter()
+    {
+        // Act
+        _builder.AddScopedSyncAuthFilter<SampleFilter>();
+        var serviceProvider = _services.BuildServiceProvider();
+
+        // Assert
+        using var scope = serviceProvider.CreateScope();
+        var service = scope.ServiceProvider.GetService<IUiAuthorizationFilter>();
+        service.Should().NotBeNull().And.BeOfType<SampleFilter>();
+        service.As<SampleFilter>().Test.Should().BeNull();
+    }
+
+    [Fact]
+    public void It_registers_sync_filter_with_implementation_factory()
+    {
+        // Act
+        _builder.AddScopedSyncAuthFilter<SampleFilter>(_ => new SampleFilter("my-test"));
+        var serviceProvider = _services.BuildServiceProvider();
+
+        // Assert
+        using var scope = serviceProvider.CreateScope();
+        var service = scope.ServiceProvider.GetService<IUiAuthorizationFilter>();
+        service.Should().NotBeNull().And.BeOfType<SampleFilter>();
+        service.As<SampleFilter>().Test.Should().Be("my-test");
     }
 
     [Fact]
@@ -63,11 +120,6 @@ public class SerilogUiOptionBuilderExtensionsTest
             .And.BeOfType<BasicService>();
     }
 
-    private class BasicService : IBasicAuthenticationService
-    {
-        public Task<bool> CanAccessAsync(AuthenticationHeaderValue basicHeader) => Task.FromResult(true);
-    }
-
     [Fact]
     public void It_registers_local_requests_filter()
     {
@@ -94,5 +146,19 @@ public class SerilogUiOptionBuilderExtensionsTest
         scope.ServiceProvider.GetService<IUiAsyncAuthorizationFilter>()
             .Should().NotBeNull()
             .And.BeOfType<PolicyAuthorizationFilter>();
+    }
+
+    private class SampleFilter(string? test = null) : IUiAuthorizationFilter, IUiAsyncAuthorizationFilter
+    {
+        public string? Test => test;
+
+        public bool Authorize() => true;
+
+        public Task<bool> AuthorizeAsync() => Task.FromResult(true);
+    }
+
+    private class BasicService : IBasicAuthenticationService
+    {
+        public Task<bool> CanAccessAsync(AuthenticationHeaderValue basicHeader) => Task.FromResult(true);
     }
 }
