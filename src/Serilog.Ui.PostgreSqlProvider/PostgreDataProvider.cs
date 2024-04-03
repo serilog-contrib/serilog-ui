@@ -22,7 +22,7 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
     /// <inheritdoc/>
     public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
     {
-        queryParams.ToUtcKindDates();
+        queryParams.ToUtcDates();
         
         var logsTask = GetLogsAsync(queryParams);
         var logCountTask = CountLogsAsync(queryParams);

@@ -24,6 +24,8 @@ public abstract class DataProvider(RelationalDbOptions options) : IDataProvider
 
     public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
     {
+        queryParams.ToUtcDates();
+
         var logsTask = GetLogsAsync(queryParams);
         var logCountTask = CountLogsAsync(queryParams);
 

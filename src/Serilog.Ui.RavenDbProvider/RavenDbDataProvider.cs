@@ -20,7 +20,7 @@ public class RavenDbDataProvider(IDocumentStore documentStore, string collection
     /// <inheritdoc/>
     public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
     {
-        queryParams.ToUtcKindDates();
+        queryParams.ToUtcDates();
 
         var logsTask = GetLogsAsync(queryParams, cancellationToken);
         var logCountTask = CountLogsAsync(queryParams, cancellationToken);

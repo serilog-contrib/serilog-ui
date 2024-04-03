@@ -98,7 +98,7 @@ namespace Serilog.Ui.Web.Endpoints
 
             var (logs, total) = await _aggregateDataProvider.FetchDataAsync(queryLogs);
 
-            var result = JsonSerializer.Serialize(new { logs, total, count = queryLogs.Count, currentPage = queryLogs.Page }, JsonSerializerOptions);
+            var result = JsonSerializer.Serialize(new { logs, total, count = queryLogs.Count, currentPage = queryLogs.CurrentPage }, JsonSerializerOptions);
 
             return result;
         }

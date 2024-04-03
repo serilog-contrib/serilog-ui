@@ -74,8 +74,9 @@ namespace Serilog.Ui.Web.Tests.Endpoints
         public async Task It_gets_logs_with_search_parameters()
         {
             // Arrange
-            _testContext.Request.QueryString = new QueryString("?page=2&count=30&level=Verbose" +
-                                                               "&search=test&startDate=2020-01-02%2018:00:00&endDate=2020-02-02%2018:00:00&key=FakeSecondProvider");
+            _testContext.Request.QueryString =
+                new QueryString(
+                    "?page=2&count=30&level=Verbose&search=test&startDate=2020-01-02%2018:00:00&endDate=2020-02-02%2018:00:00&key=FakeSecondProvider");
 
             // Act
             var result = await HappyPath<AnonymousObject>(_sut.GetLogsAsync);
@@ -136,7 +137,7 @@ namespace Serilog.Ui.Web.Tests.Endpoints
 
             public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
             {
-                if (queryParams.Page != 1 ||
+                if (queryParams.Page != 0 ||
                     queryParams.Count != 10 ||
                     !string.IsNullOrWhiteSpace(queryParams.Level) ||
                     !string.IsNullOrWhiteSpace(queryParams.SearchCriteria) ||
@@ -156,7 +157,7 @@ namespace Serilog.Ui.Web.Tests.Endpoints
 
             public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
             {
-                if (queryParams.Page != 2 ||
+                if (queryParams.Page != 1 ||
                     queryParams.Count != 30 ||
                     !(queryParams.Level?.Equals("Verbose") ?? false) ||
                     !(queryParams.SearchCriteria?.Equals("test") ?? false) ||

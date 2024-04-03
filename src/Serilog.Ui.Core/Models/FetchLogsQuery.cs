@@ -31,6 +31,11 @@ public class FetchLogsQuery
     }
 
     /// <summary>
+    /// Gets or sets the CurrentPage.
+    /// </summary>
+    public int CurrentPage => _page;
+
+    /// <summary>
     /// Gets or sets the Count.
     /// </summary>
     public int Count { get; private set; }
@@ -72,23 +77,6 @@ public class FetchLogsQuery
     {
         StartDate = StartDate?.ToUniversalTime();
         EndDate = EndDate?.ToUniversalTime();
-    }
-
-
-    /// <summary>
-    /// Specify the dates kind to UTC, if not null.
-    /// </summary>
-    public void ToUtcKindDates()
-    {
-        if (StartDate != null && StartDate.Value.Kind != DateTimeKind.Utc)
-        {
-            StartDate = DateTime.SpecifyKind(StartDate.Value, DateTimeKind.Utc);
-        }
-
-        if (EndDate != null && EndDate.Value.Kind != DateTimeKind.Utc)
-        {
-            EndDate = DateTime.SpecifyKind(EndDate.Value, DateTimeKind.Utc);
-        }
     }
 
     /// <summary>
