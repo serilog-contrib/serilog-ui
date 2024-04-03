@@ -101,6 +101,6 @@ jobs:
         with:
           name: JS - Tests
           output-to: checks
-          path: '**/test-report.xml'
+          path: '**/test-junit-report.xml'
           reporter: jest-junit
           fail-on-error: false

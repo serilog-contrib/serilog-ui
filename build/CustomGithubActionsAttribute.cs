@@ -40,10 +40,10 @@ class CustomGithubActionsAttribute(string name, GitHubActionsImage image, params
                     newSteps.Add(new GithubActionSonarCloud());
                     break;
                 case GithubAction.Frontend_Artifact:
-                    newSteps.Add(new GithubActionUploadArtifact("'**/test-report.xml'"));
+                    newSteps.Add(new GithubActionUploadArtifact("'**/test-junit-report.xml'"));
                     break;
                 case GithubAction.Frontend_Reporter:
-                    newSteps.Add(new GithubActionReporter("JS - Tests", "'**/test-report.xml'", "jest-junit"));
+                    newSteps.Add(new GithubActionReporter("JS - Tests", "'**/test-junit-report.xml'", "jest-junit"));
                     break;
                 case GithubAction.Backend_Artifact:
                     newSteps.Add(new GithubActionUploadArtifact("'**/test-results.trx'"));
@@ -150,7 +150,7 @@ class GithubActionSonarCloud : GitHubActionsStep
 
 /// <summary>
 /// using: https://github.com/phoenix-actions/test-reporting
-/// from dorny/test-reporter@v1.6.0 => using fork to overcome issue #67
+/// from dorny/test-reporter => using fork to overcome issue #67
 /// </summary>
 class GithubActionReporter(string name, string path, string reporter) : GitHubActionsStep
 {

@@ -20,6 +20,7 @@ const vitestConfig: VitestUserConfigInterface = {
     setupFiles: './__tests__/_setup/setupTests.ts',
     outputFile: {
       'vitest-sonar-reporter': './reports/test-report.xml',
+      junit: './reports/test-junit-report.xml',
     },
     coverage: {
       provider: 'istanbul',

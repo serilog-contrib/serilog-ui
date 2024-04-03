@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "start": "vite",
     "test": "vitest",
-    "test:ci": "vitest run --reporter=default --reporter=vitest-sonar-reporter --coverage",
+    "test:ci": "vitest run --reporter=default --reporter=junit --reporter=vitest-sonar-reporter --coverage",
     "test:ui": "vitest --ui --reporter=default"
   },
   "dependencies": {

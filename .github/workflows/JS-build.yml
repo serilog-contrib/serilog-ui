@@ -71,4 +71,4 @@ jobs:
         if: always()
         with:
           name: test-results
-          path: '**/test-report.xml'
+          path: '**/test-junit-report.xml'
