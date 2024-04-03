@@ -42,7 +42,10 @@ namespace Serilog.Ui.MsSqlServerProvider
         private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
         {
             var queryBuilder = new StringBuilder();
-            queryBuilder.Append($"SELECT [Id], [{ColumnMessageName}], [{ColumnLevelName}], [{ColumnTimestampName}], [Exception], [Properties] ");
+            const string level = $"[{ColumnLevelName}]";
+            const string message = $"[{ColumnMessageName}]";
+            const string timestamp = $"[{ColumnTimestampName}]";
+            queryBuilder.Append($"SELECT [Id], {message}, {level}, {timestamp}, [Exception], [Properties] ");
             queryBuilder.Append($"FROM [{_options.Schema}].[{_options.TableName}] ");
 
             GenerateWhereClause(queryBuilder, queryParams);
