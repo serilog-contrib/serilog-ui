@@ -89,7 +89,7 @@ class GithubActionUploadArtifact(string path) : GitHubActionsStep
     {
         writer.WriteLine(); // empty line to separate tasks
 
-        writer.WriteLine("- uses: actions/upload-artifact@v4");
+        writer.WriteLine("- uses: actions/upload-artifact@v3");
 
         using (writer.Indent())
         {
