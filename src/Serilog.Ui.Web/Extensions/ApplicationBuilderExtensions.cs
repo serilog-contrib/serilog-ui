@@ -31,7 +31,7 @@ namespace Serilog.Ui.Web.Extensions
             using var scope = applicationBuilder.ApplicationServices.CreateScope();
             var providers = scope.ServiceProvider.GetServices<IDataProvider>();
             var disabledSortKeys = providers
-                .Where(sd => DisabledSortProviders.Any(pr => sd.GetType().Name.StartsWith(pr)))
+                .Where(sd => Array.Exists(DisabledSortProviders, pr => sd.GetType().Name.StartsWith(pr)))
                 .Select(p => p.Name);
 
             var uiOptions = new UiOptions
