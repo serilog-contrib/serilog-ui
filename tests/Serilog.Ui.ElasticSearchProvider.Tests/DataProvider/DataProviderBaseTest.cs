@@ -10,8 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Primitives;
 using Xunit;
 using NSubstitute.ExceptionExtensions;
+using Serilog.Ui.Core.Models;
 
 namespace ElasticSearch.Tests.DataProvider
 {
@@ -39,7 +41,9 @@ namespace ElasticSearch.Tests.DataProvider
                 .ThrowsAsync(new ElasticsearchClientException("no connection to db"));
 
             var sut = new ElasticSearchDbDataProvider(elasticClientMock, new());
-            var assert = () => sut.FetchDataAsync(1, 10);
+
+            var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "10", };
+            var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
             return assert.Should().ThrowExactlyAsync<ElasticsearchClientException>().WithMessage("no connection to db");
         }

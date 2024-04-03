@@ -3,8 +3,11 @@ using FluentAssertions;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Core;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Primitives;
+using Serilog.Ui.Core.Models;
 using Xunit;
 
 namespace Serilog.Ui.Common.Tests.TestSuites.Impl
@@ -19,7 +22,8 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         [Fact]
         public virtual async Task It_finds_all_data_with_default_search()
         {
-            var res = await Provider.FetchDataAsync(1, 10);
+            var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "10" };
+            var res = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
             res.Item1.Should().HaveCount(10);
             res.Item2.Should().Be(LogCollector.DataSet.Count);
@@ -28,12 +32,16 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         [Fact]
         public virtual async Task It_finds_data_with_all_filters()
         {
-            var (logs, count) = await Provider.FetchDataAsync(1,
-                10,
-                LogCollector.Example.Level,
-                LogCollector.Example.Message[3..],
-                LogCollector.Example.Timestamp.AddSeconds(-2),
-                LogCollector.Example.Timestamp.AddSeconds(2));
+            var query = new Dictionary<string, StringValues>
+            {
+                ["page"] = "1",
+                ["count"] = "10",
+                ["level"] = LogCollector.Example.Level,
+                ["search"] = LogCollector.Example.Message[3..],
+                ["startDate"] = LogCollector.Example.Timestamp.AddSeconds(-2).ToString("O"),
+                ["endDate"] = LogCollector.Example.Timestamp.AddSeconds(2).ToString("O")
+            };
+            var (logs, count) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
             var log = logs.First();
             log.Message.Should().Be(LogCollector.Example.Message);
@@ -49,9 +57,15 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             // ARRANGE
             var lastTimeStamp = LogCollector.TimesSamples.ElementAt(LogCollector.TimesSamples.Count() - 1).AddSeconds(-50);
             var afterTimeStampCount = LogCollector.DataSet.Count(p => p.Timestamp > lastTimeStamp);
+            var query = new Dictionary<string, StringValues>
+            {
+                ["page"] = "1",
+                ["count"] = "1000",
+                ["startDate"] = lastTimeStamp.ToString("O")
+            };
 
             // ACT
-            var (logs, count) = await Provider.FetchDataAsync(1, 1000, startDate: lastTimeStamp);
+            var (logs, count) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
             var enumerateLogs = logs.ToList();
 
             // ASSERT
@@ -71,11 +85,21 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         [Fact]
         public virtual async Task It_finds_only_data_emitted_before_date()
         {
+            // ARRANGE
             var firstTimeStamp = LogCollector.TimesSamples
                 .ElementAt(LogCollector.TimesSamples.Count() - 1).AddSeconds(50);
             var beforeTimeStampCount = LogCollector.DataSet.Count(p => p.Timestamp < firstTimeStamp);
-            var (logs, count) = await Provider.FetchDataAsync(1, 1000, endDate: firstTimeStamp);
+            var query = new Dictionary<string, StringValues>
+            {
+                ["page"] = "1",
+                ["count"] = "1000",
+                ["endDate"] = firstTimeStamp.ToString("O")
+            };
 
+            // ACT
+            var (logs, count) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
+
+            // ASSERT
             var enumerateLogs = logs.ToList();
             enumerateLogs.Should().NotBeEmpty();
             enumerateLogs.Should().HaveCount(beforeTimeStampCount);
@@ -86,12 +110,23 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         [Fact]
         public virtual async Task It_finds_only_data_emitted_in_dates_range()
         {
+            // ARRANGE
             var firstTimeStamp = LogCollector.TimesSamples.First().AddSeconds(-50);
             var lastTimeStamp = LogCollector.TimesSamples.Last();
             var inTimeStampCount = LogCollector.DataSet
                 .Count(p => p.Timestamp >= firstTimeStamp && p.Timestamp <= lastTimeStamp);
-            var (logs, count) = await Provider.FetchDataAsync(1, 10, startDate: firstTimeStamp, endDate: lastTimeStamp);
+            var query = new Dictionary<string, StringValues>
+            {
+                ["page"] = "1",
+                ["count"] = "10",
+                ["startDate"] = firstTimeStamp.ToString("O"),
+                ["endDate"] = lastTimeStamp.ToString("O")
+            };
 
+            // ACT
+            var (logs, count) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
+
+            // ASSERT
             var results = logs.ToList();
             results.Should().NotBeEmpty();
             results.Should().HaveCount(inTimeStampCount);
@@ -108,10 +143,19 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         [Fact]
         public virtual async Task It_finds_only_data_with_specific_level()
         {
+            // ARRANGE
             var chosenLvl = LogCollector.CountByLevel.FirstOrDefault(p => p.Value > 0);
+            var query = new Dictionary<string, StringValues>
+            {
+                ["page"] = "1",
+                ["count"] = "10",
+                ["level"] = chosenLvl.Key
+            };
 
-            var (logs, count) = await Provider.FetchDataAsync(1, 10, level: chosenLvl.Key);
+            // ACT
+            var (logs, count) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
+            // ASSERT
             var results = logs.ToList();
             results.Should().NotBeEmpty();
             results.Should().OnlyContain(p => p.Level == chosenLvl.Key);
@@ -121,10 +165,19 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         [Fact]
         public virtual async Task It_finds_only_data_with_specific_message_content()
         {
+            // ARRANGE
             var msg = LogCollector.MessagePiecesSamples.FirstOrDefault();
+            var query = new Dictionary<string, StringValues>
+            {
+                ["page"] = "1",
+                ["count"] = "10",
+                ["search"] = msg
+            };
 
-            var (logs, count) = await Provider.FetchDataAsync(1, 10, searchCriteria: msg);
+            // ACT
+            var (logs, count) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
+            // ASSERT
             var results = logs.ToList();
             results.Should().NotBeEmpty();
             results.Should().OnlyContain(p =>
@@ -137,12 +190,20 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         [Fact]
         public virtual async Task It_finds_same_data_on_same_repeated_search()
         {
+            // ARRANGE
             var chosenLvl = LogCollector.CountByLevel.FirstOrDefault(p => p.Value > 0);
+            var query = new Dictionary<string, StringValues>
+            {
+                ["page"] = "3",
+                ["count"] = "3",
+                ["level"] = chosenLvl.Key,
+            };
 
-            var (logs, count) = await Provider.FetchDataAsync(3, 3, level: chosenLvl.Key);
+            // ACT
+            var (logs, count) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
+            var (logs2Nd, count2Nd) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
-            var (logs2Nd, count2Nd) = await Provider.FetchDataAsync(3, 3, level: chosenLvl.Key);
-
+            // ASSERT
             logs.Should().BeEquivalentTo(logs2Nd);
             count.Should().Be(count2Nd);
         }

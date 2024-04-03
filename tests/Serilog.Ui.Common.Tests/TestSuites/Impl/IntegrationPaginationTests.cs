@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Ardalis.GuardClauses;
 using FluentAssertions;
 using Serilog.Ui.Common.Tests.DataSamples;
@@ -7,27 +8,23 @@ using Serilog.Ui.Core.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions.Extensions;
+using Microsoft.Extensions.Primitives;
 using Xunit;
 
 namespace Serilog.Ui.Common.Tests.TestSuites.Impl
 {
-    public abstract class IntegrationPaginationTests<TDbRunner> : IIntegrationPaginationTests
+    public abstract class IntegrationPaginationTests<TDbRunner>(TDbRunner instance) : IIntegrationPaginationTests
         where TDbRunner : class, IIntegrationRunner
     {
-        private readonly LogModelPropsCollector _logCollector;
+        private readonly LogModelPropsCollector _logCollector = instance.GetPropsCollector();
 
-        protected readonly IDataProvider Provider;
-
-        protected IntegrationPaginationTests(TDbRunner instance)
-        {
-            _logCollector = instance.GetPropsCollector();
-            Provider = Guard.Against.Null(instance.GetDataProvider());
-        }
+        protected readonly IDataProvider Provider = Guard.Against.Null(instance.GetDataProvider());
 
         [Fact]
         public virtual async Task It_fetches_with_limit()
         {
-            var (logs, _) = await Provider.FetchDataAsync(1, 5);
+            var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "5" };
+            var (logs, _) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
             logs.Should().NotBeEmpty().And.HaveCount(5);
         }
@@ -36,7 +33,8 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         public virtual async Task It_fetches_with_limit_and_skip()
         {
             var example = _logCollector.Example;
-            var (logs, _) = await Provider.FetchDataAsync(2, 1, level: example.Level);
+            var query = new Dictionary<string, StringValues> { ["page"] = "2", ["count"] = "1", ["level"] = example.Level };
+            var (logs, _) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
             var results = logs.ToList();
             results.Should().NotBeEmpty().And.HaveCount(1);
@@ -48,7 +46,8 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         public virtual async Task It_fetches_with_skip()
         {
             var example = _logCollector.Example;
-            var (logs, _) = await Provider.FetchDataAsync(2, 1, level: example.Level);
+            var query = new Dictionary<string, StringValues> { ["page"] = "2", ["count"] = "1", ["level"] = example.Level };
+            var (logs, _) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
             var results = logs.ToList();
             results.Should().NotBeEmpty();
@@ -60,39 +59,44 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         public virtual async Task It_fetches_with_sort_by_timestamp()
         {
             // default sorting!
-            var (descLogs, _) = await Provider.FetchDataAsync(1, 50);
+            var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "50" };
+            var (descLogs, _) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
             var desc = descLogs.ToList();
-            desc.ForEach(p =>
-            {
-                p.Timestamp = p.Timestamp.AddNanoseconds(-p.Timestamp.Nanosecond).AddMicroseconds(-p.Timestamp.Microsecond);
-            });
+            desc.ForEach(p => { p.Timestamp = p.Timestamp.AddNanoseconds(-p.Timestamp.Nanosecond).AddMicroseconds(-p.Timestamp.Microsecond); });
 
             desc.Should().NotBeEmpty().And.BeInDescendingOrder(model => model.Timestamp);
 
-            var (ascLogs, _) =
-                await Provider.FetchDataAsync(1, 50, sortOn: SearchOptions.SortProperty.Timestamp, sortBy: SearchOptions.SortDirection.Asc);
+            query["sortOn"] = $"{SearchOptions.SortProperty.Timestamp}";
+            query["sortBy"] = $"{SearchOptions.SortDirection.Asc}";
+            var (ascLogs, _) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
             var asc = ascLogs.ToList();
 
-            asc.ForEach(p =>
-            {
-                p.Timestamp = p.Timestamp.AddNanoseconds(-p.Timestamp.Nanosecond).AddMicroseconds(-p.Timestamp.Microsecond);
-            });
-            
+            asc.ForEach(p => { p.Timestamp = p.Timestamp.AddNanoseconds(-p.Timestamp.Nanosecond).AddMicroseconds(-p.Timestamp.Microsecond); });
+
             asc.Should().NotBeEmpty().And.BeInAscendingOrder(model => model.Timestamp);
         }
 
         [Fact]
         public virtual async Task It_fetches_with_sort_by_message()
         {
-            var (descLogs, _) =
-                await Provider.FetchDataAsync(1, 50, sortOn: SearchOptions.SortProperty.Message, sortBy: SearchOptions.SortDirection.Desc);
+            var query = new Dictionary<string, StringValues>
+            {
+                ["page"] = "1",
+                ["count"] = "50",
+                ["sortOn"] = $"{SearchOptions.SortProperty.Message}",
+                ["sortBy"] = $"{SearchOptions.SortDirection.Desc}"
+            };
+
+            var (descLogs, _) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
             descLogs.Should().NotBeEmpty().And.BeInDescendingOrder(model => model.Message, StringComparer.OrdinalIgnoreCase);
 
+            query["sortOn"] = $"{SearchOptions.SortProperty.Message}";
+            query["sortBy"] = $"{SearchOptions.SortDirection.Asc}";
             var (ascLogs, _) =
-                await Provider.FetchDataAsync(1, 50, sortOn: SearchOptions.SortProperty.Message, sortBy: SearchOptions.SortDirection.Asc);
+                await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
             ascLogs.Should().NotBeEmpty().And.BeInAscendingOrder(model => model.Message, StringComparer.OrdinalIgnoreCase);
         }
@@ -100,13 +104,21 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         [Fact]
         public virtual async Task It_fetches_with_sort_by_level()
         {
-            var (descLogs, _) =
-                await Provider.FetchDataAsync(1, 50, sortOn: SearchOptions.SortProperty.Level, sortBy: SearchOptions.SortDirection.Desc);
+            var query = new Dictionary<string, StringValues>
+            {
+                ["page"] = "1",
+                ["count"] = "50",
+                ["sortOn"] = $"{SearchOptions.SortProperty.Level}",
+                ["sortBy"] = $"{SearchOptions.SortDirection.Desc}"
+            };
+
+            var (descLogs, _) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
             descLogs.Should().NotBeEmpty().And.BeInDescendingOrder(model => model.Level, StringComparer.OrdinalIgnoreCase);
 
-            var (ascLogs, _) =
-                await Provider.FetchDataAsync(1, 50, sortOn: SearchOptions.SortProperty.Level, sortBy: SearchOptions.SortDirection.Asc);
+            query["sortOn"] = $"{SearchOptions.SortProperty.Level}";
+            query["sortBy"] = $"{SearchOptions.SortDirection.Asc}";
+            var (ascLogs, _) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
             ascLogs.Should().NotBeEmpty().And.BeInAscendingOrder(model => model.Level, StringComparer.OrdinalIgnoreCase);
         }

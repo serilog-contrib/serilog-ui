@@ -7,6 +7,8 @@ using Serilog.Ui.MongoDbProvider;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Primitives;
+using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.OptionsBuilder;
 using Xunit;
 
@@ -35,14 +37,16 @@ namespace MongoDb.Tests.DataProvider
             var mongoDbMock = Substitute.For<IMongoDatabase>();
             var mongoCollectionMock = Substitute.For<IMongoCollection<MongoDbLogModel>>();
             mongoClientMock
-                .GetDatabase(Arg.Any<string>(), null)
+                .GetDatabase(Arg.Any<string>())
                 .Returns(mongoDbMock);
-            mongoDbMock.GetCollection<MongoDbLogModel>(Arg.Any<string>(), null).Returns(mongoCollectionMock);
+            mongoDbMock.GetCollection<MongoDbLogModel>(Arg.Any<string>()).Returns(mongoCollectionMock);
             mongoCollectionMock.Indexes.Throws(new ArithmeticException());
 
             var sut = new MongoDbDataProvider(mongoClientMock,
                 new MongoDbOptions().WithConnectionString("some").WithCollectionName("coll").WithDatabaseName("db"));
-            var assert = () => sut.FetchDataAsync(1, 10, searchCriteria: "break-db");
+
+            var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "10", ["search"] = "break-db" };
+            var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
             return assert.Should().ThrowAsync<ArithmeticException>();
         }
     }

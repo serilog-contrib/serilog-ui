@@ -24,7 +24,7 @@ public class QueryBuilderTests
         QueryBuilder.SetSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative);
 
         // Act
-        var query = QueryBuilder.BuildFetchLogsQuery(schema, tableName, level, searchCriteria, ref startDate, ref endDate);
+        var query = QueryBuilder.BuildFetchLogsQuery(schema, tableName, level, searchCriteria, startDate, endDate);
 
         // Assert
         Assert.Equal(expectedQuery, query);

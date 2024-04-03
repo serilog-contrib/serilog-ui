@@ -7,10 +7,5 @@ namespace MySql.Tests.DataProvider.MariaDb
 {
     [Collection(nameof(MariaDbDataProvider))]
     [Trait("Integration-Search", "MariaDb")]
-    public class DataProviderSearchTest : IntegrationSearchTests<MariaDbTestProvider>
-    {
-        public DataProviderSearchTest(MariaDbTestProvider instance) : base(instance)
-        {
-        }
-    }
+    public class DataProviderSearchTest(MariaDbTestProvider instance) : IntegrationSearchTests<MariaDbTestProvider>(instance);
 }

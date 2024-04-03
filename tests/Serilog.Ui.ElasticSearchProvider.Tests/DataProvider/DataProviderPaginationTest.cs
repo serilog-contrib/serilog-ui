@@ -1,23 +1,25 @@
-﻿using Elastic.Elasticsearch.Xunit.XunitPlumbing;
+﻿using System.Collections.Generic;
+using Elastic.Elasticsearch.Xunit.XunitPlumbing;
 using ElasticSearch.Tests.Util;
 using FluentAssertions;
 using Serilog.Ui.Common.Tests.TestSuites.Impl;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Primitives;
+using Serilog.Ui.Core.Models;
 using Xunit;
 
 namespace ElasticSearch.Tests.DataProvider
 {
     [Trait("Integration-Pagination", "Elastic")]
-    public class DataProviderPaginationTest : IntegrationPaginationTests<ElasticTestProvider>,
+    public class DataProviderPaginationTest(ElasticTestProvider instance) : IntegrationPaginationTests<ElasticTestProvider>(instance),
         IClassFixture<ElasticTestProvider>,
         IClusterFixture<Elasticsearch7XCluster>
     {
-        public DataProviderPaginationTest(ElasticTestProvider instance) : base(instance) { }
-
         [I]
         public override Task It_throws_when_skip_is_zero()
         {
-            var test = () => Provider.FetchDataAsync(0, 1);
+            var query = new Dictionary<string, StringValues> { ["page"] = "0", ["count"] = "1" };
+            var test = () => Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
             return test.Should().NotThrowAsync("because Elastic Client catches the error");
         }
 
@@ -26,7 +28,7 @@ namespace ElasticSearch.Tests.DataProvider
         {
             return Task.CompletedTask;
         }
-        
+
         [Fact(Skip = "sort by message is disabled in Elastic Search provider.")]
         public override Task It_fetches_with_sort_by_message()
         {

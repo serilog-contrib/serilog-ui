@@ -6,12 +6,7 @@ using Xunit;
 namespace ElasticSearch.Tests.DataProvider
 {
     [Trait("Integration-Search", "Elastic")]
-    public class DataProviderSearchTest : IntegrationSearchTests<ElasticTestProvider>,
+    public class DataProviderSearchTest(ElasticTestProvider instance) : IntegrationSearchTests<ElasticTestProvider>(instance),
         IClassFixture<ElasticTestProvider>,
-        IClusterFixture<Elasticsearch7XCluster>
-    {
-        public DataProviderSearchTest(ElasticTestProvider instance) : base(instance)
-        {
-        }
-    }
+        IClusterFixture<Elasticsearch7XCluster>;
 }

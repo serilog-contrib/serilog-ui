@@ -4,6 +4,8 @@ using Serilog.Ui.MsSqlServerProvider;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Primitives;
+using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.OptionsBuilder;
 using Xunit;
 
@@ -28,7 +30,8 @@ namespace MsSql.Tests.DataProvider
         {
             var sut = new SqlServerDataProvider(new RelationalDbOptions("dbo").WithConnectionString("connString").WithTable("logs"));
 
-            var assert = () => sut.FetchDataAsync(1, 10);
+            var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "10", };
+            var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
             return assert.Should().ThrowExactlyAsync<ArgumentException>();
         }
     }

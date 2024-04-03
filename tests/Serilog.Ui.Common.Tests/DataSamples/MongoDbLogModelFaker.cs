@@ -28,7 +28,7 @@ namespace Serilog.Ui.Common.Tests.DataSamples
                 UtcTimeStamp = p.Timestamp.ToUniversalTime(),
                 Properties = JsonConvert.DeserializeObject<Properties>(p.Properties),
                 Exception = faker.System.Exception() // Serialization round-trip not possible for an exception, so we generate a new exception.
-                    .ToBsonDocument(),
+                    .ToBsonDocument()
             });
 
             return (logs, modelCollector);

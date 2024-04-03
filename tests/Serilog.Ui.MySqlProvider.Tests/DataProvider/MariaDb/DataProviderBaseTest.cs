@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.Primitives;
 using Serilog.Ui.Common.Tests.TestSuites;
+using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.MySqlProvider;
 using Xunit;
@@ -28,7 +30,8 @@ namespace MySql.Tests.DataProvider.MariaDb
         {
             var sut = new MariaDbDataProvider(new RelationalDbOptions("dbo").WithConnectionString("connString").WithTable("logs"));
 
-            var assert = () => sut.FetchDataAsync(1, 10);
+            var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "10", };
+            var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
             return assert.Should().ThrowExactlyAsync<ArgumentException>();
         }
     }

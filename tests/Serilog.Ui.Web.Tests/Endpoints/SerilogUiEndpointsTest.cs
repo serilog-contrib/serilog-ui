@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
@@ -133,21 +134,14 @@ namespace Serilog.Ui.Web.Tests.Endpoints
         {
             public string Name => "FakeFirstProvider";
 
-            public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page,
-                int count,
-                string? level = null,
-                string? searchCriteria = null,
-                DateTime? startDate = null,
-                DateTime? endDate = null,
-                SearchOptions.SortProperty sortOn = SearchOptions.SortProperty.Timestamp,
-                SearchOptions.SortDirection sortBy = SearchOptions.SortDirection.Desc)
+            public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
             {
-                if (page != 1 ||
-                    count != 10 ||
-                    !string.IsNullOrWhiteSpace(level) ||
-                    !string.IsNullOrWhiteSpace(searchCriteria) ||
-                    startDate != null ||
-                    endDate != null)
+                if (queryParams.Page != 1 ||
+                    queryParams.Count != 10 ||
+                    !string.IsNullOrWhiteSpace(queryParams.Level) ||
+                    !string.IsNullOrWhiteSpace(queryParams.SearchCriteria) ||
+                    queryParams.StartDate != null ||
+                    queryParams.EndDate != null)
                     return Task.FromResult<(IEnumerable<LogModel>, int)>((Array.Empty<LogModel>(), 0));
 
                 var modelArray = new LogModel[10];
@@ -160,21 +154,14 @@ namespace Serilog.Ui.Web.Tests.Endpoints
         {
             public string Name => "FakeSecondProvider";
 
-            public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page,
-                int count,
-                string? level = null,
-                string? searchCriteria = null,
-                DateTime? startDate = null,
-                DateTime? endDate = null,
-                SearchOptions.SortProperty sortOn = SearchOptions.SortProperty.Timestamp,
-                SearchOptions.SortDirection sortBy = SearchOptions.SortDirection.Desc)
+            public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
             {
-                if (page != 2 ||
-                    count != 30 ||
-                    !(level?.Equals("Verbose") ?? false) ||
-                    !(searchCriteria?.Equals("test") ?? false) ||
-                    !startDate.HasValue || startDate.Value.Equals(DateTime.MinValue) ||
-                    !endDate.HasValue || endDate.Value.Equals(DateTime.MinValue))
+                if (queryParams.Page != 2 ||
+                    queryParams.Count != 30 ||
+                    !(queryParams.Level?.Equals("Verbose") ?? false) ||
+                    !(queryParams.SearchCriteria?.Equals("test") ?? false) ||
+                    !queryParams.StartDate.HasValue || queryParams.StartDate.Value.Equals(DateTime.MinValue) ||
+                    !queryParams.EndDate.HasValue || queryParams.EndDate.Value.Equals(DateTime.MinValue))
                     return Task.FromResult<(IEnumerable<LogModel>, int)>((Array.Empty<LogModel>(), 0));
 
                 var modelArray = new LogModel[5];
@@ -185,14 +172,7 @@ namespace Serilog.Ui.Web.Tests.Endpoints
 
         private class BrokenProvider : IDataProvider
         {
-            public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page,
-                int count,
-                string level = null!,
-                string searchCriteria = null!,
-                DateTime? startDate = null,
-                DateTime? endDate = null,
-                SearchOptions.SortProperty sortOn = SearchOptions.SortProperty.Timestamp,
-                SearchOptions.SortDirection sortBy = SearchOptions.SortDirection.Desc)
+            public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
             {
                 throw new NotImplementedException();
             }

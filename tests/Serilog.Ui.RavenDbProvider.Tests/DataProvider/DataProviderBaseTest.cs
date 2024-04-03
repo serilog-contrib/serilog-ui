@@ -1,6 +1,8 @@
 ﻿using FluentAssertions;
+using Microsoft.Extensions.Primitives;
 using Raven.Client.Documents;
 using Serilog.Ui.Common.Tests.TestSuites;
+using Serilog.Ui.Core.Models;
 using Serilog.Ui.RavenDbProvider;
 
 namespace RavenDb.Tests.DataProvider;
@@ -25,7 +27,8 @@ public class DataProviderBaseTest : IUnitBaseTests
     {
         var sut = new RavenDbDataProvider(new DocumentStore(), "collection");
 
-        var assert = () => sut.FetchDataAsync(1, 10);
+        var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "10" };
+        var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
         return assert.Should().ThrowExactlyAsync<InvalidOperationException>();
     }
 }

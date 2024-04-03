@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Serilog.Events;
 using Serilog.Sinks.InMemory;
@@ -14,29 +15,21 @@ public class SerilogInMemoryDataProvider : IDataProvider
 {
     public string Name => nameof(SerilogInMemoryDataProvider);
 
-    public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page,
-        int count,
-        string? level = null,
-        string? searchCriteria = null,
-        DateTime? startDate = null,
-        DateTime? endDate = null,
-        SearchOptions.SortProperty sortOn = SearchOptions.SortProperty.Timestamp,
-        SearchOptions.SortDirection sortBy = SearchOptions.SortDirection.Desc
-        )
+    public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
     {
         var events = InMemorySink.Instance.LogEvents;
 
-        if (searchCriteria != null)
-            events = events.Where(l => l.RenderMessage().Contains(searchCriteria, StringComparison.CurrentCultureIgnoreCase));
+        if (queryParams.SearchCriteria != null)
+            events = events.Where(l => l.RenderMessage().Contains(queryParams.SearchCriteria, StringComparison.CurrentCultureIgnoreCase));
 
-        if (level != null && Enum.TryParse("Active", out LogEventLevel logLevel))
+        if (queryParams.Level != null && Enum.TryParse("Active", out LogEventLevel logLevel))
         {
             events = events.Where(l => l.Level == logLevel);
         }
 
         var logs = events
-            .Skip((page - 1) * count)
-            .Take(count)
+            .Skip(queryParams.Page * queryParams.Count)
+            .Take(queryParams.Count)
             .Select(l => new LogModel
             {
                 Level = l.Level.ToString(),

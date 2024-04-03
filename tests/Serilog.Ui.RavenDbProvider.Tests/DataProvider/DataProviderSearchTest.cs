@@ -6,9 +6,4 @@ namespace RavenDb.Tests.DataProvider;
 
 [Collection(nameof(RavenDbDataProvider))]
 [Trait("Integration-Search", "RavenDb")]
-public class DataProviderSearchTest : IntegrationSearchTests<RavenDbTestProvider>
-{
-    public DataProviderSearchTest(RavenDbTestProvider instance) : base(instance)
-    {
-    }
-}
+public class DataProviderSearchTest(RavenDbTestProvider instance) : IntegrationSearchTests<RavenDbTestProvider>(instance);

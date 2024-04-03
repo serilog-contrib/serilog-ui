@@ -20,13 +20,13 @@ namespace Serilog.Ui.Common.Tests.DataSamples
             [
                 models.ElementAt(0).Message,
                 models.ElementAt(1).Message.Substring(1, models.ElementAt(1).Message.Length / 2),
-                models.ElementAt(2).Message.Substring(1, models.ElementAt(2).Message.Length / 2),
+                models.ElementAt(2).Message.Substring(1, models.ElementAt(2).Message.Length / 2)
             ];
             TimesSamples = new List<DateTime>
             {
                 models.ElementAt(0).Timestamp,
                 models.ElementAt(1).Timestamp,
-                models.ElementAt(2).Timestamp,
+                models.ElementAt(2).Timestamp
             }.OrderBy(p => p.Ticks);
         }
 

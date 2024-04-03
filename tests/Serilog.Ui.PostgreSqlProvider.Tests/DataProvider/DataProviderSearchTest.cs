@@ -7,9 +7,4 @@ namespace Postgres.Tests.DataProvider;
 
 [Collection(nameof(PostgresDataProvider))]
 [Trait("Integration-Search", "Postgres")]
-public class DataProviderSearchTest : IntegrationSearchTests<PostgresTestProvider>
-{
-    public DataProviderSearchTest(PostgresTestProvider instance) : base(instance)
-    {
-    }
-}
+public class DataProviderSearchTest(PostgresTestProvider instance) : IntegrationSearchTests<PostgresTestProvider>(instance);
