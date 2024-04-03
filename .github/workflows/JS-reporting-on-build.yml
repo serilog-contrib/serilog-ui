@@ -7,15 +7,18 @@ on:
     workflows: ['JS-build']
     types:
       - completed
+permissions:
+  contents: read
+  actions: read
+  checks: write
 
 jobs:
   upload:
     runs-on: ubuntu-latest
     steps:
-    - uses: phoenix-actions/test-reporting@v9
-      with:
-        artifact: test-results            # artifact name
-        name: JS - Tests                  # Name of the check run which will be created
-        path: '**/jest-*.xml'             # Path to test results (inside artifact .zip)
-        reporter: jest-junit              # Format of test results
-        output-to: checks
+      - uses: dorny/test-reporter@v1.8.0
+        with:
+          artifact: test-results # artifact name
+          name: JS - Tests # Name of the check run which will be created
+          path: '**/test-report.xml' # Path to test results (inside artifact .zip)
+          reporter: jest-junit # Format of test results
