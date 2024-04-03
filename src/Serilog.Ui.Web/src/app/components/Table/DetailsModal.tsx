@@ -12,16 +12,16 @@ import { renderCodeContent } from '../../util/prettyPrints';
 
 const DetailsModal = ({
   modalContent,
+  buttonTitle,
   modalTitle,
   contentType,
   disabled,
-  buttonTitle,
 }: {
   modalContent: string;
+  buttonTitle: string;
   modalTitle?: string;
   contentType?: string;
   disabled?: boolean;
-  buttonTitle?: string;
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const theme = useMantineTheme();
@@ -60,7 +60,7 @@ const DetailsModal = ({
 
       <Box display="grid" style={{ justifyContent: 'center', alignContent: 'center' }}>
         <Button size="compact-sm" disabled={disabled} onClick={open}>
-          {buttonTitle ? buttonTitle : 'View'}
+          {buttonTitle}
         </Button>
       </Box>
     </>

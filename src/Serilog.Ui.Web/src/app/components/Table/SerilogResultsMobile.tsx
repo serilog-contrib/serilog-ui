@@ -60,7 +60,7 @@ const MobileSkeleton = () => {
       key={value}
       radius="none"
       mb="sm"
-      style={{ border: `0.1em dashed ${theme.colors.gray![7]}` }}
+      style={{ border: `0.1em dashed ${theme.colors.gray[7]}` }}
     />
   ));
 };

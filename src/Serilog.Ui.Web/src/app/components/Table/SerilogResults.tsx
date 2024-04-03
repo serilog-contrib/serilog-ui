@@ -179,6 +179,7 @@ const TableCell = ({
               modalContent={content}
               modalTitle={codeModalTitle}
               contentType={codeContentType}
+              buttonTitle="View"
             />
           ) : null}
         </Table.Td>
