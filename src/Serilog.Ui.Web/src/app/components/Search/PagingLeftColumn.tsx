@@ -8,7 +8,8 @@ import {
 } from '@tabler/icons-react';
 import useQueryLogs from 'app/hooks/useQueryLogs';
 import { useSearchForm } from 'app/hooks/useSearchForm';
-import { useEffect } from 'react';
+import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
+import { useEffect, useMemo } from 'react';
 import { useController } from 'react-hook-form';
 import { SortDirectionOptions, SortPropertyOptions } from 'types/types';
 
@@ -27,20 +28,38 @@ export const PagingLeftColumn = ({
 }: {
   changePage: (page: number) => void;
 }) => {
+  const { disableSortOnKeys } = useSerilogUiProps();
   const { refetch } = useQueryLogs();
-  const { control } = useSearchForm();
+  const { control, watch } = useSearchForm();
+  const currentDbKey = watch('table');
 
   const {
     field: { onChange, ...fieldEntries },
   } = useController({ ...control, name: 'entriesPerPage' });
   const { field: fieldSortOn } = useController({ ...control, name: 'sortOn' });
   const { field: fieldSortBy } = useController({ ...control, name: 'sortBy' });
+
   const isSortByDesc = fieldSortBy.value === SortDirectionOptions.Desc;
+
+  const disableSortOn = useMemo(
+    () =>
+      !!disableSortOnKeys?.length &&
+      !!currentDbKey &&
+      disableSortOnKeys.includes(currentDbKey),
+    [currentDbKey, disableSortOnKeys],
+  );
 
   const setEntries = (event: string | null) => {
     changePage(1);
     onChange(event);
   };
+
+  // reset sort property to default, if db key can't be sorted
+  useEffect(() => {
+    if (disableSortOn && fieldSortOn.value !== SortPropertyOptions.Timestamp) {
+      fieldSortOn.onChange(SortPropertyOptions.Timestamp);
+    }
+  }, [disableSortOn, fieldSortOn]);
 
   useEffect(() => {
     void refetch();
@@ -72,6 +91,7 @@ export const PagingLeftColumn = ({
           label=""
           leftSection={<IconColumns />}
           data={sortOnOptions}
+          disabled={disableSortOn}
           allowDeselect={false}
         ></Select>
         <ActionIcon

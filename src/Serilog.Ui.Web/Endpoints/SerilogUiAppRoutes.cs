@@ -65,7 +65,8 @@ namespace Serilog.Ui.Web.Endpoints
         {
             var htmlStringBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
             var authType = options.Authorization.AuthenticationType.ToString();
-            var encodeAuthOpts = Uri.EscapeDataString(JsonSerializer.Serialize(new { options.RoutePrefix, authType, options.HomeUrl }, JsonSerializerOptions));
+            var feOpts = new { options.RoutePrefix, authType, options.HomeUrl, disableSortOnKeys = options.DisabledSortOnKeys };
+            var encodeAuthOpts = Uri.EscapeDataString(JsonSerializer.Serialize(feOpts, JsonSerializerOptions));
 
             htmlStringBuilder
                 .Replace("%(Configs)", encodeAuthOpts)

@@ -16,7 +16,7 @@ namespace Serilog.Ui.MySqlProvider.Extensions
         /// </summary>
         /// <param name="optionsBuilder"> The options builder. </param>
         /// <param name="setupOptions">The MySql options action.</param>
-        public static void UseMySqlServer(
+        public static ISerilogUiOptionsBuilder UseMySqlServer(
             this ISerilogUiOptionsBuilder optionsBuilder,
             Action<RelationalDbOptions> setupOptions
         )
@@ -27,6 +27,8 @@ namespace Serilog.Ui.MySqlProvider.Extensions
 
             optionsBuilder.Services.AddScoped<IDataProvider, MySqlDataProvider>(p =>
                 ActivatorUtilities.CreateInstance<MySqlDataProvider>(p, dbOptions));
+
+            return optionsBuilder;
         }
 
         /// <summary>
@@ -35,7 +37,7 @@ namespace Serilog.Ui.MySqlProvider.Extensions
         /// </summary>
         /// <param name="optionsBuilder"> The options builder. </param>
         /// <param name="setupOptions">The MySql options action.</param>
-        public static void UseMariaDbServer(
+        public static ISerilogUiOptionsBuilder UseMariaDbServer(
             this ISerilogUiOptionsBuilder optionsBuilder,
             Action<RelationalDbOptions> setupOptions
         )
@@ -45,6 +47,8 @@ namespace Serilog.Ui.MySqlProvider.Extensions
             dbOptions.Validate();
 
             optionsBuilder.Services.AddScoped<IDataProvider, MariaDbDataProvider>(p => ActivatorUtilities.CreateInstance<MariaDbDataProvider>(p, dbOptions));
+            
+            return optionsBuilder;
         }
     }
 }

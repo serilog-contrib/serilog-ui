@@ -12,6 +12,7 @@ export interface SerilogUiConfig {
   authType?: AuthType;
   routePrefix?: string;
   homeUrl?: string;
+  disableSortOnKeys?: string[];
 }
 interface SerilogUiProps extends SerilogUiConfig {
   isUtc: boolean;
@@ -37,6 +38,7 @@ export const SerilogUiPropsProvider = ({
         routePrefix: 'serilog-ui',
         authType: AuthType.Jwt,
         homeUrl: 'https://google.com',
+        disableSortOnKeys: [],
       });
     };
     const config = document.getElementById('serilog-ui-props')?.innerText;

@@ -8,7 +8,6 @@ import App from './app/App';
 /**
  * TODO:
 (branch/routing-by-id)
- * >> disable sort filter in case of elastic...
  * >> if auth on index is active, redirect to unauth route instead of empty html page (react router)
  * >> react router setup to catch id routing
  * >> endpoint and additional model property

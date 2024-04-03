@@ -14,7 +14,7 @@ namespace Serilog.Ui.PostgreSqlProvider.Extensions
         /// </summary>
         /// <param name="optionsBuilder"> The Serilog UI option builder. </param>
         /// <param name="setupOptions">The Postgres Sql options action.</param>
-        public static void UseNpgSql(
+        public static ISerilogUiOptionsBuilder UseNpgSql(
             this ISerilogUiOptionsBuilder optionsBuilder,
             Action<PostgreSqlDbOptions> setupOptions
         )
@@ -26,6 +26,8 @@ namespace Serilog.Ui.PostgreSqlProvider.Extensions
             QueryBuilder.SetSinkType(dbOptions.SinkType);
 
             optionsBuilder.Services.AddScoped<IDataProvider, PostgresDataProvider>(p => ActivatorUtilities.CreateInstance<PostgresDataProvider>(p, dbOptions));
+            
+            return optionsBuilder;
         }
     }
 }

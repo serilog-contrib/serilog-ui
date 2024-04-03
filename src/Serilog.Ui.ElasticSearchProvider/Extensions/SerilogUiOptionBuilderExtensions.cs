@@ -20,7 +20,7 @@ namespace Serilog.Ui.ElasticSearchProvider.Extensions
         /// <param name="setupOptions">The ElasticSearch options action.</param>
         /// <exception cref="ArgumentNullException"> throw if endpoint is null </exception>
         /// <exception cref="ArgumentNullException"> throw is indexName is null </exception>
-        public static void UseElasticSearchDb(this ISerilogUiOptionsBuilder optionsBuilder, Action<ElasticSearchDbOptions> setupOptions)
+        public static ISerilogUiOptionsBuilder UseElasticSearchDb(this ISerilogUiOptionsBuilder optionsBuilder, Action<ElasticSearchDbOptions> setupOptions)
         {
             var options = new ElasticSearchDbOptions();
             setupOptions.Invoke(options);
@@ -40,6 +40,8 @@ namespace Serilog.Ui.ElasticSearchProvider.Extensions
                     $"Adding multiple registrations of '{typeof(ElasticSearchDbDataProvider).FullName}' is not (yet) supported.");
 
             optionsBuilder.Services.AddScoped<IDataProvider, ElasticSearchDbDataProvider>();
+
+            return optionsBuilder;
         }
     }
 }

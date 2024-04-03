@@ -15,7 +15,7 @@ public static class SerilogUiOptionBuilderExtensions
     /// <param name="optionsBuilder">The Serilog UI options builder.</param>
     /// <param name="setupOptions">The RavenDb options action.</param>
     /// <exception cref="ArgumentNullException">throw if documentStore is null</exception>
-    public static void UseRavenDb(this ISerilogUiOptionsBuilder optionsBuilder, Action<RavenDbOptions> setupOptions)
+    public static ISerilogUiOptionsBuilder UseRavenDb(this ISerilogUiOptionsBuilder optionsBuilder, Action<RavenDbOptions> setupOptions)
     {
         var dbOptions = new RavenDbOptions();
         setupOptions(dbOptions);
@@ -31,5 +31,7 @@ public static class SerilogUiOptionBuilderExtensions
         optionsBuilder.Services.AddSingleton(dbOptions.DocumentStore);
         optionsBuilder.Services.AddScoped<IDataProvider>(serviceProvider =>
             new RavenDbDataProvider(serviceProvider.GetRequiredService<IDocumentStore>(), dbOptions.CollectionName));
+        
+        return optionsBuilder;
     }
 }

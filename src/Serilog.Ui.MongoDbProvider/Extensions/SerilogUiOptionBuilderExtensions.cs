@@ -17,7 +17,7 @@ namespace Serilog.Ui.MongoDbProvider.Extensions
         /// </summary>
         /// <param name="optionsBuilder">The options builder.</param>
         /// <param name="setupOptions">The MongoDb options action.</param>
-        public static void UseMongoDb(
+        public static ISerilogUiOptionsBuilder UseMongoDb(
             this ISerilogUiOptionsBuilder optionsBuilder,
             Action<MongoDbOptions> setupOptions)
         {
@@ -33,6 +33,8 @@ namespace Serilog.Ui.MongoDbProvider.Extensions
             if (optionsBuilder.Services.Any(c => c.ImplementationType == typeof(MongoDbDataProvider)))
                 throw new NotSupportedException($"Adding multiple registrations of '{typeof(MongoDbDataProvider).FullName}' is not (yet) supported.");
             optionsBuilder.Services.AddScoped<IDataProvider, MongoDbDataProvider>();
+
+            return optionsBuilder;
         }
     }
 }
