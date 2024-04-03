@@ -23,7 +23,7 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
     public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
     {
         queryParams.ToUtcDates();
-        
+
         var logsTask = GetLogsAsync(queryParams);
         var logCountTask = CountLogsAsync(queryParams);
         await Task.WhenAll(logsTask, logCountTask);
@@ -33,14 +33,7 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
 
     private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
     {
-        var query = QueryBuilder.BuildFetchLogsQuery(_options.Schema,
-            _options.TableName, 
-            queryParams.Level,
-            queryParams.SearchCriteria,
-            queryParams.StartDate,
-            queryParams.EndDate,
-            queryParams.SortOn,
-            queryParams.SortBy);
+        var query = QueryBuilder.BuildFetchLogsQuery(_options.Schema, _options.TableName, queryParams);
         var rowNoStart = queryParams.Page * queryParams.Count;
 
         await using var connection = new NpgsqlConnection(_options.ConnectionString);
@@ -70,12 +63,7 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
 
     private async Task<int> CountLogsAsync(FetchLogsQuery queryParams)
     {
-        var query = QueryBuilder.BuildCountLogsQuery(_options.Schema,
-            _options.TableName,
-            queryParams.Level,
-            queryParams.SearchCriteria,
-            queryParams.StartDate,
-            queryParams.EndDate);
+        var query = QueryBuilder.BuildCountLogsQuery(_options.Schema, _options.TableName, queryParams);
 
         await using var connection = new NpgsqlConnection(_options.ConnectionString);
 

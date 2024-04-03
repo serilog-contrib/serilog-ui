@@ -20,8 +20,8 @@ namespace Serilog.Ui.MongoDbProvider
 
         public MongoDbDataProvider(IMongoClient client, MongoDbOptions options)
         {
-            Guard.Against.Null(client, nameof(client));
-            _options = options ?? throw new ArgumentNullException(nameof(options));
+            Guard.Against.Null(client);
+            _options = Guard.Against.Null(options);
 
             _collection = client.GetDatabase(options.DatabaseName)
                 .GetCollection<MongoDbLogModel>(options.CollectionName);

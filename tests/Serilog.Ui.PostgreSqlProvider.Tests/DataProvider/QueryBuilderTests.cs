@@ -2,6 +2,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Microsoft.Extensions.Primitives;
+using Serilog.Ui.Core.Models;
 using Xunit;
 
 namespace Postgres.Tests.DataProvider;
@@ -16,15 +18,22 @@ public class QueryBuilderTests
         string tableName,
         string level,
         string searchCriteria,
-        ref DateTime? startDate,
-        ref DateTime? endDate,
+        DateTime? startDate,
+        DateTime? endDate,
         string expectedQuery)
     {
         // Arrange
         QueryBuilder.SetSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative);
+        var queryLogs = new Dictionary<string, StringValues>
+        {
+            ["level"] = level,
+            ["search"] = searchCriteria,
+            ["startDate"] = startDate?.ToString("O"),
+            ["endDate"] = endDate?.ToString("O")
+        };
 
         // Act
-        var query = QueryBuilder.BuildFetchLogsQuery(schema, tableName, level, searchCriteria, startDate, endDate);
+        var query = QueryBuilder.BuildFetchLogsQuery(schema, tableName, FetchLogsQuery.ParseQuery(queryLogs));
 
         // Assert
         Assert.Equal(expectedQuery, query);

@@ -18,7 +18,7 @@ internal class BasicAuthenticationFilter(
         var httpContext = httpContextAccessor.HttpContext;
         if (httpContext is null) return false;
 
-        var header = httpContext.Request.Headers["Authorization"];
+        var header = httpContext.Request.Headers.Authorization;
 
         var authValues = AuthenticationHeaderValue.Parse(header);
 

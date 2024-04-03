@@ -21,8 +21,8 @@ namespace Serilog.Ui.Web.Extensions
         /// <exception cref="ArgumentNullException">throw if applicationBuilder if null</exception>
         public static IApplicationBuilder UseSerilogUi(this IApplicationBuilder applicationBuilder, Action<UiOptions> options = null)
         {
-            Guard.Against.Null(applicationBuilder, nameof(applicationBuilder));
-            // TODO disable timestamp in case of elastic...
+            Guard.Against.Null(applicationBuilder);
+
             var uiOptions = new UiOptions();
             options?.Invoke(uiOptions);
 

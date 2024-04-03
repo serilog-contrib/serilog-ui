@@ -27,10 +27,10 @@ public class RavenDbOptions : IDbOptions
     /// <exception cref="ArgumentException"></exception>
     public void Validate()
     {
-        Guard.Against.Null(DocumentStore, nameof(DocumentStore));
-        Guard.Against.NullOrEmpty(DocumentStore.Urls, nameof(DocumentStore.Urls));
-        Guard.Against.NullOrWhiteSpace(DocumentStore.Database, nameof(DocumentStore.Database));
-        Guard.Against.NullOrWhiteSpace(CollectionName, nameof(CollectionName));
+        Guard.Against.Null(DocumentStore);
+        Guard.Against.NullOrEmpty(DocumentStore.Urls);
+        Guard.Against.NullOrWhiteSpace(DocumentStore.Database);
+        Guard.Against.NullOrWhiteSpace(CollectionName);
     }
 
     /// <summary>

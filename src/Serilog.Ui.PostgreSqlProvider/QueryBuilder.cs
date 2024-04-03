@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Serilog.Ui.Core.Models;
 using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.PostgreSqlProvider;
@@ -17,15 +18,7 @@ internal static class QueryBuilder
             : new PostgreSqlSinkColumnNames();
     }
 
-    internal static string BuildFetchLogsQuery(
-        string schema,
-        string tableName,
-        string level,
-        string searchCriteria,
-        DateTime? startDate,
-        DateTime? endDate,
-        SortProperty sortOn = SortProperty.Timestamp,
-        SortDirection sortBy = SortDirection.Desc)
+    internal static string BuildFetchLogsQuery(string schema, string tableName, FetchLogsQuery query)
     {
         StringBuilder queryBuilder = new();
 
@@ -35,21 +28,15 @@ internal static class QueryBuilder
                 $"\"{_columns.RenderedMessage}\", \"{_columns.MessageTemplate}\", \"{_columns.Level}\", \"{_columns.Timestamp}\", \"{_columns.Exception}\", \"{_columns.LogEventSerialized}\" AS \"Properties\"")
             .Append($" FROM \"{schema}\".\"{tableName}\"");
 
-        GenerateWhereClause(queryBuilder, level, searchCriteria, ref startDate, ref endDate);
-        var sortClause = GenerateSortClause(sortOn, sortBy);
+        GenerateWhereClause(queryBuilder, query.Level, query.SearchCriteria, query.StartDate, query.EndDate);
+        var sortClause = GenerateSortClause(query.SortOn, query.SortBy);
 
         queryBuilder.Append($" ORDER BY {sortClause} LIMIT @Count OFFSET @Offset");
 
         return queryBuilder.ToString();
     }
 
-    internal static string BuildCountLogsQuery(
-        string schema,
-        string tableName,
-        string level,
-        string searchCriteria,
-        DateTime? startDate,
-        DateTime? endDate)
+    internal static string BuildCountLogsQuery(string schema, string tableName, FetchLogsQuery query)
     {
         StringBuilder queryBuilder = new();
 
@@ -57,7 +44,7 @@ internal static class QueryBuilder
             .Append($"SELECT COUNT(\"{_columns.RenderedMessage}\")")
             .Append($" FROM \"{schema}\".\"{tableName}\"");
 
-        GenerateWhereClause(queryBuilder, level, searchCriteria, ref startDate, ref endDate);
+        GenerateWhereClause(queryBuilder, query.Level, query.SearchCriteria, query.StartDate, query.EndDate);
 
         return queryBuilder.ToString();
     }
@@ -66,8 +53,8 @@ internal static class QueryBuilder
         StringBuilder queryBuilder,
         string level,
         string searchCriteria,
-        ref DateTime? startDate,
-        ref DateTime? endDate)
+        DateTime? startDate,
+        DateTime? endDate)
     {
         var conditions = new List<string>();
 
