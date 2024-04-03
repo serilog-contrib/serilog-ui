@@ -12,7 +12,7 @@ jobs:
   upload:
     runs-on: ubuntu-latest
     steps:
-    - uses: phoenix-actions/test-reporting@v9
+    - uses: phoenix-actions/test-reporting@v14
       with:
         artifact: test-results            # artifact name
         name: DotNET - Tests              # Name of the check run which will be created
