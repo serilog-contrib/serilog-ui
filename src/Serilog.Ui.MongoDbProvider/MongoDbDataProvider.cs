@@ -4,7 +4,9 @@ using Serilog.Ui.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Serilog.Ui.Core.Models;
 using static Serilog.Ui.Core.Models.SearchOptions;
 using SortDirection = Serilog.Ui.Core.Models.SearchOptions.SortDirection;
 
@@ -25,55 +27,43 @@ namespace Serilog.Ui.MongoDbProvider
                 .GetCollection<MongoDbLogModel>(options.CollectionName);
         }
 
-        public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
-            int page,
-            int count,
-            string level = null,
-            string searchCriteria = null,
-            DateTime? startDate = null,
-            DateTime? endDate = null,
-            SortProperty sortOn = SortProperty.Timestamp,
-            SortDirection sortBy = SortDirection.Desc)
+        public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
         {
-            var logsTask = await GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate, sortOn, sortBy);
-            var logCountTask = await CountLogsAsync(level, searchCriteria, startDate, endDate);
+            queryParams.ToUtcDates();
+
+            var logsTask = await GetLogsAsync(queryParams, cancellationToken);
+            var logCountTask = await CountLogsAsync(queryParams);
 
             return (logsTask, logCountTask);
         }
 
         public string Name => string.Join(".", "MongoDb", _options.DatabaseName, _options.CollectionName);
 
-        private async Task<IEnumerable<LogModel>> GetLogsAsync(
-            int page,
-            int count,
-            string level,
-            string searchCriteria,
-            DateTime? startDate,
-            DateTime? endDate,
-            SortProperty sortOn,
-            SortDirection sortBy)
+        private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
         {
             try
             {
                 var builder = Builders<MongoDbLogModel>.Filter.Empty;
-                GenerateWhereClause(ref builder, level, searchCriteria, startDate, endDate);
+                GenerateWhereClause(ref builder, queryParams);
 
-                if (!string.IsNullOrWhiteSpace(searchCriteria))
+                if (!string.IsNullOrWhiteSpace(queryParams.SearchCriteria))
                 {
                     await _collection.Indexes.CreateOneAsync(
-                        new CreateIndexModel<MongoDbLogModel>(Builders<MongoDbLogModel>.IndexKeys.Text(p => p.RenderedMessage)));
+                        new CreateIndexModel<MongoDbLogModel>(Builders<MongoDbLogModel>.IndexKeys.Text(p => p.RenderedMessage)),
+                        cancellationToken: cancellationToken);
                 }
 
-                var sortClause = GenerateSortClause(sortOn, sortBy);
+                var sortClause = GenerateSortClause(queryParams.SortOn, queryParams.SortBy);
+
+                var rowNoStart = queryParams.Count * queryParams.Page;
 
                 var logs = await _collection
                     .Find(builder, new FindOptions { Collation = new Collation("en") })
                     .Sort(sortClause)
-                    .Skip(count * page)
-                    .Limit(count)
-                    .ToListAsync();
+                    .Skip(rowNoStart)
+                    .Limit(queryParams.Count)
+                    .ToListAsync(cancellationToken);
 
-                var rowNoStart = page * count;
                 return logs
                     .Select((item, i) =>
                     {
@@ -91,14 +81,10 @@ namespace Serilog.Ui.MongoDbProvider
             }
         }
 
-        private async Task<int> CountLogsAsync(
-            string level,
-            string searchCriteria,
-            DateTime? startDate,
-            DateTime? endDate)
+        private async Task<int> CountLogsAsync(FetchLogsQuery queryParams)
         {
             var builder = Builders<MongoDbLogModel>.Filter.Empty;
-            GenerateWhereClause(ref builder, level, searchCriteria, startDate, endDate);
+            GenerateWhereClause(ref builder, queryParams);
 
             var count = await _collection.Find(builder).CountDocumentsAsync();
 
@@ -107,28 +93,24 @@ namespace Serilog.Ui.MongoDbProvider
 
         private static void GenerateWhereClause(
             ref FilterDefinition<MongoDbLogModel> builder,
-            string level,
-            string searchCriteria,
-            DateTime? startDate = null,
-            DateTime? endDate = null)
+            FetchLogsQuery queryParams)
         {
-            if (!string.IsNullOrWhiteSpace(level))
-                builder &= Builders<MongoDbLogModel>.Filter.Eq(entry => entry.Level, level);
+            if (!string.IsNullOrWhiteSpace(queryParams.Level))
+                builder &= Builders<MongoDbLogModel>.Filter.Eq(entry => entry.Level, queryParams.Level);
 
-            if (!string.IsNullOrWhiteSpace(searchCriteria))
-                builder &= Builders<MongoDbLogModel>.Filter.Text(searchCriteria);
+            if (!string.IsNullOrWhiteSpace(queryParams.SearchCriteria))
+                builder &= Builders<MongoDbLogModel>.Filter.Text(queryParams.SearchCriteria);
 
-            if (startDate != null)
+            if (queryParams.StartDate != null)
             {
-                var utcStart = startDate.Value.ToUniversalTime();
+                var utcStart = queryParams.StartDate;
                 builder &= Builders<MongoDbLogModel>.Filter.Gte(entry => entry.UtcTimeStamp, utcStart);
             }
 
-            if (endDate != null)
-            {
-                var utcEnd = endDate.Value.ToUniversalTime();
-                builder &= Builders<MongoDbLogModel>.Filter.Lte(entry => entry.UtcTimeStamp, utcEnd);
-            }
+            if (queryParams.EndDate == null) return;
+
+            var utcEnd = queryParams.EndDate;
+            builder &= Builders<MongoDbLogModel>.Filter.Lte(entry => entry.UtcTimeStamp, utcEnd);
         }
 
 

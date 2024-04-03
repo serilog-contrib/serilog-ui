@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
-using static Serilog.Ui.Core.Models.SearchOptions;
+using Serilog.Ui.Core.Models;
 
 namespace Serilog.Ui.Core
 {
@@ -22,9 +23,9 @@ namespace Serilog.Ui.Core
         /// <exception cref="ArgumentException">when <paramref name="dataProviders"/> is empty</exception>
         public AggregateDataProvider(IEnumerable<IDataProvider> dataProviders)
         {
-            Guard.Against.NullOrEmpty(dataProviders, nameof(dataProviders));
+            var providers = Guard.Against.NullOrEmpty(dataProviders).ToList();
 
-            foreach (var grouped in dataProviders.GroupBy(dp => dp.Name, p => p, (k, e) => e.ToList()))
+            foreach (var grouped in providers.GroupBy(dp => dp.Name, p => p, (_, e) => e.ToList()))
             {
                 var name = grouped[0].Name;
 
@@ -72,17 +73,7 @@ namespace Serilog.Ui.Core
         public IEnumerable<string> Keys => _dataProviders.Keys;
 
         /// <inheritdoc/>
-        public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
-            int page,
-            int count,
-            string level = null,
-            string searchCriteria = null,
-            DateTime? startDate = null,
-            DateTime? endDate = null,
-            SortProperty sortOn = SortProperty.Timestamp,
-            SortDirection sortBy = SortDirection.Desc)
-        {
-            return SelectedDataProvider.FetchDataAsync(page, count, level, searchCriteria, startDate, endDate, sortOn, sortBy);
-        }
+        public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
+            => SelectedDataProvider.FetchDataAsync(queryParams, cancellationToken);
     }
 }

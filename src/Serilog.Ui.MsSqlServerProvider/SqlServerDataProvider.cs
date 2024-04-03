@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.OptionsBuilder;
 using static Serilog.Ui.Core.Models.SearchOptions;
 
@@ -24,62 +26,45 @@ namespace Serilog.Ui.MsSqlServerProvider
 
         public string Name => _options.ToDataProviderName("MsSQL");
 
-        public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
-            int page,
-            int count,
-            string level = null,
-            string searchCriteria = null,
-            DateTime? startDate = null,
-            DateTime? endDate = null,
-            SortProperty sortOn = SortProperty.Timestamp,
-            SortDirection sortBy = SortDirection.Desc
-        )
+        public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
         {
             // since sink stores dates in local time, we query by local time
-            var localStartDate = startDate?.ToLocalTime();
-            var localEndDate = endDate?.ToLocalTime();
+            queryParams.ToLocalDates();
 
-            var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria, localStartDate, localEndDate, sortOn, sortBy);
-            var logCountTask = CountLogsAsync(level, searchCriteria, localStartDate, localEndDate);
+            var logsTask = GetLogsAsync(queryParams);
+            var logCountTask = CountLogsAsync(queryParams);
 
             await Task.WhenAll(logsTask, logCountTask);
 
             return (await logsTask, await logCountTask);
         }
 
-        private async Task<IEnumerable<LogModel>> GetLogsAsync(
-            int page,
-            int count,
-            string level,
-            string searchCriteria,
-            DateTime? startDate,
-            DateTime? endDate,
-            SortProperty sortOn,
-            SortDirection sortBy)
+        private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
         {
             var queryBuilder = new StringBuilder();
             queryBuilder.Append($"SELECT [Id], [{ColumnMessageName}], [{ColumnLevelName}], [{ColumnTimestampName}], [Exception], [Properties] ");
             queryBuilder.Append($"FROM [{_options.Schema}].[{_options.TableName}] ");
 
-            GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
+            GenerateWhereClause(queryBuilder, queryParams);
 
-            var sortOnCol = GetColumnName(sortOn);
-            var sortByCol = sortBy.ToString().ToUpper();
+            var sortOnCol = GetColumnName(queryParams.SortOn);
+            var sortByCol = queryParams.SortBy.ToString().ToUpper();
             queryBuilder.Append($"ORDER BY [{sortOnCol}] {sortByCol} OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY");
+
+            var rowNoStart = queryParams.Page * queryParams.Count;
 
             using IDbConnection connection = new SqlConnection(_options.ConnectionString);
             var logs = await connection.QueryAsync<SqlServerLogModel>(queryBuilder.ToString(),
                 new
                 {
-                    Offset = page * count,
-                    Count = count,
-                    Level = level,
-                    Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
-                    StartDate = startDate,
-                    EndDate = endDate
+                    Offset = rowNoStart,
+                    queryParams.Count,
+                    queryParams.Level,
+                    Search = queryParams.SearchCriteria != null ? "%" + queryParams.SearchCriteria + "%" : null,
+                    queryParams.StartDate,
+                    queryParams.EndDate
                 });
 
-            var rowNoStart = page * count;
             return logs
                 .Select((item, i) =>
                 {
@@ -89,56 +74,47 @@ namespace Serilog.Ui.MsSqlServerProvider
                 .ToList();
         }
 
-        private async Task<int> CountLogsAsync(
-            string level,
-            string searchCriteria,
-            DateTime? startDate = null,
-            DateTime? endDate = null)
+        private async Task<int> CountLogsAsync(FetchLogsQuery queryParams)
         {
             var queryBuilder = new StringBuilder();
             queryBuilder.Append($"SELECT COUNT(Id) FROM [{_options.Schema}].[{_options.TableName}]");
 
-            GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
+            GenerateWhereClause(queryBuilder, queryParams);
 
             using IDbConnection connection = new SqlConnection(_options.ConnectionString);
             return await connection.ExecuteScalarAsync<int>(queryBuilder.ToString(),
                 new
                 {
-                    Level = level,
-                    Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
-                    StartDate = startDate,
-                    EndDate = endDate
+                    queryParams.Level,
+                    Search = queryParams.SearchCriteria != null ? "%" + queryParams.SearchCriteria + "%" : null,
+                    queryParams.StartDate,
+                    queryParams.EndDate
                 });
         }
 
-        private static void GenerateWhereClause(
-            StringBuilder queryBuilder,
-            string level,
-            string searchCriteria,
-            DateTime? startDate = null,
-            DateTime? endDate = null)
+        private static void GenerateWhereClause(StringBuilder queryBuilder, FetchLogsQuery queryParams)
         {
             var conditionStart = "WHERE";
 
-            if (!string.IsNullOrEmpty(level))
+            if (!string.IsNullOrEmpty(queryParams.Level))
             {
                 queryBuilder.Append($"{conditionStart} [{ColumnLevelName}] = @Level ");
                 conditionStart = "AND";
             }
 
-            if (!string.IsNullOrEmpty(searchCriteria))
+            if (!string.IsNullOrEmpty(queryParams.SearchCriteria))
             {
                 queryBuilder.Append($"{conditionStart} [{ColumnMessageName}] LIKE @Search OR [Exception] LIKE @Search ");
                 conditionStart = "AND";
             }
 
-            if (startDate != null)
+            if (queryParams.StartDate != null)
             {
                 queryBuilder.Append($"{conditionStart} [{ColumnTimestampName}] >= @StartDate ");
                 conditionStart = "AND";
             }
 
-            if (endDate != null)
+            if (queryParams.EndDate != null)
             {
                 queryBuilder.Append($"{conditionStart} [{ColumnTimestampName}] <= @EndDate ");
             }

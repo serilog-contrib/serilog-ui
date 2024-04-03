@@ -22,8 +22,8 @@ internal static class QueryBuilder
         string tableName,
         string level,
         string searchCriteria,
-        ref DateTime? startDate,
-        ref DateTime? endDate,
+        DateTime? startDate,
+        DateTime? endDate,
         SortProperty sortOn = SortProperty.Timestamp,
         SortDirection sortBy = SortDirection.Desc)
     {
@@ -48,8 +48,8 @@ internal static class QueryBuilder
         string tableName,
         string level,
         string searchCriteria,
-        ref DateTime? startDate,
-        ref DateTime? endDate)
+        DateTime? startDate,
+        DateTime? endDate)
     {
         StringBuilder queryBuilder = new();
 
