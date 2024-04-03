@@ -36,28 +36,32 @@ export const getAuthKey = (
   props: IAuthPropertiesData,
   key: keyof IAuthPropertiesData,
 ) => {
-  return props[key] || sessionStorage.getItem(IAuthPropertiesStorageKeys[key]) || '';
+  const data = props[key]
+    ? props[key]
+    : sessionStorage.getItem(IAuthPropertiesStorageKeys[key]);
+  return data ?? '';
 };
 
 export const getAuthorizationHeader = (
-  authType: string = '',
   props: IAuthPropertiesData,
+  authType: string = '',
 ) => {
   const authTypeToEnum = AuthType[authType];
 
-  switch (authTypeToEnum) {
-    case AuthType.Jwt:
-      return props?.jwt_bearerToken ? `Bearer ${props.jwt_bearerToken}` : '';
-    case AuthType.Basic:
-      if (!props.basic_user || !props.basic_pwd) {
-        return '';
-      }
-
-      const encodeProps = btoa(`${props.basic_user}:${props.basic_pwd}`);
-      return `Basic ${encodeProps}`;
-    default:
-      return '';
+  if (authTypeToEnum === AuthType.Jwt) {
+    return props?.jwt_bearerToken ? `Bearer ${props.jwt_bearerToken}` : '';
   }
+
+  if (authTypeToEnum === AuthType.Basic) {
+    if (!props.basic_user || !props.basic_pwd) {
+      return '';
+    }
+
+    const encodeProps = btoa(`${props.basic_user}:${props.basic_pwd}`);
+    return `Basic ${encodeProps}`;
+  }
+
+  return '';
 };
 
 export const initialAuthProps: () => IAuthPropertiesData = () => ({

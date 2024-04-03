@@ -25,7 +25,7 @@ const AuthPropertiesContext = createContext<AuthProps>({
   authProps: {},
   authHeader: '',
   clearAuthState: () => {},
-  saveAuthState: ([]) => ({
+  saveAuthState: () => ({
     success: true,
   }),
   updateAuthKey: (_, __) => {
@@ -46,7 +46,7 @@ export const AuthPropertiesProvider = ({
   const [activeAuthProps, setAuthProps] = useImmer<IAuthPropertiesData>(authInfo);
 
   const authHeader = useMemo(
-    () => getAuthorizationHeader(authType, authInfo),
+    () => getAuthorizationHeader(authInfo, authType),
     [authInfo, authType],
   );
 
@@ -61,11 +61,7 @@ export const AuthPropertiesProvider = ({
       const validationInfo: string[] = [];
       setAuthInfo((draft) => {
         authKeysToSave.forEach((e) => {
-          const saveResult = saveAuthKey(
-            draft,
-            e as keyof IAuthPropertiesData,
-            activeAuthProps[e] || '',
-          );
+          const saveResult = saveAuthKey(draft, e, activeAuthProps[e] ?? '');
           if (saveResult.error) {
             validationInfo.push(saveResult.error);
           }
@@ -80,22 +76,28 @@ export const AuthPropertiesProvider = ({
     [activeAuthProps, setAuthInfo],
   );
 
-  const updateAuthKey = (key: keyof IAuthPropertiesData, value: string) => {
-    setAuthProps((draft) => {
-      draft[key] = value;
-    });
-  };
+  const updateAuthKey = useCallback(
+    (key: keyof IAuthPropertiesData, value: string) => {
+      setAuthProps((draft) => {
+        draft[key] = value;
+      });
+    },
+    [setAuthProps],
+  );
+
+  const providerValue = useMemo(
+    () => ({
+      authProps: activeAuthProps,
+      authHeader,
+      updateAuthKey,
+      saveAuthState,
+      clearAuthState,
+    }),
+    [activeAuthProps, authHeader, clearAuthState, saveAuthState, updateAuthKey],
+  );
 
   return (
-    <AuthPropertiesContext.Provider
-      value={{
-        authProps: activeAuthProps,
-        authHeader,
-        updateAuthKey,
-        saveAuthState,
-        clearAuthState,
-      }}
-    >
+    <AuthPropertiesContext.Provider value={providerValue}>
       {children}
     </AuthPropertiesContext.Provider>
   );

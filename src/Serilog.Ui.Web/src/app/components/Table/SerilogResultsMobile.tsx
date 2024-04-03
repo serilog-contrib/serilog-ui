@@ -54,13 +54,13 @@ const SerilogResultsMobile = () => {
 
 const MobileSkeleton = () => {
   const theme = useMantineTheme();
-  return [...Array(4).keys()].map((_, i) => (
+  return [...Array(4).keys()].map((value) => (
     <Skeleton
       h="14em"
-      key={i}
+      key={value}
       radius="none"
       mb="sm"
-      style={{ border: `0.1em dashed ${theme.colors!.gray![7]}` }}
+      style={{ border: `0.1em dashed ${theme.colors.gray![7]}` }}
     />
   ));
 };
@@ -109,14 +109,14 @@ const LogCard = memo(({ log, isUtc }: { log: EncodedSeriLogObject; isUtc?: boole
         }}
       >
         <DetailsModal
-          modalContent={log.exception || ''}
+          modalContent={log.exception ?? ''}
           modalTitle="Exception details"
           buttonTitle="exception"
           contentType={log.propertyType}
           disabled={!log.exception}
         />
         <DetailsModal
-          modalContent={log.properties || ''}
+          modalContent={log.properties ?? ''}
           modalTitle="Properties details"
           contentType={log.propertyType}
           disabled={!log.properties}

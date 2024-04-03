@@ -48,8 +48,8 @@ const shikijiThemes: CodeOptionsMultipleThemes<BundledTheme> = {
   },
 };
 export const renderCodeContent = async (
-  contentType: string = '',
   modalContent: string,
+  contentType: string = '',
 ) => {
   if (!modalContent?.trim() || !Object.values(LogType).includes(contentType as LogType))
     return modalContent;

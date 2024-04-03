@@ -30,8 +30,8 @@ const DetailsModal = ({
 
   useEffect(() => {
     const fetchContent = async () => {
-      const content = await renderCodeContent(contentType, modalContent);
-      setRenderContent(content || '');
+      const content = await renderCodeContent(modalContent, contentType);
+      setRenderContent(content ?? '');
     };
 
     void fetchContent();
@@ -60,7 +60,7 @@ const DetailsModal = ({
 
       <Box display="grid" style={{ justifyContent: 'center', alignContent: 'center' }}>
         <Button size="compact-sm" disabled={disabled} onClick={open}>
-          {buttonTitle || 'View'}
+          {buttonTitle ? buttonTitle : 'View'}
         </Button>
       </Box>
     </>

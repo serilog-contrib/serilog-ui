@@ -27,7 +27,7 @@ const Head = ({ isMobileOpen, toggleMobile }: IProps) => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const isSmallishSize = useMediaQuery(`(max-width: ${em(360)})`);
   const isMobileSize = useMediaQuery(`(max-width: ${em(768)})`);
-
+  const mobileOrDesktopSize = isMobileSize ? 'xs' : 'lg';
   const { homeUrl } = useSerilogUiProps();
 
   return (
@@ -37,7 +37,7 @@ const Head = ({ isMobileOpen, toggleMobile }: IProps) => {
       className={isMobileSize ? classes.mobileGrid : classes.desktopGrid}
       w="100%"
       h="100%"
-      p={isSmallishSize ? 2 : isMobileSize ? 'xs' : 'lg'}
+      p={isSmallishSize ? 2 : mobileOrDesktopSize}
     >
       <Group className={classes.activityGroup}>
         <HeaderActivity isMobileOpen={isMobileOpen} toggleMobile={toggleMobile} />

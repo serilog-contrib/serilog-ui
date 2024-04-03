@@ -1,4 +1,11 @@
-import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { AuthType } from 'types/types';
 
 export interface SerilogUiConfig {
@@ -48,8 +55,13 @@ export const SerilogUiPropsProvider = ({
     }
   }, []);
 
+  const providerValue = useMemo(
+    () => ({ ...serverProps, isUtc, setIsUtc }),
+    [isUtc, serverProps],
+  );
+
   return (
-    <SerilogUiPropsContext.Provider value={{ ...serverProps, isUtc, setIsUtc }}>
+    <SerilogUiPropsContext.Provider value={providerValue}>
       {children}
     </SerilogUiPropsContext.Provider>
   );

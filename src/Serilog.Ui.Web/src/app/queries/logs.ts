@@ -6,6 +6,7 @@ import {
   send403Notification,
   sendUnexpectedNotification,
 } from '../util/queries';
+import { UiApiError } from './errors';
 
 const defaultReturn = {
   count: 0,
@@ -27,9 +28,9 @@ export const fetchLogs = async (
 
     if (req.ok) return await (req.json() as Promise<SearchResult>);
 
-    return await Promise.reject({ code: req.status, message: 'Failed to fetch' });
+    return await Promise.reject(new UiApiError(req.status, 'Failed to fetch'));
   } catch (error: unknown) {
-    const err = error as Error & { code?: number; message?: string };
+    const err = error as UiApiError;
     err?.code === 403 ? send403Notification() : sendUnexpectedNotification(err.message);
 
     return defaultReturn;
