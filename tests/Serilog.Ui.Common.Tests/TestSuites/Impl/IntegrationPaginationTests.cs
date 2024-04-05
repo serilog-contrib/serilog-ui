@@ -63,7 +63,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             var (descLogs, _) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
             var desc = descLogs.ToList();
-            desc.ForEach(p => { p.Timestamp = p.Timestamp.AddNanoseconds(-p.Timestamp.Nanosecond).AddMicroseconds(-p.Timestamp.Microsecond); });
+            desc.ForEach(p => { p.Timestamp = p.Timestamp.AddNanoseconds(-p.Timestamp.Nanosecond()).AddMicroseconds(-p.Timestamp.Microsecond()); });
 
             desc.Should().NotBeEmpty().And.BeInDescendingOrder(model => model.Timestamp);
 
@@ -73,7 +73,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
 
             var asc = ascLogs.ToList();
 
-            asc.ForEach(p => { p.Timestamp = p.Timestamp.AddNanoseconds(-p.Timestamp.Nanosecond).AddMicroseconds(-p.Timestamp.Microsecond); });
+            asc.ForEach(p => { p.Timestamp = p.Timestamp.AddNanoseconds(-p.Timestamp.Nanosecond()).AddMicroseconds(-p.Timestamp.Microsecond()); });
 
             asc.Should().NotBeEmpty().And.BeInAscendingOrder(model => model.Timestamp);
         }

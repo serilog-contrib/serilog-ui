@@ -102,7 +102,7 @@ namespace Serilog.Ui.Web.Tests
             // Arrange
             var methods = new[]
             {
-                HttpMethod.Connect, HttpMethod.Delete, HttpMethod.Head, HttpMethod.Options,
+                HttpMethod.Delete, HttpMethod.Head, HttpMethod.Options,
                 HttpMethod.Patch, HttpMethod.Post, HttpMethod.Put, HttpMethod.Trace,
             };
 
