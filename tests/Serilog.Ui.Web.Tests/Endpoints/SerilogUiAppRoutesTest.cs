@@ -68,7 +68,7 @@ namespace Serilog.Ui.Web.Tests.Endpoints
             bodyWrite.Should().Be(
                 "<!DOCTYPE html><html lang=\"en\"><head><div>head-test</div></head>" +
                 "<body><div id=\"serilog-ui-app\"></div>" +
-                "<script>const config = '%7B%22routePrefix%22%3A%22test%22%2C%22authType%22%3A%22Jwt%22%2C%22homeUrl%22%3A%22home-url%22%7D';</script>" +
+                "<script>const config = '%7B%22routePrefix%22%3A%22test%22%2C%22authType%22%3A%22Jwt%22%2C%22homeUrl%22%3A%22home-url%22%2C%22disabledSortOnKeys%22%3A%5B%5D%2C%22columnsInfo%22%3A%7B%7D%7D';</script>" +
                 "<div>body-test</div></body></html>"
                 );
         }

@@ -65,7 +65,14 @@ namespace Serilog.Ui.Web.Endpoints
         {
             var htmlStringBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
             var authType = options.Authorization.AuthenticationType.ToString();
-            var feOpts = new { options.RoutePrefix, authType, options.HomeUrl, disableSortOnKeys = options.DisabledSortOnKeys };
+            var feOpts = new
+            {
+                options.RoutePrefix,
+                authType,
+                options.HomeUrl, 
+                options.DisabledSortOnKeys,
+                options.ColumnsInfo
+            };
             var encodeAuthOpts = Uri.EscapeDataString(JsonSerializer.Serialize(feOpts, JsonSerializerOptions));
 
             htmlStringBuilder
