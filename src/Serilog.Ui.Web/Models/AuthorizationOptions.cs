@@ -16,7 +16,7 @@
         /// when accessing the serilog-ui main pages.
         /// Used to block unauthorized access to the logs ui.
         /// </summary>
-        public bool RunAuthorizationFilterOnAppRoutes { get; set; } = false;
+        public bool RunAuthorizationFilterOnAppRoutes { get; set; }
     }
 
     public enum AuthenticationType

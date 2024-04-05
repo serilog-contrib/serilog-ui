@@ -1,4 +1,3 @@
-import { fakeColumnsInfo } from '__tests__/_setup/mocks/samples';
 import {
   ReactNode,
   createContext,
@@ -16,9 +15,7 @@ interface SerilogUiProps extends SerilogUiConfig {
 
 const defaults: SerilogUiConfig = {
   authType: AuthType.Jwt,
-  columnsInfo: ['development', 'test'].includes(import.meta.env.MODE)
-    ? fakeColumnsInfo
-    : {},
+  columnsInfo: {},
   disabledSortOnKeys: [],
   homeUrl: 'https://google.com',
   routePrefix: 'serilog-ui',

@@ -38,7 +38,7 @@ public class ElasticSearchDbDataProvider(IElasticClient client, ElasticSearchDbO
             queryParams.SortBy == SortDirection.Desc
                 ? descriptor => descriptor.Descending(TimeStampPropertyName)
                 : descriptor => descriptor.Ascending(TimeStampPropertyName);
-
+        var rowNoStart = queryParams.Page * queryParams.Count;
         var descriptor = new SearchDescriptor<ElasticSearchDbLogModel>()
             .Index(_options.IndexName)
             .Query(q =>
@@ -47,13 +47,13 @@ public class ElasticSearchDbDataProvider(IElasticClient client, ElasticSearchDbO
                 +q.Match(m => m.Field(f => f.Message).Query(queryParams.SearchCriteria)) ||
                 +q.Match(m => m.Field(f => f.Exceptions).Query(queryParams.SearchCriteria)))
             .Sort(sortDescriptor)
-            .Skip(queryParams.Page * queryParams.Count)
+            .Skip(rowNoStart)
             .Size(queryParams.Count);
 
         var result = await _client.SearchAsync<ElasticSearchDbLogModel>(descriptor, cancellationToken);
 
         int.TryParse(result?.Total.ToString(), out var total);
 
-        return (result?.Documents.Select((x, index) => x.ToLogModel(index)).ToList(), total);
+        return (result?.Documents.Select((x, index) => x.ToLogModel(rowNoStart, index)).ToList(), total);
     }
 }

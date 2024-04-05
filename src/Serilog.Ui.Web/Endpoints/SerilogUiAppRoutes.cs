@@ -67,11 +67,12 @@ namespace Serilog.Ui.Web.Endpoints
             var authType = options.Authorization.AuthenticationType.ToString();
             var feOpts = new
             {
-                options.RoutePrefix,
                 authType,
-                options.HomeUrl, 
+                options.ColumnsInfo,
                 options.DisabledSortOnKeys,
-                options.ColumnsInfo
+                options.HideBrand,
+                options.HomeUrl, 
+                options.RoutePrefix
             };
             var encodeAuthOpts = Uri.EscapeDataString(JsonSerializer.Serialize(feOpts, JsonSerializerOptions));
 

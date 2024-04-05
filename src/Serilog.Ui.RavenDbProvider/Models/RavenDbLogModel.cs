@@ -18,14 +18,13 @@ internal class RavenDbLogModel
 
     public IDictionary<string, object>? Properties { get; set; }
 
-    public LogModel ToLogModel(int rowNo) => new()
+    public LogModel ToLogModel(int rowNo, int index) => new LogModel()
     {
-        RowNo = rowNo,
         Level = Level,
         Message = RenderedMessage,
         Timestamp = Timestamp.DateTime.ToUniversalTime(),
         Exception = Exception?.ToString(Formatting.None),
         Properties = JsonConvert.SerializeObject(Properties),
         PropertyType = "json"
-    };
+    }.SetRowNo(rowNo, index);
 }

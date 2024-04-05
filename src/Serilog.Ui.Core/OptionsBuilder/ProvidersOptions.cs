@@ -45,7 +45,7 @@ public static class ProvidersOptions
     /// <param name="name"></param>
     public static void RegisterDisabledSortName(string name)
     {
-        _disabledSortProviderNames.Add(name);
+        _disabledSortProviderNames.Add(name.ToLowerInvariant());
     }
 }
 
@@ -91,7 +91,7 @@ public class ColumnsInfo
             yield return new AdditionalColumn
             {
                 Name = additionalProp.Name,
-                TypeName = additionalProp.PropertyType.Name,
+                TypeName = additionalProp.PropertyType.Name.ToLowerInvariant(),
                 CodeType = extraAttribute?.CodeType
             };
         }

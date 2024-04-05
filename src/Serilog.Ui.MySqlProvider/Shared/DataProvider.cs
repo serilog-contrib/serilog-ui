@@ -64,7 +64,7 @@ public abstract class DataProvider(RelationalDbOptions options) : IDataProvider
         return logs
             .Select((item, i) =>
             {
-                item.RowNo = rowNoStart + i;
+                item.SetRowNo(rowNoStart, i);
                 // both sinks save UTC but MariaDb is queried as Unspecified, MySql is queried as Local 
                 var ts = DateTime.SpecifyKind(item.Timestamp,
                     item.Timestamp.Kind == DateTimeKind.Unspecified ? DateTimeKind.Utc : item.Timestamp.Kind);

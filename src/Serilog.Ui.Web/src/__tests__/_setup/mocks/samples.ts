@@ -1,10 +1,10 @@
 ﻿import { faker } from '@faker-js/faker';
 import {
   AdditionalColumn,
+  AdditionalColumnLogType,
   ColumnType,
   ColumnsInfo,
   LogLevel,
-  LogType,
   RemovableColumns,
   type EncodedSeriLogObject,
   type SearchResult,
@@ -62,43 +62,43 @@ const xmlExample = createRandomXmlObject();
 //#region additional columns info
 const fakeAdditionalColumns: (AdditionalColumn & { value: () => unknown })[] = [
   {
-    name: 'sampleText',
+    name: 'SampleText',
     typeName: ColumnType.string,
     codeType: null,
     value: faker.lorem.sentence,
   },
   {
-    name: 'sampleDate',
+    name: 'SampleDate',
     typeName: ColumnType.datetime,
     codeType: null,
     value: () => faker.date.recent({ days: 15 }).toISOString(),
   },
   {
-    name: 'sampleBool',
+    name: 'SampleBool',
     typeName: ColumnType.boolean,
     codeType: null,
     value: faker.datatype.boolean,
   },
   {
-    name: 'sampleCode',
+    name: 'SampleCode',
     typeName: ColumnType.code,
-    codeType: LogType.Json,
+    codeType: AdditionalColumnLogType.Json,
     value: () => jsonExample,
   },
 ];
 
 export const fakeColumnsInfo: ColumnsInfo = {
   [dbKeysMock[0]]: {
-    AdditionalColumns: fakeAdditionalColumns,
-    RemovedColumns: [],
+    additionalColumns: fakeAdditionalColumns,
+    removedColumns: [],
   },
   [dbKeysMock[1]]: {
-    AdditionalColumns: fakeAdditionalColumns,
-    RemovedColumns: [RemovableColumns.properties],
+    additionalColumns: fakeAdditionalColumns,
+    removedColumns: [RemovableColumns.properties],
   },
   [dbKeysMock[2]]: {
-    AdditionalColumns: fakeAdditionalColumns,
-    RemovedColumns: [RemovableColumns.properties, RemovableColumns.exception],
+    additionalColumns: fakeAdditionalColumns,
+    removedColumns: [RemovableColumns.properties, RemovableColumns.exception],
   },
 };
 //#endregion
@@ -128,14 +128,14 @@ const createRandomLogWithAdditionalColumns = (keyMockIndex = 1) => {
 
   const entry = fakeColumnsInfo[dbKeysMock[keyMockIndex]];
 
-  entry.AdditionalColumns.forEach((element) => {
+  entry.additionalColumns.forEach((element) => {
     const data = element as AdditionalColumn & { value: () => unknown };
 
     log[data.name] = data.value();
   });
 
-  entry.RemovedColumns.forEach((element) => {
-    delete log[element];
+  entry.removedColumns.forEach((element) => {
+    delete log[element.toLowerCase()];
   });
 
   return log;

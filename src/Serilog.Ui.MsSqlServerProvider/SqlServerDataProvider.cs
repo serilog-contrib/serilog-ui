@@ -87,13 +87,7 @@ namespace Serilog.Ui.MsSqlServerProvider
                     queryParams.EndDate
                 });
 
-            return logs
-                .Select((item, i) =>
-                {
-                    item.RowNo = rowNoStart + i;
-                    return item;
-                })
-                .ToList();
+            return logs.Select((item, i) => item.SetRowNo(rowNoStart, i)).ToList();
         }
 
         private async Task<int> CountLogsAsync(FetchLogsQuery queryParams)

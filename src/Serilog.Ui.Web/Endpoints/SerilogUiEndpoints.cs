@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using Serilog.Ui.Core;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.Json.Serialization;
@@ -97,8 +98,12 @@ namespace Serilog.Ui.Web.Endpoints
             }
 
             var (logs, total) = await _aggregateDataProvider.FetchDataAsync(queryLogs);
-
-            var result = JsonSerializer.Serialize(new { logs, total, count = queryLogs.Count, currentPage = queryLogs.CurrentPage }, JsonSerializerOptions);
+            
+            // due to System.Text.Json design choice:
+            // https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/polymorphism
+            var serializeLogs = logs.ToList().Cast<object>();
+            
+            var result = JsonSerializer.Serialize(new { logs = serializeLogs, total, count = queryLogs.Count, currentPage = queryLogs.CurrentPage }, JsonSerializerOptions);
 
             return result;
         }

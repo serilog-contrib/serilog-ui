@@ -23,6 +23,11 @@ public class UiOptions
     public string HomeUrl { get; set; } = "/";
 
     /// <summary>
+    ///   Gets or sets the serilog-ui brand visibility.
+    /// </summary>
+    public bool HideBrand { get; set; }
+
+    /// <summary>
     ///   Gets or sets the type of the Filters.
     /// </summary>
     /// <value>The type of the authentication.</value>
@@ -31,8 +36,8 @@ public class UiOptions
     /// <summary>
     /// Gets ColumnsInfo.
     /// </summary>
-    public ReadOnlyDictionary<string, ColumnsInfo> ColumnsInfo = ProvidersOptions.AdditionalColumns;
-    
+    internal ReadOnlyDictionary<string, ColumnsInfo> ColumnsInfo = ProvidersOptions.AdditionalColumns;
+
     /// <summary>
     ///   Gets or sets the head content, a string that will be placed in the &lt;head&gt; of the index.html
     /// </summary>

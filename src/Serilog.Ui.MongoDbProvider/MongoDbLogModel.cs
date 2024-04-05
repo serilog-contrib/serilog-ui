@@ -31,18 +31,17 @@ namespace Serilog.Ui.MongoDbProvider
         [BsonElement("Properties")]
         public object Properties { get; set; }
 
-        internal LogModel ToLogModel()
+        internal LogModel ToLogModel(int rowNoStart, int index)
         {
             return new LogModel
             {
-                RowNo = Id,
                 Level = Level,
                 Message = RenderedMessage,
-                Timestamp = Timestamp ?? UtcTimeStamp,
+                Timestamp = (Timestamp ?? UtcTimeStamp).ToUniversalTime(),
                 Exception = GetException(Exception),
                 Properties = JsonConvert.SerializeObject(Properties),
                 PropertyType = "json"
-            };
+            }.SetRowNo(rowNoStart, index);
         }
 
         private string GetException(object exception)

@@ -64,15 +64,7 @@ namespace Serilog.Ui.MongoDbProvider
                     .Limit(queryParams.Count)
                     .ToListAsync(cancellationToken);
 
-                return logs
-                    .Select((item, i) =>
-                    {
-                        item.Id = rowNoStart + i;
-                        var converted = item.ToLogModel();
-                        converted.Timestamp = converted.Timestamp.ToUniversalTime();
-                        return converted;
-                    })
-                    .ToList();
+                return logs.Select((item, i) => item.ToLogModel(rowNoStart, i)).ToList();
             }
             catch (Exception ex)
             {

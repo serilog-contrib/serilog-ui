@@ -24,18 +24,17 @@ namespace Serilog.Ui.ElasticSearchProvider
         [JsonProperty("fields")]
         public Dictionary<string, object> Fields { get; set; }
 
-        internal LogModel ToLogModel(int index)
+        internal LogModel ToLogModel(int rowNoStart, int index)
         {
             return new LogModel
             {
-                RowNo = index,
                 Level = Level,
                 Message = Message,
                 Timestamp = Timestamp.ToUniversalTime(),
                 Exception = Exceptions?.Count > 0 ? BuildExceptionMessage(Exceptions[0]) : null,
                 Properties = JsonConvert.SerializeObject(Fields),
                 PropertyType = "json"
-            };
+            }.SetRowNo(rowNoStart, index);
         }
 
         private static string BuildExceptionMessage(JToken jObjet)

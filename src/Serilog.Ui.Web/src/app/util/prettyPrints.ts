@@ -2,7 +2,7 @@ import { MantineColorScheme, type MantineTheme } from '@mantine/core';
 import { BundledTheme, CodeOptionsMultipleThemes } from 'shiki';
 import { highlighter } from 'style/shikijiBundle';
 import formatXml from 'xml-formatter';
-import { LogLevel, LogType } from '../../types/types';
+import { AdditionalColumnLogType, LogLevel, LogType } from '../../types/types';
 import {
   formatLocalDate,
   formatLocalSplitDate,
@@ -43,6 +43,13 @@ export const printDate = (date: string, utc?: boolean) =>
 
 export const splitPrintDate = (date: string, utc?: boolean) =>
   utc ? formatUtcSplitDate(date) : formatLocalSplitDate(date);
+
+export const convertLogType = (logType: AdditionalColumnLogType) => {
+  if (logType === AdditionalColumnLogType.Json) return LogType.Json;
+  if (logType === AdditionalColumnLogType.Xml) return LogType.Xml;
+
+  return '' as LogType;
+};
 
 const shikijiThemes: CodeOptionsMultipleThemes<BundledTheme> = {
   themes: {

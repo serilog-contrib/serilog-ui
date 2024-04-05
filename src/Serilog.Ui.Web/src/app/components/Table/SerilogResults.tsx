@@ -106,7 +106,7 @@ const TableHead = memo(() => {
         {!removeException && (
           <TableHeader text="Exception" columnType={ColumnType.code} />
         )}
-        <TableHeader text="Properties" columnType={ColumnType.code} />
+        <TableHeader text="Additional Columns" columnType={ColumnType.code} />
       </Table.Tr>
     </Table.Thead>
   );
@@ -114,88 +114,88 @@ const TableHead = memo(() => {
 
 const TableHeader = memo(
   ({ text, columnType }: { text: string; columnType: ColumnType }) => {
-  switch (columnType) {
-    case ColumnType.datetime:
-      return (
-        <>
-          <Table.Th ta="center">{`${text}${text ? ' ' : ''}[Day]`}</Table.Th>
-          <Table.Th ta="center">{`${text}${text ? ' ' : ''}[Time]`}</Table.Th>
-        </>
-      );
-    case ColumnType.shortstring:
-    case ColumnType.code:
-      return <Table.Th ta="center">{text}</Table.Th>;
-    default:
-      return <Table.Th>{text}</Table.Th>;
-  }
+    switch (columnType) {
+      case ColumnType.datetime:
+        return (
+          <>
+            <Table.Th ta="center">{`${text}${text ? ' ' : ''}[Day]`}</Table.Th>
+            <Table.Th ta="center">{`${text}${text ? ' ' : ''}[Time]`}</Table.Th>
+          </>
+        );
+      case ColumnType.shortstring:
+      case ColumnType.code:
+        return <Table.Th ta="center">{text}</Table.Th>;
+      default:
+        return <Table.Th>{text}</Table.Th>;
+    }
   },
 );
 
 const TableCell = memo(
   ({
-  content,
-  columnType,
-  codeContentType,
-  codeModalTitle,
-}: {
-  columnType: ColumnType;
-  content?: string | number;
-  codeModalTitle?: string;
-  codeContentType?: string;
-}) => {
-  const { isUtc } = useSerilogUiProps();
+    content,
+    columnType,
+    codeContentType,
+    codeModalTitle,
+  }: {
+    columnType: ColumnType;
+    content?: string | number;
+    codeModalTitle?: string;
+    codeContentType?: string;
+  }) => {
+    const { isUtc } = useSerilogUiProps();
 
-  const splitDate = useCallback(
-    (timestamp: string) => splitPrintDate(timestamp, isUtc),
-    [isUtc],
-  );
+    const splitDate = useCallback(
+      (timestamp: string) => splitPrintDate(timestamp, isUtc),
+      [isUtc],
+    );
 
-  switch (columnType) {
-    case ColumnType.shortstring:
-      return (
-        <Table.Td>
-          <Text size="sm" fw={500} ta="center">
-            {content}
-          </Text>
-        </Table.Td>
-      );
-    case ColumnType.datetime:
-      return (
-        <>
+    switch (columnType) {
+      case ColumnType.shortstring:
+        return (
           <Table.Td>
-            <Text size="sm" fw={300} ta="center">
-              {splitDate(`${content}`)[0]}
+            <Text size="sm" fw={500} ta="center">
+              {content}
             </Text>
           </Table.Td>
+        );
+      case ColumnType.datetime:
+        return (
+          <>
+            <Table.Td>
+              <Text size="sm" fw={300} ta="center">
+                {splitDate(`${content}`)[0]}
+              </Text>
+            </Table.Td>
+            <Table.Td>
+              <Text size="sm" fw={300} ta="center">
+                {splitDate(`${content}`)[1]}
+              </Text>
+            </Table.Td>
+          </>
+        );
+      case ColumnType.text:
+        return (
           <Table.Td>
-            <Text size="sm" fw={300} ta="center">
-              {splitDate(`${content}`)[1]}
+            <Text ta="justify" fz="sm" lh="sm">
+              {content}
             </Text>
           </Table.Td>
-        </>
-      );
-    case ColumnType.text:
-      return (
-        <Table.Td>
-          <Text ta="justify" fz="sm" lh="sm">
-            {content}
-          </Text>
-        </Table.Td>
-      );
-    case ColumnType.code:
-      return (
-        <Table.Td>
-          {isStringGuard(content) ? (
-            <DetailsModal
-              modalContent={content}
-              modalTitle={codeModalTitle}
-              contentType={codeContentType}
-              buttonTitle="View"
-            />
-          ) : null}
-        </Table.Td>
-      );
-  }
+        );
+      case ColumnType.code:
+        return (
+          <Table.Td>
+            {isStringGuard(content) ? (
+              <DetailsModal
+                modalContent={content}
+                modalTitle={codeModalTitle}
+                contentType={codeContentType}
+                buttonTitle="View"
+              />
+            ) : null}
+          </Table.Td>
+        );
+    }
   },
 );
 

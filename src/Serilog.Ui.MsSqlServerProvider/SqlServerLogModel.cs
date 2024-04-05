@@ -13,7 +13,7 @@ namespace Serilog.Ui.MsSqlServerProvider;
 /// </summary>
 public class SqlServerLogModel : LogModel
 {
-    public sealed override int RowNo { get; set; }
+    public sealed override int RowNo => base.RowNo;
 
     public sealed override string Level { get; set; }
 

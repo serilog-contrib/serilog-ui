@@ -106,8 +106,9 @@ const LogCard = memo(({ log, isUtc }: { log: EncodedSeriLogObject; isUtc?: boole
         fz="xs"
         m="auto auto 0.5em"
         style={{
+          gap: '0.3em',
           gridTemplateColumns: 'auto auto',
-          justifyContent: 'space-evenly',
+          justifyContent: 'center',
           alignContent: 'center',
         }}
       >

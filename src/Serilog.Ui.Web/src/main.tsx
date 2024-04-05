@@ -16,6 +16,7 @@ import App from './app/App';
 (extras)
  * >>> let mongo registers {n} logs pages
  * >>> remove newtonsoft
+ * >>> mariadb, postgres, raven? additional columns
  */
 
 const runMsw = async () => {

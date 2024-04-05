@@ -40,7 +40,7 @@ public class RavenDbDataProvider(IDocumentStore documentStore, string collection
 
         var logs = await query.Skip(skipStart).Take(queryParams.Count).ToListAsync(cancellationToken);
 
-        return logs.Select((log, index) => log.ToLogModel(skipStart + index)).ToList();
+        return logs.Select((log, index) => log.ToLogModel(skipStart, index)).ToList();
     }
 
     private async Task<int> CountLogsAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
@@ -65,13 +65,13 @@ public class RavenDbDataProvider(IDocumentStore documentStore, string collection
         if (!string.IsNullOrWhiteSpace(queryParams.SearchCriteria))
         {
             query = query
-                .Search(q => q.RenderedMessage, queryParams.  SearchCriteria)
+                .Search(q => q.RenderedMessage, queryParams.SearchCriteria)
                 .Search(q => q.Exception, queryParams.SearchCriteria);
         }
 
         if (queryParams.StartDate != null)
         {
-            query = query.Where(q => q.Timestamp >=queryParams.StartDate.Value);
+            query = query.Where(q => q.Timestamp >= queryParams.StartDate.Value);
         }
 
         if (queryParams.EndDate != null)

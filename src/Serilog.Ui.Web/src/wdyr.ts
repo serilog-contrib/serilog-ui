@@ -4,6 +4,6 @@ import * as React from 'react';
 wdyr(React, {
   collapseGroups: true,
   hotReloadBufferMs: 1000,
-  include: [/app/],
+  include: [/.*/],
   trackHooks: true,
 });

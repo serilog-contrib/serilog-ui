@@ -64,6 +64,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.RavenDbProvider.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "samples\WebApp\WebApp.csproj", "{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "samples\WebApi\WebApi.csproj", "{A2701899-102D-4926-B054-FD76F59A0791}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -140,6 +142,10 @@ Global
 		{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2701899-102D-4926-B054-FD76F59A0791}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2701899-102D-4926-B054-FD76F59A0791}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2701899-102D-4926-B054-FD76F59A0791}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2701899-102D-4926-B054-FD76F59A0791}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -164,6 +170,7 @@ Global
 		{8973E5F5-FD9B-41B1-B2D6-8B281754C443} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
 		{B785845B-D858-4562-B224-67468B4FEE41} = {75F9223B-15F2-4465-B01D-2A5A49FCD000}
 		{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765} = {157CA77C-513A-409F-8045-E68739AAC8C8}
+		{A2701899-102D-4926-B054-FD76F59A0791} = {157CA77C-513A-409F-8045-E68739AAC8C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {88374732-FEAD-4375-9CF1-75331A37CF07}

@@ -10,7 +10,7 @@ namespace Serilog.Ui.Core
         /// <summary>
         /// It gets or sets RowNo.
         /// </summary>
-        public virtual int RowNo { get; set; }
+        public virtual int RowNo { get; private set; }
 
         /// <summary>
         /// It gets or sets Level.
@@ -41,5 +41,17 @@ namespace Serilog.Ui.Core
         /// It gets or sets PropertyType.
         /// </summary>
         public virtual string PropertyType { get; set; }
+
+        /// <summary>
+        /// It sets the RowNo using the RowStart and the log index.
+        /// </summary>
+        /// <param name="rowNoStart"></param>
+        /// <param name="index"></param>
+        public LogModel SetRowNo(int rowNoStart, int index)
+        {
+            RowNo = rowNoStart + index + 1;
+
+            return this;
+        }
     }
 }

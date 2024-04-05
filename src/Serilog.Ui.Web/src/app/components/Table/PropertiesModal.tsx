@@ -17,10 +17,10 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconCheck, IconCodeDots, IconCopy } from '@tabler/icons-react';
 import { useColumnsInfo } from 'app/hooks/useColumnsInfo';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { capitalize, printDate } from 'app/util/prettyPrints';
+import { capitalize, convertLogType, printDate } from 'app/util/prettyPrints';
 import { memo } from 'react';
 import { boxButton, boxGridProperties, overlayProps } from 'style/modal';
-import { ColumnType, EncodedSeriLogObject, LogType } from 'types/types';
+import { ColumnType, EncodedSeriLogObject } from 'types/types';
 
 const CodeContent = loadable(() => import('./CodeContent'));
 
@@ -58,7 +58,7 @@ const PropertiesModal = ({
       </Modal>
 
       <Box display="grid" style={boxButton}>
-        <Button size="compact-sm" onClick={open}>
+        <Button size="compact-sm" disabled={!Object.keys(rest).length} onClick={open}>
           {title}
         </Button>
       </Box>
@@ -83,21 +83,21 @@ const RenderProps = memo(
 
     const propertyName = capitalize(name);
 
-    if (
-      additionalColumn.codeType &&
-      additionalColumn.codeType !== LogType.None &&
-      !removeProperties
-    )
+    if (additionalColumn.codeType && !removeProperties) {
       return (
         <Accordion style={{ order: 1 }}>
           <Accordion.Item value={propertyName}>
             <Accordion.Control icon={<IconCodeDots />}>{propertyName}</Accordion.Control>
             <Accordion.Panel>
-              <CodeContent prop={prop as string} codeType={additionalColumn.codeType} />
+              <CodeContent
+                prop={prop as string}
+                codeType={convertLogType(additionalColumn.codeType)}
+              />
             </Accordion.Panel>
           </Accordion.Item>
         </Accordion>
       );
+    }
 
     switch (additionalColumn?.typeName) {
       case ColumnType.boolean:
@@ -112,6 +112,7 @@ const RenderProps = memo(
           />
         );
       case ColumnType.datetime:
+      case ColumnType.datetimeoffset:
         const date = printDate(prop as string, isUtc);
         return (
           <TextInput
@@ -122,22 +123,20 @@ const RenderProps = memo(
             value={date}
           />
         );
-      case ColumnType.string:
-      case ColumnType.text:
-      case ColumnType.shortstring:
-        return (
-          <Textarea
-            autosize
-            label={propertyName}
-            value={prop as string}
-            disabled
-            rightSectionPointerEvents="all"
-            rightSection={<CopySection value={prop as string} />}
-            minRows={2}
-            maxRows={4}
-          />
-        );
     }
+
+    return (
+      <Textarea
+        autosize
+        label={propertyName}
+        value={prop as string}
+        disabled
+        rightSectionPointerEvents="all"
+        rightSection={<CopySection value={prop as string} />}
+        minRows={1}
+        maxRows={4}
+      />
+    );
   },
 );
 

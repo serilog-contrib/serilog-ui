@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
 
 import react from '@vitejs/plugin-react-swc';
-import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import { defineConfig } from 'vite';
 import { checker } from 'vite-plugin-checker';
 import mkcert from 'vite-plugin-mkcert';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
@@ -57,7 +57,6 @@ export default defineConfig((env) => ({
         jsxImportSource: '@welldone-software/why-did-you-render',
       }),
     viteTsconfigPaths(),
-    env.mode === 'production' && splitVendorChunkPlugin(), // TODO chunking and lazy load
     mkcert(),
     env.mode !== 'test' &&
       checker({

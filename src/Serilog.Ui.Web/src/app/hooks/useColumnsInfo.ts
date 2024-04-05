@@ -1,4 +1,10 @@
-import { AdditionalColumn, ColumnType, LogType, RemovableColumns } from 'types/types';
+import {
+  AdditionalColumn,
+  AdditionalColumnLogType,
+  ColumnType,
+  LogType,
+  RemovableColumns,
+} from 'types/types';
 import { useSearchForm } from './useSearchForm';
 import { useSerilogUiProps } from './useSerilogUiProps';
 
@@ -14,17 +20,23 @@ export const useColumnsInfo = (currentColumn = '', logPropertyType = '') => {
     {
       name: RemovableColumns.properties,
       typeName: ColumnType.code,
-      codeType: logPropertyType as LogType,
+      codeType:
+        (logPropertyType as LogType) === LogType.Json
+          ? AdditionalColumnLogType.Json
+          : AdditionalColumnLogType.Xml,
     },
   ];
+
   const additionalColumns = hasInfoOnCurrentTable
-    ? [...columnsInfo[currentTable].AdditionalColumns, ...propertiesColumn]
+    ? [...columnsInfo[currentTable].additionalColumns, ...propertiesColumn]
     : propertiesColumn;
 
-  const additionalColumn = additionalColumns.find((p) => p.name === currentColumn);
+  const additionalColumn = additionalColumns.find(
+    (p) => p.name.toLowerCase() === currentColumn.toLowerCase(),
+  );
 
   const removeColumn = (col: RemovableColumns) =>
-    hasInfoOnCurrentTable && columnsInfo[currentTable].RemovedColumns.includes(col);
+    hasInfoOnCurrentTable && columnsInfo[currentTable].removedColumns.includes(col);
 
   const removeException = removeColumn(RemovableColumns.exception);
 

@@ -55,15 +55,14 @@ namespace Serilog.Ui.Common.Tests.DataSamples
         }
 
         private static LogModel Spawn(string level, int rowNum, string? messageOverride = null)
-            => new()
+            => new LogModel
             {
                 Exception = null,
                 Level = level,
                 Message = $"{rowNum} {messageOverride ?? level}",
                 Properties = PropertiesFaker.SerializedProperties,
                 PropertyType = "json",
-                RowNo = rowNum,
                 Timestamp = DateTime.UtcNow
-            };
+            }.SetRowNo(rowNum, -1);
     }
 }

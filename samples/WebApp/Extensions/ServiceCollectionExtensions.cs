@@ -72,14 +72,11 @@ internal static class ServiceCollectionExtensions
                         .AddScopedPolicyAuthFilter("test-policy")
                         // c] default filter, async, checks a basic header against a predefined IConfiguration user-password
                         // .AddScopedBasicAuthFilter()
+
                         /* sample provider registration: MongoDb, Fluent interface */
                         .UseMongoDb(opt => opt
                             .WithConnectionString(configuration.GetConnectionString("MongoDbDefaultConnection"))
                             .WithCollectionName("logs"));
-                    /* sample provider registration: Sql Server [multiple], Fluent interface
-                     * .UseSqlServer(opt => opt.WithConnectionString(builder.Configuration.GetConnectionString("MsSqlDefaultConnection")).WithTable("Logs"))
-                     * .UseSqlServer(opt => opt.WithConnectionString(builder.Configuration.GetConnectionString("MsSqlBackupConnection")).WithTable("LogsBackup"))
-                     */
                 }
             );
 }

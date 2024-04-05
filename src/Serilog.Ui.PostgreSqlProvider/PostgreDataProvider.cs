@@ -55,7 +55,7 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
         return logs
             .Select((item, i) =>
             {
-                item.RowNo = rowNoStart + i;
+                item.SetRowNo(rowNoStart, i);
                 return item;
             })
             .ToList();
