@@ -1,4 +1,3 @@
-using System.Linq;
 using Nuke.Common;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.Docker;
@@ -15,7 +14,7 @@ partial class Build
 
     Target Backend_Test => targetDefinition => targetDefinition
         .DependsOn(Backend_Compile)
-        .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Any())
+        .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Count != 0)
         .Description("Runs dotnet test")
         .Executes(() =>
         {
@@ -26,7 +25,7 @@ partial class Build
 
     Target Backend_Test_Ci => targetDefinition => targetDefinition
         .DependsOn(Backend_Compile)
-        .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Any())
+        .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Count != 0)
         .Description("Runs dotnet-coverage collect, with coverlet coverage")
         .Executes(() =>
         {

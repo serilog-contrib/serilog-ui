@@ -45,7 +45,7 @@ public static class ProvidersOptions
     /// <param name="name"></param>
     public static void RegisterDisabledSortName(string name)
     {
-        _disabledSortProviderNames.Add(name.ToLowerInvariant());
+        _disabledSortProviderNames.Add(name);
     }
 }
 

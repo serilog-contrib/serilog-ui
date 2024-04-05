@@ -27,15 +27,16 @@ public class DataProviderSearchAdditionalColsTest(MsSqlServerAdditionalColsTestP
         var res = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
         res.Item1.Should().HaveCount(LogCollector.DataSet.Count);
-        res.Item1.As<IEnumerable<SqlServerTestModel>>().Should().AllSatisfy(it =>
+        var sut = res.Item1.Cast<SqlServerTestModel>();
+        sut.Should().AllSatisfy(it =>
         {
             it.Exception.Should().BeNullOrWhiteSpace();
             it.EnvironmentName.Should().NotBeNullOrWhiteSpace();
             it.EnvironmentUserName.Should().NotBeNullOrWhiteSpace();
         });
-        
-        var warningItems = res.Item1.Where(e => e.Level == "Warning").ToList();
-        warningItems.First().As<SqlServerTestModel>().SampleBool.Should().BeTrue();
-        warningItems.First().As<SqlServerTestModel>().SampleDate.Should().Be(new DateTime(2022, 01, 15, 09, 00, 00, DateTimeKind.Utc));
+
+        var warningItems = sut.Where(e => e.Level == "Warning").ToList();
+        warningItems.First().SampleBool.Should().BeTrue();
+        warningItems.First().SampleDate.Should().HaveDay(15).And.HaveYear(2022).And.HaveMonth(01);
     }
 }

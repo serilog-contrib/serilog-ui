@@ -41,13 +41,13 @@ public class ProvidersOptionsTest
         result.RemovedColumns.Should().Contain("Exception", "Properties");
         result.AdditionalColumns.Should().BeEquivalentTo(new[]
         {
-            new { Name = "SampleDate", TypeName = "dateTime", CodeType = (CodeType?)null },
+            new { Name = "SampleDate", TypeName = "datetime", CodeType = (CodeType?)null },
             new { Name = "SampleBool", TypeName = "boolean", CodeType = (CodeType?)null },
             new { Name = "EnvironmentName", TypeName = "string", CodeType = (CodeType?)CodeType.Json },
             new { Name = "EnvironmentUserName", TypeName = "string", CodeType = (CodeType?)null },
         });
     }
-    
+
     [Fact]
     public void It_creates_info_from_default_log_model()
     {
