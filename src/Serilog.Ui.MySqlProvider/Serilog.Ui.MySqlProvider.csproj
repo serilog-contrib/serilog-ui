@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <Version>2.2.1</Version>
+    <Version>3.0.0-beta.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,5 +13,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+    <None Include="..\..\assets\icon.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
 </Project>

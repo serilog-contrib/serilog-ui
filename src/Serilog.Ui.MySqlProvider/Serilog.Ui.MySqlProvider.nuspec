@@ -17,15 +17,18 @@
 		<icon>assets\icon.png</icon>
 		<dependencies>
 			<group targetFramework=".NETStandard2.0">
-				<dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="7.0.0" exclude="Build,Analyzers" />
-				<dependency id="Dapper" version="2.1.4" exclude="Build,Analyzers" />
-				<dependency id="MySql.Data" version="8.1.0" exclude="Build,Analyzers" />
+				<dependency id="Ardalis.GuardClauses" version="4.5.0" exclude="Build,Analyzers" />
+				<dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="8.0.1" exclude="Build,Analyzers" />
+				<dependency id="Microsoft.Extensions.Primitives" version="8.0.0" exclude="Build,Analyzers" />
+				<dependency id="Dapper" version="2.1.35" exclude="Build,Analyzers" />
+				<dependency id="MySqlConnector" version="2.3.6" exclude="Build,Analyzers" />
+				<dependency id="System.Text.Json" version="8.0.3" exclude="Build,Analyzers" />
 			</group>
 		</dependencies>
 	</metadata>
 	<files>
 		<file src="bin\Release\netstandard2.0\*.dll" target="lib/netstandard2.0" />
-		<file src="..\..\assets\icon.png" target="assets\" />
-		<file src="..\..\README.md" target="docs\" />
+		<file src="icon.png" target="assets\" />
+		<file src="README.md" target="docs\" />
 	</files>
 </package>

@@ -4,7 +4,7 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<LangVersion>latest</LangVersion>
-		<Version>2.3.0</Version>
+		<Version>3.0.0-beta.1</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -15,5 +15,10 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" PrivateAssets="all" />
 		<InternalsVisibleTo Include="Postgres.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+		<None Include="..\..\assets\icon.png" Pack="true" PackagePath="\"/>
 	</ItemGroup>
 </Project>
