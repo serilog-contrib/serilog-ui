@@ -11,6 +11,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute"/>
+	</ItemGroup>
+	
+	<ItemGroup>
 		<None Include="Directory.Build.props">
 			<Generator>SettingsSingleFileGenerator</Generator>
 		</None>

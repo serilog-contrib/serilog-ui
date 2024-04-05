@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Serilog.Ui.Core.Interfaces;
+﻿using Serilog.Ui.Core.Interfaces;
 
 namespace WebApp.Authentication;
 

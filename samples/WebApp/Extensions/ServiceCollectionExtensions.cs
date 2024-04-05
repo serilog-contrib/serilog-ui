@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.OptionsBuilder;
@@ -11,15 +12,21 @@ namespace WebApp.Extensions;
 
 internal static class ServiceCollectionExtensions
 {
+    private static void PoliciesConfig(AuthorizationPolicyBuilder builder)
+    {
+        // a sample policy, checking for a custom claim
+        builder.RequireClaim("example", "my-value");
+    }
+
     internal static IServiceCollection AddAuthenticationDetails(this IServiceCollection services, IConfiguration configuration)
     {
         services
+#if (NET7_0_OR_GREATER)
             .AddAuthorizationBuilder()
-            .AddPolicy("test-policy", (builder) =>
-            {
-                // a sample policy, checking for a custom claim
-                builder.RequireClaim("example", "my-value");
-            });
+            .AddPolicy("test-policy", PoliciesConfig);
+#else
+            .AddAuthorization(builder => builder.AddPolicy("test-policy", PoliciesConfig));
+#endif
 
         services
             .AddScoped<JwtTokenGenerator>()
@@ -65,15 +72,14 @@ internal static class ServiceCollectionExtensions
                         .AddScopedPolicyAuthFilter("test-policy")
                         // c] default filter, async, checks a basic header against a predefined IConfiguration user-password
                         // .AddScopedBasicAuthFilter()
-
                         /* sample provider registration: MongoDb, Fluent interface */
                         .UseMongoDb(opt => opt
                             .WithConnectionString(configuration.GetConnectionString("MongoDbDefaultConnection"))
                             .WithCollectionName("logs"));
-                        /* sample provider registration: Sql Server [multiple], Fluent interface
-                         * .UseSqlServer(opt => opt.WithConnectionString(builder.Configuration.GetConnectionString("MsSqlDefaultConnection")).WithTable("Logs"))
-                         * .UseSqlServer(opt => opt.WithConnectionString(builder.Configuration.GetConnectionString("MsSqlBackupConnection")).WithTable("LogsBackup"))
-                         */
+                    /* sample provider registration: Sql Server [multiple], Fluent interface
+                     * .UseSqlServer(opt => opt.WithConnectionString(builder.Configuration.GetConnectionString("MsSqlDefaultConnection")).WithTable("Logs"))
+                     * .UseSqlServer(opt => opt.WithConnectionString(builder.Configuration.GetConnectionString("MsSqlBackupConnection")).WithTable("LogsBackup"))
+                     */
                 }
             );
 }
