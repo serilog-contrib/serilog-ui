@@ -1,3 +1,4 @@
+import { fakeColumnsInfo } from '__tests__/_setup/mocks/samples';
 import {
   ReactNode,
   createContext,
@@ -6,18 +7,22 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { AuthType } from 'types/types';
+import { AuthType, SerilogUiConfig } from 'types/types';
 
-export interface SerilogUiConfig {
-  authType?: AuthType;
-  routePrefix?: string;
-  homeUrl?: string;
-  disableSortOnKeys?: string[];
-}
 interface SerilogUiProps extends SerilogUiConfig {
   isUtc: boolean;
   setIsUtc: (value: boolean) => void;
 }
+
+const defaults: SerilogUiConfig = {
+  authType: AuthType.Jwt,
+  columnsInfo: ['development', 'test'].includes(import.meta.env.MODE)
+    ? fakeColumnsInfo
+    : {},
+  disabledSortOnKeys: [],
+  homeUrl: 'https://google.com',
+  routePrefix: 'serilog-ui',
+};
 
 const SerilogUiPropsContext = createContext<SerilogUiProps>({
   isUtc: false,
@@ -33,28 +38,20 @@ export const SerilogUiPropsProvider = ({
   const [isUtc, setIsUtc] = useState<boolean>(false);
 
   useEffect(() => {
-    const setDefaults = () => {
-      setServerProps({
-        routePrefix: 'serilog-ui',
-        authType: AuthType.Jwt,
-        homeUrl: 'https://google.com',
-        disableSortOnKeys: [],
-      });
-    };
     const config = document.getElementById('serilog-ui-props')?.innerText;
-    if (!config) {
-      setDefaults();
-      return;
+
+    if (config) {
+      try {
+        const decodedConfig = decodeURIComponent(config);
+        const configObject = JSON.parse(decodedConfig);
+        setServerProps(configObject);
+        return;
+      } catch (e) {
+        console.warn('SerilogUI Config not received correctly! Using defaults');
+      }
     }
 
-    try {
-      const decodedConfig = decodeURIComponent(config);
-      const configObject = JSON.parse(decodedConfig);
-      setServerProps(configObject);
-    } catch (e) {
-      console.warn('SerilogUI Config not received correctly! Using defaults');
-      setDefaults();
-    }
+    setServerProps(defaults);
   }, []);
 
   const providerValue = useMemo(

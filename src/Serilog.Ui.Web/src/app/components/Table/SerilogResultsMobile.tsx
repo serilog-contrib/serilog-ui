@@ -12,6 +12,7 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { IconSearchOff } from '@tabler/icons-react';
+import { useColumnsInfo } from 'app/hooks/useColumnsInfo';
 import useQueryLogs from 'app/hooks/useQueryLogs';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { getBgLogLevel, printDate } from 'app/util/prettyPrints';
@@ -20,6 +21,7 @@ import classes from 'style/table.module.css';
 import { EncodedSeriLogObject, LogLevel } from 'types/types';
 
 const DetailsModal = loadable(() => import('./DetailsModal'));
+const PropertiesModal = loadable(() => import('./PropertiesModal'));
 
 const SerilogResultsMobile = () => {
   const { data, isFetching } = useQueryLogs();
@@ -68,6 +70,7 @@ const MobileSkeleton = () => {
 const LogCard = memo(({ log, isUtc }: { log: EncodedSeriLogObject; isUtc?: boolean }) => {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
+  const { removeException } = useColumnsInfo();
 
   const colorByLogLevel = getBgLogLevel(theme, colorScheme, LogLevel[log.level]);
 
@@ -103,25 +106,21 @@ const LogCard = memo(({ log, isUtc }: { log: EncodedSeriLogObject; isUtc?: boole
         fz="xs"
         m="auto auto 0.5em"
         style={{
-          gridTemplateColumns: '1fr 1fr',
+          gridTemplateColumns: 'auto auto',
           justifyContent: 'space-evenly',
           alignContent: 'center',
         }}
       >
-        <DetailsModal
-          modalContent={log.exception ?? ''}
-          modalTitle="Exception details"
-          buttonTitle="exception"
-          contentType={log.propertyType}
-          disabled={!log.exception}
-        />
-        <DetailsModal
-          modalContent={log.properties ?? ''}
-          modalTitle="Properties details"
-          contentType={log.propertyType}
-          disabled={!log.properties}
-          buttonTitle="properties"
-        />
+        {!removeException && (
+          <DetailsModal
+            modalContent={log.exception ?? ''}
+            modalTitle="Exception details"
+            buttonTitle="exception"
+            contentType={log.propertyType}
+            disabled={!log.exception}
+          />
+        )}
+        <PropertiesModal modalContent={log} />
       </Card.Section>
     </Card>
   );

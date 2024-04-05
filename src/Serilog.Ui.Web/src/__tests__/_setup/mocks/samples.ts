@@ -1,12 +1,19 @@
 ﻿import { faker } from '@faker-js/faker';
 import {
+  AdditionalColumn,
+  ColumnType,
+  ColumnsInfo,
   LogLevel,
+  LogType,
+  RemovableColumns,
   type EncodedSeriLogObject,
   type SearchResult,
 } from '../../../types/types';
+import { dbKeysMock } from './fetchMock';
 
 faker.seed(10);
 
+//#region code samples
 const createRandomJsonObject = (propLength: number = 13) => {
   const fakeObject = {};
   const nestedIndexes = [1, 4, 7];
@@ -50,7 +57,53 @@ const createRandomXmlObject = () => {
 
 const jsonExample = JSON.stringify(createRandomJsonObject());
 const xmlExample = createRandomXmlObject();
+//#endregion
 
+//#region additional columns info
+const fakeAdditionalColumns: (AdditionalColumn & { value: () => unknown })[] = [
+  {
+    name: 'sampleText',
+    typeName: ColumnType.string,
+    codeType: null,
+    value: faker.lorem.sentence,
+  },
+  {
+    name: 'sampleDate',
+    typeName: ColumnType.datetime,
+    codeType: null,
+    value: () => faker.date.recent({ days: 15 }).toISOString(),
+  },
+  {
+    name: 'sampleBool',
+    typeName: ColumnType.boolean,
+    codeType: null,
+    value: faker.datatype.boolean,
+  },
+  {
+    name: 'sampleCode',
+    typeName: ColumnType.code,
+    codeType: LogType.Json,
+    value: () => jsonExample,
+  },
+];
+
+export const fakeColumnsInfo: ColumnsInfo = {
+  [dbKeysMock[0]]: {
+    AdditionalColumns: fakeAdditionalColumns,
+    RemovedColumns: [],
+  },
+  [dbKeysMock[1]]: {
+    AdditionalColumns: fakeAdditionalColumns,
+    RemovedColumns: [RemovableColumns.properties],
+  },
+  [dbKeysMock[2]]: {
+    AdditionalColumns: fakeAdditionalColumns,
+    RemovedColumns: [RemovableColumns.properties, RemovableColumns.exception],
+  },
+};
+//#endregion
+
+//#region faker - logs
 const createRandomLog = (): EncodedSeriLogObject => {
   const log: EncodedSeriLogObject = {
     rowNo: faker.number.int(),
@@ -70,9 +123,44 @@ const createRandomLog = (): EncodedSeriLogObject => {
   return log;
 };
 
+const createRandomLogWithAdditionalColumns = (keyMockIndex = 1) => {
+  const log = createRandomLog();
+
+  const entry = fakeColumnsInfo[dbKeysMock[keyMockIndex]];
+
+  entry.AdditionalColumns.forEach((element) => {
+    const data = element as AdditionalColumn & { value: () => unknown };
+
+    log[data.name] = data.value();
+  });
+
+  entry.RemovedColumns.forEach((element) => {
+    delete log[element];
+  });
+
+  return log;
+};
+
 export const fakeLogs: SearchResult = {
-  logs: faker.helpers.multiple(createRandomLog, { count: 137 }),
-  total: 139,
+  logs: faker.helpers.multiple(() => createRandomLogWithAdditionalColumns(0), {
+    count: 137,
+  }),
+  total: 137,
   count: 10,
   currentPage: 1,
 };
+
+export const fakeLogs2ndTable: SearchResult = {
+  ...fakeLogs,
+  logs: faker.helpers.multiple(createRandomLogWithAdditionalColumns, { count: 95 }),
+  total: 95,
+};
+
+export const fakeLogs3rdTable: SearchResult = {
+  ...fakeLogs,
+  logs: faker.helpers.multiple(() => createRandomLogWithAdditionalColumns(2), {
+    count: 33,
+  }),
+  total: 33,
+};
+//#endregion

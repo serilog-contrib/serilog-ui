@@ -6,8 +6,9 @@ import {
   useMantineColorScheme,
   useMantineTheme,
 } from '@mantine/core';
+import { useColumnsInfo } from 'app/hooks/useColumnsInfo';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import classes from 'style/table.module.css';
 import { ColumnType, LogLevel } from '../../../types/types';
 import useQueryLogs from '../../hooks/useQueryLogs';
@@ -15,10 +16,12 @@ import { isArrayGuard, isObjectGuard, isStringGuard } from '../../util/guards';
 import { getBgLogLevel, splitPrintDate } from '../../util/prettyPrints';
 
 const DetailsModal = loadable(() => import('./DetailsModal'));
+const PropertiesModal = loadable(() => import('./PropertiesModal'));
 
 const SerilogResults = () => {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
+  const { removeException } = useColumnsInfo();
 
   const { data, isFetching } = useQueryLogs();
 
@@ -28,39 +31,35 @@ const SerilogResults = () => {
   );
 
   const TableRows = useMemo(() => {
-    return !data?.logs
-      ? null
-      : data.logs.map((log) => (
-          <Table.Tr
-            key={log.rowNo}
-            className={log.level}
-            style={{
-              borderBottom: `0.15em solid ${getCellColor(log.level)}`,
-              boxSizing: 'border-box',
-            }}
-          >
-            <Table.Td bg={getCellColor(log.level)} ta="center">
-              <Text fz="sm">{log.level}</Text>
-            </Table.Td>
-            <TableCell content={log.rowNo} columnType={ColumnType.shortstring} />
-            <TableCell content={log.timestamp} columnType={ColumnType.datetime} />
-            <TableCell content={log.message} columnType={ColumnType.text} />
-            <TableCell
-              content={log.exception}
-              columnType={ColumnType.code}
-              codeContentType={log.propertyType}
-              codeModalTitle="Exception details"
-            />
-            <TableCell
-              content={log.properties}
-              columnType={ColumnType.code}
-              codeContentType={log.propertyType}
-              codeModalTitle="Properties details"
-            />
-            {/* TODO: dynamic columns configuration from ui definition */}
-          </Table.Tr>
-        ));
-  }, [data?.logs, getCellColor]);
+    return data?.logs.map((log) => (
+      <Table.Tr
+        key={log.rowNo}
+        className={log.level}
+        style={{
+          borderBottom: `0.15em solid ${getCellColor(log.level)}`,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Table.Td bg={getCellColor(log.level)} ta="center">
+          <Text fz="sm">{log.level}</Text>
+        </Table.Td>
+        <TableCell content={log.rowNo} columnType={ColumnType.shortstring} />
+        <TableCell content={log.timestamp} columnType={ColumnType.datetime} />
+        <TableCell content={log.message} columnType={ColumnType.text} />
+        {!removeException && (
+          <TableCell
+            content={log.exception}
+            columnType={ColumnType.code}
+            codeContentType={log.propertyType}
+            codeModalTitle="Exception details"
+          />
+        )}
+        <Table.Td>
+          <PropertiesModal modalContent={log} title="View" />
+        </Table.Td>
+      </Table.Tr>
+    ));
+  }, [data?.logs, getCellColor, removeException]);
 
   return (
     <Table.ScrollContainer minWidth={1250}>
@@ -72,17 +71,7 @@ const SerilogResults = () => {
         withColumnBorders
         className={classes.desktopTableCell}
       >
-        <Table.Thead>
-          <Table.Tr>
-            <TableHeader text="Level" columnType={ColumnType.shortstring} />
-            <TableHeader text="#" columnType={ColumnType.shortstring} />
-            <TableHeader text="" columnType={ColumnType.datetime} />
-            <TableHeader text="Message" columnType={ColumnType.text} />
-            <TableHeader text="Exception" columnType={ColumnType.code} />
-            <TableHeader text="Properties" columnType={ColumnType.code} />
-            {/* TODO: dynamic columns configuration from ui definition */}
-          </Table.Tr>
-        </Table.Thead>
+        <TableHead />
         <Table.Tbody className={isFetching ? classes.skeletonDesktopTableCell : ''}>
           {!isFetching && isObjectGuard(data) && isArrayGuard(data.logs) && TableRows}
           {isFetching && <DesktopSkeleton />}
@@ -104,7 +93,27 @@ const DesktopSkeleton = () =>
     </Table.Tr>
   ));
 
-const TableHeader = ({ text, columnType }: { text: string; columnType: ColumnType }) => {
+const TableHead = memo(() => {
+  const { removeException } = useColumnsInfo();
+
+  return (
+    <Table.Thead>
+      <Table.Tr>
+        <TableHeader text="Level" columnType={ColumnType.shortstring} />
+        <TableHeader text="#" columnType={ColumnType.shortstring} />
+        <TableHeader text="" columnType={ColumnType.datetime} />
+        <TableHeader text="Message" columnType={ColumnType.text} />
+        {!removeException && (
+          <TableHeader text="Exception" columnType={ColumnType.code} />
+        )}
+        <TableHeader text="Properties" columnType={ColumnType.code} />
+      </Table.Tr>
+    </Table.Thead>
+  );
+});
+
+const TableHeader = memo(
+  ({ text, columnType }: { text: string; columnType: ColumnType }) => {
   switch (columnType) {
     case ColumnType.datetime:
       return (
@@ -119,9 +128,11 @@ const TableHeader = ({ text, columnType }: { text: string; columnType: ColumnTyp
     default:
       return <Table.Th>{text}</Table.Th>;
   }
-};
+  },
+);
 
-const TableCell = ({
+const TableCell = memo(
+  ({
   content,
   columnType,
   codeContentType,
@@ -185,6 +196,7 @@ const TableCell = ({
         </Table.Td>
       );
   }
-};
+  },
+);
 
 export default SerilogResults;

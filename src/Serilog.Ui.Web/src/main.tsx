@@ -13,13 +13,30 @@ import App from './app/App';
  * >> endpoint and additional model property
  * >> filter by _id (react router and opening log by itself)
 
-(branch/custom-columns)
- * >> custom columns
-
 (extras)
  * >>> let mongo registers {n} logs pages
  * >>> remove newtonsoft
  */
+
+const runMsw = async () => {
+  const { worker } = await import('./__tests__/_setup/msw-worker');
+  try {
+    await worker.start({
+      onUnhandledRequest: (req, print) => {
+        const excludedPaths = ['/@fs/', '/app/', '/style/'];
+        const url = new URL(req.url);
+        if (excludedPaths.some((path) => url.pathname.startsWith(path))) {
+          return;
+        }
+
+        print.warning();
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
 
 const main = async () => {
   const rootItem = document.getElementById('serilog-ui-app');
@@ -32,13 +49,7 @@ const main = async () => {
 
   // attach msw on development
   if (import.meta.env.MODE === 'development') {
-    const { worker } = await import('./__tests__/_setup/msw-worker');
-    try {
-      await worker.start();
-    } catch (err) {
-      console.error(err);
-      throw err;
-    }
+    await runMsw();
   }
 
   root.render(<App />);

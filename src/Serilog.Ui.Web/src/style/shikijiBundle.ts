@@ -14,7 +14,6 @@ export const highlighter = async () =>
     langs: [
       import('shiki/langs/json.mjs'),
       import('shiki/langs/json5.mjs'),
-      import('shiki/langs/jsonc.mjs'),
       import('shiki/langs/xml.mjs'),
       // shikiji will try to interop the module with the default export
       () => import('shiki/langs/css.mjs'),

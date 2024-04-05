@@ -3,6 +3,7 @@ import { Button, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconLockCheck, IconLockOpen } from '@tabler/icons-react';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
+import { memo } from 'react';
 import { AuthType } from 'types/types';
 import { useAuthProperties } from '../../hooks/useAuthProperties';
 import { isStringGuard } from '../../util/guards';
@@ -22,7 +23,7 @@ const AuthorizeButton = ({ customStyle }: { customStyle?: string }) => {
   return (
     <>
       <Button color="green" size="compact-md" onClick={open} className={customStyle}>
-        {isHeaderReady ? <IconLockCheck size="24px" /> : <IconLockOpen size="24px" />}
+        {isHeaderReady ? <IconClose /> : <IconOpen />}
         Authorize
       </Button>
       <Modal opened={opened} onClose={close} centered size="lg">
@@ -32,5 +33,8 @@ const AuthorizeButton = ({ customStyle }: { customStyle?: string }) => {
     </>
   );
 };
+
+const IconClose = memo(() => <IconLockCheck size="24px" />);
+const IconOpen = memo(() => <IconLockOpen size="24px" />);
 
 export default AuthorizeButton;

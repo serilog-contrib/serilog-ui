@@ -14,7 +14,7 @@ import useQueryLogs from 'app/hooks/useQueryLogs';
 import { useQueryTableKeys } from 'app/hooks/useQueryTableKeys';
 import { useSearchForm } from 'app/hooks/useSearchForm';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import { useController } from 'react-hook-form';
 import classes from 'style/search.module.css';
 import { LogLevel } from '../../../types/types';
@@ -24,10 +24,10 @@ const levelsArray = Object.keys(LogLevel).map((level) => ({
   label: level,
 }));
 
-const Search = () => {
+const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
   const { data: queryTableKeys, isError } = useQueryTableKeys();
   const { isUtc, setIsUtc } = useSerilogUiProps();
-  const { control, handleSubmit, reset, setValue } = useSearchForm();
+  const { control, handleSubmit, reset, setValue, watch } = useSearchForm();
 
   const { field } = useController({ ...control, name: 'table' });
   const isTableDisabled = !(queryTableKeys && queryTableKeys.length > 1);
@@ -37,11 +37,18 @@ const Search = () => {
   const { field: textField } = useController({ ...control, name: 'search' });
 
   const { refetch } = useQueryLogs();
+  const currentDbKey = watch('table');
 
   const submit = async () => {
     setValue('page', 1);
     await refetch();
+    onRefetch?.();
   };
+
+  useEffect(() => {
+    void refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentDbKey]);
 
   return (
     <form onSubmit={() => {}}>

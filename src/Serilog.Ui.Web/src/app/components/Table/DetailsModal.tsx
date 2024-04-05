@@ -1,3 +1,4 @@
+import loadable from '@loadable/component';
 import {
   Box,
   Button,
@@ -6,9 +7,12 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useEffect, useState } from 'react';
-import classes from 'style/table.module.css';
-import { renderCodeContent } from '../../util/prettyPrints';
+import { memo } from 'react';
+import { boxButton, overlayProps } from 'style/modal';
+import { LogType } from 'types/types';
+import { capitalize } from '../../util/prettyPrints';
+
+const CodeContent = loadable(() => import('./CodeContent'));
 
 const DetailsModal = ({
   modalContent,
@@ -26,16 +30,6 @@ const DetailsModal = ({
   const [opened, { open, close }] = useDisclosure(false);
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
-  const [renderContent, setRenderContent] = useState<TrustedHTML>('');
-
-  useEffect(() => {
-    const fetchContent = async () => {
-      const content = await renderCodeContent(modalContent, contentType);
-      setRenderContent(content ?? '');
-    };
-
-    void fetchContent();
-  }, [contentType, modalContent]);
 
   return (
     <>
@@ -46,25 +40,18 @@ const DetailsModal = ({
         radius="sm"
         size="xl"
         title={modalTitle}
-        overlayProps={{
-          color: colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[2],
-          opacity: 0.55,
-          blur: 3,
-        }}
+        overlayProps={overlayProps(colorScheme, theme.colors)}
       >
-        <div
-          dangerouslySetInnerHTML={{ __html: renderContent }}
-          className={classes.detailModalCode}
-        ></div>
+        <CodeContent prop={modalContent} codeType={contentType as LogType} />
       </Modal>
 
-      <Box display="grid" style={{ justifyContent: 'center', alignContent: 'center' }}>
+      <Box display="grid" style={boxButton}>
         <Button size="compact-sm" disabled={disabled} onClick={open}>
-          {buttonTitle}
+          {capitalize(buttonTitle)}
         </Button>
       </Box>
     </>
   );
 };
 
-export default DetailsModal;
+export default memo(DetailsModal);

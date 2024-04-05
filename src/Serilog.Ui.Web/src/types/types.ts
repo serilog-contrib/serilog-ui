@@ -16,16 +16,7 @@ export enum LogLevel {
 export enum LogType {
   Json = 'json',
   Xml = 'xml',
-}
-
-export interface SeriLogObject {
-  rowNo: number;
-  level: LogLevel;
-  message: string;
-  timestamp: string;
-  exception?: Record<string, string>;
-  properties?: Record<string, string>;
-  propertyType: LogType;
+  None = 'none',
 }
 
 export interface EncodedSeriLogObject {
@@ -36,6 +27,7 @@ export interface EncodedSeriLogObject {
   exception?: string;
   properties?: string;
   propertyType: string;
+  [key: string]: unknown; // in case of additional columns
 }
 
 export interface SearchResult {
@@ -46,6 +38,7 @@ export interface SearchResult {
 }
 
 export enum SearchParameters {
+  Table = 'key',
   Count = 'count',
   Page = 'page',
   Level = 'level',
@@ -79,8 +72,36 @@ export enum SortDirectionOptions {
   Desc = 'Desc',
 }
 
-// column definitions
+// configuration definitions
+export type AdditionalColumn = {
+  name: string;
+  typeName: ColumnType;
+  codeType: LogType | null;
+};
+
+export enum RemovableColumns {
+  exception = 'exception',
+  properties = 'properties',
+}
+
+export type ColumnsInfo = {
+  [dbKey: string]: {
+    AdditionalColumns: AdditionalColumn[];
+    RemovedColumns: RemovableColumns[];
+  };
+};
+
+export interface SerilogUiConfig {
+  authType?: AuthType;
+  routePrefix?: string;
+  homeUrl?: string;
+  hideBrand?: boolean;
+  disabledSortOnKeys?: string[];
+  columnsInfo?: ColumnsInfo;
+}
+
 export enum ColumnType {
+  boolean = 'boolean',
   code = 'code',
   datetime = 'date',
   shortstring = 'shortstring',

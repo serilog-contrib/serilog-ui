@@ -7,16 +7,25 @@ import {
   SortDirectionOptions,
   SortPropertyOptions,
 } from '../../../types/types';
-import { fakeLogs } from './samples';
+import { fakeLogs, fakeLogs2ndTable, fakeLogs3rdTable } from './samples';
 
 const developmentListenersHost = ['https://localhost:3001'];
+
+export const dbKeysMock = ['MsSQL.dbo.Logs', 'MsSQL.dbo.Logs2', 'MsSQL.dbo.Logs3'];
+
+const tableLogs = (table: string | null) => {
+  if (table === dbKeysMock[2]) return fakeLogs3rdTable;
+  if (table === dbKeysMock[1]) return fakeLogs2ndTable;
+  return fakeLogs;
+};
 
 export const handlers = developmentListenersHost.flatMap((dlh) => [
   http.get(`${dlh}/api/logs`, ({ request }) => {
     const req = new URL(request.url);
     const params = getSearchParams(req.searchParams);
-    const logs = fakeLogs.logs
-      .filter(byLevel(LogLevel[params.level || '']))
+
+    const logs = tableLogs(params.table)
+      .logs.filter(byLevel(LogLevel[params.level || '']))
       .filter(byDates(params.start || '', params.end || ''))
       .filter(bySearch(params.search || ''))
       .sort(
@@ -35,9 +44,7 @@ export const handlers = developmentListenersHost.flatMap((dlh) => [
     };
     return HttpResponse.json(data);
   }),
-  http.get(`${dlh}/api/keys`, () =>
-    HttpResponse.json(['MsSQL.dbo.Logs', 'MsSQL.dbo.Logs2']),
-  ),
+  http.get(`${dlh}/api/keys`, () => HttpResponse.json(dbKeysMock)),
 ]);
 
 const getSearchParams = (params: URLSearchParams) => ({
@@ -49,6 +56,7 @@ const getSearchParams = (params: URLSearchParams) => ({
   end: params.get(SearchParameters.EndDate),
   sortOn: params.get(SearchParameters.SortProperty),
   sortBy: params.get(SearchParameters.SortDirection),
+  table: params.get(SearchParameters.Table),
 });
 
 const byLevel = (level?: LogLevel) => (item: EncodedSeriLogObject) =>

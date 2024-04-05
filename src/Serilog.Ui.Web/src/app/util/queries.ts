@@ -1,8 +1,7 @@
 import { DefaultMantineColor } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { SerilogUiConfig } from 'app/hooks/useSerilogUiProps';
 import { ReactNode } from 'react';
-import { AuthType } from 'types/types';
+import { AuthType, SerilogUiConfig } from 'types/types';
 
 export const determineHost = (routePrefix?: string) =>
   ['development', 'test'].includes(import.meta.env.MODE ?? '')

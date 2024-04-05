@@ -1,6 +1,5 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { fetchLogs } from '../queries/logs';
-import { isObjectGuard } from '../util/guards';
 import { useQueryHeaders } from './useQueryHeaders';
 import { useSearchForm } from './useSearchForm';
 import { useSerilogUiProps } from './useSerilogUiProps';
@@ -8,16 +7,14 @@ import { useSerilogUiProps } from './useSerilogUiProps';
 const useQueryLogs = () => {
   const { routePrefix } = useSerilogUiProps();
   const { headers: requestInit } = useQueryHeaders();
-  const { getValues } = useSearchForm();
-  const searchValues = getValues();
+  const { getValues, watch } = useSearchForm();
+  const currentDbKey = watch('table');
 
   return useQuery({
     enabled: false,
     queryKey: ['get-logs'],
     queryFn: async () => {
-      return isObjectGuard(searchValues) && searchValues.table
-        ? await fetchLogs(searchValues, requestInit, routePrefix)
-        : null;
+      return currentDbKey ? await fetchLogs(getValues(), requestInit, routePrefix) : null;
     },
     placeholderData: keepPreviousData,
     refetchOnMount: true,

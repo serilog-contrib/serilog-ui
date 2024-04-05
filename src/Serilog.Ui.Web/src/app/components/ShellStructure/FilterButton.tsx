@@ -18,7 +18,7 @@ const FilterButton = () => {
 
   return (
     <>
-      <Button size="compact-md" onClick={open}>
+      <Button color="gray" size="compact-md" onClick={open}>
         <IconFilterSearch />
         Filter
       </Button>
@@ -44,7 +44,7 @@ const FilterButton = () => {
         centered
         size="lg"
       >
-        <Search />
+        <Search onRefetch={close} />
       </Modal>
     </>
   );
