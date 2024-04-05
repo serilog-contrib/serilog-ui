@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Raven.Client.Documents;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.OptionsBuilder;
 
 namespace Serilog.Ui.RavenDbProvider.Extensions;
 

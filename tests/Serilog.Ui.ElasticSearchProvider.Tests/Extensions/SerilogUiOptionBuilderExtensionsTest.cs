@@ -6,6 +6,7 @@ using Serilog.Ui.Core;
 using Serilog.Ui.ElasticSearchProvider;
 using Serilog.Ui.Web.Extensions;
 using System;
+using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.ElasticSearchProvider.Extensions;
 using Xunit;
 
@@ -31,6 +32,8 @@ namespace ElasticSearch.Tests.Extensions
             var options = services.GetRequiredService<ElasticSearchDbOptions>();
             options.Should().NotBeNull();
             options.IndexName.Should().Be("my-index");
+
+            ProvidersOptions.DisabledSortProviderNames.Should().Contain(options.ProviderName);
         }
 
         [U]

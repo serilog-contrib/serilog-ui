@@ -12,7 +12,7 @@ public static class UiOptionsExtensions
     /// <param name="path">A path to the stylesheet - i.e. the link "href" attribute</param>
     /// <param name="media">The target media - i.e. the link "media" attribute</param>
     /// <returns>The passed options object for chaining</returns>
-    public static Models.UiOptions InjectStylesheet(this UiOptions options, string path, string media = "screen")
+    public static UiOptions InjectStylesheet(this UiOptions options, string path, string media = "screen")
     {
         var builder = new StringBuilder(options.HeadContent);
         builder.AppendLine($"<link href='{path}' rel='stylesheet' media='{media}' type='text/css' />");

@@ -23,7 +23,21 @@ namespace Serilog.Ui.MsSqlServerProvider.Extensions
             this ISerilogUiOptionsBuilder optionsBuilder,
             Action<RelationalDbOptions> setupOptions,
             Func<string, DateTime>? dateTimeCustomParsing = null
-        )
+        ) => optionsBuilder.UseSqlServer<SqlServerLogModel>(setupOptions, dateTimeCustomParsing);
+
+        /// <summary>Configures the SerilogUi to connect to a SQL Server database.</summary>
+        /// <typeparam name="T">The log model, containing any additional columns. It must inherit <see cref="SqlServerLogModel"/>.</typeparam>
+        /// <param name="optionsBuilder"> The options builder. </param>
+        /// <param name="setupOptions">The Ms Sql options action.</param>
+        /// <param name="dateTimeCustomParsing">
+        /// Delegate to customize the DateTime parsing.
+        /// It throws <see cref="InvalidOperationException" /> if the return DateTime isn't UTC kind.
+        /// </param>
+        public static ISerilogUiOptionsBuilder UseSqlServer<T>(
+            this ISerilogUiOptionsBuilder optionsBuilder,
+            Action<RelationalDbOptions> setupOptions,
+            Func<string, DateTime>? dateTimeCustomParsing = null
+        ) where T : SqlServerLogModel
         {
             var dbOptions = new RelationalDbOptions("dbo");
             setupOptions(dbOptions);
@@ -31,9 +45,14 @@ namespace Serilog.Ui.MsSqlServerProvider.Extensions
 
             SqlMapper.AddTypeHandler(new DapperDateTimeHandler(dateTimeCustomParsing));
 
+            if (typeof(T) != typeof(SqlServerLogModel))
+            {
+                ProvidersOptions.RegisterType<T>(dbOptions.ToDataProviderName(SqlServerDataProvider.MsSqlProviderName));
+            }
+
             optionsBuilder.Services
-                .AddScoped<IDataProvider, SqlServerDataProvider>(p =>
-                    ActivatorUtilities.CreateInstance<SqlServerDataProvider>(p, dbOptions));
+                .AddScoped<IDataProvider, SqlServerDataProvider<T>>(p =>
+                    ActivatorUtilities.CreateInstance<SqlServerDataProvider<T>>(p, dbOptions));
 
             return optionsBuilder;
         }

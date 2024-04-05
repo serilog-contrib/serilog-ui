@@ -4,6 +4,7 @@ using Elasticsearch.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.OptionsBuilder;
 
 namespace Serilog.Ui.ElasticSearchProvider.Extensions
 {
@@ -27,6 +28,8 @@ namespace Serilog.Ui.ElasticSearchProvider.Extensions
             options.Validate();
 
             optionsBuilder.Services.AddSingleton(options);
+            // sorting by property is disabled for Elastic Search
+            ProvidersOptions.RegisterDisabledSortName(options.ProviderName);
 
             var pool = new SingleNodeConnectionPool(options.Endpoint);
             var connectionSettings = new ConnectionSettings(pool, sourceSerializer: (_, _) => new VanillaSerializer());
@@ -38,7 +41,7 @@ namespace Serilog.Ui.ElasticSearchProvider.Extensions
             if (optionsBuilder.Services.Any(c => c.ImplementationType == typeof(ElasticSearchDbDataProvider)))
                 throw new NotSupportedException(
                     $"Adding multiple registrations of '{typeof(ElasticSearchDbDataProvider).FullName}' is not (yet) supported.");
-
+            
             optionsBuilder.Services.AddScoped<IDataProvider, ElasticSearchDbDataProvider>();
 
             return optionsBuilder;

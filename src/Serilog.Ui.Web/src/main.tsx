@@ -18,6 +18,7 @@ import App from './app/App';
 
 (extras)
  * >>> let mongo registers {n} logs pages
+ * >>> remove newtonsoft
  */
 
 const main = async () => {

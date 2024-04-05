@@ -1,30 +1,51 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using Serilog.Ui.Core;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.GuardClauses;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.OptionsBuilder;
 using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.MsSqlServerProvider
 {
-    public class SqlServerDataProvider(RelationalDbOptions options) : IDataProvider
+    public class SqlServerDataProvider(RelationalDbOptions options) : SqlServerDataProvider<SqlServerLogModel>(options)
     {
-        private const string ColumnTimestampName = "TimeStamp";
+        protected override string SearchCriteriaWhereQuery() => "OR [Exception] LIKE @Search";
 
-        private const string ColumnLevelName = "Level";
+        protected override string SelectQuery()
+        {
+            const string level = $"[{ColumnLevelName}]";
+            const string message = $"[{ColumnMessageName}]";
+            const string timestamp = $"[{ColumnTimestampName}]";
 
-        private const string ColumnMessageName = "Message";
+            return $"SELECT [Id], {message}, {level}, {timestamp}, [Exception], [Properties] ";
+        }
+    }
 
-        private readonly RelationalDbOptions _options = options ?? throw new ArgumentNullException(nameof(options));
+    public class SqlServerDataProvider<T>(RelationalDbOptions options) : IDataProvider
+        where T : SqlServerLogModel
+    {
+        internal const string MsSqlProviderName = "MsSQL";
 
-        public string Name => _options.ToDataProviderName("MsSQL");
+        private protected const string ColumnTimestampName = "TimeStamp";
+
+        private protected const string ColumnLevelName = "Level";
+
+        private protected const string ColumnMessageName = "Message";
+
+        private readonly RelationalDbOptions _options = Guard.Against.Null(options);
+
+        public string Name => _options.ToDataProviderName(MsSqlProviderName);
+
+        protected virtual string SelectQuery() => "SELECT * ";
 
         public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
         {
@@ -42,22 +63,20 @@ namespace Serilog.Ui.MsSqlServerProvider
         private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
         {
             var queryBuilder = new StringBuilder();
-            const string level = $"[{ColumnLevelName}]";
-            const string message = $"[{ColumnMessageName}]";
-            const string timestamp = $"[{ColumnTimestampName}]";
-            queryBuilder.Append($"SELECT [Id], {message}, {level}, {timestamp}, [Exception], [Properties] ");
+
+            queryBuilder.Append(SelectQuery());
             queryBuilder.Append($"FROM [{_options.Schema}].[{_options.TableName}] ");
 
             GenerateWhereClause(queryBuilder, queryParams);
 
-            var sortOnCol = GetColumnName(queryParams.SortOn);
-            var sortByCol = queryParams.SortBy.ToString().ToUpper();
-            queryBuilder.Append($"ORDER BY [{sortOnCol}] {sortByCol} OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY");
+            GenerateSortClause(queryBuilder, queryParams.SortOn, queryParams.SortBy);
+
+            queryBuilder.Append("OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY");
 
             var rowNoStart = queryParams.Page * queryParams.Count;
 
             using IDbConnection connection = new SqlConnection(_options.ConnectionString);
-            var logs = await connection.QueryAsync<SqlServerLogModel>(queryBuilder.ToString(),
+            var logs = await connection.QueryAsync<T>(queryBuilder.ToString(),
                 new
                 {
                     Offset = rowNoStart,
@@ -95,7 +114,19 @@ namespace Serilog.Ui.MsSqlServerProvider
                 });
         }
 
-        private static void GenerateWhereClause(StringBuilder queryBuilder, FetchLogsQuery queryParams)
+        /// <summary>
+        /// If Exception property is flagged with <see cref="JsonIgnoreAttribute"/>,
+        /// it removes the Where query part on the Exception field. 
+        /// </summary>
+        /// <returns></returns>
+        protected virtual string SearchCriteriaWhereQuery()
+        {
+            var exceptionProperty = typeof(T).GetProperty(nameof(SqlServerLogModel.Exception));
+            var att = exceptionProperty?.GetCustomAttribute<JsonIgnoreAttribute>();
+            return att is null ? "OR [Exception] LIKE @Search" : string.Empty;
+        }
+
+        private void GenerateWhereClause(StringBuilder queryBuilder, FetchLogsQuery queryParams)
         {
             var conditionStart = "WHERE";
 
@@ -107,7 +138,7 @@ namespace Serilog.Ui.MsSqlServerProvider
 
             if (!string.IsNullOrEmpty(queryParams.SearchCriteria))
             {
-                queryBuilder.Append($"{conditionStart} [{ColumnMessageName}] LIKE @Search OR [Exception] LIKE @Search ");
+                queryBuilder.Append($"{conditionStart} [{ColumnMessageName}] LIKE @Search {SearchCriteriaWhereQuery()} ");
                 conditionStart = "AND";
             }
 
@@ -121,6 +152,14 @@ namespace Serilog.Ui.MsSqlServerProvider
             {
                 queryBuilder.Append($"{conditionStart} [{ColumnTimestampName}] <= @EndDate ");
             }
+        }
+
+        private static void GenerateSortClause(StringBuilder queryBuilder, SortProperty sortOn, SortDirection sortBy)
+        {
+            var sortOnCol = GetColumnName(sortOn);
+            var sortByCol = sortBy.ToString().ToUpper();
+
+            queryBuilder.Append($"ORDER BY [{sortOnCol}] {sortByCol} ");
         }
 
         private static string GetColumnName(SortProperty sortOn)

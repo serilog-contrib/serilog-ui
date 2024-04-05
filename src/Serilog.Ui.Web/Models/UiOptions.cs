@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Serilog.Ui.Core.OptionsBuilder;
 
 namespace Serilog.Ui.Web.Models;
 
@@ -27,6 +29,11 @@ public class UiOptions
     public AuthorizationOptions Authorization { get; set; } = new();
 
     /// <summary>
+    /// Gets ColumnsInfo.
+    /// </summary>
+    public ReadOnlyDictionary<string, ColumnsInfo> ColumnsInfo = ProvidersOptions.AdditionalColumns;
+    
+    /// <summary>
     ///   Gets or sets the head content, a string that will be placed in the &lt;head&gt; of the index.html
     /// </summary>
     /// <value>The head content.</value>
@@ -41,5 +48,5 @@ public class UiOptions
     /// <summary>
     /// Gets or sets the database keys that can't change the sort property.
     /// </summary>
-    internal IEnumerable<string> DisabledSortOnKeys { get; set; }
+    internal IEnumerable<string> DisabledSortOnKeys { get; } = ProvidersOptions.DisabledSortProviderNames;
 }

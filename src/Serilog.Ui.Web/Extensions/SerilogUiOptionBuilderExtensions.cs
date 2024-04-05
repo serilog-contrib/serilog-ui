@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog.Ui.Core;
 using Serilog.Ui.Core.Interfaces;
+using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.Web.Authorization.Filters;
 
 namespace Serilog.Ui.Web.Extensions;

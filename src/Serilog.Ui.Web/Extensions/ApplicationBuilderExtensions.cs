@@ -1,9 +1,6 @@
 using System;
-using System.Linq;
 using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Serilog.Ui.Core;
 using Serilog.Ui.Web.Models;
 
 namespace Serilog.Ui.Web.Extensions
@@ -13,8 +10,6 @@ namespace Serilog.Ui.Web.Extensions
     /// </summary>
     public static class ApplicationBuilderExtensions
     {
-        private static readonly string[] DisabledSortProviders = ["ElasticSearch"];
-
         /// <summary>
         ///   Adds a <see cref="SerilogUiMiddleware"/> middleware to the specified <see cref="IApplicationBuilder"/>.
         /// </summary>
@@ -28,16 +23,7 @@ namespace Serilog.Ui.Web.Extensions
         {
             Guard.Against.Null(applicationBuilder);
 
-            using var scope = applicationBuilder.ApplicationServices.CreateScope();
-            var providers = scope.ServiceProvider.GetServices<IDataProvider>();
-            var disabledSortKeys = providers
-                .Where(sd => Array.Exists(DisabledSortProviders, pr => sd.GetType().Name.StartsWith(pr)))
-                .Select(p => p.Name);
-
-            var uiOptions = new UiOptions
-            {
-                DisabledSortOnKeys = disabledSortKeys
-            };
+            var uiOptions = new UiOptions();
             options?.Invoke(uiOptions);
 
             return applicationBuilder.UseMiddleware<SerilogUiMiddleware>(uiOptions);

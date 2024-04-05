@@ -10,6 +10,8 @@ namespace Serilog.Ui.ElasticSearchProvider
 
         public Uri Endpoint { get; private set; }
 
+        public string ProviderName => string.Join(".", "ES", IndexName);
+
         public void Validate()
         {
             Guard.Against.Null(Endpoint);

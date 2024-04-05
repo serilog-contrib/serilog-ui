@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.OptionsBuilder;
 
 namespace Serilog.Ui.PostgreSqlProvider.Extensions
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Serilog.Ui.Core
+namespace Serilog.Ui.Core.OptionsBuilder
 {
     /// <summary>
     /// SerilogUi OptionsBuilder class, used during app services registration.
