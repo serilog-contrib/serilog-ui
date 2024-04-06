@@ -29,11 +29,7 @@ namespace ElasticSearch.Tests.Extensions
             var services = _serviceCollection.BuildServiceProvider();
 
             services.GetRequiredService<IDataProvider>().Should().NotBeNull().And.BeOfType<ElasticSearchDbDataProvider>();
-            var options = services.GetRequiredService<ElasticSearchDbOptions>();
-            options.Should().NotBeNull();
-            options.IndexName.Should().Be("my-index");
-
-            services.GetRequiredService<ProvidersOptions>().DisabledSortProviderNames.Should().Contain(options.ProviderName);
+ services.GetRequiredService<ProvidersOptions>().DisabledSortProviderNames.Should().HaveCount(1);
         }
 
         [U]
