@@ -11,6 +11,8 @@ public class PostgreSqlDbOptions : RelationalDbOptions
     {
     }
 
+    internal SinkColumnNames ColumnNames = new PostgreSqlAlternativeSinkColumnNames();
+
     /// <summary>
     /// It gets or sets SinkType.
     ///  The sink that used to store logs in the PostgreSQL database. This data provider supports
@@ -26,6 +28,9 @@ public class PostgreSqlDbOptions : RelationalDbOptions
     public PostgreSqlDbOptions WithSinkType(PostgreSqlSinkType sinkType)
     {
         SinkType = sinkType;
+        ColumnNames = sinkType == PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative ?
+            new PostgreSqlAlternativeSinkColumnNames() :
+            new PostgreSqlSinkColumnNames();
         return this;
     }
 }

@@ -35,7 +35,7 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
 
     private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
     {
-        var query = QueryBuilder.BuildFetchLogsQuery(_options.Schema, _options.TableName, queryParams);
+        var query = options.ColumnNames.BuildFetchLogsQuery(_options.Schema, _options.TableName, queryParams);
         var rowNoStart = queryParams.Page * queryParams.Count;
 
         await using var connection = new NpgsqlConnection(_options.ConnectionString);
@@ -45,9 +45,6 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
             {
                 Offset = rowNoStart,
                 queryParams.Count,
-                // TODO: [open point]
-                // this level could be a text column, to be passed as parameter:
-                // https://github.com/b00ted/serilog-sinks-postgresql/blob/ce73c7423383d91ddc3823fe350c1c71fc23bab9/Serilog.Sinks.PostgreSQL/Sinks/PostgreSQL/ColumnWriters.cs#L97
                 Level = LogLevelConverter.GetLevelValue(queryParams.Level),
                 Search = queryParams.SearchCriteria != null ? "%" + queryParams.SearchCriteria + "%" : null,
                 queryParams.StartDate,
@@ -65,7 +62,7 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
 
     private async Task<int> CountLogsAsync(FetchLogsQuery queryParams)
     {
-        var query = QueryBuilder.BuildCountLogsQuery(_options.Schema, _options.TableName, queryParams);
+        var query = options.ColumnNames.BuildCountLogsQuery(_options.Schema, _options.TableName, queryParams);
 
         await using var connection = new NpgsqlConnection(_options.ConnectionString);
 

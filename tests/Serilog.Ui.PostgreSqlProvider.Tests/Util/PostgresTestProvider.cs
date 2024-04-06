@@ -26,7 +26,6 @@ namespace Postgres.Tests.Util
         public PostgresTestProvider()
         {
             Container = new PostgreSqlBuilder().Build();
-            QueryBuilder.SetSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative);
         }
 
         public PostgreSqlDbOptions DbOptions { get; set; } = new PostgreSqlDbOptions("public")

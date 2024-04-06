@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.PostgreSqlProvider.Extensions;
 using Xunit;
+using Serilog.Ui.PostgreSqlProvider.Models;
 
 namespace Postgres.Tests.Extensions
 {
@@ -16,14 +17,26 @@ namespace Postgres.Tests.Extensions
     {
         private readonly ServiceCollection _serviceCollection = [];
 
-        [Fact]
-        public void It_registers_provider_and_dependencies()
+        [Theory]
+#pragma warning disable CS0618 // Type or member is obsolete
+        [InlineData(PostgreSqlSinkType.SerilogSinksPostgreSQL, typeof(PostgreSqlSinkColumnNames))]
+#pragma warning restore CS0618 // Type or member is obsolete
+        [InlineData(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative, typeof(PostgreSqlAlternativeSinkColumnNames))]
+        [InlineData(null, typeof(PostgreSqlAlternativeSinkColumnNames))]
+        public void It_registers_provider_and_dependencies(PostgreSqlSinkType? sink, Type type)
         {
+            PostgreSqlDbOptions? opts = null!;
             _serviceCollection.AddSerilogUi(builder =>
             {
-                builder.UseNpgSql(opt => opt
+                builder.UseNpgSql(opt =>
+                {
+                    opt
                     .WithConnectionString("https://npgsql.example.com")
-                    .WithTable("my-table"));
+                    .WithTable("my-table");
+                    if (sink is not null) opt.WithSinkType((PostgreSqlSinkType)sink);
+
+                    opts = opt;
+                });
             });
 
             var serviceProvider = _serviceCollection.BuildServiceProvider();
@@ -31,6 +44,7 @@ namespace Postgres.Tests.Extensions
 
             var provider = scope.ServiceProvider.GetService<IDataProvider>();
             provider.Should().NotBeNull().And.BeOfType<PostgresDataProvider>();
+            opts.ColumnNames.Should().BeOfType(type);
         }
 
         [Fact]

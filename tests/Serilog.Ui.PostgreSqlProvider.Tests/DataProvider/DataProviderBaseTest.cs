@@ -8,7 +8,6 @@ using Microsoft.Extensions.Primitives;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.PostgreSqlProvider.Extensions;
-using Serilog.Ui.PostgreSqlProvider.Models;
 using Xunit;
 
 namespace Postgres.Tests.DataProvider
@@ -30,7 +29,6 @@ namespace Postgres.Tests.DataProvider
         [Fact]
         public Task It_logs_and_throws_when_db_read_breaks_down()
         {
-            QueryBuilder.SetSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative);
             var sut = new PostgresDataProvider(new PostgreSqlDbOptions("dbo")
                 .WithConnectionString("connString")
                 .WithTable("logs"));

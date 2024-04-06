@@ -9,16 +9,7 @@ namespace Serilog.Ui.PostgreSqlProvider;
 
 internal static class QueryBuilder
 {
-    private static SinkColumnNames _columns;
-
-    internal static void SetSinkType(PostgreSqlSinkType sinkType)
-    {
-        _columns = sinkType == PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative
-            ? new PostgreSqlAlternativeSinkColumnNames()
-            : new PostgreSqlSinkColumnNames();
-    }
-
-    internal static string BuildFetchLogsQuery(string schema, string tableName, FetchLogsQuery query)
+    internal static string BuildFetchLogsQuery(this SinkColumnNames _columns, string schema, string tableName, FetchLogsQuery query)
     {
         StringBuilder queryBuilder = new();
 
@@ -28,15 +19,15 @@ internal static class QueryBuilder
                 $"\"{_columns.RenderedMessage}\", \"{_columns.MessageTemplate}\", \"{_columns.Level}\", \"{_columns.Timestamp}\", \"{_columns.Exception}\", \"{_columns.LogEventSerialized}\" AS \"Properties\"")
             .Append($" FROM \"{schema}\".\"{tableName}\"");
 
-        GenerateWhereClause(queryBuilder, query.Level, query.SearchCriteria, query.StartDate, query.EndDate);
-        var sortClause = GenerateSortClause(query.SortOn, query.SortBy);
+        _columns.GenerateWhereClause(queryBuilder, query.Level, query.SearchCriteria, query.StartDate, query.EndDate);
+        var sortClause = _columns.GenerateSortClause(query.SortOn, query.SortBy);
 
         queryBuilder.Append($" ORDER BY {sortClause} LIMIT @Count OFFSET @Offset");
 
         return queryBuilder.ToString();
     }
 
-    internal static string BuildCountLogsQuery(string schema, string tableName, FetchLogsQuery query)
+    internal static string BuildCountLogsQuery(this SinkColumnNames _columns, string schema, string tableName, FetchLogsQuery query)
     {
         StringBuilder queryBuilder = new();
 
@@ -44,12 +35,12 @@ internal static class QueryBuilder
             .Append($"SELECT COUNT(\"{_columns.RenderedMessage}\")")
             .Append($" FROM \"{schema}\".\"{tableName}\"");
 
-        GenerateWhereClause(queryBuilder, query.Level, query.SearchCriteria, query.StartDate, query.EndDate);
+        _columns.GenerateWhereClause(queryBuilder, query.Level, query.SearchCriteria, query.StartDate, query.EndDate);
 
         return queryBuilder.ToString();
     }
 
-    private static void GenerateWhereClause(
+    private static void GenerateWhereClause(this SinkColumnNames _columns,
         StringBuilder queryBuilder,
         string level,
         string searchCriteria,
@@ -85,7 +76,7 @@ internal static class QueryBuilder
             .Append(string.Join(" AND ", conditions));
     }
 
-    private static string GenerateSortClause(SortProperty sortOn, SortDirection sortBy)
+    private static string GenerateSortClause(this SinkColumnNames _columns, SortProperty sortOn, SortDirection sortBy)
     {
         var sortPropertyName = sortOn switch
         {
