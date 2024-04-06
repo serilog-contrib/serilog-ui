@@ -5,6 +5,7 @@ using Serilog.Ui.MsSqlServerProvider;
 using Serilog.Ui.Web.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using MsSql.Tests.Util;
 using Serilog.Ui.Core.OptionsBuilder;
@@ -51,6 +52,28 @@ namespace MsSql.Tests.Extensions
 
             var provider = scope.ServiceProvider.GetService<IDataProvider>();
             provider.Should().NotBeNull().And.BeOfType<SqlServerDataProvider<SqlServerTestModel>>();
+        }
+
+        [Fact]
+        public void It_registers_multiple_providers()
+        {
+            _serviceCollection.AddSerilogUi(builder =>
+            {
+                builder
+                    .UseSqlServer(opt => opt.WithConnectionString("https://sqlserver.example.com").WithTable("table"))
+                    .UseSqlServer(opt => opt.WithConnectionString("https://sqlserver.example.com").WithTable("table-2"))
+                    .UseSqlServer<SqlServerTestModel>(opt => opt.WithConnectionString("https://sqlserver.com").WithTable("table-custom"))
+                    .UseSqlServer<SqlServerTestModel>(opt => opt.WithConnectionString("https://sqlserver.com").WithTable("table-custom-2"));
+            });
+
+            var serviceProvider = _serviceCollection.BuildServiceProvider();
+            using var scope = serviceProvider.CreateScope();
+
+            var providers = scope.ServiceProvider.GetServices<IDataProvider>().ToList();
+            providers.Should().HaveCount(4);
+            providers.Take(2).Should().AllBeOfType<SqlServerDataProvider<SqlServerLogModel>>();
+            providers.Skip(2).Take(2).Should().AllBeOfType<SqlServerDataProvider<SqlServerTestModel>>();
+            providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
         }
 
         [Fact]

@@ -5,6 +5,7 @@ using Serilog.Ui.MySqlProvider;
 using Serilog.Ui.Web.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.MySqlProvider.Extensions;
 using Xunit;
@@ -30,7 +31,25 @@ public class SerilogUiOptionBuilderExtensionsMySqlTest
         var provider = scope.ServiceProvider.GetService<IDataProvider>();
         provider.Should().NotBeNull().And.BeOfType<MySqlDataProvider>();
     }
+    
+    [Fact]
+    public void It_registers_multiple_providers()
+    {
+        _serviceCollection.AddSerilogUi(builder =>
+        {
+            builder
+                .UseMySqlServer(opt => opt.WithConnectionString("https://sqlserver.example.com").WithTable("table"))
+                .UseMySqlServer(opt => opt.WithConnectionString("https://sqlserver.example.com").WithTable("table-2"));
+        });
 
+        var serviceProvider = _serviceCollection.BuildServiceProvider();
+        using var scope = serviceProvider.CreateScope();
+
+        var providers = scope.ServiceProvider.GetServices<IDataProvider>().ToList();
+        providers.Should().HaveCount(2).And.AllBeOfType<MySqlDataProvider>();
+        providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
+    }
+    
     [Fact]
     public void It_throws_on_invalid_registration()
     {
@@ -79,6 +98,24 @@ public class SerilogUiOptionBuilderExtensionsMariaDbTest
         provider.Should().NotBeNull().And.BeOfType<MariaDbDataProvider>();
     }
 
+    [Fact]
+    public void It_registers_multiple_providers()
+    {
+        _serviceCollection.AddSerilogUi(builder =>
+        {
+            builder
+                .UseMariaDbServer(opt => opt.WithConnectionString("https://sqlserver.example.com").WithTable("table"))
+                .UseMariaDbServer(opt => opt.WithConnectionString("https://sqlserver.example.com").WithTable("table-2"));
+        });
+
+        var serviceProvider = _serviceCollection.BuildServiceProvider();
+        using var scope = serviceProvider.CreateScope();
+
+        var providers = scope.ServiceProvider.GetServices<IDataProvider>().ToList();
+        providers.Should().HaveCount(2).And.AllBeOfType<MariaDbDataProvider>();
+        providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
+    }
+    
     [Fact]
     public void It_throws_on_invalid_registration()
     {

@@ -5,6 +5,7 @@ using Serilog.Ui.PostgreSqlProvider;
 using Serilog.Ui.Web.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.PostgreSqlProvider.Extensions;
 using Xunit;
@@ -31,8 +32,8 @@ namespace Postgres.Tests.Extensions
                 builder.UseNpgSql(opt =>
                 {
                     opt
-                    .WithConnectionString("https://npgsql.example.com")
-                    .WithTable("my-table");
+                        .WithConnectionString("https://npgsql.example.com")
+                        .WithTable("my-table");
                     if (sink is not null) opt.WithSinkType((PostgreSqlSinkType)sink);
 
                     opts = opt;
@@ -45,6 +46,33 @@ namespace Postgres.Tests.Extensions
             var provider = scope.ServiceProvider.GetService<IDataProvider>();
             provider.Should().NotBeNull().And.BeOfType<PostgresDataProvider>();
             opts.ColumnNames.Should().BeOfType(type);
+        }
+
+        [Fact]
+        public void It_registers_multiple_providers()
+        {
+            _serviceCollection.AddSerilogUi(builder =>
+            {
+                builder.UseNpgSql(opt =>
+                    {
+                        opt
+                            .WithConnectionString("https://npgsql.example.com")
+                            .WithTable("my-table");
+                    })
+                    .UseNpgSql(opt =>
+                    {
+                        opt
+                            .WithConnectionString("https://npgsql.example.com")
+                            .WithTable("my-table-2");
+                    });
+            });
+
+            var serviceProvider = _serviceCollection.BuildServiceProvider();
+            using var scope = serviceProvider.CreateScope();
+
+            var providers = scope.ServiceProvider.GetServices<IDataProvider>().ToList();
+            providers.Should().HaveCount(2).And.AllBeOfType<PostgresDataProvider>();
+            providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
         }
 
         [Fact]
