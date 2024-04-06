@@ -1,10 +1,10 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
-using Serilog.Ui.Core;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using Serilog.Ui.Core.Models;
 
 namespace Serilog.Ui.MongoDbProvider
 {

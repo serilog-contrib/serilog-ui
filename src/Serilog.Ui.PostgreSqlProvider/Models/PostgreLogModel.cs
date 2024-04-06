@@ -1,4 +1,4 @@
-﻿using Serilog.Ui.Core;
+﻿using Serilog.Ui.Core.Models;
 
 namespace Serilog.Ui.PostgreSqlProvider.Models
 {

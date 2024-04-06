@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.Json.Serialization;
-using Serilog.Ui.Core;
+using Serilog.Ui.Core.Models;
 
 namespace Serilog.Ui.MsSqlServerProvider;
 

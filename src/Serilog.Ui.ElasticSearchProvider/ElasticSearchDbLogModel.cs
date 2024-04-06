@@ -1,9 +1,9 @@
 ﻿using Nest;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Serilog.Ui.Core;
 using System;
 using System.Collections.Generic;
+using Serilog.Ui.Core.Models;
 
 namespace Serilog.Ui.ElasticSearchProvider
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Serilog.Ui.Core
+namespace Serilog.Ui.Core.Models
 {
     /// <summary>
     /// Log Model class.

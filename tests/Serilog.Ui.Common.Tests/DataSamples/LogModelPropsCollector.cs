@@ -1,7 +1,7 @@
-﻿using Serilog.Ui.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Serilog.Ui.Core.Models;
 
 namespace Serilog.Ui.Common.Tests.DataSamples
 {

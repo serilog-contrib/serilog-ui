@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Serilog.Ui.Core;
+using Serilog.Ui.Core.Models;
 
 namespace Serilog.Ui.RavenDbProvider.Models;
 

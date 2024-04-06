@@ -1,8 +1,8 @@
 ﻿using Bogus;
-using Serilog.Ui.Core;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Serilog.Ui.Core.Models;
 
 namespace Serilog.Ui.Common.Tests.DataSamples
 {

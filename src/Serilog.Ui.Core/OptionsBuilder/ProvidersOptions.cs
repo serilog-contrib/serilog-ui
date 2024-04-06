@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Serilog.Ui.Core.Attributes;
+using Serilog.Ui.Core.Models;
 
 namespace Serilog.Ui.Core.OptionsBuilder;
 
