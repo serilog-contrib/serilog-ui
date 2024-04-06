@@ -1,6 +1,7 @@
 ﻿using System;
+using Serilog.Ui.Core.OptionsBuilder;
 
-namespace Serilog.Ui.Core.OptionsBuilder;
+namespace Serilog.Ui.Core.Attributes;
 
 /// <summary>
 /// Used to identify a <see cref="AdditionalColumn"/> that can be rendered as code in the UI.

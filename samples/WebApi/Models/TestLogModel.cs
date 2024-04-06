@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Attributes;
 using Serilog.Ui.MsSqlServerProvider;
 
 namespace WebApi.Models;

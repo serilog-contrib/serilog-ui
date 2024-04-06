@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 using Serilog.Ui.Core;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Attributes;
 
 namespace Serilog.Ui.Common.Tests.FakeObjectModels;
 

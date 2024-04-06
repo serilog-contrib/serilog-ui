@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Serilog.Ui.Common.Tests.FakeObjectModels;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Attributes;
 using Serilog.Ui.Core.OptionsBuilder;
 using Xunit;
 
