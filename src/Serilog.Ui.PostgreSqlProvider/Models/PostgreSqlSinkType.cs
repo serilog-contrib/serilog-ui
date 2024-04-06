@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Serilog.Ui.PostgreSqlProvider;
+namespace Serilog.Ui.PostgreSqlProvider.Models;
 
 /// <summary>
 /// Available Postgres sink types.

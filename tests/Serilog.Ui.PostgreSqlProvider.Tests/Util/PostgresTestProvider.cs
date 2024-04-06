@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Serilog;
 using Serilog.Events;
 using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.PostgreSqlProvider.Extensions;
+using Serilog.Ui.PostgreSqlProvider.Models;
 using Testcontainers.PostgreSql;
 using Xunit;
 

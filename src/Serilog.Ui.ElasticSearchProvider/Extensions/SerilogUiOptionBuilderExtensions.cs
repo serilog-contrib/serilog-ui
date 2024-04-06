@@ -6,6 +6,7 @@ using Nest;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Interfaces;
 using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.ElasticSearchProvider.Serializers;
 
 namespace Serilog.Ui.ElasticSearchProvider.Extensions
 {
@@ -35,7 +36,7 @@ namespace Serilog.Ui.ElasticSearchProvider.Extensions
             var pool = new SingleNodeConnectionPool(options.Endpoint);
             var connectionSettings = new ConnectionSettings(pool, sourceSerializer: (_, _) => new VanillaSerializer());
 
-            optionsBuilder.Services.AddSingleton<IElasticClient>(o => new ElasticClient(connectionSettings));
+            optionsBuilder.Services.AddSingleton<IElasticClient>(new ElasticClient(connectionSettings));
 
             // TODO: Fixup ES to allow multiple registrations.
             // Think about multiple ES clients (singletons) used in data providers (scoped)

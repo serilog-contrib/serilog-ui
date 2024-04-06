@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Microsoft.Extensions.Primitives;
 using Serilog.Ui.Core.Models;
+using Serilog.Ui.PostgreSqlProvider.Models;
 using Xunit;
 
 namespace Postgres.Tests.DataProvider;

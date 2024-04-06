@@ -3,6 +3,7 @@ using System;
 using Dapper;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Interfaces;
 using Serilog.Ui.Core.OptionsBuilder;
 

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Primitives;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.PostgreSqlProvider.Extensions;
+using Serilog.Ui.PostgreSqlProvider.Models;
 using Xunit;
 
 namespace Postgres.Tests.DataProvider

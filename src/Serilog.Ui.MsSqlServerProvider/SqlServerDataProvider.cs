@@ -10,6 +10,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.OptionsBuilder;
 using static Serilog.Ui.Core.Models.SearchOptions;

@@ -1,6 +1,7 @@
 ﻿using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.PostgreSqlProvider.Models;
 
-namespace Serilog.Ui.PostgreSqlProvider;
+namespace Serilog.Ui.PostgreSqlProvider.Extensions;
 
 /// <inheritdoc/> - Postgres implementation
 public class PostgreSqlDbOptions : RelationalDbOptions

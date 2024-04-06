@@ -1,6 +1,6 @@
 ﻿using Serilog.Ui.Core.OptionsBuilder;
 
-namespace Serilog.Ui.Core
+namespace Serilog.Ui.Core.Extensions
 {
     /// <summary>
     /// Relational Db Options extensions.

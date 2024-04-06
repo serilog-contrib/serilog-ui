@@ -7,7 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models;
+using Serilog.Ui.PostgreSqlProvider.Extensions;
 
 namespace Serilog.Ui.PostgreSqlProvider;
 
