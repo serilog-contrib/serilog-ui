@@ -31,20 +31,14 @@ namespace Serilog.Ui.ElasticSearchProvider.Extensions
 
             // sorting by property is disabled for Elastic Search
             optionsBuilder.RegisterDisabledSortForProviderKey(options.ProviderName);
-            optionsBuilder.Services.AddSingleton(options);
             
             var pool = new SingleNodeConnectionPool(options.Endpoint);
             var connectionSettings = new ConnectionSettings(pool, sourceSerializer: (_, _) => new VanillaSerializer());
 
             optionsBuilder.Services.AddSingleton<IElasticClient>(new ElasticClient(connectionSettings));
 
-            // TODO: Fixup ES to allow multiple registrations.
-            // Think about multiple ES clients (singletons) used in data providers (scoped)
-            if (optionsBuilder.Services.Any(c => c.ImplementationType == typeof(ElasticSearchDbDataProvider)))
-                throw new NotSupportedException(
-                    $"Adding multiple registrations of '{typeof(ElasticSearchDbDataProvider).FullName}' is not (yet) supported.");
-            
-            optionsBuilder.Services.AddScoped<IDataProvider, ElasticSearchDbDataProvider>();
+            optionsBuilder.Services.AddScoped<IDataProvider, ElasticSearchDbDataProvider>(sp => 
+                new ElasticSearchDbDataProvider(sp.GetRequiredService<IElasticClient>(), options));
 
             return optionsBuilder;
         }

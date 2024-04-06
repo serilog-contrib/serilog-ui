@@ -14,9 +14,8 @@ import App from './app/App';
  * >> filter by _id (react router and opening log by itself)
 
 (extras)
- * >>> let mongo registers {n} logs pages
  * >>> remove newtonsoft
- * >>> mariadb, postgres, raven? additional columns
+ * >>> mariadb, postgres, additional columns
  */
 
 const runMsw = async () => {

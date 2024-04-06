@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MongoDB.Driver;
@@ -26,14 +25,9 @@ namespace Serilog.Ui.MongoDbProvider.Extensions
             setupOptions(dbOptions);
             dbOptions.Validate();
 
-            optionsBuilder.Services.AddSingleton(dbOptions);
             optionsBuilder.Services.TryAddSingleton<IMongoClient>(o => new MongoClient(dbOptions.ConnectionString));
-
-            // TODO Fix up MongoDB to allow multiple registrations. Think about multiple MongoDB clients
-            // (singletons) used in data providers (scoped)
-            if (optionsBuilder.Services.Any(c => c.ImplementationType == typeof(MongoDbDataProvider)))
-                throw new NotSupportedException($"Adding multiple registrations of '{typeof(MongoDbDataProvider).FullName}' is not (yet) supported.");
-            optionsBuilder.Services.AddScoped<IDataProvider, MongoDbDataProvider>();
+            
+            optionsBuilder.Services.AddScoped<IDataProvider>(sp => new MongoDbDataProvider(sp.GetRequiredService<IMongoClient>(), dbOptions));
 
             return optionsBuilder;
         }

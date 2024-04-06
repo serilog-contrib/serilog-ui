@@ -37,6 +37,25 @@ public class SerilogUiOptionBuilderExtensionsTest
         documentStore.Urls.Should().NotBeNullOrEmpty();
         documentStore.Database.Should().Be(dbName);
     }
+    
+    [Fact]
+    public void It_registers_multiple_providers()
+    {
+        _serviceCollection.AddSerilogUi(builder =>
+        {
+            IDocumentStore documentStore = new DocumentStore { Urls = ["http://localhost:8080"], Database = "test-db" };
+            builder
+                .UseRavenDb(opt => opt.WithDocumentStore(documentStore)) // default collection name
+                .UseRavenDb(opt => opt.WithDocumentStore(documentStore).WithCollectionName("test"));
+        });
+
+        var serviceProvider = _serviceCollection.BuildServiceProvider();
+        using var scope = serviceProvider.CreateScope();
+
+        var providers = scope.ServiceProvider.GetServices<IDataProvider>().ToList();
+        providers.Should().HaveCount(2).And.AllBeOfType<RavenDbDataProvider>();
+        providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
+    }
 
     [Fact]
     public void It_throws_on_invalid_registration()

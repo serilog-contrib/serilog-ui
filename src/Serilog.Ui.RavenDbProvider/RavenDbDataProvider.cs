@@ -15,7 +15,7 @@ public class RavenDbDataProvider(IDocumentStore documentStore, string collection
     private readonly string _collectionName = collectionName ?? throw new ArgumentNullException(nameof(collectionName));
 
     /// <inheritdoc/>
-    public string Name => string.Join(".", "RavenDB");
+    public string Name => string.Join(".", "RavenDB", collectionName);
 
     /// <inheritdoc/>
     public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)

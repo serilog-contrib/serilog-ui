@@ -12,6 +12,7 @@ public static class SerilogUiOptionBuilderExtensions
 {
     /// <summary>
     ///   Configures the SerilogUi to connect to a RavenDB database.
+    ///   It supports multiple registration by collection. 
     /// </summary>
     /// <param name="optionsBuilder">The Serilog UI options builder.</param>
     /// <param name="setupOptions">The RavenDb options action.</param>
@@ -21,13 +22,6 @@ public static class SerilogUiOptionBuilderExtensions
         var dbOptions = new RavenDbOptions();
         setupOptions(dbOptions);
         dbOptions.Validate();
-
-        // TODO: Fix up RavenDB to allow multiple registrations. Think about multiple RavenDB clients
-        // (singletons) used in data providers (scoped)
-        if (optionsBuilder.Services.Any(c => c.ImplementationType == typeof(RavenDbDataProvider)))
-        {
-            throw new NotSupportedException($"Adding multiple registrations of '{typeof(RavenDbDataProvider).FullName}' is not (yet) supported.");
-        }
 
         optionsBuilder.Services.AddSingleton(dbOptions.DocumentStore);
         optionsBuilder.Services.AddScoped<IDataProvider>(serviceProvider =>

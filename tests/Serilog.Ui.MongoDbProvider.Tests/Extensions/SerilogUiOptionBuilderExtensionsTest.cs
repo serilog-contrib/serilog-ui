@@ -5,6 +5,7 @@ using Serilog.Ui.Core;
 using Serilog.Ui.MongoDbProvider;
 using Serilog.Ui.Web.Extensions;
 using System;
+using System.Linq;
 using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.MongoDbProvider.Extensions;
 using Xunit;
@@ -27,7 +28,6 @@ namespace MongoDb.Tests.Extensions
             });
             var services = _serviceCollection.BuildServiceProvider();
 
-            services.GetRequiredService<MongoDbOptions>().Should().NotBeNull();
             services.GetRequiredService<IDataProvider>().Should().NotBeNull().And.BeOfType<MongoDbDataProvider>();
             services.GetRequiredService<IMongoClient>().Should().NotBeNull();
         }
@@ -44,10 +44,31 @@ namespace MongoDb.Tests.Extensions
             });
             var services = _serviceCollection.BuildServiceProvider();
 
-            services.GetRequiredService<MongoDbOptions>().Should().NotBeNull();
             services.GetRequiredService<IDataProvider>().Should().NotBeNull().And.BeOfType<MongoDbDataProvider>();
             services.GetRequiredService<IMongoClient>().Should().NotBeNull();
             services.GetRequiredService<IMongoClient>().Settings.ApplicationName.Should().BeNullOrWhiteSpace();
+        }
+
+        [Fact]
+        public void It_registers_multiple_providers()
+        {
+            _serviceCollection.AddSerilogUi(builder =>
+            {
+                builder
+                    .UseMongoDb(options => options
+                        .WithConnectionString("mongodb://mongodb0.example.com:27017/my-db")
+                        .WithCollectionName("my-collection"))
+                    .UseMongoDb(options => options
+                        .WithConnectionString("mongodb://mongodb0.example.com:27017/my-db")
+                        .WithCollectionName("my-collection-2"));
+            });
+
+            var serviceProvider = _serviceCollection.BuildServiceProvider();
+            using var scope = serviceProvider.CreateScope();
+
+            var providers = scope.ServiceProvider.GetServices<IDataProvider>().ToList();
+            providers.Should().HaveCount(2).And.AllBeOfType<MongoDbDataProvider>();
+            providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
         }
 
         [Fact]
