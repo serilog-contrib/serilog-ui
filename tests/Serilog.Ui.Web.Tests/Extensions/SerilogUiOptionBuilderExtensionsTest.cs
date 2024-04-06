@@ -24,7 +24,7 @@ public class SerilogUiOptionBuilderExtensionsTest
     public SerilogUiOptionBuilderExtensionsTest()
     {
         _services.AddHttpContextAccessor();
-        _services.AddScoped<IAuthorizationService>(_ => Substitute.For<IAuthorizationService>());
+        _services.AddScoped(_ => Substitute.For<IAuthorizationService>());
 
         _builder = new SerilogUiOptionsBuilder(_services);
     }

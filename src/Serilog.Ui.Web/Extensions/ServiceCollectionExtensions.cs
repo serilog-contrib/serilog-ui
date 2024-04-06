@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Linq;
 using Ardalis.GuardClauses;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Interfaces;
 using Serilog.Ui.Core.OptionsBuilder;
@@ -29,9 +29,15 @@ namespace Serilog.Ui.Web.Extensions
         {
             Guard.Against.Null(services, nameof(services));
             Guard.Against.Null(optionsBuilder, nameof(optionsBuilder));
+            var isProviderAlreadyRegistered = services.Any(c => c.ImplementationType == typeof(AggregateDataProvider));
+            if (isProviderAlreadyRegistered)
+            {
+                throw new InvalidOperationException($"{nameof(AddSerilogUi)} can be invoked one time per service registration.");
+            }
 
             var builder = new SerilogUiOptionsBuilder(services);
             optionsBuilder.Invoke(builder);
+            builder.RegisterProviderServices();
 
             services.AddHttpContextAccessor();
             services.AddScoped<IAuthorizationFilterService, AuthorizationFilterService>();
@@ -43,7 +49,7 @@ namespace Serilog.Ui.Web.Extensions
             services.AddScoped<ISerilogUiAppRoutes, SerilogUiAppRoutes>();
             services.Decorate<ISerilogUiAppRoutes, SerilogUiAppRoutesDecorator>();
 
-            services.TryAddScoped<AggregateDataProvider>();
+            services.AddScoped<AggregateDataProvider>();
 
             return services;
         }

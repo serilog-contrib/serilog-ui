@@ -26,8 +26,8 @@ namespace Serilog.Ui.PostgreSqlProvider.Extensions
 
             QueryBuilder.SetSinkType(dbOptions.SinkType);
 
-            optionsBuilder.Services.AddScoped<IDataProvider, PostgresDataProvider>(p => ActivatorUtilities.CreateInstance<PostgresDataProvider>(p, dbOptions));
-            
+            optionsBuilder.Services.AddScoped<IDataProvider, PostgresDataProvider>(_ => new PostgresDataProvider(dbOptions));
+
             return optionsBuilder;
         }
     }

@@ -50,6 +50,7 @@ public class WebAppFactory
     {
         protected override void WithTestServices(IServiceCollection services)
         {
+            base.WithTestServices(services);
             // mock some services
             services.AddScoped<ISerilogUiAppRoutes, FakeAppRoutes>();
             services.AddScoped<ISerilogUiEndpoints, FakeAppRoutes>();

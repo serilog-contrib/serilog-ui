@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
+using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.Web.Endpoints;
 using Serilog.Ui.Web.Models;
 using Xunit;
@@ -39,11 +40,11 @@ namespace Serilog.Ui.Web.Tests.Endpoints
         public async Task It_gets_app_home()
         {
             // Arrange
-            _sut.SetOptions(new()
+            _sut.SetOptions(new UiOptions(new ProvidersOptions())
             {
                 BodyContent = "<div>body-test</div>",
                 HeadContent = "<div>head-test</div>",
-                Authorization = new() { AuthenticationType = AuthenticationType.Jwt },
+                Authorization = new AuthorizationOptions { AuthenticationType = AuthenticationType.Jwt },
                 RoutePrefix = "test",
                 HomeUrl = "home-url"
             });
@@ -78,7 +79,7 @@ namespace Serilog.Ui.Web.Tests.Endpoints
         public async Task It_returns_page_error_when_stream_cannot_load_app_home()
         {
             // Arrange
-            _sut.SetOptions(new());
+            _sut.SetOptions(new UiOptions(new ProvidersOptions()));
             _testContext.Request.Path = "/serilog-ui-url/index.html";
             _testContext.Response.Body = new MemoryStream();
             _streamLoaderMock.GetIndex().Returns((Stream)null!);

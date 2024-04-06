@@ -29,10 +29,10 @@ namespace Serilog.Ui.ElasticSearchProvider.Extensions
             setupOptions.Invoke(options);
             options.Validate();
 
-            optionsBuilder.Services.AddSingleton(options);
             // sorting by property is disabled for Elastic Search
-            ProvidersOptions.RegisterDisabledSortName(options.ProviderName);
-
+            optionsBuilder.RegisterDisabledSortForProviderKey(options.ProviderName);
+            optionsBuilder.Services.AddSingleton(options);
+            
             var pool = new SingleNodeConnectionPool(options.Endpoint);
             var connectionSettings = new ConnectionSettings(pool, sourceSerializer: (_, _) => new VanillaSerializer());
 

@@ -1,6 +1,8 @@
 using System;
 using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.Web.Models;
 
 namespace Serilog.Ui.Web.Extensions
@@ -23,7 +25,8 @@ namespace Serilog.Ui.Web.Extensions
         {
             Guard.Against.Null(applicationBuilder);
 
-            var uiOptions = new UiOptions();
+            var providerOptions = applicationBuilder.ApplicationServices.GetRequiredService<ProvidersOptions>();
+            var uiOptions = new UiOptions(providerOptions);
             options?.Invoke(uiOptions);
 
             return applicationBuilder.UseMiddleware<SerilogUiMiddleware>(uiOptions);

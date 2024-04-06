@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,46 +12,37 @@ namespace Serilog.Ui.Core.OptionsBuilder;
 /// <summary>
 /// ProvidersOptions class.
 /// </summary>
-public static class ProvidersOptions
+public class ProvidersOptions
 {
-    private static readonly ConcurrentDictionary<string, ColumnsInfo> _additionalColumns = new();
+    private readonly ConcurrentDictionary<string, ColumnsInfo> _additionalColumns = new();
 
-    private static readonly HashSet<string> _disabledSortProviderNames = [];
+    private readonly HashSet<string> _disabledSortProviderNames = [];
 
     /// <summary>
     /// Gets the AdditionalColumns.
     /// </summary>
     /// <returns></returns>
-    public static ReadOnlyDictionary<string, ColumnsInfo> AdditionalColumns => new(_additionalColumns);
+    public ReadOnlyDictionary<string, ColumnsInfo> AdditionalColumns => new(_additionalColumns);
 
     /// <summary>
     /// Gets the DisabledSortProviderNames.
     /// </summary>
-    public static ReadOnlyCollection<string> DisabledSortProviderNames => _disabledSortProviderNames.ToList().AsReadOnly();
+    public IEnumerable<string> DisabledSortProviderNames => _disabledSortProviderNames.ToList().AsReadOnly();
 
-    /// <summary>
-    /// Register AdditionalColumns info for <see cref="LogModel"/> provider.
-    /// </summary>
-    /// <param name="providerKey">The provider key. Should be the same registered in the provider.</param>
-    /// <typeparam name="T"></typeparam>
-    public static void RegisterType<T>(string providerKey)
+    internal void RegisterType<T>(string providerKey)
         where T : LogModel
     {
         _additionalColumns.TryAdd(providerKey, ColumnsInfo.Create<T>());
     }
 
-    /// <summary>
-    /// Register a Provider Name that doesn't permit sorting by property.
-    /// </summary>
-    /// <param name="name"></param>
-    public static void RegisterDisabledSortName(string name)
+    internal void RegisterDisabledSortName(string name)
     {
         _disabledSortProviderNames.Add(name);
     }
 }
 
 /// <summary>
-/// ColumnsInfo options.
+/// ColumnsInfo.
 /// </summary>
 public class ColumnsInfo
 {
@@ -65,15 +55,15 @@ public class ColumnsInfo
     /// <summary>
     ///  AdditionalColumns info.
     /// </summary>
-    public IEnumerable<AdditionalColumn> AdditionalColumns { get; private set; } = Array.Empty<AdditionalColumn>();
+    public IEnumerable<AdditionalColumn> AdditionalColumns { get; private set; } = [];
 
     /// <summary>
-    /// LogModel RemovedColumns list.
+    /// RemovedColumns info.
     /// </summary>
-    public IEnumerable<string> RemovedColumns { get; private set; } = Array.Empty<string>();
+    public IEnumerable<string> RemovedColumns { get; private set; } = [];
 
     /// <summary>
-    /// Creates a ColumnsInfo object, from a T param (constraint <see cref="LogModel"/>).
+    /// Get an instance of <see cref="ColumnsInfo"/>.
     /// </summary>
     public static ColumnsInfo Create<T>()
         where T : LogModel
@@ -124,17 +114,17 @@ public class ColumnsInfo
 public class AdditionalColumn
 {
     /// <summary>
-    /// Column name.
+    /// Gets or sets the Name.
     /// </summary>
     public string Name { get; set; }
 
     /// <summary>
-    /// Column type name.
+    /// Gets or sets the TypeName.
     /// </summary>
     public string TypeName { get; set; }
 
     /// <summary>
-    /// Column code type.
+    /// Gets or sets the CodeType.
     /// </summary>
     public CodeType? CodeType { get; set; }
 }

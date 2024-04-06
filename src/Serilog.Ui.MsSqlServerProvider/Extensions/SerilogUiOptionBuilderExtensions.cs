@@ -49,12 +49,10 @@ namespace Serilog.Ui.MsSqlServerProvider.Extensions
 
             if (typeof(T) != typeof(SqlServerLogModel))
             {
-                ProvidersOptions.RegisterType<T>(dbOptions.ToDataProviderName(SqlServerDataProvider.MsSqlProviderName));
+                optionsBuilder.RegisterColumnsInfo<T>(dbOptions.ToDataProviderName(SqlServerDataProvider.MsSqlProviderName));
             }
 
-            optionsBuilder.Services
-                .AddScoped<IDataProvider, SqlServerDataProvider<T>>(p =>
-                    ActivatorUtilities.CreateInstance<SqlServerDataProvider<T>>(p, dbOptions));
+            optionsBuilder.Services.AddScoped<IDataProvider, SqlServerDataProvider<T>>(_ => new SqlServerDataProvider<T>(dbOptions));
 
             return optionsBuilder;
         }

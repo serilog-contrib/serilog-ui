@@ -42,7 +42,9 @@ public class ApplicationBuilderExtensionsTest(WebAppFactory.WithMocks program) :
     public void It_not_throws_on_null_parameters()
     {
         // Arrange
-        var webApp = WebApplication.CreateBuilder().Build();
+        var builder = WebApplication.CreateBuilder();
+        builder.Services.AddSerilogUi(_ => { });
+        var webApp = builder.Build();
 
         // Act
         var fail = () => webApp.UseSerilogUi();

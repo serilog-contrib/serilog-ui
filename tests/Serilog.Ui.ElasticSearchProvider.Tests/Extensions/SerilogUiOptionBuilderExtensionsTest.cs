@@ -33,7 +33,7 @@ namespace ElasticSearch.Tests.Extensions
             options.Should().NotBeNull();
             options.IndexName.Should().Be("my-index");
 
-            ProvidersOptions.DisabledSortProviderNames.Should().Contain(options.ProviderName);
+            services.GetRequiredService<ProvidersOptions>().DisabledSortProviderNames.Should().Contain(options.ProviderName);
         }
 
         [U]
