@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MongoDB.Driver;
 using Serilog.Ui.Core;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Interfaces;
 
 namespace Serilog.Ui.MongoDbProvider.Extensions
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Interfaces;
 
 namespace Serilog.Ui.Web.Tests.Utilities.InMemoryDataProvider
 {

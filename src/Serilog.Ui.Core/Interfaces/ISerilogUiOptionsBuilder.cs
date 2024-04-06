@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Serilog.Ui.Core.OptionsBuilder
+namespace Serilog.Ui.Core.Interfaces
 {
     /// <summary>
     /// Serilog UI options builder

@@ -4,6 +4,7 @@ using Elasticsearch.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Interfaces;
 using Serilog.Ui.Core.OptionsBuilder;
 
 namespace Serilog.Ui.ElasticSearchProvider.Extensions

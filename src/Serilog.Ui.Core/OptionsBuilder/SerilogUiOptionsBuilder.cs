@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Serilog.Ui.Core.Interfaces;
 
 namespace Serilog.Ui.Core.OptionsBuilder
 {
