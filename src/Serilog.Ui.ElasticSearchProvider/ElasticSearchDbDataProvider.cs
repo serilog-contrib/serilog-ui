@@ -50,7 +50,6 @@ public class ElasticSearchDbDataProvider(IElasticClient client, ElasticSearchDbO
             .Skip(rowNoStart)
             .Size(queryParams.Count);
 
-        var results = await _client.SearchAsync<ElasticSearchDbLogModel>(new SearchDescriptor<ElasticSearchDbLogModel>().Index(_options.IndexName), cancellationToken);
         var result = await _client.SearchAsync<ElasticSearchDbLogModel>(descriptor, cancellationToken);
 
         int.TryParse(result?.Total.ToString(), out var total);
