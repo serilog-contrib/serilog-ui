@@ -9,6 +9,8 @@ using System.Linq;
 using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.MySqlProvider.Extensions;
 using Xunit;
+using Microsoft.AspNetCore.Builder;
+using Serilog.Ui.Web.Models;
 
 namespace MySql.Tests.Extensions;
 
@@ -31,7 +33,7 @@ public class SerilogUiOptionBuilderExtensionsMySqlTest
         var provider = scope.ServiceProvider.GetService<IDataProvider>();
         provider.Should().NotBeNull().And.BeOfType<MySqlDataProvider>();
     }
-    
+
     [Fact]
     public void It_registers_multiple_providers()
     {
@@ -49,7 +51,7 @@ public class SerilogUiOptionBuilderExtensionsMySqlTest
         providers.Should().HaveCount(2).And.AllBeOfType<MySqlDataProvider>();
         providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
     }
-    
+
     [Fact]
     public void It_throws_on_invalid_registration()
     {
@@ -99,23 +101,69 @@ public class SerilogUiOptionBuilderExtensionsMariaDbTest
     }
 
     [Fact]
+    public void It_registers_provider_and_dependencies_with_custom_log_model()
+    {
+        _serviceCollection.AddSerilogUi(builder =>
+        {
+            builder
+                .UseMariaDbServer<MariaDbTestModel>(opt => opt.WithConnectionString("https://sqlserver.com").WithTable("table-custom"));
+
+        });
+
+        var serviceProvider = _serviceCollection.BuildServiceProvider();
+        using var scope = serviceProvider.CreateScope();
+
+        var provider = scope.ServiceProvider.GetService<IDataProvider>();
+        provider.Should().NotBeNull().And.BeOfType<MariaDbDataProvider<MariaDbTestModel>>();
+    }
+
+    [Fact]
     public void It_registers_multiple_providers()
     {
         _serviceCollection.AddSerilogUi(builder =>
         {
             builder
-                .UseMariaDbServer(opt => opt.WithConnectionString("https://sqlserver.example.com").WithTable("table"))
-                .UseMariaDbServer(opt => opt.WithConnectionString("https://sqlserver.example.com").WithTable("table-2"));
+                .UseMariaDbServer(opt => opt.WithConnectionString("https://sqlserver.com").WithTable("table"))
+                .UseMariaDbServer(opt => opt.WithConnectionString("https://sqlserver.com").WithTable("table-2"))
+                .UseMariaDbServer<MariaDbTestModel>(opt => opt.WithConnectionString("https://sqlserver.com").WithTable("table-custom"))
+                .UseMariaDbServer<MariaDbTestModel>(opt => opt.WithConnectionString("https://sqlserver.com").WithTable("table-custom-2"));
         });
 
         var serviceProvider = _serviceCollection.BuildServiceProvider();
         using var scope = serviceProvider.CreateScope();
 
         var providers = scope.ServiceProvider.GetServices<IDataProvider>().ToList();
-        providers.Should().HaveCount(2).And.AllBeOfType<MariaDbDataProvider>();
+        providers.Should().HaveCount(4);
+        providers.Take(2).Should().AllBeOfType<MariaDbDataProvider>();
+        providers.Skip(2).Take(2).Should().AllBeOfType<MariaDbDataProvider<MariaDbTestModel>>();
         providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
     }
-    
+
+    [Fact]
+    public void It_registers_additional_columns_options_during_service_registration()
+    {
+        var appBuilder = WebApplication.CreateBuilder();
+        appBuilder.Services.AddSerilogUi(builder =>
+        {
+            builder
+                .UseMariaDbServer(opt => opt
+                    .WithConnectionString("https://sqlserver.com")
+                    .WithTable("table"))
+                .UseMariaDbServer<MariaDbTestModel>(opt => opt
+                    .WithConnectionString("https://sqlserver.com")
+                    .WithTable("table-custom"));
+        });
+
+        var app = appBuilder.Build();
+        UiOptions? options = null;
+        app.UseSerilogUi(opt => { options = opt; });
+
+        options?.ColumnsInfo.Should().BeEquivalentTo(new Dictionary<string, ColumnsInfo>
+        {
+            ["MariaDb.dbo.table-custom"] = ColumnsInfo.Create<MariaDbTestModel>()
+        });
+    }
+
     [Fact]
     public void It_throws_on_invalid_registration()
     {

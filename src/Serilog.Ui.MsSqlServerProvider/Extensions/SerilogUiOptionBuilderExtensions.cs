@@ -47,14 +47,17 @@ namespace Serilog.Ui.MsSqlServerProvider.Extensions
 
             SqlMapper.AddTypeHandler(new DapperDateTimeHandler(dateTimeCustomParsing));
 
-            if (typeof(T) != typeof(SqlServerLogModel))
+            var customModel = typeof(T) != typeof(SqlServerLogModel);
+            if (customModel)
             {
                 optionsBuilder.RegisterColumnsInfo<T>(dbOptions.ToDataProviderName(SqlServerDataProvider.MsSqlProviderName));
             }
 
-            optionsBuilder.Services.AddScoped<IDataProvider, SqlServerDataProvider<T>>(_ => new SqlServerDataProvider<T>(dbOptions));
-
+            optionsBuilder.Services.AddScoped<IDataProvider>(customModel ? CustomModelAction : DefaultAction);
             return optionsBuilder;
+
+            SqlServerDataProvider DefaultAction(IServiceProvider provider) => new(dbOptions);
+            SqlServerDataProvider<T> CustomModelAction(IServiceProvider provider) => new(dbOptions);
         }
     }
 }

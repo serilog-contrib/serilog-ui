@@ -30,7 +30,7 @@ public class MsSqlServerTestProvider<T> : DatabaseInstance
     }
 
     private RelationalDbOptions DbOptions { get; set; } = new RelationalDbOptions("dbo").WithTable("Logs");
-    
+
     protected override string Name => nameof(MsSqlContainer);
 
     protected virtual ColumnOptions? ColumnOptions => null;
@@ -59,14 +59,16 @@ public class MsSqlServerTestProvider<T> : DatabaseInstance
                 .WriteTo.MSSqlServer(DbOptions.ConnectionString,
                     new MSSqlServerSinkOptions
                     {
-                        TableName = "Logs", AutoCreateSqlTable = true
+                        TableName = "Logs",
+                        AutoCreateSqlTable = true
                     },
                     columnOptions: ColumnOptions);
         });
         Collector = serilog.InitializeLogs();
 
         SqlMapper.AddTypeHandler(new DapperDateTimeHandler());
-        Provider = new SqlServerDataProvider<T>(DbOptions);
+        var custom = typeof(T) != typeof(SqlServerLogModel);
+        Provider = custom ? new SqlServerDataProvider<T>(DbOptions) : new SqlServerDataProvider(DbOptions);
 
         return Task.CompletedTask;
     }

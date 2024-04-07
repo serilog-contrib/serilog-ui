@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
@@ -12,7 +14,8 @@ using Serilog.Ui.Core.OptionsBuilder;
 
 namespace Serilog.Ui.MySqlProvider.Shared;
 
-public abstract class DataProvider(RelationalDbOptions options) : IDataProvider
+public abstract class DataProvider<T>(RelationalDbOptions options) : IDataProvider
+    where T : MySqlLogModel
 {
     protected virtual string ColumnTimestampName => "TimeStamp";
 
@@ -36,11 +39,12 @@ public abstract class DataProvider(RelationalDbOptions options) : IDataProvider
 
     public abstract string Name { get; }
 
+    protected virtual string SelectQuery => "SELECT * ";
+
     private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
     {
         var queryBuilder = new StringBuilder();
-        queryBuilder.Append(
-            $"SELECT Id, {ColumnMessageName}, {ColumnLevelName} AS 'Level', {ColumnTimestampName}, Exception, Properties From `{Options.TableName}` ");
+        queryBuilder.Append(SelectQuery).Append($"FROM `{Options.TableName}` ");
 
         GenerateWhereClause(queryBuilder, queryParams);
         var sortClause = GenerateSortClause(queryParams.SortOn, queryParams.SortBy);
@@ -59,12 +63,14 @@ public abstract class DataProvider(RelationalDbOptions options) : IDataProvider
             queryParams.StartDate,
             queryParams.EndDate
         };
-        var logs = await connection.QueryAsync<MySqlLogModel>(queryBuilder.ToString(), param);
+
+        var logs = await connection.QueryAsync<T>(queryBuilder.ToString(), param);
 
         return logs
             .Select((item, i) =>
             {
                 item.SetRowNo(rowNoStart, i);
+                item.Level ??= item.LogLevel;
                 // both sinks save UTC but MariaDb is queried as Unspecified, MySql is queried as Local 
                 var ts = DateTime.SpecifyKind(item.Timestamp,
                     item.Timestamp.Kind == DateTimeKind.Unspecified ? DateTimeKind.Utc : item.Timestamp.Kind);
@@ -92,6 +98,18 @@ public abstract class DataProvider(RelationalDbOptions options) : IDataProvider
             });
     }
 
+    /// <summary>
+    /// If Exception property is flagged with <see cref="JsonIgnoreAttribute"/>,
+    /// it removes the Where query part on the Exception field. 
+    /// </summary>
+    /// <returns></returns>
+    protected virtual string SearchCriteriaWhereQuery()
+    {
+        var exceptionProperty = typeof(T).GetProperty(nameof(MySqlLogModel.Exception));
+        var att = exceptionProperty?.GetCustomAttribute<JsonIgnoreAttribute>();
+        return att is null ? "OR Exception LIKE @Search" : string.Empty;
+    }
+
     private void GenerateWhereClause(StringBuilder queryBuilder, FetchLogsQuery queryParams)
     {
         var conditionStart = "WHERE";
@@ -104,7 +122,7 @@ public abstract class DataProvider(RelationalDbOptions options) : IDataProvider
 
         if (!string.IsNullOrEmpty(queryParams.SearchCriteria))
         {
-            queryBuilder.Append($"{conditionStart} ({ColumnMessageName} LIKE @Search OR Exception LIKE @Search) ");
+            queryBuilder.Append($"{conditionStart} ({ColumnMessageName} LIKE @Search {SearchCriteriaWhereQuery()}) ");
             conditionStart = "AND";
         }
 

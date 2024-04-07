@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Linq;
 using Elasticsearch.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Interfaces;
-using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.ElasticSearchProvider.Serializers;
 
 namespace Serilog.Ui.ElasticSearchProvider.Extensions
@@ -31,13 +29,13 @@ namespace Serilog.Ui.ElasticSearchProvider.Extensions
 
             // sorting by property is disabled for Elastic Search
             optionsBuilder.RegisterDisabledSortForProviderKey(options.ProviderName);
-            
+
             var pool = new SingleNodeConnectionPool(options.Endpoint);
             var connectionSettings = new ConnectionSettings(pool, sourceSerializer: (_, _) => new VanillaSerializer());
 
             optionsBuilder.Services.AddSingleton<IElasticClient>(new ElasticClient(connectionSettings));
 
-            optionsBuilder.Services.AddScoped<IDataProvider, ElasticSearchDbDataProvider>(sp => 
+            optionsBuilder.Services.AddScoped<IDataProvider, ElasticSearchDbDataProvider>(sp =>
                 new ElasticSearchDbDataProvider(sp.GetRequiredService<IElasticClient>(), options));
 
             return optionsBuilder;

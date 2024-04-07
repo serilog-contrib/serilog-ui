@@ -10,15 +10,22 @@ using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.MySqlProvider;
 using Testcontainers.MariaDb;
 using Xunit;
+using System.Collections.Generic;
+using Serilog;
+using Serilog.Events;
+using System;
 
 namespace MySql.Tests.Util;
 
-[CollectionDefinition(nameof(MariaDbDataProvider))]
+[CollectionDefinition(nameof(MariaDbTestProvider))]
 public class MariaDbCollection : ICollectionFixture<MariaDbTestProvider>
 {
 }
 
-public sealed class MariaDbTestProvider : DatabaseInstance
+public sealed class MariaDbTestProvider : MariaDbTestProvider<MySqlLogModel>;
+
+public class MariaDbTestProvider<T> : DatabaseInstance
+    where T : MySqlLogModel
 {
     protected override string Name => nameof(MariaDbDataProvider);
 
@@ -28,6 +35,8 @@ public sealed class MariaDbTestProvider : DatabaseInstance
     }
 
     public RelationalDbOptions DbOptions { get; set; } = new RelationalDbOptions("dbo").WithTable("Logs");
+
+    protected virtual Dictionary<string, string>? PropertiesToColumnsMapping => new MariaDBSinkOptions().PropertiesToColumnsMapping;
 
     protected override async Task CheckDbReadinessAsync()
     {
@@ -44,11 +53,28 @@ public sealed class MariaDbTestProvider : DatabaseInstance
     {
         var serilog = new SerilogSinkSetup(logger =>
         {
-            logger.WriteTo.MariaDB(DbOptions.ConnectionString, autoCreateTable: true, options: new MariaDBSinkOptions { TimestampInUtc = true });
+            logger
+                .Enrich.WithEnvironmentName()
+                .Enrich.WithEnvironmentUserName()
+                .Enrich.AtLevel(LogEventLevel.Warning, p =>
+                {
+                    p.WithProperty(nameof(MariaDbTestModel.SampleBool), true);
+                    p.WithProperty(nameof(MariaDbTestModel.SampleDate), new DateTime(2022, 01, 15, 10, 00, 00));
+                })
+                .WriteTo.MariaDB(
+                    DbOptions.ConnectionString,
+                    autoCreateTable: true,
+                    options: new MariaDBSinkOptions
+                    {
+                        TimestampInUtc = true,
+                        PropertiesToColumnsMapping = PropertiesToColumnsMapping
+                    }
+                    );
         });
         Collector = serilog.InitializeLogs();
 
-        Provider = new MariaDbDataProvider(DbOptions);
+        var custom = typeof(T) != typeof(MySqlLogModel);
+        Provider = custom ? new MariaDbDataProvider<T>(DbOptions) : new MariaDbDataProvider(DbOptions);
 
         return Task.CompletedTask;
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Interfaces;
 using Serilog.Ui.Core.OptionsBuilder;
 
@@ -12,7 +13,8 @@ namespace Serilog.Ui.MySqlProvider.Extensions
     public static class SerilogUiOptionBuilderExtensions
     {
         /// <summary>
-        /// Configures the SerilogUi to connect to a MySQL/MariaDb database using Serilog.Sinks.MySQL.
+        /// Configures the SerilogUi to connect to a MySQL/MariaDb database expecting
+        /// <seealso href="https://github.com/saleem-mirza/serilog-sinks-mysql">Serilog.Sinks.MySQL.</seealso> defaults.
         /// Provider expects sink to store timestamp in utc.
         /// </summary>
         /// <param name="optionsBuilder"> The options builder. </param>
@@ -32,7 +34,8 @@ namespace Serilog.Ui.MySqlProvider.Extensions
         }
 
         /// <summary>
-        /// Configures the SerilogUi to connect to a MySQL/MariaDb database using Serilog.Sinks.MariaDB.
+        /// Configures the SerilogUi to connect to a MySQL/MariaDb database expecting
+        /// <seealso href="https://github.com/TeleSoftas/serilog-sinks-mariadb">Serilog.Sinks.MariaDB.</seealso> defaults.
         /// Provider expects sink to store timestamp in utc.
         /// </summary>
         /// <param name="optionsBuilder"> The options builder. </param>
@@ -40,15 +43,36 @@ namespace Serilog.Ui.MySqlProvider.Extensions
         public static ISerilogUiOptionsBuilder UseMariaDbServer(
             this ISerilogUiOptionsBuilder optionsBuilder,
             Action<RelationalDbOptions> setupOptions
-        )
+        ) => optionsBuilder.UseMariaDbServer<MySqlLogModel>(setupOptions);
+
+        /// <summary>
+        /// Configures the SerilogUi to connect to a MySQL/MariaDb database expecting
+        /// <seealso href="https://github.com/TeleSoftas/serilog-sinks-mariadb">Serilog.Sinks.MariaDB.</seealso> defaults.
+        /// Provider expects sink to store timestamp in utc.
+        /// </summary>
+        /// <typeparam name="T">The log model, containing any additional columns. It must inherit <see cref="MySqlLogModel"/>.</typeparam>
+        /// <param name="optionsBuilder"> The options builder. </param>
+        /// <param name="setupOptions">The MySql options action.</param>
+        public static ISerilogUiOptionsBuilder UseMariaDbServer<T>(
+            this ISerilogUiOptionsBuilder optionsBuilder,
+            Action<RelationalDbOptions> setupOptions
+        ) where T : MySqlLogModel
         {
             var dbOptions = new RelationalDbOptions("dbo");
             setupOptions(dbOptions);
             dbOptions.Validate();
 
-            optionsBuilder.Services.AddScoped<IDataProvider, MariaDbDataProvider>(_ => new MariaDbDataProvider(dbOptions));
+            var customModel = typeof(T) != typeof(MySqlLogModel);
+            if (customModel)
+            {
+                optionsBuilder.RegisterColumnsInfo<T>(dbOptions.ToDataProviderName(MariaDbDataProvider.ProviderName));
+            }
 
+            optionsBuilder.Services.AddScoped<IDataProvider>(customModel ? CustomModelAction : DefaultAction);
             return optionsBuilder;
+
+            MariaDbDataProvider DefaultAction(IServiceProvider provider) => new(dbOptions);
+            MariaDbDataProvider<T> CustomModelAction(IServiceProvider provider) => new(dbOptions);
         }
     }
 }

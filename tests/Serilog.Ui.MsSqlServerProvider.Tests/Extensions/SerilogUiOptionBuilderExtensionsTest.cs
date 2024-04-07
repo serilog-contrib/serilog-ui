@@ -34,7 +34,7 @@ namespace MsSql.Tests.Extensions
             using var scope = serviceProvider.CreateScope();
 
             var provider = scope.ServiceProvider.GetService<IDataProvider>();
-            provider.Should().NotBeNull().And.BeOfType<SqlServerDataProvider<SqlServerLogModel>>();
+            provider.Should().NotBeNull().And.BeOfType<SqlServerDataProvider>();
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace MsSql.Tests.Extensions
 
             var providers = scope.ServiceProvider.GetServices<IDataProvider>().ToList();
             providers.Should().HaveCount(4);
-            providers.Take(2).Should().AllBeOfType<SqlServerDataProvider<SqlServerLogModel>>();
+            providers.Take(2).Should().AllBeOfType<SqlServerDataProvider>();
             providers.Skip(2).Take(2).Should().AllBeOfType<SqlServerDataProvider<SqlServerTestModel>>();
             providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
         }
