@@ -71,8 +71,8 @@ namespace Serilog.Ui.MySqlProvider.Extensions
             optionsBuilder.Services.AddScoped<IDataProvider>(customModel ? CustomModelAction : DefaultAction);
             return optionsBuilder;
 
-            MariaDbDataProvider DefaultAction(IServiceProvider provider) => new(dbOptions);
-            MariaDbDataProvider<T> CustomModelAction(IServiceProvider provider) => new(dbOptions);
+            MariaDbDataProvider DefaultAction(IServiceProvider _) => new(dbOptions);
+            MariaDbDataProvider<T> CustomModelAction(IServiceProvider _) => new(dbOptions);
         }
     }
 }
