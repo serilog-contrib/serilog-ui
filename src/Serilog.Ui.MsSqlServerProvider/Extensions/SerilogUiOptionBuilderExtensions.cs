@@ -56,8 +56,8 @@ namespace Serilog.Ui.MsSqlServerProvider.Extensions
             optionsBuilder.Services.AddScoped<IDataProvider>(customModel ? CustomModelAction : DefaultAction);
             return optionsBuilder;
 
-            SqlServerDataProvider DefaultAction(IServiceProvider provider) => new(dbOptions);
-            SqlServerDataProvider<T> CustomModelAction(IServiceProvider provider) => new(dbOptions);
+            SqlServerDataProvider DefaultAction(IServiceProvider _) => new(dbOptions);
+            SqlServerDataProvider<T> CustomModelAction(IServiceProvider _) => new(dbOptions);
         }
     }
 }
