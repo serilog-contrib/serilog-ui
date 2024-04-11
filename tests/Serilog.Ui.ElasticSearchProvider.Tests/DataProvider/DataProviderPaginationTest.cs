@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Elastic.Elasticsearch.Xunit.XunitPlumbing;
 using ElasticSearch.Tests.Util;
 using FluentAssertions;
-using Serilog.Ui.Common.Tests.TestSuites.Impl;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Primitives;
+using Serilog.Ui.Common.Tests.TestSuites.Impl;
 using Serilog.Ui.Core.Models;
 using Xunit;
 

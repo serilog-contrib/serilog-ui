@@ -1,16 +1,16 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using Serilog.Ui.Core;
-using Serilog.Ui.PostgreSqlProvider;
-using Serilog.Ui.Web.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Postgres.Tests.Util;
+using Serilog.Ui.Core;
 using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.PostgreSqlProvider;
 using Serilog.Ui.PostgreSqlProvider.Extensions;
-using Xunit;
 using Serilog.Ui.PostgreSqlProvider.Models;
+using Serilog.Ui.Web.Extensions;
+using Xunit;
 
 namespace Postgres.Tests.Extensions
 {

@@ -1,10 +1,10 @@
-﻿using Nuke.Common.CI.GitHubActions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.CI.GitHubActions.Configuration;
 using Nuke.Common.Execution;
 using Nuke.Common.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 /// <summary>
 /// from: https://github.com/RicoSuter/NSwag/blob/master/build/Build.CI.GitHubActions.cs

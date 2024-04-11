@@ -1,10 +1,10 @@
-﻿using Serilog.Ui.PostgreSqlProvider.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using Serilog.Ui.Core.Attributes;
 using Serilog.Ui.Core.Models;
+using Serilog.Ui.PostgreSqlProvider.Models;
 using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.PostgreSqlProvider;

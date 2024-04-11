@@ -1,13 +1,13 @@
-﻿using FluentAssertions;
-using Serilog.Ui.Common.Tests.TestSuites;
-using Serilog.Ui.MsSqlServerProvider;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Primitives;
 using MsSql.Tests.Util;
+using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.MsSqlServerProvider;
 using Xunit;
 
 namespace MsSql.Tests.DataProvider
@@ -32,13 +32,14 @@ namespace MsSql.Tests.DataProvider
         {
             // Arrange
             var sut = new SqlServerDataProvider(new RelationalDbOptions("dbo").WithConnectionString("connString").WithTable("logs"));
-            var sutWithAdditionalCols = new SqlServerDataProvider<SqlServerTestModel>(new RelationalDbOptions("dbo").WithConnectionString("connString").WithTable("logs"));
+            var sutWithAdditionalCols =
+                new SqlServerDataProvider<SqlServerTestModel>(new RelationalDbOptions("dbo").WithConnectionString("connString").WithTable("logs"));
             var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "10", };
 
             // Act
             var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
             var assertWithAdditionalCols = () => sutWithAdditionalCols.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
-            
+
             await assert.Should().ThrowExactlyAsync<ArgumentException>();
             await assertWithAdditionalCols.Should().ThrowExactlyAsync<ArgumentException>();
         }

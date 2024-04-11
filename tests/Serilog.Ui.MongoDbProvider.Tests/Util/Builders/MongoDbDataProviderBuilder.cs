@@ -1,9 +1,9 @@
-﻿using MongoDB.Bson.Serialization;
+﻿using System.Threading.Tasks;
+using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.MongoDbProvider;
-using System.Threading.Tasks;
 
 namespace MongoDb.Tests.Util.Builders
 {

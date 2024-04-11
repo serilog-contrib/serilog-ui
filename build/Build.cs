@@ -1,10 +1,11 @@
-using Nuke.Common;
-using Nuke.Common.IO;
-using Nuke.Common.Tools.DotNet;
-using Nuke.Common.ProjectModel;
-using Nuke.Common.Git;
-using Nuke.Common.Utilities.Collections;
 using System.Linq;
+using Nuke.Common;
+using Nuke.Common.Git;
+using Nuke.Common.IO;
+using Nuke.Common.ProjectModel;
+using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Utilities.Collections;
+using Serilog;
 
 partial class Build : NukeBuild
 {
@@ -23,16 +24,20 @@ partial class Build : NukeBuild
     [GitRepository] readonly GitRepository Repository;
 
     static AbsolutePath FrontendWorkingDirectory => RootDirectory / "src/Serilog.Ui.Web";
+
     static AbsolutePath OutputDirectory => RootDirectory / "artifacts";
+
     static AbsolutePath SourceDirectory => RootDirectory / "src";
+
     static AbsolutePath TestsDirectory => RootDirectory / "tests";
+
     bool IsReleaseOrMasterBranch => Repository.IsOnReleaseBranch() || Repository.IsOnMainOrMasterBranch();
 
     Target Clean => targetDefinition => targetDefinition
         .DependsOn(Backend_Clean, Frontend_Clean)
         .Executes(() =>
         {
-            Serilog.Log.Information("--- Clean operations completed ---");
+            Log.Information("--- Clean operations completed ---");
         });
 
     Target Pack => targetDefinition => targetDefinition
@@ -40,11 +45,11 @@ partial class Build : NukeBuild
         .OnlyWhenStatic(() => IsReleaseOrMasterBranch)
         .Executes(() =>
         {
-            Serilog.Log.Information("Received infos: {@Key}", ReleaseInfos());
+            Log.Information("Received infos: {@Key}", ReleaseInfos());
 
             foreach (var prj in ReleaseInfos().Where(prj => prj.Publish()))
             {
-                Serilog.Log.Information("Packing prj: {@Key}", prj.Key);
+                Log.Information("Packing prj: {@Key}", prj.Key);
 
                 DotNetTasks.DotNetPack(new DotNetPackSettings()
                     .SetDescription(prj.Key)
@@ -66,14 +71,13 @@ partial class Build : NukeBuild
             if (IsLocalBuild) localOutput.CreateDirectory();
 
             OutputDirectory.GlobFiles("*.nupkg")
-            .ForEach(filePath =>
-            {
-                DotNetTasks.DotNetNuGetPush(settings => settings
-                    .SetTargetPath(filePath)
-                    .SetSource(IsLocalBuild ?
-                        localOutput : "https://api.nuget.org/v3/index.json")
+                .ForEach(filePath =>
+                {
+                    DotNetTasks.DotNetNuGetPush(settings => settings
+                        .SetTargetPath(filePath)
+                        .SetSource(IsLocalBuild ? localOutput : "https://api.nuget.org/v3/index.json")
                         .SetApiKey(NugetApiKey)
                     );
-            });
+                });
         });
 }

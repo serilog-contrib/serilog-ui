@@ -1,19 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Dapper;
 using Npgsql;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.PostgreSQL.ColumnWriters;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
-using Serilog.Ui.PostgreSqlProvider;
-using System.Threading.Tasks;
-using Serilog;
 using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.PostgreSqlProvider;
 using Serilog.Ui.PostgreSqlProvider.Extensions;
 using Serilog.Ui.PostgreSqlProvider.Models;
 using Testcontainers.PostgreSql;
 using Xunit;
-using System.Collections.Generic;
-using Serilog.Events;
-using Serilog.Sinks.PostgreSQL.ColumnWriters;
 
 namespace Postgres.Tests.Util;
 

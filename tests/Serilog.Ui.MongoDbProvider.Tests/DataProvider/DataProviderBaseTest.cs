@@ -1,15 +1,15 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.Extensions.Primitives;
 using MongoDB.Driver;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Serilog.Ui.Common.Tests.TestSuites;
-using Serilog.Ui.MongoDbProvider;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Primitives;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.MongoDbProvider;
 using Xunit;
 
 namespace MongoDb.Tests.DataProvider

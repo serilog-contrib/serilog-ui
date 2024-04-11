@@ -1,14 +1,16 @@
 ﻿// Generated from https://github.com/nuke-build/nuke/blob/master/source/Nuke.Common/Tools/Yarn/Yarn.json
 // TODO: replace with official implementation when ready 
 
-using JetBrains.Annotations;
-using Nuke.Common.Tooling;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using JetBrains.Annotations;
 using Nuke.Common.IO;
+using Nuke.Common.Tooling;
+using Serilog;
+
 // ReSharper disable All
 
 /// <summary>
@@ -300,24 +302,24 @@ public partial class YarnTasks
         {
             // Log standard output as Normal
             case OutputType.Std:
-                Serilog.Log.Debug("{Output}", output);
+                Log.Debug("{Output}", output);
                 break;
 
             // Log output on err stream that contains 'warning' as Warning
             case OutputType.Err when output.Contains("warning", StringComparison.OrdinalIgnoreCase):
-                Serilog.Log.Warning("{Output}", output);
+                Log.Warning("{Output}", output);
                 break;
 
             // Log diagnostic output on error stream as Trace
             case OutputType.Err
                 when output.Contains("Building", StringComparison.OrdinalIgnoreCase) &&
                      output.Contains("for production", StringComparison.OrdinalIgnoreCase):
-                Serilog.Log.Verbose("{Output}", output);
+                Log.Verbose("{Output}", output);
                 break;
 
             // Log other output on err stream as Error
             case OutputType.Err:
-                Serilog.Log.Error("{Output}", output);
+                Log.Error("{Output}", output);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(type), type, null);

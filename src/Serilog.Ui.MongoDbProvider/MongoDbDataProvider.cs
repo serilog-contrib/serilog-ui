@@ -1,11 +1,11 @@
-﻿using Ardalis.GuardClauses;
-using MongoDB.Driver;
-using Serilog.Ui.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Ardalis.GuardClauses;
+using MongoDB.Driver;
+using Serilog.Ui.Core;
 using Serilog.Ui.Core.Models;
 using static Serilog.Ui.Core.Models.SearchOptions;
 using SortDirection = Serilog.Ui.Core.Models.SearchOptions.SortDirection;

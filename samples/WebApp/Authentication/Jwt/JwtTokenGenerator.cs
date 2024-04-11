@@ -1,12 +1,13 @@
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
 
 namespace WebApp.Authentication.Jwt
 {
     public class JwtTokenGenerator(IConfiguration configuration)
     {
         private const string ValidUser = "John Doe";
+
         private readonly IConfiguration _configuration = configuration;
 
         public string GenerateJwtToken()

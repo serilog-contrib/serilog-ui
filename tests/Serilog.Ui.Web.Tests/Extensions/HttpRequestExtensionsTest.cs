@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
@@ -144,7 +145,7 @@ namespace Serilog.Ui.Web.Tests.Extensions
 
             public override Task<X509Certificate2?> GetClientCertificateAsync(CancellationToken cancellationToken = default)
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
 
             public ConnectionInfoMock WithRemoteIp(IPAddress? remoteIp)

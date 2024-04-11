@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
-using System.Text.Json;
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Serilog.Ui.Web.Models;
 
 namespace Serilog.Ui.Web.Endpoints
@@ -71,7 +71,7 @@ namespace Serilog.Ui.Web.Endpoints
                 options.ColumnsInfo,
                 options.DisabledSortOnKeys,
                 options.HideBrand,
-                options.HomeUrl, 
+                options.HomeUrl,
                 options.RoutePrefix
             };
             var encodeAuthOpts = Uri.EscapeDataString(JsonSerializer.Serialize(feOpts, JsonSerializerOptions));

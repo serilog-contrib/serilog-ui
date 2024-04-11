@@ -1,7 +1,11 @@
-﻿using Ardalis.GuardClauses;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Ardalis.GuardClauses;
 using Dapper;
 using MySqlConnector;
+using Serilog;
+using Serilog.Events;
 using Serilog.Sinks.MariaDB;
 using Serilog.Sinks.MariaDB.Extensions;
 using Serilog.Ui.Common.Tests.DataSamples;
@@ -10,10 +14,6 @@ using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.MySqlProvider;
 using Testcontainers.MariaDb;
 using Xunit;
-using System.Collections.Generic;
-using Serilog;
-using Serilog.Events;
-using System;
 
 namespace MySql.Tests.Util;
 

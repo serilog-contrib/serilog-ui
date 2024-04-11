@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Primitives;
 using MsSql.Tests.Util;
 using Serilog.Ui.Common.Tests.TestSuites.Impl;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Primitives;
 using Serilog.Ui.Core.Models;
 using Xunit;
 

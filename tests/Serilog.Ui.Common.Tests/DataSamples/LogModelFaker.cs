@@ -1,7 +1,7 @@
-﻿using Bogus;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Bogus;
 using Serilog.Ui.Core.Models;
 
 namespace Serilog.Ui.Common.Tests.DataSamples

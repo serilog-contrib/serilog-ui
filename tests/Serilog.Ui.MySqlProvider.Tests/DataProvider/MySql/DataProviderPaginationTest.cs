@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Primitives;
-using MySqlConnector;
 using MySql.Tests.Util;
+using MySqlConnector;
 using Serilog.Ui.Common.Tests.TestSuites.Impl;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.MySqlProvider;

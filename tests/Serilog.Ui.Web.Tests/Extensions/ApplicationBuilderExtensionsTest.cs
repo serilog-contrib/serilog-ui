@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -21,7 +22,7 @@ public class ApplicationBuilderExtensionsTest(WebAppFactory.WithMocks program) :
         var middlewareResponse = await _client.GetAsync("/serilog-ui/");
 
         // Assert
-        middlewareResponse.StatusCode.Should().Be((System.Net.HttpStatusCode)418,
+        middlewareResponse.StatusCode.Should().Be((HttpStatusCode)418,
             "because that means that the middleware isn't intercepting the request");
     }
 

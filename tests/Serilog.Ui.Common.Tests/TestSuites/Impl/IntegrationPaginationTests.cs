@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using FluentAssertions;
+using FluentAssertions.Extensions;
+using Microsoft.Extensions.Primitives;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Models;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentAssertions.Extensions;
-using Microsoft.Extensions.Primitives;
 using Xunit;
 
 namespace Serilog.Ui.Common.Tests.TestSuites.Impl

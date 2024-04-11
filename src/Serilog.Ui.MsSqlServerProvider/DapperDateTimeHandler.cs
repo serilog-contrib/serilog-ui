@@ -1,8 +1,8 @@
 ﻿#nullable enable
-using Dapper;
 using System;
 using System.Data;
 using System.Globalization;
+using Dapper;
 
 namespace Serilog.Ui.MsSqlServerProvider;
 

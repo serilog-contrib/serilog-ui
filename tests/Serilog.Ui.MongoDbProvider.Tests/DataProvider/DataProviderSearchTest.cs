@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using MongoDb.Tests.Util;
-using Serilog.Ui.MongoDbProvider;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Primitives;
+using MongoDb.Tests.Util;
 using Serilog.Ui.Common.Tests.TestSuites.Impl;
 using Serilog.Ui.Core.Models;
+using Serilog.Ui.MongoDbProvider;
 using Xunit;
 
 namespace MongoDb.Tests.DataProvider

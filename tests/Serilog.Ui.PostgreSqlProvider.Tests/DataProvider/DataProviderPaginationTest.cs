@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.Primitives;
 using Npgsql;
 using Postgres.Tests.Util;
 using Serilog.Ui.Common.Tests.TestSuites.Impl;
-using Serilog.Ui.PostgreSqlProvider;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Primitives;
 using Serilog.Ui.Core.Models;
+using Serilog.Ui.PostgreSqlProvider;
 using Xunit;
 
 namespace Postgres.Tests.DataProvider;

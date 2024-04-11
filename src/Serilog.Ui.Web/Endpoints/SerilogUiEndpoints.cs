@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using System.Text.Json;
-using Serilog.Ui.Core;
-using System;
+﻿using System;
 using System.Linq;
 using System.Net;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
+using Serilog.Ui.Core;
 using Serilog.Ui.Core.Models;
-using Serilog.Ui.Web.Models;
 using Serilog.Ui.Web.Extensions;
+using Serilog.Ui.Web.Models;
 
 namespace Serilog.Ui.Web.Endpoints
 {
@@ -97,12 +97,13 @@ namespace Serilog.Ui.Web.Endpoints
             }
 
             var (logs, total) = await _aggregateDataProvider.FetchDataAsync(queryLogs);
-            
+
             // due to System.Text.Json design choice:
             // https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/polymorphism
             var serializeLogs = logs.ToList().Cast<object>();
-            
-            var result = JsonSerializer.Serialize(new { logs = serializeLogs, total, count = queryLogs.Count, currentPage = queryLogs.CurrentPage }, JsonSerializerOptions);
+
+            var result = JsonSerializer.Serialize(new { logs = serializeLogs, total, count = queryLogs.Count, currentPage = queryLogs.CurrentPage },
+                JsonSerializerOptions);
 
             return result;
         }

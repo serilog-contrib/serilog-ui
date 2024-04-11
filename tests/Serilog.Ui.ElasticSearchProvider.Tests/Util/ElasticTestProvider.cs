@@ -1,9 +1,9 @@
-﻿using Serilog.Ui.Common.Tests.DataSamples;
+﻿using System;
+using System.Threading.Tasks;
+using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core;
 using Serilog.Ui.ElasticSearchProvider;
-using System;
-using System.Threading.Tasks;
 
 namespace ElasticSearch.Tests.Util
 {

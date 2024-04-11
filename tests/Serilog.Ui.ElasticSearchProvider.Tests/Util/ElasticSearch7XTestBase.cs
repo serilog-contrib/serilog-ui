@@ -1,10 +1,10 @@
-﻿using Elastic.Elasticsearch.Xunit.XunitPlumbing;
+﻿using Elastic.Elasticsearch.Ephemeral;
 using Elastic.Elasticsearch.Xunit;
-using Nest;
+using Elastic.Elasticsearch.Xunit.XunitPlumbing;
 using Elasticsearch.Net;
-using Elastic.Elasticsearch.Ephemeral;
-using Xunit;
 using ElasticSearch.Tests.Util;
+using Nest;
+using Xunit;
 
 [assembly: TestFramework("Elastic.Elasticsearch.Xunit.Sdk.ElasticTestFramework", "Elastic.Elasticsearch.Xunit")]
 [assembly: ElasticXunitConfiguration(typeof(SerilogSinkElasticsearchXunitRunOptions))]

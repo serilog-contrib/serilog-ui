@@ -1,10 +1,10 @@
-﻿using MongoDB.Bson;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Bogus;
+using MongoDB.Bson;
+using Newtonsoft.Json;
 using Serilog.Ui.Common.Tests.FakeObjectModels;
 using Serilog.Ui.MongoDbProvider;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
-using Bogus;
 
 namespace Serilog.Ui.Common.Tests.DataSamples
 {

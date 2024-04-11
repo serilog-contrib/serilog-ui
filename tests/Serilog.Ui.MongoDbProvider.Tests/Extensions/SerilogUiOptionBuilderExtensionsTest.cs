@@ -1,13 +1,13 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Linq;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using Serilog.Ui.Core;
-using Serilog.Ui.MongoDbProvider;
-using Serilog.Ui.Web.Extensions;
-using System;
-using System.Linq;
 using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.MongoDbProvider;
 using Serilog.Ui.MongoDbProvider.Extensions;
+using Serilog.Ui.Web.Extensions;
 using Xunit;
 
 namespace MongoDb.Tests.Extensions

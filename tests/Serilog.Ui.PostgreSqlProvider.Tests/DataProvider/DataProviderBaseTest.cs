@@ -1,13 +1,13 @@
-﻿using FluentAssertions;
-using Serilog.Ui.Common.Tests.TestSuites;
-using Serilog.Ui.PostgreSqlProvider;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.Primitives;
 using Postgres.Tests.Util;
+using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.PostgreSqlProvider;
 using Serilog.Ui.PostgreSqlProvider.Extensions;
 using Xunit;
 

@@ -1,19 +1,19 @@
-﻿using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
-using ElasticSearch.Tests.Util;
-using FluentAssertions;
-using NSubstitute;
-using Nest;
-using Serilog.Ui.Common.Tests.TestSuites;
-using Serilog.Ui.ElasticSearchProvider;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Elastic.Elasticsearch.Xunit.XunitPlumbing;
+using Elasticsearch.Net;
+using ElasticSearch.Tests.Util;
+using FluentAssertions;
 using Microsoft.Extensions.Primitives;
-using Xunit;
+using Nest;
+using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core.Models;
+using Serilog.Ui.ElasticSearchProvider;
+using Xunit;
 
 namespace ElasticSearch.Tests.DataProvider
 {

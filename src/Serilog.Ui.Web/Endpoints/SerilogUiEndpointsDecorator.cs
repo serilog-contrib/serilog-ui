@@ -1,6 +1,6 @@
-﻿using Serilog.Ui.Web.Authorization;
+﻿using System.Threading.Tasks;
+using Serilog.Ui.Web.Authorization;
 using Serilog.Ui.Web.Models;
-using System.Threading.Tasks;
 
 namespace Serilog.Ui.Web.Endpoints
 {

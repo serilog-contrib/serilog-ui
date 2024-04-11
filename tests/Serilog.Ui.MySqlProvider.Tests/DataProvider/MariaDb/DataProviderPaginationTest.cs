@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Primitives;
-using MySqlConnector;
 using MySql.Tests.Util;
+using MySqlConnector;
 using Serilog.Ui.Common.Tests.TestSuites.Impl;
 using Serilog.Ui.Core.Models;
 using Xunit;
@@ -25,7 +25,8 @@ namespace MySql.Tests.DataProvider.MariaDb
 
     [Collection(nameof(MariaDbAdditionalColsTestProvider))]
     [Trait("Integration-Pagination-AdditionalColumns", "MariaDb")]
-    public class DataProviderPaginationAdditionalColsTest(MariaDbAdditionalColsTestProvider instance) : IntegrationPaginationTests<MariaDbAdditionalColsTestProvider>(instance)
+    public class DataProviderPaginationAdditionalColsTest(MariaDbAdditionalColsTestProvider instance)
+        : IntegrationPaginationTests<MariaDbAdditionalColsTestProvider>(instance)
     {
         [Fact]
         public override Task It_throws_when_skip_is_zero()

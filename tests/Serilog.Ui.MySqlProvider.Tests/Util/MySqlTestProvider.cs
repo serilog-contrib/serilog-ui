@@ -1,12 +1,12 @@
-﻿using Ardalis.GuardClauses;
+﻿using System.Threading.Tasks;
+using Ardalis.GuardClauses;
 using Dapper;
 using MySqlConnector;
+using Serilog;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
-using Serilog.Ui.MySqlProvider;
-using System.Threading.Tasks;
-using Serilog;
 using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.MySqlProvider;
 using Testcontainers.MySql;
 using Xunit;
 

@@ -1,7 +1,4 @@
-﻿using Dapper;
-using Microsoft.Data.SqlClient;
-using Serilog.Ui.Core;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
@@ -9,6 +6,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
+using Dapper;
+using Microsoft.Data.SqlClient;
+using Serilog.Ui.Core;
 using Serilog.Ui.Core.Attributes;
 using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models;

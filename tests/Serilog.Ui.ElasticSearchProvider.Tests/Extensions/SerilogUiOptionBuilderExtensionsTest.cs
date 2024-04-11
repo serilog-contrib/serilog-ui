@@ -1,15 +1,15 @@
-﻿using Elastic.Elasticsearch.Xunit.XunitPlumbing;
+﻿using System;
+using System.Linq;
+using Elastic.Elasticsearch.Xunit.XunitPlumbing;
 using ElasticSearch.Tests.Util;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
-using Serilog.Ui.ElasticSearchProvider;
-using Serilog.Ui.Web.Extensions;
-using System;
 using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.ElasticSearchProvider;
 using Serilog.Ui.ElasticSearchProvider.Extensions;
+using Serilog.Ui.Web.Extensions;
 using Xunit;
-using System.Linq;
 
 namespace ElasticSearch.Tests.Extensions;
 

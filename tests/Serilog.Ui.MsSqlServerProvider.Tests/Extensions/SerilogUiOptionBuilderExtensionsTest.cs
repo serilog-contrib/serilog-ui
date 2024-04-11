@@ -1,15 +1,15 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using Serilog.Ui.Core;
-using Serilog.Ui.MsSqlServerProvider;
-using Serilog.Ui.Web.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using MsSql.Tests.Util;
+using Serilog.Ui.Core;
 using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.MsSqlServerProvider;
 using Serilog.Ui.MsSqlServerProvider.Extensions;
+using Serilog.Ui.Web.Extensions;
 using Serilog.Ui.Web.Models;
 using Xunit;
 
