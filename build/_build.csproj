@@ -25,7 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageDownload Include="dotnet-coverage" Version="[17.10.4]" />
+		<PackageDownload Include="dotnet-coverage" Version="[17.11.0]"/>
 		<PackageDownload Include="dotnet-sonarscanner" Version="[6.2.0]" />
 	</ItemGroup>
 </Project>

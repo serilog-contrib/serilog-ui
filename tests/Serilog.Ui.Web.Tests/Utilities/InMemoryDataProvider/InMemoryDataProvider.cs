@@ -38,8 +38,8 @@ public class SerilogInMemoryDataProvider : IDataProvider
                 Properties = JsonSerializer.Serialize(l.Properties),
                 PropertyType = "Json",
                 Timestamp = l.Timestamp.DateTime
-            });
+            }).ToList();
 
-        return Task.FromResult((logs, events.Count()));
+        return Task.FromResult((logs as IEnumerable<LogModel>, logs.Count));
     }
 }

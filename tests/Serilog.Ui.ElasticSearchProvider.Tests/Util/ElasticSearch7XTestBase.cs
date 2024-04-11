@@ -48,8 +48,7 @@ namespace ElasticSearch.Tests.Util
         {
             RunIntegrationTests = true;
             RunUnitTests = true;
-            ClusterFilter = null;
-            TestFilter = null;
+            PartitionFilterRegex = null;
             IntegrationTestsMayUseAlreadyRunningNode = false;
         }
     }

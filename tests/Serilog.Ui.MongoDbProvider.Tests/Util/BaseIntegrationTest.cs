@@ -28,9 +28,9 @@ namespace MongoDb.Tests.Util
             Builder = await MongoDbDataProviderBuilder.Build();
         }
 
-        public IDataProvider GetDataProvider() => Guard.Against.Null(Builder?.Sut)!;
+        public IDataProvider GetDataProvider() => Guard.Against.Null(Builder?.Sut);
 
-        public LogModelPropsCollector GetPropsCollector() => Guard.Against.Null(Builder?.Collector)!;
+        public LogModelPropsCollector GetPropsCollector() => Guard.Against.Null(Builder?.Collector);
 
         protected virtual void Dispose(bool disposing)
         {

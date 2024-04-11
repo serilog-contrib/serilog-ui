@@ -31,7 +31,7 @@ public sealed class MsSqlServerAdditionalColsTestProvider : MsSqlServerTestProvi
         return cols;
     }
 
-    protected override ColumnOptions? ColumnOptions => Opts();
+    protected override ColumnOptions ColumnOptions => Opts();
 }
 
 public class SqlServerTestModel : SqlServerLogModel

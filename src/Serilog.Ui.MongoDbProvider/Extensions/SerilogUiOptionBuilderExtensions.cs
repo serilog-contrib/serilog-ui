@@ -25,8 +25,8 @@ namespace Serilog.Ui.MongoDbProvider.Extensions
             setupOptions(dbOptions);
             dbOptions.Validate();
 
-            optionsBuilder.Services.TryAddSingleton<IMongoClient>(o => new MongoClient(dbOptions.ConnectionString));
-            
+            optionsBuilder.Services.TryAddSingleton<IMongoClient>(_ => new MongoClient(dbOptions.ConnectionString));
+
             optionsBuilder.Services.AddScoped<IDataProvider>(sp => new MongoDbDataProvider(sp.GetRequiredService<IMongoClient>(), dbOptions));
 
             return optionsBuilder;

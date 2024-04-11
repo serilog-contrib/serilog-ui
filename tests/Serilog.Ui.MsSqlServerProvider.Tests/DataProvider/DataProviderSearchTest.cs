@@ -26,7 +26,7 @@ public class DataProviderSearchAdditionalColsTest(MsSqlServerAdditionalColsTestP
         var res = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
         res.Item1.Should().HaveCount(LogCollector.DataSet.Count);
-        var sut = res.Item1.Cast<SqlServerTestModel>();
+        var sut = res.Item1.Cast<SqlServerTestModel>().ToArray();
         sut.Should().AllSatisfy(it =>
         {
             it.Exception.Should().BeNullOrWhiteSpace();

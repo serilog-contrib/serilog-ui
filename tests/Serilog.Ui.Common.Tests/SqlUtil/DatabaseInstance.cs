@@ -12,7 +12,6 @@ using Serilog.Ui.Core;
 
 namespace Serilog.Ui.Common.Tests.SqlUtil
 {
-#nullable enable
     public abstract class DatabaseInstance : IIntegrationRunner
     {
         private bool _disposedValue;
@@ -72,7 +71,6 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
                     retry += 1;
                     await Task.Delay(1000 * retry, token);
                 }
-
             } while (retry < 10);
 
             await InitializeAdditionalAsync();
@@ -84,7 +82,7 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
             if (Container != null)
             {
                 await Container.DisposeAsync()
-                  .ConfigureAwait(false);
+                    .ConfigureAwait(false);
             }
         }
 

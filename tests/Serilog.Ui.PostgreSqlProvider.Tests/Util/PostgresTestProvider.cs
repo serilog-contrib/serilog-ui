@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
+using DotNet.Testcontainers.Containers;
 using Npgsql;
 using Serilog;
 using Serilog.Events;
@@ -35,6 +36,8 @@ public class PostgresTestProvider<T> : DatabaseInstance
     private PostgreSqlDbOptions DbOptions { get; set; } = new PostgreSqlDbOptions("public")
         .WithTable("logs")
         .WithSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative);
+
+    protected sealed override IContainer? Container { get; set; }
 
     protected virtual Dictionary<string, ColumnWriterBase>? ColumnOptions => null;
 

@@ -181,7 +181,7 @@ namespace Serilog.Ui.Web.Tests.Endpoints
             public string Name { get; } = "BrokenProvider";
         };
 
-        private class AnonymousObject
+        private record AnonymousObject
         {
             [JsonPropertyName("logs")]
             public IEnumerable<LogModel>? Logs { get; set; }

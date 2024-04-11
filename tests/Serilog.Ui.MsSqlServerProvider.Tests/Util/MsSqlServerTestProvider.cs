@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dapper;
+using DotNet.Testcontainers.Containers;
 using Microsoft.Data.SqlClient;
 using Serilog;
 using Serilog.Events;
@@ -30,6 +31,8 @@ public class MsSqlServerTestProvider<T> : DatabaseInstance
     }
 
     private RelationalDbOptions DbOptions { get; set; } = new RelationalDbOptions("dbo").WithTable("Logs");
+
+    protected sealed override IContainer? Container { get; set; }
 
     protected override string Name => nameof(MsSqlContainer);
 

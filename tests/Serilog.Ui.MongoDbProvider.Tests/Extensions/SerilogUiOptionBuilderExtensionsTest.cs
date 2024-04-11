@@ -74,7 +74,7 @@ namespace MongoDb.Tests.Extensions
         [Fact]
         public void It_registers_IMongoClient_only_when_not_registered()
         {
-            _serviceCollection.AddSingleton<IMongoClient>(p =>
+            _serviceCollection.AddSingleton<IMongoClient>(_ =>
                 new MongoClient(new MongoClientSettings { ApplicationName = "my-app" }));
             _serviceCollection.AddSerilogUi(builder =>
             {

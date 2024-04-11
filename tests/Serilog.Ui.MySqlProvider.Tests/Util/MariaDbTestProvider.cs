@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Dapper;
+using DotNet.Testcontainers.Containers;
 using MySqlConnector;
 using Serilog;
 using Serilog.Events;
@@ -33,6 +34,8 @@ public class MariaDbTestProvider<T> : DatabaseInstance
     }
 
     public RelationalDbOptions DbOptions { get; set; } = new RelationalDbOptions("dbo").WithTable("Logs");
+
+    protected sealed override IContainer? Container { get; set; }
 
     protected virtual Dictionary<string, string>? PropertiesToColumnsMapping => new MariaDBSinkOptions().PropertiesToColumnsMapping;
 

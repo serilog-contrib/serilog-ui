@@ -15,7 +15,6 @@ import App from './app/App';
 
 (extras)
  * >>> remove newtonsoft
- * >>> mariadb, postgres, additional columns
  */
 
 const runMsw = async () => {

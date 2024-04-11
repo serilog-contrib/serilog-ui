@@ -12,7 +12,7 @@ public class MariaDbAdditionalColsCollection : ICollectionFixture<MariaDbAdditio
 
 public sealed class MariaDbAdditionalColsTestProvider : MariaDbTestProvider<MariaDbTestModel>
 {
-    protected override Dictionary<string, string>? PropertiesToColumnsMapping => new()
+    protected override Dictionary<string, string> PropertiesToColumnsMapping => new()
     {
         ["Level"] = "LogLevel",
         ["Message"] = "Message",

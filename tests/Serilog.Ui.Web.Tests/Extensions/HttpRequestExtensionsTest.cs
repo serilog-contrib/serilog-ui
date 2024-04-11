@@ -20,7 +20,7 @@ namespace Serilog.Ui.Web.Tests.Extensions
             // Arrange
             var requestMock = Substitute.For<HttpRequest>();
             var httpContextMock = Substitute.For<HttpContext>();
-            var dic = new HeaderDictionary { };
+            var dic = new HeaderDictionary();
 
             httpContextMock.Connection.Returns(new ConnectionInfoMock()
                 .WithRemoteIp(IPAddress.Parse("20.100.30.10"))
@@ -41,7 +41,7 @@ namespace Serilog.Ui.Web.Tests.Extensions
             // Arrange
             var requestMock = Substitute.For<HttpRequest>();
             var httpContextMock = Substitute.For<HttpContext>();
-            var dic = new HeaderDictionary { };
+            var dic = new HeaderDictionary();
             requestMock.Headers.Returns(dic);
             requestMock.HttpContext.Returns(httpContextMock);
 
@@ -68,7 +68,7 @@ namespace Serilog.Ui.Web.Tests.Extensions
             // Arrange
             var requestMock = Substitute.For<HttpRequest>();
             var httpContextMock = Substitute.For<HttpContext>();
-            var dic = new HeaderDictionary { };
+            var dic = new HeaderDictionary();
 
             httpContextMock.Connection.Returns(new ConnectionInfoMock()
                 .WithRemoteIp(null)
@@ -104,7 +104,7 @@ namespace Serilog.Ui.Web.Tests.Extensions
             // Arrange
             var requestMock = Substitute.For<HttpRequest>();
             var httpContextMock = Substitute.For<HttpContext>();
-            var dic = new HeaderDictionary { };
+            var dic = new HeaderDictionary();
 
             requestMock.Headers.Returns(dic);
             requestMock.HttpContext.Returns(httpContextMock);

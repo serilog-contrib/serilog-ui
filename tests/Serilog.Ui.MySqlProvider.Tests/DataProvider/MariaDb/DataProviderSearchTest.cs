@@ -17,7 +17,7 @@ namespace MySql.Tests.DataProvider.MariaDb
     [Collection(nameof(MariaDbAdditionalColsTestProvider))]
     [Trait("Integration-Search-AdditionalColumns", "MariaDb")]
     public class DataProviderSearchAdditionalColsTest(MariaDbAdditionalColsTestProvider instance)
-    : IntegrationSearchTests<MariaDbAdditionalColsTestProvider>(instance)
+        : IntegrationSearchTests<MariaDbAdditionalColsTestProvider>(instance)
     {
         [Fact]
         public async Task It_finds_data_with_expected_additional_columns()
@@ -26,7 +26,7 @@ namespace MySql.Tests.DataProvider.MariaDb
             var res = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
             res.Item1.Should().HaveCount(LogCollector.DataSet.Count);
-            var sut = res.Item1.Cast<MariaDbTestModel>();
+            var sut = res.Item1.Cast<MariaDbTestModel>().ToArray();
             sut.Should().AllSatisfy(it =>
             {
                 it.Exception.Should().BeNullOrWhiteSpace();
