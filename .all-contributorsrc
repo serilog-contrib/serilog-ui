@@ -1,0 +1,126 @@
+{
+  "projectName": "serilog-ui",
+  "projectOwner": "serilog-contrib",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 60,
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "mo-esmp",
+      "name": "Mohsen Esmailpour",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1659032?v=4",
+      "profile": "https://stackoverflow.com/users/1385614/mohsen-esmailpour",
+      "contributions": [
+        "code",
+        "projectManagement",
+        "test"
+      ]
+    },
+    {
+      "login": "followynne",
+      "name": "Matteo Gregoricchio",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32459930?v=4",
+      "profile": "https://www.matteogregoricchio.com/",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
+    },
+    {
+      "login": "sommmen",
+      "name": "sommmen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8641495?v=4",
+      "profile": "https://github.com/sommmen",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "igece",
+      "name": "Israel Gómez de Celis",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2063980?v=4",
+      "profile": "http://igecelabs.net/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "traien",
+      "name": "Osama Bashir",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16708328?v=4",
+      "profile": "https://github.com/traien",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ricardodemauro",
+      "name": "Ricardo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3687018?v=4",
+      "profile": "https://rmauro.dev/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "hansoncaleb",
+      "name": "Caleb Hanson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8008108?v=4",
+      "profile": "https://github.com/hansoncaleb",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Millarex",
+      "name": "Aleksei",
+      "avatar_url": "https://avatars.githubusercontent.com/u/55946676?v=4",
+      "profile": "https://github.com/Millarex",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "chaadfh",
+      "name": "chaadfh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/133214342?v=4",
+      "profile": "https://github.com/chaadfh",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "phillduffy",
+      "name": "Phill Duffy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/710550?v=4",
+      "profile": "https://github.com/phillduffy",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "uthmanrahimi",
+      "name": "Uthman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/45357615?v=4",
+      "profile": "https://github.com/uthmanrahimi",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "jorgevp",
+      "name": "jorgevp",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3268148?v=4",
+      "profile": "https://github.com/jorgevp",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 6
+}
