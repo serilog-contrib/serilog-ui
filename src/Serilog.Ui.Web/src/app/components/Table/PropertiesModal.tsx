@@ -1,26 +1,24 @@
 import loadable from '@loadable/component';
 import {
   Accordion,
-  ActionIcon,
   Box,
   Button,
-  CopyButton,
   Modal,
   Switch,
   TextInput,
   Textarea,
-  Tooltip,
   useMantineColorScheme,
   useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconCheck, IconCodeDots, IconCopy } from '@tabler/icons-react';
+import { IconCodeDots } from '@tabler/icons-react';
 import { useColumnsInfo } from 'app/hooks/useColumnsInfo';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { capitalize, convertLogType, printDate } from 'app/util/prettyPrints';
 import { memo } from 'react';
 import { boxButton, boxGridProperties, overlayProps } from 'style/modal';
 import { ColumnType, EncodedSeriLogObject } from 'types/types';
+import { CopySection } from '../Util/Copy';
 
 const CodeContent = loadable(() => import('./CodeContent'));
 
@@ -78,7 +76,7 @@ const RenderProps = memo(
   }) => {
     const { isUtc } = useSerilogUiProps();
     const { additionalColumn, removeProperties } = useColumnsInfo(name, logPropertyType);
-
+    console.log(additionalColumn);
     if (!additionalColumn) return null;
 
     const propertyName = capitalize(name);
@@ -138,24 +136,6 @@ const RenderProps = memo(
       />
     );
   },
-);
-
-const CopySection = memo(({ value }: { value: string }) => (
-  <CopyButton value={value}>
-    {({ copied, copy }) => (
-      <Tooltip label={copied ? 'Copied' : 'Copy'} withArrow position="right">
-        <IconCopySection copied={copied} copy={copy} />
-      </Tooltip>
-    )}
-  </CopyButton>
-));
-
-const IconCopySection = memo(
-  ({ copied, copy }: { copied: boolean; copy: () => void }) => (
-    <ActionIcon color={copied ? 'teal' : 'gray'} variant="subtle" onClick={copy}>
-      {copied ? <IconCheck /> : <IconCopy />}
-    </ActionIcon>
-  ),
 );
 
 export default PropertiesModal;

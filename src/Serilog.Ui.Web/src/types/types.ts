@@ -101,6 +101,7 @@ export interface SerilogUiConfig {
   routePrefix?: string;
   homeUrl?: string;
   hideBrand?: boolean;
+  isHomeUnauthorized?: boolean;
   disabledSortOnKeys?: string[];
   columnsInfo?: ColumnsInfo;
 }

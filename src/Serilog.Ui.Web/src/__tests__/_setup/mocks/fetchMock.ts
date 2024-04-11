@@ -7,11 +7,9 @@ import {
   SortDirectionOptions,
   SortPropertyOptions,
 } from '../../../types/types';
-import { fakeLogs, fakeLogs2ndTable, fakeLogs3rdTable } from './samples';
+import { dbKeysMock, fakeLogs, fakeLogs2ndTable, fakeLogs3rdTable } from './samples';
 
 const developmentListenersHost = ['https://localhost:3001'];
-
-export const dbKeysMock = ['MsSQL.dbo.Logs', 'MsSQL.dbo.Logs2', 'MsSQL.dbo.Logs3'];
 
 const tableLogs = (table: string | null) => {
   if (table === dbKeysMock[2]) return fakeLogs3rdTable;

@@ -9,9 +9,10 @@ import {
   type EncodedSeriLogObject,
   type SearchResult,
 } from '../../../types/types';
-import { dbKeysMock } from './fetchMock';
 
 faker.seed(10);
+
+export const dbKeysMock = ['MsSQL.dbo.Logs', 'MsSQL.dbo.Logs2', 'MsSQL.dbo.Logs3'];
 
 //#region code samples
 const createRandomJsonObject = (propLength: number = 13) => {

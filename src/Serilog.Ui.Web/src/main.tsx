@@ -9,10 +9,6 @@ import App from './app/App';
  * TODO:
 (branch/routing-by-id)
  * >> if auth on index is active, redirect to unauth route instead of empty html page (react router)
- * >> react router setup to catch id routing
- * >> endpoint and additional model property
- * >> filter by _id (react router and opening log by itself)
-
  */
 
 const runMsw = async () => {
