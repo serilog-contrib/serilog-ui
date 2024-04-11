@@ -6,10 +6,10 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
+using Serilog.Ui.Core.Attributes;
 using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.OptionsBuilder;
@@ -110,14 +110,14 @@ namespace Serilog.Ui.MsSqlServerProvider
         }
 
         /// <summary>
-        /// If Exception property is flagged with <see cref="JsonIgnoreAttribute"/>,
+        /// If Exception property is flagged with <see cref="RemovedColumnAttribute"/>,
         /// it removes the Where query part on the Exception field. 
         /// </summary>
         /// <returns></returns>
         protected virtual string SearchCriteriaWhereQuery()
         {
             var exceptionProperty = typeof(T).GetProperty(nameof(SqlServerLogModel.Exception));
-            var att = exceptionProperty?.GetCustomAttribute<JsonIgnoreAttribute>();
+            var att = exceptionProperty?.GetCustomAttribute<RemovedColumnAttribute>();
             return att is null ? "OR [Exception] LIKE @Search" : string.Empty;
         }
 

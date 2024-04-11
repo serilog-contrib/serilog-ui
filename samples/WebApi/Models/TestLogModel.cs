@@ -22,6 +22,6 @@ internal class TestLogModel : SqlServerLogModel
 
     public string EnvironmentUserName { get; set; } = string.Empty;
 
-    [JsonIgnore]
+    [JsonIgnore, RemovedColumn]
     public override string Properties { get; set; } = string.Empty;
 }

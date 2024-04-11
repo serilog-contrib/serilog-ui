@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Dapper;
 using MySqlConnector;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Attributes;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.OptionsBuilder;
 
@@ -99,14 +100,14 @@ public abstract class DataProvider<T>(RelationalDbOptions options) : IDataProvid
     }
 
     /// <summary>
-    /// If Exception property is flagged with <see cref="JsonIgnoreAttribute"/>,
+    /// If Exception property is flagged with <see cref="RemovedColumnAttribute"/>,
     /// it removes the Where query part on the Exception field. 
     /// </summary>
     /// <returns></returns>
     protected virtual string SearchCriteriaWhereQuery()
     {
         var exceptionProperty = typeof(T).GetProperty(nameof(MySqlLogModel.Exception));
-        var att = exceptionProperty?.GetCustomAttribute<JsonIgnoreAttribute>();
+        var att = exceptionProperty?.GetCustomAttribute<RemovedColumnAttribute>();
         return att is null ? "OR Exception LIKE @Search" : string.Empty;
     }
 

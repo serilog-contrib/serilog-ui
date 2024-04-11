@@ -93,14 +93,14 @@ public class ColumnsInfo
         where T : LogModel
     {
         var exceptionProperty = typeof(T).GetProperty(nameof(LogModel.Exception));
-        var isExcRemoved = exceptionProperty?.GetCustomAttribute<JsonIgnoreAttribute>();
+        var isExcRemoved = exceptionProperty?.GetCustomAttribute<RemovedColumnAttribute>();
         if (isExcRemoved is not null)
         {
             yield return nameof(LogModel.Exception);
         }
 
         var propertiesProperty = typeof(T).GetProperty(nameof(LogModel.Properties));
-        var isPropRemoved = propertiesProperty?.GetCustomAttribute<JsonIgnoreAttribute>();
+        var isPropRemoved = propertiesProperty?.GetCustomAttribute<RemovedColumnAttribute>();
         if (isPropRemoved is not null)
         {
             yield return nameof(LogModel.Exception);
