@@ -4,7 +4,7 @@ using Serilog.Ui.Common.Tests.FakeObjectModels;
 using Serilog.Ui.Core.OptionsBuilder;
 using Xunit;
 
-namespace Serilog.Ui.Web.Tests;
+namespace Serilog.Ui.Web.Tests.OptionsBuilder;
 
 [Trait("Unit-OptionsBuilder-SerilogUiOptionsBuilder", "Core")]
 public class SerilogUiOptionsBuilderTest

@@ -18,9 +18,7 @@ using System;
 namespace MySql.Tests.Util;
 
 [CollectionDefinition(nameof(MariaDbTestProvider))]
-public class MariaDbCollection : ICollectionFixture<MariaDbTestProvider>
-{
-}
+public class MariaDbCollection : ICollectionFixture<MariaDbTestProvider>;
 
 public sealed class MariaDbTestProvider : MariaDbTestProvider<MySqlLogModel>;
 
@@ -68,8 +66,7 @@ public class MariaDbTestProvider<T> : DatabaseInstance
                     {
                         TimestampInUtc = true,
                         PropertiesToColumnsMapping = PropertiesToColumnsMapping
-                    }
-                    );
+                    });
         });
         Collector = serilog.InitializeLogs();
 

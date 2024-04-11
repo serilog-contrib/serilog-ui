@@ -1,25 +1,31 @@
-﻿using Dapper;
-using Npgsql;
-using Serilog.Ui.Core;
-using Serilog.Ui.PostgreSqlProvider.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dapper;
+using Npgsql;
+using Serilog.Ui.Core;
 using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.PostgreSqlProvider.Extensions;
+using Serilog.Ui.PostgreSqlProvider.Models;
 
 namespace Serilog.Ui.PostgreSqlProvider;
 
 /// <inheritdoc/>
-public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
+public class PostgresDataProvider(PostgreSqlDbOptions options) : PostgresDataProvider<PostgresLogModel>(options);
+
+/// <inheritdoc />
+public class PostgresDataProvider<T>(PostgreSqlDbOptions options) : IDataProvider
+    where T : PostgresLogModel
 {
+    internal const string ProviderName = "NPGSQL";
+
     private readonly PostgreSqlDbOptions _options = options ?? throw new ArgumentNullException(nameof(options));
 
     /// <inheritdoc/>
-    public string Name => _options.ToDataProviderName("NPGSQL");
+    public string Name => _options.ToDataProviderName(ProviderName);
 
     /// <inheritdoc/>
     public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
@@ -35,12 +41,12 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
 
     private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
     {
-        var query = options.ColumnNames.BuildFetchLogsQuery(_options.Schema, _options.TableName, queryParams);
+        var query = options.ColumnNames.BuildFetchLogsQuery<T>(_options.Schema, _options.TableName, queryParams);
         var rowNoStart = queryParams.Page * queryParams.Count;
 
         await using var connection = new NpgsqlConnection(_options.ConnectionString);
 
-        var logs = await connection.QueryAsync<PostgresLogModel>(query,
+        var logs = await connection.QueryAsync<T>(query,
             new
             {
                 Offset = rowNoStart,
@@ -62,7 +68,7 @@ public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
 
     private async Task<int> CountLogsAsync(FetchLogsQuery queryParams)
     {
-        var query = options.ColumnNames.BuildCountLogsQuery(_options.Schema, _options.TableName, queryParams);
+        var query = options.ColumnNames.BuildCountLogsQuery<T>(_options.Schema, _options.TableName, queryParams);
 
         await using var connection = new NpgsqlConnection(_options.ConnectionString);
 

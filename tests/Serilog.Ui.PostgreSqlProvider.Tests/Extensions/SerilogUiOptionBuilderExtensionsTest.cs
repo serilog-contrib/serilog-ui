@@ -6,6 +6,7 @@ using Serilog.Ui.Web.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Postgres.Tests.Util;
 using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.PostgreSqlProvider.Extensions;
 using Xunit;
@@ -49,6 +50,23 @@ namespace Postgres.Tests.Extensions
         }
 
         [Fact]
+        public void It_registers_provider_and_dependencies_with_custom_log_model()
+        {
+            _serviceCollection.AddSerilogUi(builder =>
+            {
+                builder
+                    .UseNpgSql<PostgresTestModel>(opt => opt
+                        .WithConnectionString("https://sqlserver.com").WithTable("table-custom"));
+            });
+
+            var serviceProvider = _serviceCollection.BuildServiceProvider();
+            using var scope = serviceProvider.CreateScope();
+
+            var provider = scope.ServiceProvider.GetService<IDataProvider>();
+            provider.Should().NotBeNull().And.BeOfType<PostgresDataProvider<PostgresTestModel>>();
+        }
+
+        [Fact]
         public void It_registers_multiple_providers()
         {
             _serviceCollection.AddSerilogUi(builder =>
@@ -64,6 +82,18 @@ namespace Postgres.Tests.Extensions
                         opt
                             .WithConnectionString("https://npgsql.example.com")
                             .WithTable("my-table-2");
+                    })
+                    .UseNpgSql<PostgresTestModel>(opt =>
+                    {
+                        opt
+                            .WithConnectionString("https://npgsql.example.com")
+                            .WithTable("table-custom");
+                    })
+                    .UseNpgSql<PostgresTestModel>(opt =>
+                    {
+                        opt
+                            .WithConnectionString("https://npgsql.example.com")
+                            .WithTable("table-custom-2");
                     });
             });
 
@@ -71,7 +101,9 @@ namespace Postgres.Tests.Extensions
             using var scope = serviceProvider.CreateScope();
 
             var providers = scope.ServiceProvider.GetServices<IDataProvider>().ToList();
-            providers.Should().HaveCount(2).And.AllBeOfType<PostgresDataProvider>();
+            providers.Take(2).Should().AllBeOfType<PostgresDataProvider>();
+            providers.Skip(2).Take(2).Should().AllBeOfType<PostgresDataProvider<PostgresTestModel>>();
+
             providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
         }
 

@@ -24,7 +24,7 @@ namespace MySql.Tests.DataProvider.MariaDb
     }
 
     [Collection(nameof(MariaDbAdditionalColsTestProvider))]
-    [Trait("Integration-Pagination", "MariaDb")]
+    [Trait("Integration-Pagination-AdditionalColumns", "MariaDb")]
     public class DataProviderPaginationAdditionalColsTest(MariaDbAdditionalColsTestProvider instance) : IntegrationPaginationTests<MariaDbAdditionalColsTestProvider>(instance)
     {
         [Fact]

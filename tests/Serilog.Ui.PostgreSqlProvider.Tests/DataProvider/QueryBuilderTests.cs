@@ -2,7 +2,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using FluentAssertions;
 using Microsoft.Extensions.Primitives;
+using Postgres.Tests.Util;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.PostgreSqlProvider.Models;
 using Xunit;
@@ -12,12 +14,7 @@ namespace Postgres.Tests.DataProvider;
 [Trait("Unit-QueryBuilder", "Postgres")]
 public class QueryBuilderTests
 {
-    private readonly PostgreSqlAlternativeSinkColumnNames _sut;
-
-    public QueryBuilderTests()
-    {
-        _sut = new PostgreSqlAlternativeSinkColumnNames();
-    }
+    private readonly PostgreSqlAlternativeSinkColumnNames _sut = new();
 
     [Theory]
     [ClassData(typeof(QueryBuilderTestData))]
@@ -40,10 +37,28 @@ public class QueryBuilderTests
         };
 
         // Act
-        var query = _sut.BuildFetchLogsQuery(schema, tableName, FetchLogsQuery.ParseQuery(queryLogs));
+        var query = _sut.BuildFetchLogsQuery<PostgresLogModel>(schema, tableName, FetchLogsQuery.ParseQuery(queryLogs));
 
         // Assert
-        Assert.Equal(expectedQuery, query);
+        query.Should().Be(expectedQuery);
+    }
+
+    [Fact]
+    public void BuildFetchLogsQuery_not_includes_Exception_if_custom_log_model()
+    {
+        // Arrange
+        var queryLogs = new Dictionary<string, StringValues>
+        {
+            ["level"] = "level",
+            ["search"] = "criteria"
+        };
+
+        // Act
+        var query = _sut.BuildFetchLogsQuery<PostgresTestModel>("test", "logs", FetchLogsQuery.ParseQuery(queryLogs));
+
+        // Assert
+        query.ToLowerInvariant().Should().StartWith("select *");
+        query.ToLowerInvariant().Should().NotContain("exception");
     }
 
     public class QueryBuilderTestData : IEnumerable<object[]>

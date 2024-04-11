@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
-using System.Text.Json.Serialization;
 using Serilog.Ui.Core.Attributes;
 using Serilog.Ui.Core.Models;
 

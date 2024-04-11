@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using MySql.Tests.Util;
 using Serilog.Ui.Core.Attributes;
 using Serilog.Ui.MySqlProvider;
 using Xunit;
 
-namespace MySql.Tests;
+namespace MySql.Tests.Util;
 
 [CollectionDefinition(nameof(MariaDbAdditionalColsTestProvider))]
-public class MariaDbCollection : ICollectionFixture<MariaDbAdditionalColsTestProvider>
-{
-}
+public class MariaDbAdditionalColsCollection : ICollectionFixture<MariaDbAdditionalColsTestProvider>;
 
 public sealed class MariaDbAdditionalColsTestProvider : MariaDbTestProvider<MariaDbTestModel>
 {

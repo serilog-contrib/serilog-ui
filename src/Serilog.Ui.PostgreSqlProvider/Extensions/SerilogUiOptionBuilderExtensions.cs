@@ -1,7 +1,9 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Interfaces;
+using Serilog.Ui.PostgreSqlProvider.Models;
 
 namespace Serilog.Ui.PostgreSqlProvider.Extensions
 {
@@ -18,15 +20,34 @@ namespace Serilog.Ui.PostgreSqlProvider.Extensions
         public static ISerilogUiOptionsBuilder UseNpgSql(
             this ISerilogUiOptionsBuilder optionsBuilder,
             Action<PostgreSqlDbOptions> setupOptions
-        )
+        ) => optionsBuilder.UseNpgSql<PostgresLogModel>(setupOptions);
+
+        /// <summary>
+        ///  Configures the SerilogUi to connect to a PostgreSQL database.
+        /// </summary>
+        /// <typeparam name="T">The log model, containing any additional columns. It must inherit <see cref="PostgresLogModel"/>.</typeparam>
+        /// <param name="optionsBuilder"> The Serilog UI option builder. </param>
+        /// <param name="setupOptions">The Postgres Sql options action.</param>
+        public static ISerilogUiOptionsBuilder UseNpgSql<T>(
+            this ISerilogUiOptionsBuilder optionsBuilder,
+            Action<PostgreSqlDbOptions> setupOptions
+        ) where T : PostgresLogModel
         {
             var dbOptions = new PostgreSqlDbOptions("public");
             setupOptions(dbOptions);
             dbOptions.Validate();
 
-            optionsBuilder.Services.AddScoped<IDataProvider, PostgresDataProvider>(_ => new PostgresDataProvider(dbOptions));
+            var customModel = typeof(T) != typeof(PostgresLogModel);
+            if (customModel)
+            {
+                optionsBuilder.RegisterColumnsInfo<T>(dbOptions.ToDataProviderName(PostgresDataProvider.ProviderName));
+            }
 
+            optionsBuilder.Services.AddScoped<IDataProvider>(customModel ? CustomModelAction : DefaultAction);
             return optionsBuilder;
+
+            PostgresDataProvider DefaultAction(IServiceProvider _) => new(dbOptions);
+            PostgresDataProvider<T> CustomModelAction(IServiceProvider _) => new(dbOptions);
         }
     }
 }

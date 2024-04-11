@@ -1,16 +1,17 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using Serilog.Ui.Core;
-using Serilog.Ui.MySqlProvider;
-using Serilog.Ui.Web.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Serilog.Ui.Core.OptionsBuilder;
-using Serilog.Ui.MySqlProvider.Extensions;
-using Xunit;
+using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using MySql.Tests.Util;
+using Serilog.Ui.Core;
+using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.MySqlProvider;
+using Serilog.Ui.MySqlProvider.Extensions;
+using Serilog.Ui.Web.Extensions;
 using Serilog.Ui.Web.Models;
+using Xunit;
 
 namespace MySql.Tests.Extensions;
 
