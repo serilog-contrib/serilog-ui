@@ -4,12 +4,13 @@ using WebApi.HostedServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host.ConfigureSerilog();
+var enableElasticSample = builder.Configuration.GetSection("SerilogUi").GetValue<bool>("EnableElasticServices");
+builder.Host.ConfigureSerilog(enableElasticSample);
 
 builder.Services
     .AddHostedService<SqlServerContainerService>()
     .AddEndpointsApiExplorer()
-    .AddSerilogUiSample(builder.Configuration)
+    .AddSerilogUiSample(builder.Configuration, enableElasticSample)
     .AddSwaggerGen();
 
 var app = builder.Build();

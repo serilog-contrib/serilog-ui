@@ -4,7 +4,7 @@ using Testcontainers.MsSql;
 
 namespace WebApi.HostedServices;
 
-public class SqlServerContainerService : IHostedService, IAsyncDisposable
+public class SqlServerContainerService(ILogger<SqlServerContainerService> logger) : IHostedService, IAsyncDisposable
 {
     private static MsSqlContainer? _runner;
 
@@ -19,12 +19,16 @@ public class SqlServerContainerService : IHostedService, IAsyncDisposable
 
         await using var dataContext = new SqlConnection(_runner.GetConnectionString());
         await dataContext.ExecuteAsync("CREATE DATABASE test;");
-        
         var connectionStringBuilder = new SqlConnectionStringBuilder(_runner.GetConnectionString())
         {
             InitialCatalog = "test"
         };
         SqlConnectionString = connectionStringBuilder.ToString();
+
+        // writing some complete exception-handling logs
+        logger.LogWarning(new DataMisalignedException("Starting the engines..."), "TEST");
+        logger.LogError(new InvalidCastException("Rolling out an error..."), "TEST");
+        logger.LogCritical(new InvalidProgramException("Rolling out a critical error..."), "TEST");
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

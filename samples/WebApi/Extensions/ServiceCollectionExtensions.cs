@@ -3,8 +3,11 @@ using System.Text.Json;
 using System.Xml.Linq;
 using Serilog;
 using Serilog.Events;
+using Serilog.Sinks.Elasticsearch;
 using Serilog.Sinks.MSSqlServer;
+using Serilog.Ui.Core.Interfaces;
 using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.ElasticSearchProvider.Extensions;
 using Serilog.Ui.MsSqlServerProvider.Extensions;
 using Serilog.Ui.Web.Extensions;
 using WebApi.HostedServices;
@@ -51,7 +54,7 @@ internal static class ServiceCollectionExtensions
         }
     }
 
-    internal static void ConfigureSerilog(this ConfigureHostBuilder configureHostBuilder)
+    internal static void ConfigureSerilog(this ConfigureHostBuilder configureHostBuilder, bool enableElasticSample)
     {
         configureHostBuilder.UseSerilog((_, loggerConfiguration) =>
         {
@@ -69,7 +72,8 @@ internal static class ServiceCollectionExtensions
                 })
                 .Enrich.FromLogContext()
                 .MinimumLevel.Verbose()
-                // configuration required to start ms sql logging only AFTER test container is running
+                .WriteToElastic(enableElasticSample)
+                // configuration required to start ms sql logging only AFTER test containers are running
                 // ref: https://nblumhardt.com/2023/02/dynamically-reload-any-serilog-sink/
                 .WriteTo.Map(
                     _ => SqlServerContainerService.SqlConnectionString,
@@ -87,13 +91,35 @@ internal static class ServiceCollectionExtensions
         });
     }
 
+
+    /// <summary>
+    /// Unfortunately TestContainers does not support NEST package and requires Elastic.Clients.Elasticsearch (NEST v8) <br />
+    /// To start an Elasticsearch container that works with sink and provider, run:
+    /// docker run -d --name elasticsearch --net elastic -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e "xpack.security.enabled=false" elasticsearch:8.13.0
+    /// </summary>
+    private static LoggerConfiguration WriteToElastic(this LoggerConfiguration logger, bool enableElasticSample)
+    {
+        if (!enableElasticSample) return logger;
+
+        return logger.WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
+        {
+            AutoRegisterTemplate = true,
+            AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
+            IndexFormat = "logs-7x-default-{0:yyyy.MM.dd}",
+            TemplateName = "serilog-logs-7x",
+            BatchAction = ElasticOpType.Create,
+            ModifyConnectionSettings = c => c.EnableApiVersioningHeader()
+        });
+    }
+
     /// <summary>
     /// Check this method to find some sample configuration for Serilog UI.
     /// </summary>
     /// <param name="services"></param>
     /// <param name="configuration"></param>
+    /// <param name="enableElasticSample"></param>
     /// <returns></returns>
-    internal static IServiceCollection AddSerilogUiSample(this IServiceCollection services, IConfiguration configuration)
+    internal static IServiceCollection AddSerilogUiSample(this IServiceCollection services, IConfiguration configuration, bool enableElasticSample)
         => services
             .AddSerilogUi(options =>
                 {
@@ -105,7 +131,17 @@ internal static class ServiceCollectionExtensions
                         .UseSqlServer<TestLogModel>(opt =>
                             opt.WithConnectionString(configuration.GetConnectionString("MsSqlDefaultConnection")).WithTable("logs"))
                         .UseSqlServer(opt =>
-                            opt.WithConnectionString(configuration.GetConnectionString("MsSqlBackupConnection")).WithTable("logsBackup"));
+                            opt.WithConnectionString(configuration.GetConnectionString("MsSqlBackupConnection")).WithTable("logsBackup"))
+                        .UseElasticSample(enableElasticSample);
                 }
             );
+
+    private static void UseElasticSample(this ISerilogUiOptionsBuilder builder, bool enableElasticSample)
+    {
+        if (!enableElasticSample) return;
+
+        /* sample provider registration: ElasticSearch, Fluent interface */
+        builder.UseElasticSearchDb(opt =>
+            opt.WithEndpoint(new Uri("http://localhost:9200/")).WithIndex($"logs-7x-default-{DateTime.UtcNow:yyyy.MM.dd}"));
+    }
 }
