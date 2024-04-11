@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using FluentAssertions;
 using Microsoft.Extensions.Primitives;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Attributes;
 using Serilog.Ui.Core.Models;
 using Xunit;
 
@@ -145,7 +147,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
         public virtual async Task It_finds_only_data_with_specific_level()
         {
             // ARRANGE
-            var chosenLvl = LogCollector.CountByLevel.FirstOrDefault(p => p.Value > 0);
+            var chosenLvl = LogCollector.CountByLevel.FirstOrDefault(p => p.Key == "Error");
             var query = new Dictionary<string, StringValues>
             {
                 ["page"] = "1",
@@ -161,6 +163,15 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             results.Should().NotBeEmpty();
             results.Should().OnlyContain(p => p.Level == chosenLvl.Key);
             count.Should().Be(chosenLvl.Value);
+
+            // checking that an Exception is serialized
+            var removedAttribute = results.First().GetType().GetProperty(nameof(LogModel.Exception))!.GetCustomAttribute<RemovedColumnAttribute>();
+            results.Should().AllSatisfy(p =>
+            {
+                p.Exception.Should().Match(x =>
+                    removedAttribute != null ||
+                    (!string.IsNullOrWhiteSpace(x)));
+            });
         }
 
         [Fact]

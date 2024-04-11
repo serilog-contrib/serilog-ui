@@ -17,14 +17,19 @@ public sealed class PostgresAdditionalColsTestProvider : PostgresTestProvider<Po
 {
     protected override Dictionary<string, ColumnWriterBase>? ColumnOptions { get; } = new()
     {
-        [DefaultColumnNames.RenderedMessage] = new RenderedMessageColumnWriter(),
+        [DefaultColumnNames.RenderedMessage] = new RenderedMessageColumnWriter(order: 0),
         [DefaultColumnNames.MessageTemplate] = new MessageTemplateColumnWriter(),
         [DefaultColumnNames.Level] = new LevelColumnWriter(),
         [DefaultColumnNames.Timestamp] = new TimestampColumnWriter(),
-        [nameof(PostgresTestModel.SampleBool)] = new SinglePropertyColumnWriter(nameof(PostgresTestModel.SampleBool)) { WriteMethod = PropertyWriteMethod.Raw, DbType = NpgsqlDbType.Boolean },
-        [nameof(PostgresTestModel.SampleDate)] = new SinglePropertyColumnWriter(nameof(PostgresTestModel.SampleDate)){ DbType = NpgsqlDbType.Date, WriteMethod = PropertyWriteMethod.Raw },
-        [nameof(PostgresTestModel.EnvironmentName)] = new SinglePropertyColumnWriter(nameof(PostgresTestModel.EnvironmentName)){ DbType = NpgsqlDbType.Varchar},
-        [nameof(PostgresTestModel.EnvironmentUserName)] = new SinglePropertyColumnWriter(nameof(PostgresTestModel.EnvironmentUserName)){ DbType = NpgsqlDbType.Varchar},
+        [DefaultColumnNames.LogEventSerialized] = new LogEventSerializedColumnWriter(),
+        [nameof(PostgresTestModel.SampleBool)] = new SinglePropertyColumnWriter(nameof(PostgresTestModel.SampleBool))
+            { WriteMethod = PropertyWriteMethod.Raw, DbType = NpgsqlDbType.Boolean, Order = 0 },
+        [nameof(PostgresTestModel.SampleDate)] = new SinglePropertyColumnWriter(nameof(PostgresTestModel.SampleDate))
+            { DbType = NpgsqlDbType.Date, WriteMethod = PropertyWriteMethod.Raw, Order = 0 },
+        [nameof(PostgresTestModel.EnvironmentName)] = new SinglePropertyColumnWriter(nameof(PostgresTestModel.EnvironmentName))
+            { DbType = NpgsqlDbType.Varchar, Order = 0 },
+        [nameof(PostgresTestModel.EnvironmentUserName)] = new SinglePropertyColumnWriter(nameof(PostgresTestModel.EnvironmentUserName))
+            { DbType = NpgsqlDbType.Varchar, Order = 0 },
     };
 }
 

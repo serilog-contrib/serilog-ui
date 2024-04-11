@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using Serilog.Ui.Core.Attributes;
 using Serilog.Ui.Core.Models;
 
@@ -30,6 +31,12 @@ public class PostgresLogModel : LogModel
         get => _level;
         set => _level = LogLevelConverter.GetLevelName(value);
     }
+
+    /// <summary>
+    /// It get or sets LogEventSerialized.
+    /// </summary>
+    [JsonIgnore]
+    public string LogEvent { get; set; }
 
     /// <inheritdoc />
     public override string PropertyType => "json";

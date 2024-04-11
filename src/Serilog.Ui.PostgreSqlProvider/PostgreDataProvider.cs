@@ -61,6 +61,7 @@ public class PostgresDataProvider<T>(PostgreSqlDbOptions options) : IDataProvide
             .Select((item, i) =>
             {
                 item.SetRowNo(rowNoStart, i);
+                item.Properties ??= item.LogEvent;
                 return item;
             })
             .ToList();

@@ -36,15 +36,17 @@ namespace Serilog.Ui.Common.Tests.DataSamples
             logger.Debug("Hello Debug");
             logs.Add(Spawn("Debug", 17));
             // error
-            logger.Error("Hello Error");
-            logs.Add(Spawn("Error", 18));
-            logger.Error("Hello Error");
-            logs.Add(Spawn("Error", 19));
+            var exc = new InvalidOperationException();
+            logger.Error(exc, "Hello Error");
+            logs.Add(Spawn("Error", 18, exc: exc));
+            logger.Error(exc, "Hello Error");
+            logs.Add(Spawn("Error", 19, exc: exc));
             // fatal
-            logger.Fatal("Hello Fatal");
-            logs.Add(Spawn("Fatal", 20));
-            logger.Fatal("Hello Fatal");
-            logs.Add(Spawn("Fatal", 21));
+            var excFatal = new AccessViolationException();
+            logger.Fatal(excFatal, "Hello Fatal");
+            logs.Add(Spawn("Fatal", 20, exc: excFatal));
+            logger.Fatal(excFatal, "Hello Fatal");
+            logs.Add(Spawn("Fatal", 21, exc: excFatal));
             // verbose
             logger.Verbose("Hello Verbose");
             logs.Add(Spawn("Verbose", 22));
@@ -54,10 +56,10 @@ namespace Serilog.Ui.Common.Tests.DataSamples
             return new LogModelPropsCollector(logs);
         }
 
-        private static LogModel Spawn(string level, int rowNum, string? messageOverride = null)
+        private static LogModel Spawn(string level, int rowNum, string? messageOverride = null, Exception? exc = null)
             => new LogModel
             {
-                Exception = null,
+                Exception = exc?.ToString(),
                 Level = level,
                 Message = $"{rowNum} {messageOverride ?? level}",
                 Properties = PropertiesFaker.SerializedProperties,
