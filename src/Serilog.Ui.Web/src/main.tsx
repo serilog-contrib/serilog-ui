@@ -13,8 +13,6 @@ import App from './app/App';
  * >> endpoint and additional model property
  * >> filter by _id (react router and opening log by itself)
 
-(extras)
- * >>> remove newtonsoft
  */
 
 const runMsw = async () => {

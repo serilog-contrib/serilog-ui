@@ -4,6 +4,9 @@ using Serilog.Ui.Core.Models;
 
 namespace Serilog.Ui.RavenDbProvider.Models;
 
+/// <summary>
+/// Note: don't remove <see cref="Newtonsoft.Json"/> as the provider will break on Exception serialization.
+/// </summary>
 internal class RavenDbLogModel
 {
     public DateTimeOffset Timestamp { get; set; }

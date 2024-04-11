@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Text.Json;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using Newtonsoft.Json;
 using Serilog.Ui.Core.Models;
 
 namespace Serilog.Ui.MongoDbProvider
@@ -39,12 +39,12 @@ namespace Serilog.Ui.MongoDbProvider
                 Message = RenderedMessage,
                 Timestamp = (Timestamp ?? UtcTimeStamp).ToUniversalTime(),
                 Exception = GetException(Exception),
-                Properties = JsonConvert.SerializeObject(Properties),
+                Properties = JsonSerializer.Serialize(Properties),
                 PropertyType = "json"
             }.SetRowNo(rowNoStart, index);
         }
 
-        private string GetException(object exception)
+        private static string GetException(object exception)
         {
             if (exception == null || IsPropertyExist(exception, "_csharpnull"))
                 return null;
@@ -53,7 +53,7 @@ namespace Serilog.Ui.MongoDbProvider
             return str;
         }
 
-        private bool IsPropertyExist(dynamic obj, string name)
+        private static bool IsPropertyExist(dynamic obj, string name)
         {
             if (obj is ExpandoObject)
                 return ((IDictionary<string, object>)obj).ContainsKey(name);

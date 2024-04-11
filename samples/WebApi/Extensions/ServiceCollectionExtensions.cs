@@ -1,5 +1,6 @@
 ﻿using System.Data;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Xml.Linq;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
@@ -35,7 +36,20 @@ internal static class ServiceCollectionExtensions
 
     private static readonly string JsonOutput = JsonSerializer.Serialize(new { test = "my-prop", other = 2 });
 
-    private static readonly string XmlOutput = JsonConvert.DeserializeXmlNode(JsonOutput, "root")!.OuterXml;
+    private static string XmlOutput
+    {
+        get
+        {
+            var jsonDocument = JsonDocument.Parse(JsonOutput);
+            var xDocument = new XDocument(
+                new XElement("Root",
+                    jsonDocument.RootElement.EnumerateObject()
+                        .Select(prop => new XElement(prop.Name, prop.Value.ToString()))
+                )
+            );
+            return xDocument.ToString(SaveOptions.DisableFormatting);
+        }
+    }
 
     internal static void ConfigureSerilog(this ConfigureHostBuilder configureHostBuilder)
     {

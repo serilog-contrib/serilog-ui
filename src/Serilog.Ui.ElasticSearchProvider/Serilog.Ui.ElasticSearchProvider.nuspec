@@ -10,8 +10,8 @@
 		<license type="expression">MIT</license>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>ElasticSearch data provider for Serilog UI.</description>
-		<releaseNotes></releaseNotes>
-		<copyright></copyright>
+		<releaseNotes/>
+		<copyright/>
 		<tags>serilog serilog-ui serilog.sinks.elasticsearch</tags>
 		<icon>assets\icon.png</icon>
 		<readme>docs\README.md</readme>

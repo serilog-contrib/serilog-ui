@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Dapper;
 using DotNet.Testcontainers.Containers;
 using MySqlConnector;
-using Serilog;
-using Serilog.Events;
 using Serilog.Sinks.MariaDB;
 using Serilog.Sinks.MariaDB.Extensions;
 using Serilog.Ui.Common.Tests.DataSamples;
@@ -28,12 +25,12 @@ public class MariaDbTestProvider<T> : DatabaseInstance
 {
     protected override string Name => nameof(MariaDbDataProvider);
 
-    public MariaDbTestProvider()
+    protected MariaDbTestProvider()
     {
         Container = new MariaDbBuilder().Build();
     }
 
-    public RelationalDbOptions DbOptions { get; set; } = new RelationalDbOptions("dbo").WithTable("Logs");
+    private RelationalDbOptions DbOptions { get; set; } = new RelationalDbOptions("dbo").WithTable("Logs");
 
     protected sealed override IContainer? Container { get; set; }
 
@@ -55,13 +52,6 @@ public class MariaDbTestProvider<T> : DatabaseInstance
         var serilog = new SerilogSinkSetup(logger =>
         {
             logger
-                .Enrich.WithEnvironmentName()
-                .Enrich.WithEnvironmentUserName()
-                .Enrich.AtLevel(LogEventLevel.Warning, p =>
-                {
-                    p.WithProperty(nameof(MariaDbTestModel.SampleBool), true);
-                    p.WithProperty(nameof(MariaDbTestModel.SampleDate), new DateTime(2022, 01, 15, 10, 00, 00));
-                })
                 .WriteTo.MariaDB(
                     DbOptions.ConnectionString,
                     autoCreateTable: true,

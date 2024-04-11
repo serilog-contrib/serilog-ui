@@ -11,8 +11,8 @@
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>PostgreSQL data provider for Serilog UI.</description>
 		<readme>docs\README.md</readme>
-		<releaseNotes></releaseNotes>
-		<copyright></copyright>
+		<releaseNotes/>
+		<copyright/>
 		<tags>serilog serilog-ui serilog.sinks.postgresql</tags>
 		<icon>assets\icon.png</icon>
 		<dependencies>

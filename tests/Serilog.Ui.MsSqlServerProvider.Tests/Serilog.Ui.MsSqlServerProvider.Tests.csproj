@@ -6,7 +6,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Serilog.Enrichers.Environment" Version="2.3.0" />
 		<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="6.6.0" />
 		<PackageReference Include="Testcontainers.MsSql" Version="3.8.0" />
 	</ItemGroup>

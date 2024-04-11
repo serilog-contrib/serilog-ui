@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Dapper;
 using DotNet.Testcontainers.Containers;
 using Npgsql;
 using Serilog;
-using Serilog.Events;
 using Serilog.Sinks.PostgreSQL.ColumnWriters;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
@@ -55,13 +53,6 @@ public class PostgresTestProvider<T> : DatabaseInstance
         var serilog = new SerilogSinkSetup(logger =>
         {
             logger
-                .Enrich.WithEnvironmentName()
-                .Enrich.WithEnvironmentUserName()
-                .Enrich.AtLevel(LogEventLevel.Warning, p =>
-                {
-                    p.WithProperty(nameof(PostgresTestModel.SampleBool), true);
-                    p.WithProperty(nameof(PostgresTestModel.SampleDate), new DateTime(2022, 01, 15, 10, 00, 00));
-                })
                 .WriteTo.PostgreSQL(
                     DbOptions.ConnectionString,
                     "logs",

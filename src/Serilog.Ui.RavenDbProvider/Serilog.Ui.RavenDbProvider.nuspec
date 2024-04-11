@@ -11,8 +11,8 @@
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>RavenDB data provider for Serilog UI.</description>
 		<readme>docs\README.md</readme>
-		<releaseNotes></releaseNotes>
-		<copyright></copyright>
+		<releaseNotes/>
+		<copyright/>
 		<tags>serilog serilog-ui serilog.sinks.ravendb</tags>
 		<icon>assets\icon.png</icon>
 		<dependencies>

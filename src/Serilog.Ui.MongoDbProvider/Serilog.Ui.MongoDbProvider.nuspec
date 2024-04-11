@@ -10,8 +10,8 @@
 		<license type="expression">MIT</license>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>MongoDB data provider for Serilog UI.</description>
-		<releaseNotes></releaseNotes>
-		<copyright></copyright>
+		<releaseNotes/>
+		<copyright/>
 		<tags>serilog serilog-ui serilog.sinks.mongodb</tags>
 		<icon>assets\icon.png</icon>
 		<readme>docs\README.md</readme>
@@ -22,7 +22,6 @@
 				<dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="8.0.1" exclude="Build,Analyzers" />
 				<dependency id="Microsoft.Extensions.Primitives" version="8.0.0" exclude="Build,Analyzers" />
 				<dependency id="MongoDB.Driver" version="2.24.0" exclude="Build,Analyzers" />
-				<dependency id="Newtonsoft.Json" version="13.0.3" exclude="Build,Analyzers" />
 				<dependency id="System.Text.Json" version="8.0.3" exclude="Build,Analyzers" />
 			</group>
 		</dependencies>

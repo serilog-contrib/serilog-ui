@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Dapper;
 using DotNet.Testcontainers.Containers;
 using Microsoft.Data.SqlClient;
 using Serilog;
-using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
@@ -52,13 +50,6 @@ public class MsSqlServerTestProvider<T> : DatabaseInstance
         var serilog = new SerilogSinkSetup(logger =>
         {
             logger
-                .Enrich.WithEnvironmentName()
-                .Enrich.WithEnvironmentUserName()
-                .Enrich.AtLevel(LogEventLevel.Warning, p =>
-                {
-                    p.WithProperty(nameof(SqlServerTestModel.SampleBool), true);
-                    p.WithProperty(nameof(SqlServerTestModel.SampleDate), new DateTime(2022, 01, 15, 10, 00, 00));
-                })
                 .WriteTo.MSSqlServer(DbOptions.ConnectionString,
                     new MSSqlServerSinkOptions
                     {

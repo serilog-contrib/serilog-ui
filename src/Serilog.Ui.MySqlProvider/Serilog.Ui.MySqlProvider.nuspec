@@ -10,8 +10,8 @@
 		<license type="expression">MIT</license>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>MySQL and MariaDB data provider for Serilog UI.</description>
-		<releaseNotes></releaseNotes>
-		<copyright></copyright>
+		<releaseNotes/>
+		<copyright/>
 		<tags>serilog serilog-ui serilog.sinks.mysql serilog.sinks.mariadb</tags>
 		<readme>docs\README.md</readme>
 		<icon>assets\icon.png</icon>

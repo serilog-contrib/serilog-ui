@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 
 namespace Serilog.Ui.ElasticSearchProvider.Serializers
 {
+    /// <summary>
+    /// Note: don't remove <see cref="Newtonsoft.Json" /> as the provider will break on Exception serialization.
+    /// </summary>
     internal class VanillaSerializer : IElasticsearchSerializer
     {
         public T Deserialize<T>(Stream stream) => (T)Deserialize(typeof(T), stream);

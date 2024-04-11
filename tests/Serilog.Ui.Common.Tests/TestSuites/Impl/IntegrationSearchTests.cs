@@ -26,6 +26,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             var res = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
             res.Item1.Should().HaveCount(10);
+            res.Item1.Should().AllSatisfy(x => x.Properties.Should().NotBeNullOrWhiteSpace());
             res.Item2.Should().Be(LogCollector.DataSet.Count);
         }
 

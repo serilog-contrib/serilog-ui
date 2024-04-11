@@ -11,8 +11,8 @@
 		<license type="expression">MIT</license>
 		<description>Simple web UI for several Serilog sinks.</description>
 		<readme>docs\README.md</readme>
-		<releaseNotes></releaseNotes>
-		<copyright></copyright>
+		<releaseNotes/>
+		<copyright/>
 		<tags>serilog serilog-ui log logui log-ui web-log</tags>
 		<icon>assets\icon.png</icon>
 		<dependencies>
