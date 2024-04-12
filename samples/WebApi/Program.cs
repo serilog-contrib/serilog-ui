@@ -23,11 +23,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseSerilogUi(options =>
-{
-    options.RoutePrefix = "my-test";
-    options.HideBrand = true;
-});
+app.UseSerilogUi(options => options
+    .WithRoutePrefix("my-test")
+    .HideSerilogUiBrand());
 
 var summaries = new[]
 {

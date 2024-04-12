@@ -2,7 +2,7 @@
 
 namespace Serilog.Ui.Web.Endpoints
 {
-    public interface ISerilogUiAppRoutes: ISerilogUiOptionsSetter
+    public interface ISerilogUiAppRoutes : ISerilogUiOptionsSetter
     {
         Task GetHomeAsync();
 

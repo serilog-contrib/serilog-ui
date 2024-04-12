@@ -70,9 +70,10 @@ namespace Serilog.Ui.Web.Endpoints
                 authType,
                 options.ColumnsInfo,
                 options.DisabledSortOnKeys,
-                options.HideBrand,
+                options.ShowBrand,
                 options.HomeUrl,
-                options.RoutePrefix
+                options.Authorization.BlockHomeAccess,
+                options.RoutePrefix,
             };
             var encodeAuthOpts = Uri.EscapeDataString(JsonSerializer.Serialize(feOpts, JsonSerializerOptions));
 

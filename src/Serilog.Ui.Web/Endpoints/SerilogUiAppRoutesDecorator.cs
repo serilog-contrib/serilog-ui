@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿using System.Net;
 using System.Threading.Tasks;
 using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Http;
@@ -8,24 +8,32 @@ using Serilog.Ui.Web.Models;
 namespace Serilog.Ui.Web.Endpoints
 {
     internal class SerilogUiAppRoutesDecorator(
+        IHttpContextAccessor httpContextAccessor,
         ISerilogUiAppRoutes decoratedService,
         IAuthorizationFilterService authFilterService) : ISerilogUiAppRoutes
     {
         public UiOptions Options { get; private set; }
 
-        public Task GetHomeAsync()
+        public async Task GetHomeAsync()
         {
             Guard.Against.Null(Options, nameof(Options));
+            Guard.Against.Null(httpContextAccessor.HttpContext);
 
-            return Options.Authorization.RunAuthorizationFilterOnAppRoutes
-                ? authFilterService.CheckAccessAsync(decoratedService.GetHomeAsync, ChangeResponseAsync)
-                : decoratedService.GetHomeAsync();
-
-            // https://stackoverflow.com/a/73555727/15129749
-            static Task ChangeResponseAsync(HttpResponse response)
+            if (Options.Authorization.RunAuthorizationFilterOnAppRoutes)
             {
-                response.ContentType = "text/html;charset=utf-8";
-                return response.WriteAsync("<p>You don't have enough permission to access this page!</p>", Encoding.UTF8);
+                await authFilterService.CheckAccessAsync(() => Task.CompletedTask, OnAccessFailure);
+            }
+
+            await decoratedService.GetHomeAsync();
+            return;
+
+            Task OnAccessFailure()
+            {
+                httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+
+                Options.Authorization.BlockHomeAccess = true;
+
+                return Task.CompletedTask;
             }
         }
 
@@ -33,9 +41,7 @@ namespace Serilog.Ui.Web.Endpoints
         {
             Guard.Against.Null(Options, nameof(Options));
 
-            return Options.Authorization.RunAuthorizationFilterOnAppRoutes
-                ? authFilterService.CheckAccessAsync(decoratedService.RedirectHomeAsync)
-                : decoratedService.RedirectHomeAsync();
+            return decoratedService.RedirectHomeAsync();
         }
 
         public void SetOptions(UiOptions options)

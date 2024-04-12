@@ -36,15 +36,12 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseSerilogUi(options =>
-{
-    options.HomeUrl = "/#Test";
-    options.InjectJavascript("/js/serilog-ui/custom.js");
-    options.Authorization = new AuthorizationOptions
-    {
-        AuthenticationType = AuthenticationType.Jwt,
-    };
-});
+app.UseSerilogUi(options => options
+    .WithHomeUrl("/#Test")
+    .WithAuthenticationType(AuthenticationType.Jwt)
+    .EnableAuthorizationOnAppRoutes()
+    .InjectJavascript("/js/serilog-ui/custom.js")
+);
 
 app.MapControllerRoute(
     name: "default",

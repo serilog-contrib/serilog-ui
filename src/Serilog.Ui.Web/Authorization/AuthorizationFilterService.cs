@@ -15,7 +15,7 @@ namespace Serilog.Ui.Web.Authorization
     {
         public async Task CheckAccessAsync(
             Func<Task> onSuccess,
-            Func<HttpResponse, Task> onFailure = null)
+            Func<Task> onFailure = null)
         {
             var httpContext = httpContextAccessor.HttpContext;
             if (httpContext is null) return;
@@ -31,7 +31,7 @@ namespace Serilog.Ui.Web.Authorization
             httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
             if (onFailure != null)
             {
-                await onFailure.Invoke(httpContext.Response);
+                await onFailure.Invoke();
             }
         }
 

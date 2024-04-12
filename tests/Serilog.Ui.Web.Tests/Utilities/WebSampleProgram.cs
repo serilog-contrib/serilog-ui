@@ -77,7 +77,7 @@ public class WebAppFactory
         {
             protected override void WithCustomConfigure(IApplicationBuilder builder)
             {
-                builder.UseSerilogUi(ui => { ui.RoutePrefix = "test"; });
+                builder.UseSerilogUi(ui => ui.WithRoutePrefix("test"));
             }
         }
     }

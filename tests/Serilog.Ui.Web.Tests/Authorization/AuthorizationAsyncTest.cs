@@ -15,7 +15,7 @@ public class AuthorizationAsyncTest(WebAppFactory.WithForbidden.Async factory) :
     public async Task Local_Requests_Are_Not_Allowed_By_Async_Filters()
     {
         // Act
-        var response = await _client.GetAsync("/serilog-ui/index.html");
+        var response = await _client.GetAsync("/serilog-ui/api/keys");
 
         // Assert
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);

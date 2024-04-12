@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
@@ -43,7 +42,7 @@ public class SerilogUiDecoratorsTest
         _appRoutesMock = Substitute.For<ISerilogUiAppRoutes>();
         _endpointMock = Substitute.For<ISerilogUiEndpoints>();
 
-        _sutRoutesDecorator = new SerilogUiAppRoutesDecorator(_appRoutesMock, authMock);
+        _sutRoutesDecorator = new SerilogUiAppRoutesDecorator(_contextAccessor, _appRoutesMock, authMock);
         _sutEndpointsDecorator = new SerilogUiEndpointsDecorator(_endpointMock, authMock);
     }
 
@@ -87,32 +86,31 @@ public class SerilogUiDecoratorsTest
     }
 
     [Fact]
-    public async Task It_forwards_the_call_to_RedirectHome_when_unauthorized_page_access_is_enabled()
+    public async Task It_forwards_the_call_to_RedirectHome_always()
     {
         // Arrange
-        _sutRoutesDecorator.SetOptions(GetOptions());
+        var options = GetOptions();
+        _sutRoutesDecorator.SetOptions(options);
 
         // Act
         await _sutRoutesDecorator.RedirectHomeAsync();
 
+        options.EnableAuthorizationOnAppRoutes();
+        await _sutRoutesDecorator.RedirectHomeAsync();
+
         // Assert
-        await _appRoutesMock.Received().RedirectHomeAsync();
+        await _appRoutesMock.Received(2).RedirectHomeAsync();
     }
 
     [Fact]
     public async Task It_blocks_the_call_on_failed_authentication()
     {
         // Arrange
-        var uiOpts = new UiOptions(new ProvidersOptions()) { Authorization = new AuthorizationOptions { RunAuthorizationFilterOnAppRoutes = true } };
+        var uiOpts = new UiOptions(new ProvidersOptions()).EnableAuthorizationOnAppRoutes();
+
         _syncFilters.Add(new ForbidLocalRequestFilter(_contextAccessor));
         _sutRoutesDecorator.SetOptions(uiOpts);
         _sutEndpointsDecorator.SetOptions(uiOpts);
-
-        // Act
-        await _sutRoutesDecorator.RedirectHomeAsync();
-        // Assert
-        _context.Response.StatusCode.Should().Be(403);
-        await _appRoutesMock.DidNotReceive().RedirectHomeAsync();
 
         // Arrange
         _contextAccessor.ClearSubstitute();
@@ -122,7 +120,7 @@ public class SerilogUiDecoratorsTest
         // Act
         await _sutEndpointsDecorator.GetLogsAsync();
         // Assert
-        _context.Response.StatusCode.Should().Be(403);
+        cleanContext.Response.StatusCode.Should().Be(403);
         await _endpointMock.DidNotReceive().GetLogsAsync();
 
         // Arrange
@@ -133,37 +131,30 @@ public class SerilogUiDecoratorsTest
         // Act
         await _sutEndpointsDecorator.GetApiKeysAsync();
         // Assert
-        _context.Response.StatusCode.Should().Be(403);
+        cleanContext2.Response.StatusCode.Should().Be(403);
         await _endpointMock.DidNotReceive().GetApiKeysAsync();
     }
 
     [Fact]
-    public async Task It_blocks_the_GetHome_on_failed_authentication_with_custom_delegate()
+    public async Task It_return_GetHome_on_failed_authentication_with_custom_ui_option()
     {
         // Arrange
-        var uiOpts = new UiOptions(new ProvidersOptions()) { Authorization = new AuthorizationOptions { RunAuthorizationFilterOnAppRoutes = true } };
+        var uiOpts = new UiOptions(new ProvidersOptions()).EnableAuthorizationOnAppRoutes();
+        uiOpts.Authorization.BlockHomeAccess.Should().BeFalse();
+
         _syncFilters.Add(new ForbidLocalRequestFilter(_contextAccessor));
         _sutRoutesDecorator.SetOptions(uiOpts);
         _sutEndpointsDecorator.SetOptions(uiOpts);
 
         // Act
-        var context = new DefaultHttpContext
-        {
-            Response =
-            {
-                Body = new MemoryStream()
-            }
-        };
+        var context = new DefaultHttpContext();
         _contextAccessor.HttpContext.Returns(context);
         await _sutRoutesDecorator.GetHomeAsync();
 
         // Assert
-        context.Response.StatusCode.Should().Be(403);
-        await _appRoutesMock.DidNotReceive().GetHomeAsync();
-
-        context.Response.Body.Seek(0, SeekOrigin.Begin);
-        var bodyWrite = await new StreamReader(context.Response.Body).ReadToEndAsync();
-        bodyWrite.Should().Be("<p>You don't have enough permission to access this page!</p>");
+        context.Response.StatusCode.Should().Be(200);
+        uiOpts.Authorization.BlockHomeAccess.Should().BeTrue();
+        await _appRoutesMock.Received().GetHomeAsync();
     }
 
     private static UiOptions GetOptions() => new(new ProvidersOptions());

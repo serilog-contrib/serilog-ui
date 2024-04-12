@@ -20,7 +20,8 @@ namespace Serilog.Ui.Web.Extensions
         /// </param>
         /// <param name="options">The options to configure Serilog UI dashboard.</param>
         /// <returns>IApplicationBuilder.</returns>
-        /// <exception cref="ArgumentNullException">throw if applicationBuilder if null</exception>
+        /// <exception cref="ArgumentNullException">throw if applicationBuilder is null</exception>
+        /// <exception cref="ArgumentException">if <see cref="UiOptions"/> validation fails</exception>
         public static IApplicationBuilder UseSerilogUi(this IApplicationBuilder applicationBuilder, Action<UiOptions> options = null)
         {
             Guard.Against.Null(applicationBuilder);
@@ -28,6 +29,7 @@ namespace Serilog.Ui.Web.Extensions
             var providerOptions = applicationBuilder.ApplicationServices.GetRequiredService<ProvidersOptions>();
             var uiOptions = new UiOptions(providerOptions);
             options?.Invoke(uiOptions);
+            uiOptions.Validate();
 
             return applicationBuilder.UseMiddleware<SerilogUiMiddleware>(uiOptions);
         }
