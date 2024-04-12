@@ -29,13 +29,11 @@ public class SerilogUiDecoratorsTest
 
     private readonly SerilogUiEndpointsDecorator _sutEndpointsDecorator;
 
-    private readonly DefaultHttpContext _context;
-
     public SerilogUiDecoratorsTest()
     {
-        _context = new DefaultHttpContext();
+        var context = new DefaultHttpContext();
         _contextAccessor = Substitute.For<IHttpContextAccessor>();
-        _contextAccessor.HttpContext.Returns(_context);
+        _contextAccessor.HttpContext.Returns(context);
 
         var authMock = new AuthorizationFilterService(_contextAccessor, _syncFilters, []);
 
@@ -140,7 +138,6 @@ public class SerilogUiDecoratorsTest
     {
         // Arrange
         var uiOpts = new UiOptions(new ProvidersOptions()).EnableAuthorizationOnAppRoutes();
-        uiOpts.Authorization.BlockHomeAccess.Should().BeFalse();
 
         _syncFilters.Add(new ForbidLocalRequestFilter(_contextAccessor));
         _sutRoutesDecorator.SetOptions(uiOpts);
@@ -149,11 +146,15 @@ public class SerilogUiDecoratorsTest
         // Act
         var context = new DefaultHttpContext();
         _contextAccessor.HttpContext.Returns(context);
+
+        _appRoutesMock.BlockHomeAccess.Should().BeFalse();
+        
         await _sutRoutesDecorator.GetHomeAsync();
 
         // Assert
         context.Response.StatusCode.Should().Be(200);
-        uiOpts.Authorization.BlockHomeAccess.Should().BeTrue();
+        _appRoutesMock.BlockHomeAccess.Should().BeTrue();
+
         await _appRoutesMock.Received().GetHomeAsync();
     }
 

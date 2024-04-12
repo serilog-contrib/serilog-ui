@@ -22,6 +22,8 @@ namespace Serilog.Ui.Web.Endpoints
         };
 
         public UiOptions Options { get; private set; }
+        
+        public bool BlockHomeAccess { get; set; }
 
         public async Task GetHomeAsync()
         {
@@ -61,7 +63,7 @@ namespace Serilog.Ui.Web.Endpoints
             Options = options;
         }
 
-        private static async Task<string> LoadStream(Stream stream, UiOptions options)
+        private async Task<string> LoadStream(Stream stream, UiOptions options)
         {
             var htmlStringBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
             var authType = options.Authorization.AuthenticationType.ToString();
@@ -72,7 +74,7 @@ namespace Serilog.Ui.Web.Endpoints
                 options.DisabledSortOnKeys,
                 options.ShowBrand,
                 options.HomeUrl,
-                options.Authorization.BlockHomeAccess,
+                BlockHomeAccess,
                 options.RoutePrefix,
             };
             var encodeAuthOpts = Uri.EscapeDataString(JsonSerializer.Serialize(feOpts, JsonSerializerOptions));

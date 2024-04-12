@@ -20,7 +20,6 @@ public class UiOptionsTest
         sut.ShowBrand.Should().BeTrue();
         sut.Authorization.AuthenticationType.Should().Be(AuthenticationType.Custom);
         sut.Authorization.RunAuthorizationFilterOnAppRoutes.Should().BeFalse();
-        sut.Authorization.BlockHomeAccess.Should().BeFalse();
     }
 
     [Fact]

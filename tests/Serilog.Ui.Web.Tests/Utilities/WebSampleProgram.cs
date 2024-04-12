@@ -60,7 +60,10 @@ public class WebAppFactory
         {
             public UiOptions? Options { get; set; }
 
+            public bool BlockHomeAccess { get; set; }
+
             public Task GetApiKeysAsync() => Oper(417);
+
             public Task GetHomeAsync() => Oper(418);
             public Task GetLogsAsync() => Oper(409);
             public Task RedirectHomeAsync() => Oper(400);

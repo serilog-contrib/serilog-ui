@@ -17,8 +17,6 @@
         /// Defaults to false.
         /// </summary>
         public bool RunAuthorizationFilterOnAppRoutes { get; set; }
-
-        internal bool BlockHomeAccess { get; set; }
     }
 
     public enum AuthenticationType
@@ -27,6 +25,6 @@
 
         Basic,
 
-        Jwt,
+        Jwt
     }
 }

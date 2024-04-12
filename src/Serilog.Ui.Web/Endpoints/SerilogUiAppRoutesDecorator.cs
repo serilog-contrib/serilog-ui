@@ -13,6 +13,8 @@ namespace Serilog.Ui.Web.Endpoints
         IAuthorizationFilterService authFilterService) : ISerilogUiAppRoutes
     {
         public UiOptions Options { get; private set; }
+        
+        public bool BlockHomeAccess { get; set; }
 
         public async Task GetHomeAsync()
         {
@@ -31,7 +33,7 @@ namespace Serilog.Ui.Web.Endpoints
             {
                 httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
 
-                Options.Authorization.BlockHomeAccess = true;
+                decoratedService.BlockHomeAccess = true;
 
                 return Task.CompletedTask;
             }
