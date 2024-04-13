@@ -35,6 +35,7 @@ export const handlers = developmentListenersHost.flatMap((dlh) => [
           params.sortBy ?? SortDirectionOptions.Desc,
         ),
       );
+
     const sliceValues = applyLimits(params.count, params.page);
 
     const data = {

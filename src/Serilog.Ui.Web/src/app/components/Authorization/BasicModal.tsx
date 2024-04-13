@@ -1,32 +1,19 @@
 import { Alert, Button, Fieldset, Group, PasswordInput, TextInput } from '@mantine/core';
 import { IconAlertTriangleFilled } from '@tabler/icons-react';
 import { useAuthProperties } from 'app/hooks/useAuthProperties';
-import useQueryLogs from 'app/hooks/useQueryLogs';
-import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { isStringGuard } from 'app/util/guards';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useState } from 'react';
 
 const BasicModal = ({ onClose }: { onClose: () => void }) => {
-  const { blockHomeAccess, authenticatedFromAccessDenied } = useSerilogUiProps();
-  const {
-    authHeader,
-    basic_pwd,
-    basic_user,
-    clearAuthState,
-    saveAuthState,
-    updateAuthKey,
-  } = useAuthProperties();
-  const { refetch } = useQueryLogs();
+  const { authHeader, basic_pwd, basic_user, clearAuthState, saveAuthState } =
+    useAuthProperties();
+  const [user, setUser] = useState(basic_user ?? '');
+  const [pwd, setPwd] = useState(basic_pwd ?? '');
 
   const isHeaderReady = isStringGuard(authHeader);
 
   const onSave = async () => {
-    saveAuthState(['basic_pwd', 'basic_user']);
-
-    // if we cannot access home, we block the refetch
-    if (blockHomeAccess && !authenticatedFromAccessDenied) return;
-
-    await refetch();
+    saveAuthState({ basic_pwd: pwd, basic_user: user });
   };
 
   return (
@@ -48,10 +35,10 @@ const BasicModal = ({ onClose }: { onClose: () => void }) => {
         <TextInput
           placeholder="admin"
           label="Username"
-          value={basic_user}
+          value={user}
           disabled={isHeaderReady}
           onChange={(event) => {
-            updateAuthKey('basic_user', event.currentTarget.value);
+            setUser(event.currentTarget.value);
           }}
         />
         <PasswordInput
@@ -61,18 +48,18 @@ const BasicModal = ({ onClose }: { onClose: () => void }) => {
           radius="sm"
           size="sm"
           style={{ flexGrow: 1 }}
-          value={basic_pwd ?? ''}
+          value={pwd}
           withAsterisk
           autoComplete="off"
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            updateAuthKey('basic_pwd', event.currentTarget.value);
+            setPwd(event.currentTarget.value);
           }}
         />
       </Fieldset>
       <Group display="flex" justify="right">
         <Button
           display={isHeaderReady ? 'none' : 'inherit'}
-          disabled={!(basic_pwd && basic_user)}
+          disabled={!(user && pwd)}
           onClick={onSave}
         >
           Save

@@ -1,25 +1,17 @@
 import { Button, Fieldset, Group, PasswordInput } from '@mantine/core';
-import useQueryLogs from 'app/hooks/useQueryLogs';
-import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { type ChangeEvent } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { useAuthProperties } from '../../hooks/useAuthProperties';
 import { isStringGuard } from '../../util/guards';
 
 const JwtModal = ({ onClose }: { onClose: () => void }) => {
-  const { blockHomeAccess, authenticatedFromAccessDenied } = useSerilogUiProps();
-  const { authHeader, clearAuthState, jwt_bearerToken, saveAuthState, updateAuthKey } =
+  const { authHeader, clearAuthState, jwt_bearerToken, saveAuthState } =
     useAuthProperties();
-  const { refetch } = useQueryLogs();
+  const [currentInput, setCurrentInput] = useState(jwt_bearerToken ?? '');
 
   const isHeaderReady = isStringGuard(authHeader);
 
   const onSave = async () => {
-    saveAuthState(['jwt_bearerToken']);
-
-    // if we cannot access home, we block the refetch
-    if (blockHomeAccess && !authenticatedFromAccessDenied) return;
-
-    await refetch();
+    saveAuthState({ jwt_bearerToken: currentInput });
   };
 
   return (
@@ -38,12 +30,12 @@ const JwtModal = ({ onClose }: { onClose: () => void }) => {
           radius="sm"
           size="sm"
           style={{ flexGrow: 1 }}
-          value={jwt_bearerToken ?? ''}
+          value={currentInput}
           disabled={isHeaderReady}
           withAsterisk
           autoComplete="off"
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
-            updateAuthKey('jwt_bearerToken', event.currentTarget.value);
+            setCurrentInput(event.currentTarget.value);
           }}
         />
       </Fieldset>

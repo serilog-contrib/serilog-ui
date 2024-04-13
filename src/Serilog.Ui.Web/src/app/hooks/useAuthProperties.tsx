@@ -1,24 +1,30 @@
 import {
   IAuthPropertiesData,
+  IAuthPropertiesStorageKeys,
   checkErrors,
   clearAuth,
   getAuthorizationHeader,
   initialAuthProps,
   saveAuthKey,
 } from 'app/util/auth';
-import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react';
-import { useImmer } from 'use-immer';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 import { useSerilogUiProps } from './useSerilogUiProps';
 
 interface AuthProps {
   authProps: IAuthPropertiesData;
   authHeader: string;
   clearAuthState: () => void;
-  saveAuthState: (authKeysToSave: (keyof IAuthPropertiesData)[]) => {
+  saveAuthState: (authKeysToSave: { [key: string]: string }) => {
     success: boolean;
     errors?: string[];
   };
-  updateAuthKey: (key: keyof IAuthPropertiesData, value: string) => void;
 }
 
 const AuthPropertiesContext = createContext<AuthProps>({
@@ -28,9 +34,6 @@ const AuthPropertiesContext = createContext<AuthProps>({
   saveAuthState: () => ({
     success: true,
   }),
-  updateAuthKey: (_, __) => {
-    console.log(_, __);
-  },
 });
 
 export const AuthPropertiesProvider = ({
@@ -40,10 +43,9 @@ export const AuthPropertiesProvider = ({
 }) => {
   const { authType } = useSerilogUiProps();
 
-  const [authInfo, setAuthInfo] = useImmer<IAuthPropertiesData>({
+  const [authInfo, setAuthInfo] = useState<IAuthPropertiesData>({
     ...initialAuthProps(),
   });
-  const [activeAuthProps, setAuthProps] = useImmer<IAuthPropertiesData>(authInfo);
 
   const authHeader = useMemo(
     () => getAuthorizationHeader(authInfo, authType),
@@ -53,47 +55,39 @@ export const AuthPropertiesProvider = ({
   const clearAuthState = useCallback(() => {
     const cleanState = clearAuth();
     setAuthInfo(cleanState);
-    setAuthProps(cleanState);
-  }, [setAuthInfo, setAuthProps]);
+  }, []);
 
-  const saveAuthState = useCallback(
-    (authKeysToSave: (keyof IAuthPropertiesData)[]) => {
-      const validationInfo: string[] = [];
-      setAuthInfo((draft) => {
-        authKeysToSave.forEach((e) => {
-          const saveResult = saveAuthKey(draft, e, activeAuthProps[e] ?? '');
-          if (saveResult.error) {
-            validationInfo.push(saveResult.error);
-          }
-        });
-        return draft;
-      });
+  const saveAuthState = useCallback((input: { [key: string]: string }) => {
+    const validationInfo: string[] = [];
 
-      const result = { success: !validationInfo.length, errors: validationInfo };
-      checkErrors(result);
-      return result;
-    },
-    [activeAuthProps, setAuthInfo],
-  );
+    const updatedData = Object.keys(input).reduce((acc, value) => {
+      if (!Object.keys(IAuthPropertiesStorageKeys).includes(value)) return acc;
+      const saveResult = saveAuthKey(
+        acc,
+        value as keyof IAuthPropertiesData,
+        input[value] ?? '',
+      );
+      if (saveResult.error) {
+        validationInfo.push(saveResult.error);
+      }
+      return acc;
+    }, {});
 
-  const updateAuthKey = useCallback(
-    (key: keyof IAuthPropertiesData, value: string) => {
-      setAuthProps((draft) => {
-        draft[key] = value;
-      });
-    },
-    [setAuthProps],
-  );
+    setAuthInfo((draft) => ({ ...draft, ...updatedData }));
+
+    const result = { success: !validationInfo.length, errors: validationInfo };
+    checkErrors(result);
+    return result;
+  }, []);
 
   const providerValue = useMemo(
     () => ({
-      authProps: activeAuthProps,
+      authProps: authInfo,
       authHeader,
-      updateAuthKey,
       saveAuthState,
       clearAuthState,
     }),
-    [activeAuthProps, authHeader, clearAuthState, saveAuthState, updateAuthKey],
+    [authHeader, authInfo, clearAuthState, saveAuthState],
   );
 
   return (
@@ -104,7 +98,7 @@ export const AuthPropertiesProvider = ({
 };
 
 export const useAuthProperties = () => {
-  const { authProps, clearAuthState, authHeader, saveAuthState, updateAuthKey } =
+  const { authProps, clearAuthState, authHeader, saveAuthState } =
     useContext(AuthPropertiesContext);
 
   return {
@@ -112,6 +106,5 @@ export const useAuthProperties = () => {
     authHeader,
     clearAuthState,
     saveAuthState,
-    updateAuthKey,
   };
 };
