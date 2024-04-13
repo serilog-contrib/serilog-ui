@@ -1,16 +1,24 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchKeys } from 'app/queries/table-keys';
-import { useQueryHeaders } from './useQueryHeaders';
+import { isArrayGuard } from 'app/util/guards';
+import { useAuthProperties } from './useAuthProperties';
 import { useSerilogUiProps } from './useSerilogUiProps';
 
 export const useQueryTableKeys = () => {
-  const { routePrefix } = useSerilogUiProps();
-  const { headers: requestInit, authHeader } = useQueryHeaders();
+  const { blockHomeAccess, setAuthenticatedFromAccessDenied } = useSerilogUiProps();
+  const { authHeader, fetchInfo } = useAuthProperties();
 
   return useQuery({
-    queryKey: ['get-keys', authHeader, routePrefix],
+    queryKey: ['get-keys', fetchInfo.routePrefix, authHeader],
     queryFn: async () => {
-      return routePrefix ? await fetchKeys(requestInit(), routePrefix) : [];
+      if (!fetchInfo || !fetchInfo.routePrefix) return [];
+
+      const result = await fetchKeys(fetchInfo.headers, fetchInfo.routePrefix);
+
+      if (blockHomeAccess) {
+        setAuthenticatedFromAccessDenied(isArrayGuard(result));
+      }
+      return result;
     },
     refetchOnMount: false,
     refetchOnReconnect: false,

@@ -1,18 +1,15 @@
 import { DefaultMantineColor } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { ReactNode } from 'react';
-import { AuthType, SerilogUiConfig } from 'types/types';
+import { AuthType } from 'types/types';
 
 export const determineHost = (routePrefix?: string) =>
   ['development', 'test'].includes(import.meta.env.MODE ?? '')
     ? 'https://localhost:3001'
     : `${window.location.origin}/${routePrefix}`;
 
-export const createRequestInit = (
-  uiProps: SerilogUiConfig,
-  header?: string,
-): RequestInit => {
-  const notWindowsAuth = uiProps.authType !== AuthType.Custom;
+export const createRequestInit = (authType?: AuthType, header?: string): RequestInit => {
+  const notWindowsAuth = authType !== AuthType.Custom;
 
   const headers: Headers = new Headers();
 

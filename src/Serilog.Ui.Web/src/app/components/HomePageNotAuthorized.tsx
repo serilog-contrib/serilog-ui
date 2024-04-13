@@ -1,4 +1,5 @@
 import { Box, Text } from '@mantine/core';
+import { useQueryAuth } from 'app/hooks/useQueryAuth';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { Navigate } from 'react-router-dom';
 import AuthorizeButton from './Authorization/AuthorizeButton';
@@ -6,6 +7,8 @@ import AuthorizeButton from './Authorization/AuthorizeButton';
 export const HomePageNotAuthorized = () => {
   const { authenticatedFromAccessDenied, blockHomeAccess, routePrefix } =
     useSerilogUiProps();
+
+  useQueryAuth();
 
   if (!routePrefix) return null;
 

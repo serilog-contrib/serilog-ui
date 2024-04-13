@@ -1,5 +1,4 @@
 import { isArrayGuard } from 'app/util/guards';
-import { useEffect } from 'react';
 import { useForm, useFormContext } from 'react-hook-form';
 import {
   SortDirectionOptions,
@@ -26,7 +25,7 @@ export const useSearchForm = () => {
   });
   const useSearchContext = useFormContext<SearchForm>();
 
-  const { data, isSuccess } = useQueryTableKeys();
+  const { data } = useQueryTableKeys();
   const tableKeysDefaultValue = isArrayGuard(data) ? data.at(0)! : '';
 
   const resetForm = () => {
@@ -35,15 +34,6 @@ export const useSearchForm = () => {
       table: tableKeysDefaultValue,
     });
   };
-
-  useEffect(() => {
-    if (!useSearchContext) return;
-
-    const tableValue = useSearchContext.getValues('table');
-    if (isSuccess && data && !tableValue) {
-      useSearchContext.setValue('table', tableKeysDefaultValue);
-    }
-  }, [data, isSuccess, tableKeysDefaultValue, useSearchContext]);
 
   return { methods, ...useSearchContext, reset: resetForm };
 };

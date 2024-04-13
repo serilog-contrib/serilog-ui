@@ -5,12 +5,6 @@ import '@mantine/notifications/styles.css';
 import { createRoot } from 'react-dom/client';
 import App from './app/App';
 
-/**
- * TODO:
-(branch/routing-by-id)
- * >> if auth on index is active, redirect to unauth route instead of empty html page (react router)
- */
-
 const runMsw = async () => {
   const { worker } = await import('./__tests__/_setup/msw-worker');
   try {

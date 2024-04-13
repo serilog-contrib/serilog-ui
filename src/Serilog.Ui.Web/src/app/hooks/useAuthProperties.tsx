@@ -7,6 +7,7 @@ import {
   initialAuthProps,
   saveAuthKey,
 } from 'app/util/auth';
+import { createRequestInit } from 'app/util/queries';
 import {
   createContext,
   useCallback,
@@ -20,6 +21,10 @@ import { useSerilogUiProps } from './useSerilogUiProps';
 interface AuthProps {
   authProps: IAuthPropertiesData;
   authHeader: string;
+  fetchInfo: {
+    headers: RequestInit;
+    routePrefix?: string;
+  };
   clearAuthState: () => void;
   saveAuthState: (authKeysToSave: { [key: string]: string }) => {
     success: boolean;
@@ -30,6 +35,9 @@ interface AuthProps {
 const AuthPropertiesContext = createContext<AuthProps>({
   authProps: {},
   authHeader: '',
+  fetchInfo: {
+    headers: {},
+  },
   clearAuthState: () => {},
   saveAuthState: () => ({
     success: true,
@@ -41,7 +49,7 @@ export const AuthPropertiesProvider = ({
 }: {
   children: ReactNode | undefined;
 }) => {
-  const { authType } = useSerilogUiProps();
+  const { authType, routePrefix } = useSerilogUiProps();
 
   const [authInfo, setAuthInfo] = useState<IAuthPropertiesData>({
     ...initialAuthProps(),
@@ -50,6 +58,14 @@ export const AuthPropertiesProvider = ({
   const authHeader = useMemo(
     () => getAuthorizationHeader(authInfo, authType),
     [authInfo, authType],
+  );
+
+  const fetchInfo = useMemo(
+    () => ({
+      headers: createRequestInit(authType, authHeader),
+      routePrefix,
+    }),
+    [authHeader, authType, routePrefix],
   );
 
   const clearAuthState = useCallback(() => {
@@ -84,10 +100,11 @@ export const AuthPropertiesProvider = ({
     () => ({
       authProps: authInfo,
       authHeader,
+      fetchInfo,
       saveAuthState,
       clearAuthState,
     }),
-    [authHeader, authInfo, clearAuthState, saveAuthState],
+    [authInfo, authHeader, clearAuthState, fetchInfo, saveAuthState],
   );
 
   return (
@@ -98,13 +115,14 @@ export const AuthPropertiesProvider = ({
 };
 
 export const useAuthProperties = () => {
-  const { authProps, clearAuthState, authHeader, saveAuthState } =
+  const { authProps, authHeader, fetchInfo, clearAuthState, saveAuthState } =
     useContext(AuthPropertiesContext);
 
   return {
     ...authProps,
     authHeader,
     clearAuthState,
+    fetchInfo,
     saveAuthState,
   };
 };

@@ -47,8 +47,7 @@ const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
 
   useEffect(() => {
     void refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentDbKey]);
+  }, [currentDbKey, refetch]);
 
   return (
     <form onSubmit={() => {}}>

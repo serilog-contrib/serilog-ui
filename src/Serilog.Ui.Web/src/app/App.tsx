@@ -17,6 +17,7 @@ import { ErrorBoundaryPage } from './components/ErrorPage';
 import { HomePageNotAuthorized } from './components/HomePageNotAuthorized';
 import { AuthPropertiesProvider } from './hooks/useAuthProperties';
 import { useCloseOnResize } from './hooks/useCloseOnResize';
+import { useQueryAuth } from './hooks/useQueryAuth';
 import { useSearchForm } from './hooks/useSearchForm';
 import { SerilogUiPropsProvider, useSerilogUiProps } from './hooks/useSerilogUiProps';
 
@@ -24,23 +25,21 @@ const AppBody = loadable(() => import('./components/AppBody'));
 const Head = loadable(() => import('./components/ShellStructure/Header'));
 const Sidebar = loadable(() => import('./components/ShellStructure/Sidebar'));
 
-const App = () => {
-  return (
-    <SerilogUiPropsProvider>
-      <RouterProviders />
-    </SerilogUiPropsProvider>
-  );
-};
+const App = () => (
+  <SerilogUiPropsProvider>
+    <Router />
+  </SerilogUiPropsProvider>
+);
 
-const RouterProviders = () => {
+const Router = () => {
   const { routePrefix } = useSerilogUiProps();
   const queryClient = new QueryClient();
 
   const router = createBrowserRouter([
     {
-      element: <Layout />,
       path: `${routePrefix}/`,
       ErrorBoundary: ErrorBoundaryPage,
+      element: <Layout />,
       children: [
         {
           element: <Shell />,
@@ -73,8 +72,10 @@ const Layout = () => {
   const { methods } = useSearchForm();
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <FormProvider {...methods}>
+    <FormProvider
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...methods}
+    >
       <AuthPropertiesProvider>
         <Outlet />
       </AuthPropertiesProvider>
@@ -86,6 +87,7 @@ const Shell = () => {
   const { blockHomeAccess, authenticatedFromAccessDenied, routePrefix } =
     useSerilogUiProps();
 
+  useQueryAuth();
   const [mobileOpen, { toggle: toggleMobile, close }] = useDisclosure();
 
   const headerProps: AppShellHeaderConfiguration = { height: '4.3em' };

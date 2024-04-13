@@ -1,12 +1,10 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { fetchLogs } from '../queries/logs';
-import { useQueryHeaders } from './useQueryHeaders';
+import { useAuthProperties } from './useAuthProperties';
 import { useSearchForm } from './useSearchForm';
-import { useSerilogUiProps } from './useSerilogUiProps';
 
 const useQueryLogs = () => {
-  const { routePrefix } = useSerilogUiProps();
-  const { headers: requestInit } = useQueryHeaders();
+  const { fetchInfo } = useAuthProperties();
   const { getValues, watch } = useSearchForm();
   const currentDbKey = watch('table');
 
@@ -15,7 +13,7 @@ const useQueryLogs = () => {
     queryKey: ['get-logs'],
     queryFn: async () => {
       return currentDbKey
-        ? await fetchLogs(getValues(), requestInit(), routePrefix)
+        ? await fetchLogs(getValues(), fetchInfo.headers, fetchInfo.routePrefix)
         : null;
     },
     placeholderData: keepPreviousData,
