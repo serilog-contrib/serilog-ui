@@ -1,11 +1,14 @@
 import { Box, Button, Text } from '@mantine/core';
 import { IconArrowBarRight, IconBackspace, IconMoodSad } from '@tabler/icons-react';
+import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { serilogUiUrl } from 'app/util/prettyPrints';
 import { Link, isRouteErrorResponse, useRouteError } from 'react-router-dom';
 
 export const ErrorBoundaryPage = () => {
+  const { routePrefix } = useSerilogUiProps();
   const error = useRouteError();
-  if (isRouteErrorResponse(error)) {
+
+  if (isRouteErrorResponse(error) && routePrefix) {
     return (
       <Box
         display="grid"
@@ -18,11 +21,11 @@ export const ErrorBoundaryPage = () => {
           gap: '1em',
         }}
       >
-        <Text size="xl" fw="bold">
+        <Text size="xl" fw="bold" display="flex" style={{ alignItems: 'center' }}>
           {error.status >= 500 ? 'An unexpected error occurred!' : 'Page not found!'}
           <IconMoodSad />
         </Text>
-        <Link to="/">
+        <Link to={`/${routePrefix}/`} style={{ textDecoration: 'none' }}>
           <Button size="lg" display="block">
             <IconBackspace />
             <Text size="lg" p="0.6em" fw="bold">

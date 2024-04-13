@@ -4,9 +4,9 @@ import { currentYear } from 'app/util/dates';
 import { serilogUiUrl } from 'app/util/prettyPrints';
 
 const BrandBadge = ({ size, margin }: { margin?: MantineSpacing; size: MantineSize }) => {
-  const { hideBrand } = useSerilogUiProps();
+  const { showBrand } = useSerilogUiProps();
 
-  if (hideBrand) return null;
+  if (!showBrand) return null;
 
   return (
     <Badge

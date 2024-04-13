@@ -1,10 +1,12 @@
 import { Button, Fieldset, Group, PasswordInput } from '@mantine/core';
 import useQueryLogs from 'app/hooks/useQueryLogs';
+import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { type ChangeEvent } from 'react';
 import { useAuthProperties } from '../../hooks/useAuthProperties';
 import { isStringGuard } from '../../util/guards';
 
 const JwtModal = ({ onClose }: { onClose: () => void }) => {
+  const { blockHomeAccess, authenticatedFromAccessDenied } = useSerilogUiProps();
   const { authHeader, clearAuthState, jwt_bearerToken, saveAuthState, updateAuthKey } =
     useAuthProperties();
   const { refetch } = useQueryLogs();
@@ -13,8 +15,13 @@ const JwtModal = ({ onClose }: { onClose: () => void }) => {
 
   const onSave = async () => {
     saveAuthState(['jwt_bearerToken']);
+
+    // if we cannot access home, we block the refetch
+    if (blockHomeAccess && !authenticatedFromAccessDenied) return;
+
     await refetch();
   };
+
   return (
     <>
       <Fieldset

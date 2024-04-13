@@ -67,8 +67,9 @@ export default defineConfig((env) => ({
       }),
   ],
   server: {
-    open: false,
+    open: 'serilog-ui/',
     port: 3001,
   },
+
   test: vitestConfig.test,
 }));

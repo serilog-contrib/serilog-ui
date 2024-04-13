@@ -19,6 +19,9 @@ const tableLogs = (table: string | null) => {
 
 export const handlers = developmentListenersHost.flatMap((dlh) => [
   http.get(`${dlh}/api/logs`, ({ request }) => {
+    const auth = request.headers.get('authorization');
+    if (!auth) return HttpResponse.error();
+
     const req = new URL(request.url);
     const params = getSearchParams(req.searchParams);
 
@@ -42,7 +45,11 @@ export const handlers = developmentListenersHost.flatMap((dlh) => [
     };
     return HttpResponse.json(data);
   }),
-  http.get(`${dlh}/api/keys`, () => HttpResponse.json(dbKeysMock)),
+  http.get(`${dlh}/api/keys`, ({ request }) => {
+    const auth = request.headers.get('authorization');
+
+    return !auth ? HttpResponse.error() : HttpResponse.json(dbKeysMock);
+  }),
 ]);
 
 const getSearchParams = (params: URLSearchParams) => ({

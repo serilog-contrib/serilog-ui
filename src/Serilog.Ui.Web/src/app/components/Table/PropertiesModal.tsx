@@ -76,7 +76,7 @@ const RenderProps = memo(
   }) => {
     const { isUtc } = useSerilogUiProps();
     const { additionalColumn, removeProperties } = useColumnsInfo(name, logPropertyType);
-    console.log(additionalColumn);
+
     if (!additionalColumn) return null;
 
     const propertyName = capitalize(name);

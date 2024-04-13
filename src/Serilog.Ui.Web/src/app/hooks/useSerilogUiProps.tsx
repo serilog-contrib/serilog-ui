@@ -11,6 +11,8 @@ import { AuthType, SerilogUiConfig } from 'types/types';
 interface SerilogUiProps extends SerilogUiConfig {
   isUtc: boolean;
   setIsUtc: (value: boolean) => void;
+  authenticatedFromAccessDenied?: boolean;
+  setAuthenticatedFromAccessDenied: (value: boolean) => void;
 }
 
 const defaults: SerilogUiConfig = {
@@ -19,11 +21,14 @@ const defaults: SerilogUiConfig = {
   disabledSortOnKeys: [],
   homeUrl: 'https://google.com',
   routePrefix: 'serilog-ui',
+  showBrand: true,
 };
 
 const SerilogUiPropsContext = createContext<SerilogUiProps>({
   isUtc: false,
   setIsUtc: () => {},
+  authenticatedFromAccessDenied: false,
+  setAuthenticatedFromAccessDenied: () => {},
 });
 
 export const SerilogUiPropsProvider = ({
@@ -33,6 +38,8 @@ export const SerilogUiPropsProvider = ({
 }) => {
   const [serverProps, setServerProps] = useState<SerilogUiConfig>({});
   const [isUtc, setIsUtc] = useState<boolean>(false);
+  const [authenticatedFromAccessDenied, setAuthenticatedFromAccessDenied] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const config = document.getElementById('serilog-ui-props')?.innerText;
@@ -52,8 +59,14 @@ export const SerilogUiPropsProvider = ({
   }, []);
 
   const providerValue = useMemo(
-    () => ({ ...serverProps, isUtc, setIsUtc }),
-    [isUtc, serverProps],
+    () => ({
+      ...serverProps,
+      authenticatedFromAccessDenied,
+      isUtc,
+      setIsUtc,
+      setAuthenticatedFromAccessDenied,
+    }),
+    [authenticatedFromAccessDenied, isUtc, serverProps],
   );
 
   return (

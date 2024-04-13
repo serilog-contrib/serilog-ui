@@ -2,10 +2,12 @@ import { Alert, Button, Fieldset, Group, PasswordInput, TextInput } from '@manti
 import { IconAlertTriangleFilled } from '@tabler/icons-react';
 import { useAuthProperties } from 'app/hooks/useAuthProperties';
 import useQueryLogs from 'app/hooks/useQueryLogs';
+import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { isStringGuard } from 'app/util/guards';
 import { ChangeEvent } from 'react';
 
 const BasicModal = ({ onClose }: { onClose: () => void }) => {
+  const { blockHomeAccess, authenticatedFromAccessDenied } = useSerilogUiProps();
   const {
     authHeader,
     basic_pwd,
@@ -20,6 +22,10 @@ const BasicModal = ({ onClose }: { onClose: () => void }) => {
 
   const onSave = async () => {
     saveAuthState(['basic_pwd', 'basic_user']);
+
+    // if we cannot access home, we block the refetch
+    if (blockHomeAccess && !authenticatedFromAccessDenied) return;
+
     await refetch();
   };
 

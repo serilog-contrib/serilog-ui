@@ -4,11 +4,13 @@ import { Navigate } from 'react-router-dom';
 import AuthorizeButton from './Authorization/AuthorizeButton';
 
 export const HomePageNotAuthorized = () => {
-  const { isHomeUnauthorized } = useSerilogUiProps();
+  const { authenticatedFromAccessDenied, blockHomeAccess, routePrefix } =
+    useSerilogUiProps();
 
-  if (!isHomeUnauthorized) return <Navigate to="/" replace />;
+  if (!routePrefix) return null;
 
-  // TODO => auth button to do something...
+  if (!blockHomeAccess || authenticatedFromAccessDenied)
+    return <Navigate to={`/${routePrefix}/`} replace />;
 
   return (
     <Box

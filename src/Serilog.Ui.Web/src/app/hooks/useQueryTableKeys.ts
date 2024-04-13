@@ -10,11 +10,11 @@ export const useQueryTableKeys = () => {
   return useQuery({
     queryKey: ['get-keys', authHeader, routePrefix],
     queryFn: async () => {
-      return routePrefix ? await fetchKeys(requestInit, routePrefix) : [];
+      return routePrefix ? await fetchKeys(requestInit(), routePrefix) : [];
     },
-
     refetchOnMount: false,
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
+    retry: false,
   });
 };

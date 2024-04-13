@@ -14,12 +14,14 @@ const useQueryLogs = () => {
     enabled: false,
     queryKey: ['get-logs'],
     queryFn: async () => {
-      return currentDbKey ? await fetchLogs(getValues(), requestInit, routePrefix) : null;
+      return currentDbKey
+        ? await fetchLogs(getValues(), requestInit(), routePrefix)
+        : null;
     },
     placeholderData: keepPreviousData,
     refetchOnMount: true,
     refetchOnWindowFocus: false,
-    retry: 3,
+    retry: false,
   });
 };
 

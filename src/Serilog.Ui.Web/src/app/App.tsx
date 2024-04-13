@@ -25,12 +25,21 @@ const Head = loadable(() => import('./components/ShellStructure/Header'));
 const Sidebar = loadable(() => import('./components/ShellStructure/Sidebar'));
 
 const App = () => {
+  return (
+    <SerilogUiPropsProvider>
+      <RouterProviders />
+    </SerilogUiPropsProvider>
+  );
+};
+
+const RouterProviders = () => {
+  const { routePrefix } = useSerilogUiProps();
   const queryClient = new QueryClient();
 
   const router = createBrowserRouter([
     {
       element: <Layout />,
-      path: '/',
+      path: `${routePrefix}/`,
       ErrorBoundary: ErrorBoundaryPage,
       children: [
         {
@@ -39,11 +48,13 @@ const App = () => {
         },
         {
           element: <HomePageNotAuthorized />,
-          path: 'access-denied',
+          path: 'access-denied/',
         },
       ],
     },
   ]);
+
+  if (!routePrefix) return null;
 
   return (
     <>
@@ -64,17 +75,17 @@ const Layout = () => {
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...methods}>
-      <SerilogUiPropsProvider>
-        <AuthPropertiesProvider>
-          <Outlet />
-        </AuthPropertiesProvider>
-      </SerilogUiPropsProvider>
+      <AuthPropertiesProvider>
+        <Outlet />
+      </AuthPropertiesProvider>
     </FormProvider>
   );
 };
 
 const Shell = () => {
-  const { isHomeUnauthorized } = useSerilogUiProps();
+  const { blockHomeAccess, authenticatedFromAccessDenied, routePrefix } =
+    useSerilogUiProps();
+
   const [mobileOpen, { toggle: toggleMobile, close }] = useDisclosure();
 
   const headerProps: AppShellHeaderConfiguration = { height: '4.3em' };
@@ -86,7 +97,8 @@ const Shell = () => {
 
   useCloseOnResize(close);
 
-  if (isHomeUnauthorized) return <Navigate to="access-denied" replace />;
+  if (blockHomeAccess && !authenticatedFromAccessDenied)
+    return <Navigate to={`/${routePrefix}/access-denied/`} replace />;
 
   return (
     <AppShell header={headerProps} navbar={navbarProps}>

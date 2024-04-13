@@ -8,16 +8,13 @@ import { UiApiError } from './errors';
 export const fetchKeys = async (fetchOptions: RequestInit, routePrefix?: string) => {
   const url = `${determineHost(routePrefix)}/api/keys`;
 
-  try {
-    const req = await fetch(url, fetchOptions);
+  const req = await fetch(url, fetchOptions);
 
-    if (req.ok) return await (req.json() as Promise<string[]>);
+  if (req.ok) return await (req.json() as Promise<string[]>);
 
-    return await Promise.reject(new UiApiError(req.status, 'Failed to fetch'));
-  } catch (error) {
-    const err = error as UiApiError;
+  req?.status === 403
+    ? send403Notification()
+    : sendUnexpectedNotification('Failed to fetch');
 
-    err?.code === 403 ? send403Notification() : sendUnexpectedNotification(err.message);
-    return [];
-  }
+  return await Promise.reject(new UiApiError(req.status, 'Failed to fetch'));
 };
