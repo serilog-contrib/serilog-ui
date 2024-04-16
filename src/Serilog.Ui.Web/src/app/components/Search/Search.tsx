@@ -25,12 +25,12 @@ const levelsArray = Object.keys(LogLevel).map((level) => ({
 }));
 
 const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
-  const { data: queryTableKeys, isError } = useQueryTableKeys();
+  const { data: queryTableKeys, isError } = useQueryTableKeys(true);
   const { isUtc, setIsUtc } = useSerilogUiProps();
   const { control, handleSubmit, reset, setValue, watch } = useSearchForm();
 
   const { field } = useController({ ...control, name: 'table' });
-  const isTableDisabled = !(queryTableKeys && queryTableKeys.length > 1);
+  const isTableDisabled = !(queryTableKeys && queryTableKeys.length);
   const { field: levelField } = useController({ ...control, name: 'level' });
   const { field: startRangeField } = useController({ ...control, name: 'startDate' });
   const { field: endRangeField } = useController({ ...control, name: 'endDate' });

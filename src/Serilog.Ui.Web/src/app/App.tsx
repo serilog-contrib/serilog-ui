@@ -19,39 +19,35 @@ import { AuthPropertiesProvider } from './hooks/useAuthProperties';
 import { useCloseOnResize } from './hooks/useCloseOnResize';
 import { useQueryAuth } from './hooks/useQueryAuth';
 import { useSearchForm } from './hooks/useSearchForm';
-import { SerilogUiPropsProvider, useSerilogUiProps } from './hooks/useSerilogUiProps';
+import { useSerilogUiProps } from './hooks/useSerilogUiProps';
 
 const AppBody = loadable(() => import('./components/AppBody'));
 const Head = loadable(() => import('./components/ShellStructure/Header'));
 const Sidebar = loadable(() => import('./components/ShellStructure/Sidebar'));
 
-const App = () => (
-  <SerilogUiPropsProvider>
-    <Router />
-  </SerilogUiPropsProvider>
-);
-
-const Router = () => {
+const App = () => {
   const { routePrefix } = useSerilogUiProps();
   const queryClient = new QueryClient();
 
-  const router = createBrowserRouter([
-    {
-      path: `${routePrefix}/`,
-      ErrorBoundary: ErrorBoundaryPage,
-      element: <Layout />,
-      children: [
-        {
-          element: <Shell />,
-          index: true,
-        },
-        {
-          element: <HomePageNotAuthorized />,
-          path: 'access-denied/',
-        },
-      ],
-    },
-  ]);
+  const router = createBrowserRouter(
+    [
+      {
+        ErrorBoundary: ErrorBoundaryPage,
+        element: <Layout />,
+        children: [
+          {
+            element: <Shell />,
+            index: true,
+          },
+          {
+            element: <HomePageNotAuthorized />,
+            path: 'access-denied',
+          },
+        ],
+      },
+    ],
+    { basename: `/${routePrefix}/` },
+  );
 
   if (!routePrefix) return null;
 
@@ -61,7 +57,9 @@ const Router = () => {
       <MantineProvider defaultColorScheme="auto" theme={theme}>
         <Notifications />
         <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
+          <AuthPropertiesProvider>
+            <RouterProvider router={router} />
+          </AuthPropertiesProvider>
         </QueryClientProvider>
       </MantineProvider>
     </>
@@ -76,16 +74,13 @@ const Layout = () => {
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...methods}
     >
-      <AuthPropertiesProvider>
-        <Outlet />
-      </AuthPropertiesProvider>
+      <Outlet />
     </FormProvider>
   );
 };
 
 const Shell = () => {
-  const { blockHomeAccess, authenticatedFromAccessDenied, routePrefix } =
-    useSerilogUiProps();
+  const { blockHomeAccess, authenticatedFromAccessDenied } = useSerilogUiProps();
 
   useQueryAuth();
   const [mobileOpen, { toggle: toggleMobile, close }] = useDisclosure();
@@ -100,7 +95,7 @@ const Shell = () => {
   useCloseOnResize(close);
 
   if (blockHomeAccess && !authenticatedFromAccessDenied)
-    return <Navigate to={`/${routePrefix}/access-denied/`} replace />;
+    return <Navigate to={`access-denied`} replace />;
 
   return (
     <AppShell header={headerProps} navbar={navbarProps}>

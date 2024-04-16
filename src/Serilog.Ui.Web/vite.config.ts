@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
 
 import react from '@vitejs/plugin-react-swc';
-import { defineConfig } from 'vite';
+import { PreviewOptions, defineConfig } from 'vite';
 import { checker } from 'vite-plugin-checker';
 import mkcert from 'vite-plugin-mkcert';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
@@ -28,6 +28,22 @@ const vitestConfig: VitestUserConfigInterface = {
       reportsDirectory: './reports/coverage/',
       reportOnFailure: true,
     },
+  },
+};
+
+const proxyAssets = (replace: RegExp) => ({
+  target: 'https://localhost:4173',
+  changeOrigin: true,
+  rewrite: (path: string) => path.replace(replace, ''),
+  secure: false,
+});
+const previewConfig: PreviewOptions = {
+  cors: true,
+  port: 4173,
+  strictPort: true,
+  proxy: {
+    ['^/serilog-ui/assets']: proxyAssets(/^\/serilog-ui/),
+    ['^/serilog-ui/access-denied/assets']: proxyAssets(/^\/serilog-ui\/access-denied/),
   },
 };
 
@@ -66,10 +82,10 @@ export default defineConfig((env) => ({
         },
       }),
   ],
+  preview: previewConfig,
   server: {
     open: 'serilog-ui/',
     port: 3001,
   },
-
   test: vitestConfig.test,
 }));

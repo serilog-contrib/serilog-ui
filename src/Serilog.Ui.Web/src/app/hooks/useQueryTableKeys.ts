@@ -4,7 +4,7 @@ import { isArrayGuard } from 'app/util/guards';
 import { useAuthProperties } from './useAuthProperties';
 import { useSerilogUiProps } from './useSerilogUiProps';
 
-export const useQueryTableKeys = () => {
+export const useQueryTableKeys = (shouldNotify = false) => {
   const { blockHomeAccess, setAuthenticatedFromAccessDenied } = useSerilogUiProps();
   const { authHeader, fetchInfo } = useAuthProperties();
 
@@ -13,7 +13,11 @@ export const useQueryTableKeys = () => {
     queryFn: async () => {
       if (!fetchInfo || !fetchInfo.routePrefix) return [];
 
-      const result = await fetchKeys(fetchInfo.headers, fetchInfo.routePrefix);
+      const result = await fetchKeys(
+        fetchInfo.headers,
+        fetchInfo.routePrefix,
+        shouldNotify,
+      );
 
       if (blockHomeAccess) {
         setAuthenticatedFromAccessDenied(isArrayGuard(result));

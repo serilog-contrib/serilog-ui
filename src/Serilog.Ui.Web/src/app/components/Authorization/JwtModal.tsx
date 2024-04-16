@@ -40,7 +40,11 @@ const JwtModal = ({ onClose }: { onClose: () => void }) => {
         />
       </Fieldset>
       <Group display="flex" justify="right">
-        <Button display={isHeaderReady ? 'none' : 'inherit'} onClick={onSave}>
+        <Button
+          disabled={!currentInput}
+          display={isHeaderReady ? 'none' : 'inherit'}
+          onClick={onSave}
+        >
           Save
         </Button>
         <Button

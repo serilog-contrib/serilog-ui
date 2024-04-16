@@ -2,6 +2,8 @@ import '@fontsource/mononoki';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
+import { SerilogUiPropsProvider } from 'app/hooks/useSerilogUiProps';
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './app/App';
 
@@ -39,7 +41,13 @@ const main = async () => {
     await runMsw();
   }
 
-  root.render(<App />);
+  root.render(
+    <StrictMode>
+      <SerilogUiPropsProvider>
+        <App />
+      </SerilogUiPropsProvider>
+    </StrictMode>,
+  );
 };
 
 void main();
