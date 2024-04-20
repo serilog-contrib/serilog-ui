@@ -6,7 +6,7 @@ import { AuthType } from 'types/types';
 export const determineHost = (routePrefix?: string) =>
   ['development', 'test'].includes(import.meta.env.MODE ?? '')
     ? 'https://localhost:3001'
-    : `${window.location.origin}/${routePrefix}`;
+    : `${window.location.origin}/${routePrefix ?? ''}`;
 
 export const createRequestInit = (authType?: AuthType, header?: string): RequestInit => {
   const notWindowsAuth = authType !== AuthType.Custom;

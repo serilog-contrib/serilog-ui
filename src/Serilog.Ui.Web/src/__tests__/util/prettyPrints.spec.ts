@@ -3,14 +3,27 @@ import dayjs from 'dayjs';
 import { theme } from 'style/theme';
 import { describe, expect, it, vi } from 'vitest';
 import {
+  capitalize,
+  convertLogType,
   getBgLogLevel,
   printDate,
   renderCodeContent,
   splitPrintDate,
 } from '../../app/util/prettyPrints';
-import { LogLevel, LogType } from '../../types/types';
+import { AdditionalColumnLogType, LogLevel, LogType } from '../../types/types';
 
 describe('pretty prints util', () => {
+  it.each([
+    ['string', 'String'],
+    ['', ''],
+    [null, null],
+    [undefined, undefined],
+  ])('capitalize: value %s returned as %s', (entry, output) => {
+    const sut = capitalize(entry);
+
+    expect(sut).toBe(output);
+  });
+
   describe('log level backgrounds', () => {
     it.each([
       {
@@ -151,5 +164,16 @@ describe('pretty prints util', () => {
       expect(sut[0]).toBe(`Sep 27, 2022`);
       expect(sut[1]).toBe(`14:15:10 [UTC]`);
     });
+  });
+
+  it.each([
+    [AdditionalColumnLogType.Json, LogType.Json],
+    [AdditionalColumnLogType.Xml, LogType.Xml],
+    [AdditionalColumnLogType.None, ''],
+    ['some' as unknown as AdditionalColumnLogType, ''],
+  ])('convert column log type %s to log type %s', (entry, output) => {
+    const sut = convertLogType(entry);
+
+    expect(sut).toBe(output);
   });
 });

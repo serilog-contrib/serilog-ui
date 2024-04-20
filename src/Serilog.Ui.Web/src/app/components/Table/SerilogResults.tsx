@@ -85,7 +85,6 @@ const SerilogResults = () => {
 const DesktopSkeleton = () =>
   [...Array(10).keys()].map((k) => (
     <Table.Tr key={k} h="4em">
-      {/* TODO: 8 + custom columns */}
       {[...Array(8).keys()].map((k) => (
         <Table.Td key={k} p="0">
           <Skeleton h="4em" radius="0" />

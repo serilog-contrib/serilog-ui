@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { type SearchForm, type SearchResult } from '../../types/types';
-import { isDefinedGuard, isStringGuard } from '../util/guards';
+import { isNotNullGuard, isStringGuard } from '../util/guards';
 import {
   determineHost,
   send403Notification,
@@ -43,8 +43,8 @@ const prepareSearchUrl = (input: SearchForm, routePrefix?: string) => {
   const startDate = inputData.startDate;
   const endDate = inputData.endDate;
   if (
-    isDefinedGuard(startDate) &&
-    isDefinedGuard(endDate) &&
+    isNotNullGuard(startDate) &&
+    isNotNullGuard(endDate) &&
     dayjs(startDate).isAfter(dayjs(endDate))
   ) {
     sendUnexpectedNotification(
@@ -73,6 +73,6 @@ const prepareSearchUrl = (input: SearchForm, routePrefix?: string) => {
 };
 
 const queryParamIfSet = (paramName: string, paramValue?: string | null) =>
-  isDefinedGuard(paramValue) && isStringGuard(paramValue)
+  isNotNullGuard(paramValue) && isStringGuard(paramValue)
     ? `&${paramName}=${paramValue}`
     : '';
