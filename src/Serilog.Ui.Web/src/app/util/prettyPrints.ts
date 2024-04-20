@@ -13,7 +13,7 @@ import {
 export const serilogUiUrl = 'https://github.com/serilog-contrib/serilog-ui';
 
 export const capitalize = (str?: string | null) =>
-  str ? str.charAt(0).toUpperCase() + str.slice(1) : str;
+  str ? str.charAt(0).toUpperCase() + str.slice(1) : str ?? '';
 
 export const getBgLogLevel = (
   theme: MantineTheme,

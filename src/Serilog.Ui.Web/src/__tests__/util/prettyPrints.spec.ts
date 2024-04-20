@@ -16,8 +16,8 @@ describe('pretty prints util', () => {
   it.each([
     ['string', 'String'],
     ['', ''],
-    [null, null],
-    [undefined, undefined],
+    [null, ''],
+    [undefined, ''],
   ])('capitalize: value %s returned as %s', (entry, output) => {
     const sut = capitalize(entry);
 

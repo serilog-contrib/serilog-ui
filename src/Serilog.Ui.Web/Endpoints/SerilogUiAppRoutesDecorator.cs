@@ -27,7 +27,6 @@ namespace Serilog.Ui.Web.Endpoints
             }
 
             await decoratedService.GetHomeAsync();
-            return;
 
             Task OnAccessFailure()
             {
