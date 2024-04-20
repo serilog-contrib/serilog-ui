@@ -1,4 +1,3 @@
-import loadable from '@loadable/component';
 import {
   Skeleton,
   Table,
@@ -8,15 +7,15 @@ import {
 } from '@mantine/core';
 import { useColumnsInfo } from 'app/hooks/useColumnsInfo';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { memo, useCallback, useMemo } from 'react';
+import { Suspense, lazy, memo, useCallback, useMemo } from 'react';
 import classes from 'style/table.module.css';
 import { ColumnType, LogLevel } from '../../../types/types';
 import useQueryLogs from '../../hooks/useQueryLogs';
 import { isArrayGuard, isObjectGuard, isStringGuard } from '../../util/guards';
 import { getBgLogLevel, splitPrintDate } from '../../util/prettyPrints';
 
-const DetailsModal = loadable(() => import('./DetailsModal'));
-const PropertiesModal = loadable(() => import('./PropertiesModal'));
+const DetailsModal = lazy(() => import('./DetailsModal'));
+const PropertiesModal = lazy(() => import('./PropertiesModal'));
 
 const SerilogResults = () => {
   const theme = useMantineTheme();
@@ -55,7 +54,9 @@ const SerilogResults = () => {
           />
         )}
         <Table.Td>
-          <PropertiesModal modalContent={log} title="View" />
+          <Suspense>
+            <PropertiesModal modalContent={log} title="View" />
+          </Suspense>
         </Table.Td>
       </Table.Tr>
     ));
@@ -186,12 +187,14 @@ const TableCell = memo(
         return (
           <Table.Td>
             {isStringGuard(content) ? (
-              <DetailsModal
-                modalContent={content}
-                modalTitle={codeModalTitle}
-                contentType={codeContentType}
-                buttonTitle="View"
-              />
+              <Suspense>
+                <DetailsModal
+                  modalContent={content}
+                  modalTitle={codeModalTitle}
+                  contentType={codeContentType}
+                  buttonTitle="View"
+                />
+              </Suspense>
             ) : null}
           </Table.Td>
         );

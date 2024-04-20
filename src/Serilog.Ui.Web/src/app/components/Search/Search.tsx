@@ -25,19 +25,17 @@ const levelsArray = Object.keys(LogLevel).map((level) => ({
 }));
 
 const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
-  const { data: queryTableKeys, isError } = useQueryTableKeys(true);
+  const { isError } = useQueryTableKeys(true);
   const { isUtc, setIsUtc } = useSerilogUiProps();
-  const { control, handleSubmit, reset, setValue, watch } = useSearchForm();
-
-  const { field } = useController({ ...control, name: 'table' });
-  const isTableDisabled = !(queryTableKeys && queryTableKeys.length);
-  const { field: levelField } = useController({ ...control, name: 'level' });
-  const { field: startRangeField } = useController({ ...control, name: 'startDate' });
-  const { field: endRangeField } = useController({ ...control, name: 'endDate' });
-  const { field: textField } = useController({ ...control, name: 'search' });
+  const { handleSubmit, reset, setValue, watch } = useSearchForm();
 
   const { refetch } = useQueryLogs();
   const currentDbKey = watch('table');
+
+  const clean = async () => {
+    reset();
+    await refetch();
+  };
 
   const submit = async () => {
     setValue('page', 1);
@@ -52,37 +50,11 @@ const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
   return (
     <form onSubmit={() => {}}>
       <Grid className={classes.searchFiltersGrid}>
-        <Grid.Col span={{ xs: 6, sm: 7, md: 4, lg: 2 }} order={{ sm: 1, md: 1 }}>
-          <Select
-            label="Table"
-            data={queryTableKeys?.map((d) => ({ value: d, label: d })) ?? []}
-            allowDeselect={false}
-            {...field}
-            disabled={isTableDisabled}
-          ></Select>
-        </Grid.Col>
-        <Grid.Col span={{ xs: 6, sm: 5, md: 2, lg: 2 }} order={{ sm: 2, md: 4, lg: 3 }}>
-          <Select label="Level" data={levelsArray} {...levelField}></Select>
-        </Grid.Col>
-        <Grid.Col span={{ xs: 6, sm: 6, md: 4 }} order={{ sm: 3, md: 2, lg: 4 }}>
-          <DateTimePicker
-            label="Start date"
-            withSeconds={true}
-            mx="auto"
-            {...startRangeField}
-          />
-        </Grid.Col>
-        <Grid.Col span={{ xs: 6, sm: 6, md: 4 }} order={{ sm: 4, md: 3, lg: 5 }}>
-          <DateTimePicker
-            label="End date"
-            withSeconds={true}
-            mx="auto"
-            {...endRangeField}
-          />
-        </Grid.Col>
-        <Grid.Col span={{ xs: 6, sm: 6, md: 6, lg: 8 }} order={{ sm: 5, md: 6, lg: 2 }}>
-          <TextInput label="Search" placeholder="Your input..." {...textField} />
-        </Grid.Col>
+        <SelectDbKeyInput />
+        <SelectLevelInput />
+        <DateStartInput />
+        <DateEndInput />
+        <TextSearchInput />
         <Grid.Col span={{ xs: 6, sm: 6, md: 4 }} order={{ sm: 6 }}>
           <Group justify="end" align="center" h="100%">
             <Switch
@@ -100,10 +72,7 @@ const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
             <ActionIcon
               visibleFrom="lg"
               size={28}
-              onClick={async () => {
-                reset();
-                await refetch();
-              }}
+              onClick={clean}
               variant="light"
               aria-label="reset filters"
             >
@@ -113,6 +82,84 @@ const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
         </Grid.Col>
       </Grid>
     </form>
+  );
+};
+
+const dbKeySpan = { xs: 6, sm: 7, md: 4, lg: 2 };
+const dbKeyOrder = { sm: 1, md: 1 };
+const SelectDbKeyInput = memo(() => {
+  const { control } = useSearchForm();
+  const { data: queryTableKeys } = useQueryTableKeys(true);
+  const { field } = useController({ ...control, name: 'table' });
+  const isTableDisabled = !(queryTableKeys && queryTableKeys.length);
+
+  return (
+    <Grid.Col span={dbKeySpan} order={dbKeyOrder}>
+      <Select
+        label="Table"
+        data={queryTableKeys?.map((d) => ({ value: d, label: d })) ?? []}
+        allowDeselect={false}
+        {...field}
+        disabled={isTableDisabled}
+      ></Select>
+    </Grid.Col>
+  );
+});
+
+const levelSpan = { xs: 6, sm: 5, md: 2, lg: 2 };
+const levelOrder = { sm: 2, md: 4, lg: 3 };
+const SelectLevelInput = memo(() => {
+  const { control } = useSearchForm();
+  const { field: levelField } = useController({ ...control, name: 'level' });
+
+  return (
+    <Grid.Col span={levelSpan} order={levelOrder}>
+      <Select label="Level" data={levelsArray} {...levelField}></Select>
+    </Grid.Col>
+  );
+});
+
+const searchSpan = { xs: 6, sm: 6, md: 6, lg: 8 };
+const searchOrder = { sm: 5, md: 6, lg: 2 };
+const TextSearchInput = memo(() => {
+  const { control } = useSearchForm();
+  const { field: searchField } = useController({ ...control, name: 'search' });
+
+  return (
+    <Grid.Col span={searchSpan} order={searchOrder}>
+      <TextInput label="Search" placeholder="Your input..." {...searchField} />
+    </Grid.Col>
+  );
+});
+
+const dateStartSpan = { xs: 6, sm: 6, md: 4 };
+const dateStartOrder = { sm: 3, md: 2, lg: 4 };
+const DateStartInput = () => {
+  const { control } = useSearchForm();
+  const { field: startRangeField } = useController({ ...control, name: 'startDate' });
+
+  return (
+    <Grid.Col span={dateStartSpan} order={dateStartOrder}>
+      <DateTimePicker
+        label="Start date"
+        withSeconds={true}
+        mx="auto"
+        {...startRangeField}
+      />
+    </Grid.Col>
+  );
+};
+
+const dateEndSpan = { xs: 6, sm: 6, md: 4 };
+const dateEndOrder = { sm: 4, md: 3, lg: 5 };
+const DateEndInput = () => {
+  const { control } = useSearchForm();
+  const { field: endRangeField } = useController({ ...control, name: 'endDate' });
+
+  return (
+    <Grid.Col span={dateEndSpan} order={dateEndOrder}>
+      <DateTimePicker label="End date" withSeconds={true} mx="auto" {...endRangeField} />
+    </Grid.Col>
   );
 };
 

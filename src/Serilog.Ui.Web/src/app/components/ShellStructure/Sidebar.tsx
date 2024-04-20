@@ -1,14 +1,14 @@
-import loadable from '@loadable/component';
 import { Box, Button } from '@mantine/core';
 import { IconHomeDot } from '@tabler/icons-react';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
+import { Suspense, lazy } from 'react';
 import styles from 'style/header.module.css';
 import { isStringGuard } from '../../util/guards';
 import BrandBadge from './BrandBadge';
 
-const FilterButton = loadable(() => import('./FilterButton'));
-const AuthorizeButton = loadable(() => import('../Authorization/AuthorizeButton'));
-const Paging = loadable(() => import('../Search/Paging'));
+const FilterButton = lazy(() => import('./FilterButton'));
+const AuthorizeButton = lazy(() => import('../Authorization/AuthorizeButton'));
+const Paging = lazy(() => import('../Search/Paging'));
 
 const Sidebar = () => {
   const { homeUrl } = useSerilogUiProps();
@@ -38,13 +38,20 @@ const Sidebar = () => {
             fz="xs"
             style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.2em' }}
           >
-            <AuthorizeButton />
-            <FilterButton />
+            <Suspense>
+              <AuthorizeButton />
+            </Suspense>
+            <Suspense>
+              <FilterButton />
+            </Suspense>
           </Box>
         </Button.Group>
       </Box>
       <Box>
-        <Paging />
+        <Suspense>
+          <Paging />
+        </Suspense>
+
         <Box display="flex">
           <BrandBadge size="lg" margin={'0 auto'} />
         </Box>

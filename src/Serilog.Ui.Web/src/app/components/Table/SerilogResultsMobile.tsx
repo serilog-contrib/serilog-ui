@@ -1,4 +1,3 @@
-import loadable from '@loadable/component';
 import {
   Blockquote,
   Box,
@@ -16,12 +15,12 @@ import { useColumnsInfo } from 'app/hooks/useColumnsInfo';
 import useQueryLogs from 'app/hooks/useQueryLogs';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { getBgLogLevel, printDate } from 'app/util/prettyPrints';
-import { memo } from 'react';
+import { Suspense, lazy, memo } from 'react';
 import classes from 'style/table.module.css';
 import { EncodedSeriLogObject, LogLevel } from 'types/types';
 
-const DetailsModal = loadable(() => import('./DetailsModal'));
-const PropertiesModal = loadable(() => import('./PropertiesModal'));
+const DetailsModal = lazy(() => import('./DetailsModal'));
+const PropertiesModal = lazy(() => import('./PropertiesModal'));
 
 const SerilogResultsMobile = () => {
   const { data, isFetching } = useQueryLogs();
@@ -113,15 +112,19 @@ const LogCard = memo(({ log, isUtc }: { log: EncodedSeriLogObject; isUtc?: boole
         }}
       >
         {!removeException && (
-          <DetailsModal
-            modalContent={log.exception ?? ''}
-            modalTitle="Exception details"
-            buttonTitle="exception"
-            contentType={log.propertyType}
-            disabled={!log.exception}
-          />
+          <Suspense>
+            <DetailsModal
+              modalContent={log.exception ?? ''}
+              modalTitle="Exception details"
+              buttonTitle="exception"
+              contentType={log.propertyType}
+              disabled={!log.exception}
+            />
+          </Suspense>
         )}
-        <PropertiesModal modalContent={log} />
+        <Suspense>
+          <PropertiesModal modalContent={log} />
+        </Suspense>
       </Card.Section>
     </Card>
   );

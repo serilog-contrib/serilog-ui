@@ -1,12 +1,12 @@
-import loadable from '@loadable/component';
 import { Box } from '@mantine/core';
 import { useJwtTimeout } from 'app/hooks/useJwtTimeout';
+import { Suspense, lazy } from 'react';
 import classes from 'style/table.module.css';
 
-const Search = loadable(() => import('./Search/Search'));
-const Paging = loadable(() => import('./Search/Paging'));
-const SerilogResults = loadable(() => import('./Table/SerilogResults'));
-const SerilogResultsMobile = loadable(() => import('./Table/SerilogResultsMobile'));
+const Search = lazy(() => import('./Search/Search'));
+const Paging = lazy(() => import('./Search/Paging'));
+const SerilogResults = lazy(() => import('./Table/SerilogResults'));
+const SerilogResultsMobile = lazy(() => import('./Table/SerilogResultsMobile'));
 
 const AppBody = ({ hideMobileResults }: { hideMobileResults: boolean }) => {
   useJwtTimeout();
@@ -14,20 +14,28 @@ const AppBody = ({ hideMobileResults }: { hideMobileResults: boolean }) => {
   return (
     <>
       <Box visibleFrom="lg">
-        <Search />
+        <Suspense>
+          <Search />
+        </Suspense>
       </Box>
       <Box
         display={hideMobileResults ? 'none' : 'block'}
         hiddenFrom="md"
         className={classes.mobileTableWrapper}
       >
-        <SerilogResultsMobile />
+        <Suspense>
+          <SerilogResultsMobile />
+        </Suspense>
       </Box>
       <Box>
         <Box visibleFrom="md" m="xl">
-          <SerilogResults />
+          <Suspense>
+            <SerilogResults />
+          </Suspense>
         </Box>
-        <Paging />
+        <Suspense>
+          <Paging />
+        </Suspense>
       </Box>
     </>
   );

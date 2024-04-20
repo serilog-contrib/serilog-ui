@@ -1,10 +1,9 @@
-import loadable from '@loadable/component';
 import { Box, Burger, useMantineTheme } from '@mantine/core';
-import { ComponentProps } from 'react';
+import { ComponentProps, Suspense, lazy } from 'react';
+import Head from './Header';
 
-const Head = loadable(() => import('./Header'));
-const AuthorizeButton = loadable(() => import('../Authorization/AuthorizeButton'));
-const FilterButton = loadable(() => import('./FilterButton'));
+const AuthorizeButton = lazy(() => import('../Authorization/AuthorizeButton'));
+const FilterButton = lazy(() => import('./FilterButton'));
 
 const HeaderActivity = (props: ComponentProps<typeof Head>) => {
   const theme = useMantineTheme();
@@ -20,11 +19,15 @@ const HeaderActivity = (props: ComponentProps<typeof Head>) => {
       />
 
       <Box visibleFrom="sm">
-        <AuthorizeButton />
+        <Suspense>
+          <AuthorizeButton />
+        </Suspense>
       </Box>
 
       <Box visibleFrom="sm" hiddenFrom="lg">
-        <FilterButton />
+        <Suspense>
+          <FilterButton />
+        </Suspense>
       </Box>
     </>
   );

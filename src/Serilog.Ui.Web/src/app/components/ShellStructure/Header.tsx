@@ -1,4 +1,3 @@
-import loadable from '@loadable/component';
 import {
   ActionIcon,
   Group,
@@ -10,10 +9,11 @@ import { useMediaQuery } from '@mantine/hooks';
 import { IconHomeDot, IconMoonStars, IconSun } from '@tabler/icons-react';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { isStringGuard } from 'app/util/guards';
+import { Suspense, lazy } from 'react';
 import classes from 'style/header.module.css';
 import BrandBadge from './BrandBadge';
 
-const HeaderActivity = loadable(() => import('./HeaderActivity'));
+const HeaderActivity = lazy(() => import('./HeaderActivity'));
 
 type IDispatch = {
   toggleMobile: () => void;
@@ -40,7 +40,9 @@ const Head = ({ isMobileOpen, toggleMobile }: IProps) => {
       p={isSmallishSize ? 2 : mobileOrDesktopSize}
     >
       <Group className={classes.activityGroup}>
-        <HeaderActivity isMobileOpen={isMobileOpen} toggleMobile={toggleMobile} />
+        <Suspense>
+          <HeaderActivity isMobileOpen={isMobileOpen} toggleMobile={toggleMobile} />
+        </Suspense>
       </Group>
 
       <Group className={classes.bannerGroup}>

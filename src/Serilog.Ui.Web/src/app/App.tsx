@@ -1,4 +1,3 @@
-import loadable from '@loadable/component';
 import {
   AppShell,
   AppShellHeaderConfiguration,
@@ -9,7 +8,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { Notifications } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Suspense } from 'react';
+import { Suspense, lazy } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { Navigate, Outlet, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { theme } from 'style/theme';
@@ -21,9 +20,9 @@ import { useQueryAuth } from './hooks/useQueryAuth';
 import { useSearchForm } from './hooks/useSearchForm';
 import { useSerilogUiProps } from './hooks/useSerilogUiProps';
 
-const AppBody = loadable(() => import('./components/AppBody'));
-const Head = loadable(() => import('./components/ShellStructure/Header'));
-const Sidebar = loadable(() => import('./components/ShellStructure/Sidebar'));
+const AppBody = lazy(() => import('./components/AppBody'));
+const Head = lazy(() => import('./components/ShellStructure/Header'));
+const Sidebar = lazy(() => import('./components/ShellStructure/Sidebar'));
 
 const App = () => {
   const { routePrefix } = useSerilogUiProps();
@@ -41,7 +40,7 @@ const App = () => {
           },
           {
             element: <HomePageNotAuthorized />,
-            path: 'access-denied',
+            path: 'access-denied/',
           },
         ],
       },
@@ -100,11 +99,15 @@ const Shell = () => {
   return (
     <AppShell header={headerProps} navbar={navbarProps}>
       <AppShell.Header>
-        <Head isMobileOpen={mobileOpen} toggleMobile={toggleMobile} />
+        <Suspense fallback={<div />}>
+          <Head isMobileOpen={mobileOpen} toggleMobile={toggleMobile} />
+        </Suspense>
       </AppShell.Header>
 
       <AppShell.Navbar p="sm">
-        <Sidebar />
+        <Suspense fallback={<div />}>
+          <Sidebar />
+        </Suspense>
       </AppShell.Navbar>
 
       <AppShell.Main>

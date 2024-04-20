@@ -1,4 +1,3 @@
-import loadable from '@loadable/component';
 import {
   Box,
   Button,
@@ -7,12 +6,12 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { memo } from 'react';
+import { Suspense, lazy, memo } from 'react';
 import { boxButton, overlayProps } from 'style/modal';
 import { LogType } from 'types/types';
 import { capitalize } from '../../util/prettyPrints';
 
-const CodeContent = loadable(() => import('./CodeContent'));
+const CodeContent = lazy(() => import('./CodeContent'));
 
 const DetailsModal = ({
   modalContent,
@@ -42,7 +41,9 @@ const DetailsModal = ({
         title={modalTitle}
         overlayProps={overlayProps(colorScheme, theme.colors)}
       >
-        <CodeContent prop={modalContent} codeType={contentType as LogType} />
+        <Suspense>
+          <CodeContent prop={modalContent} codeType={contentType as LogType} />
+        </Suspense>
       </Modal>
 
       <Box display="grid" style={boxButton}>

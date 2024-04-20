@@ -1,4 +1,3 @@
-import loadable from '@loadable/component';
 import {
   Accordion,
   Box,
@@ -15,12 +14,12 @@ import { IconCodeDots } from '@tabler/icons-react';
 import { useColumnsInfo } from 'app/hooks/useColumnsInfo';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { capitalize, convertLogType, printDate } from 'app/util/prettyPrints';
-import { memo } from 'react';
+import { Suspense, lazy, memo } from 'react';
 import { boxButton, boxGridProperties, overlayProps } from 'style/modal';
 import { ColumnType, EncodedSeriLogObject } from 'types/types';
 import { CopySection } from '../Util/Copy';
 
-const CodeContent = loadable(() => import('./CodeContent'));
+const CodeContent = lazy(() => import('./CodeContent'));
 
 const PropertiesModal = ({
   modalContent,
@@ -87,10 +86,12 @@ const RenderProps = memo(
           <Accordion.Item value={propertyName}>
             <Accordion.Control icon={<IconCodeDots />}>{propertyName}</Accordion.Control>
             <Accordion.Panel>
-              <CodeContent
-                prop={prop as string}
-                codeType={convertLogType(additionalColumn.codeType)}
-              />
+              <Suspense>
+                <CodeContent
+                  prop={prop as string}
+                  codeType={convertLogType(additionalColumn.codeType)}
+                />
+              </Suspense>
             </Accordion.Panel>
           </Accordion.Item>
         </Accordion>
