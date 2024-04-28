@@ -139,7 +139,7 @@ class GithubActionSonarCloud : GitHubActionsStep
                     writer.WriteLine($"-Dsonar.projectKey={SonarCloudInfo.FrontendProjectKey}");
                     writer.WriteLine("-Dsonar.sources=src/Serilog.Ui.Web/src/");
                     writer.WriteLine("-Dsonar.tests=src/Serilog.Ui.Web/src/");
-                    writer.WriteLine("-Dsonar.exclusions=src/Serilog.Ui.Web/src/__tests__/**/*");
+                    writer.WriteLine("-Dsonar.exclusions=src/Serilog.Ui.Web/src/__tests__/**/*,src/Serilog.Ui.Web/src/mockServiceWorker.*,src/Serilog.Ui.Web/src/style/**/*");
                     writer.WriteLine("-Dsonar.test.inclusions=src/Serilog.Ui.Web/src/__tests__/**/*");
                     writer.WriteLine("-Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/src/reports/coverage/lcov.info");
                 }

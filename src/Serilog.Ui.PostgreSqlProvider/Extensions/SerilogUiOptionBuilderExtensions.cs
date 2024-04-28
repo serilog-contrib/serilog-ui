@@ -41,13 +41,13 @@ namespace Serilog.Ui.PostgreSqlProvider.Extensions
             if (customModel)
             {
                 optionsBuilder.RegisterColumnsInfo<T>(dbOptions.ToDataProviderName(PostgresDataProvider.ProviderName));
+                optionsBuilder.Services.AddScoped<IDataProvider>(_ => new PostgresDataProvider<T>(dbOptions));
+
+                return optionsBuilder;
             }
 
-            optionsBuilder.Services.AddScoped<IDataProvider>(customModel ? CustomModelAction : DefaultAction);
+            optionsBuilder.Services.AddScoped<IDataProvider>(_ => new PostgresDataProvider(dbOptions));
             return optionsBuilder;
-
-            PostgresDataProvider DefaultAction(IServiceProvider _) => new(dbOptions);
-            PostgresDataProvider<T> CustomModelAction(IServiceProvider _) => new(dbOptions);
         }
     }
 }

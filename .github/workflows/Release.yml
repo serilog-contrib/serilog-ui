@@ -92,7 +92,7 @@ jobs:
             -Dsonar.projectKey=followynne_serilog-ui_assets
             -Dsonar.sources=src/Serilog.Ui.Web/src/
             -Dsonar.tests=src/Serilog.Ui.Web/src/
-            -Dsonar.exclusions=src/Serilog.Ui.Web/src/__tests__/**/*
+            -Dsonar.exclusions=src/Serilog.Ui.Web/src/__tests__/**/*,src/Serilog.Ui.Web/src/mockServiceWorker.*,src/Serilog.Ui.Web/src/style/**/*
             -Dsonar.test.inclusions=src/Serilog.Ui.Web/src/__tests__/**/*
             -Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/src/reports/coverage/lcov.info
 

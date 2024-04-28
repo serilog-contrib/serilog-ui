@@ -11,7 +11,7 @@ export const useQueryTableKeys = (shouldNotify = false) => {
   return useQuery({
     queryKey: ['get-keys', fetchInfo.routePrefix, authHeader],
     queryFn: async () => {
-      if (!fetchInfo || !fetchInfo.routePrefix) return [];
+      if (!fetchInfo?.routePrefix) return [];
 
       const result = await fetchKeys(
         fetchInfo.headers,

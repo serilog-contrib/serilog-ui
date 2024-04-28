@@ -13,7 +13,7 @@ export const useColumnsInfo = (currentColumn = '', logPropertyType = '') => {
   const { columnsInfo } = useSerilogUiProps();
 
   const currentTable = getValues('table');
-  const hasInfoOnCurrentTable = columnsInfo && columnsInfo[currentTable];
+  const hasInfoOnCurrentTable = columnsInfo?.[currentTable];
 
   // treating Properties as an additional column, in the rendering
   const propertiesColumn: AdditionalColumn[] = [

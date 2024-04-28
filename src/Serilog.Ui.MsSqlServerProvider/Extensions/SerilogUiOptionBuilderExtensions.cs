@@ -51,13 +51,13 @@ namespace Serilog.Ui.MsSqlServerProvider.Extensions
             if (customModel)
             {
                 optionsBuilder.RegisterColumnsInfo<T>(dbOptions.ToDataProviderName(SqlServerDataProvider.MsSqlProviderName));
+                optionsBuilder.Services.AddScoped<IDataProvider>(_ => new SqlServerDataProvider<T>(dbOptions));
+                
+                return optionsBuilder;
             }
-
-            optionsBuilder.Services.AddScoped<IDataProvider>(customModel ? CustomModelAction : DefaultAction);
+            
+            optionsBuilder.Services.AddScoped<IDataProvider>(_ => new SqlServerDataProvider(dbOptions));
             return optionsBuilder;
-
-            SqlServerDataProvider DefaultAction(IServiceProvider _) => new(dbOptions);
-            SqlServerDataProvider<T> CustomModelAction(IServiceProvider _) => new(dbOptions);
         }
     }
 }

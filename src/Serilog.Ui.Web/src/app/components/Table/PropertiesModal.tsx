@@ -111,7 +111,7 @@ const RenderProps = memo(
           />
         );
       case ColumnType.datetime:
-      case ColumnType.datetimeoffset:
+      case ColumnType.datetimeoffset: {
         const date = printDate(prop as string, isUtc);
         return (
           <TextInput
@@ -122,6 +122,7 @@ const RenderProps = memo(
             value={date}
           />
         );
+      }
     }
 
     return (

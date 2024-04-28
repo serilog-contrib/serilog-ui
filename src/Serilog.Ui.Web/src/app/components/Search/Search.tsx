@@ -91,7 +91,7 @@ const SelectDbKeyInput = memo(() => {
   const { control } = useSearchForm();
   const { data: queryTableKeys } = useQueryTableKeys(true);
   const { field } = useController({ ...control, name: 'table' });
-  const isTableDisabled = !(queryTableKeys && queryTableKeys.length);
+  const isTableDisabled = !queryTableKeys?.length;
 
   return (
     <Grid.Col span={dbKeySpan} order={dbKeyOrder}>

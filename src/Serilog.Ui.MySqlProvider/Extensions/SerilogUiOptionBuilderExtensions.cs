@@ -66,13 +66,12 @@ namespace Serilog.Ui.MySqlProvider.Extensions
             if (customModel)
             {
                 optionsBuilder.RegisterColumnsInfo<T>(dbOptions.ToDataProviderName(MariaDbDataProvider.ProviderName));
+                optionsBuilder.Services.AddScoped<IDataProvider>(_ => new MariaDbDataProvider<T>(dbOptions));
+                return optionsBuilder;
             }
 
-            optionsBuilder.Services.AddScoped<IDataProvider>(customModel ? CustomModelAction : DefaultAction);
+            optionsBuilder.Services.AddScoped<IDataProvider>(_ => new MariaDbDataProvider(dbOptions));
             return optionsBuilder;
-
-            MariaDbDataProvider DefaultAction(IServiceProvider _) => new(dbOptions);
-            MariaDbDataProvider<T> CustomModelAction(IServiceProvider _) => new(dbOptions);
         }
     }
 }

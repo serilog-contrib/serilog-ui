@@ -10,7 +10,7 @@ const CodeContent = ({ prop, codeType }: { prop: string; codeType: LogType }) =>
   useEffect(() => {
     const fetchContent = async () => {
       if (!codeContent && prop) {
-        const content = await renderCodeContent(prop as string, codeType);
+        const content = await renderCodeContent(prop, codeType);
         setCodeContent(content ?? '');
       }
     };

@@ -56,6 +56,36 @@ describe('util: pretty prints', () => {
         colorScheme: 'dark',
         expectedBg: (theme: MantineTheme) => theme.colors.red[9],
       },
+      {
+        logLevelEntry: LogLevel.Verbose,
+        colorScheme: 'light',
+        expectedBg: (theme: MantineTheme) => theme.colors.green[7],
+      },
+      {
+        logLevelEntry: LogLevel.Debug,
+        colorScheme: 'light',
+        expectedBg: (theme: MantineTheme) => theme.colors.blue[4],
+      },
+      {
+        logLevelEntry: LogLevel.Information,
+        colorScheme: 'light',
+        expectedBg: (theme: MantineTheme) => theme.colors.blue[3],
+      },
+      {
+        logLevelEntry: LogLevel.Warning,
+        colorScheme: 'light',
+        expectedBg: (theme: MantineTheme) => theme.colors.yellow[5],
+      },
+      {
+        logLevelEntry: LogLevel.Error,
+        colorScheme: 'light',
+        expectedBg: (theme: MantineTheme) => theme.colors.red[4],
+      },
+      {
+        logLevelEntry: LogLevel.Fatal,
+        colorScheme: 'light',
+        expectedBg: (theme: MantineTheme) => theme.colors.red[8],
+      },
     ])(
       'returns color for log level $logLevelEntry and scheme $colorScheme',
       ({ logLevelEntry, colorScheme, expectedBg }) => {
