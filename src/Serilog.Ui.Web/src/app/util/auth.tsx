@@ -25,8 +25,8 @@ export const defaultAuthProps = {
 const notSavedKeys: (keyof IAuthPropertiesData)[] = ['basic_pwd'];
 
 export const clearAuth = () => {
-  Object.keys(IAuthPropertiesStorageKeys).forEach((key) => {
-    sessionStorage.removeItem(IAuthPropertiesStorageKeys[key]);
+  Object.values(IAuthPropertiesStorageKeys).forEach((key) => {
+    sessionStorage.removeItem(key);
   });
 
   return defaultAuthProps;
