@@ -8,7 +8,7 @@ import {
 import { AuthType } from 'types/types';
 import { describe, expect, it, vi } from 'vitest';
 
-describe('queries util', () => {
+describe('util: queries', () => {
   it('determines test-dev host', () => {
     import.meta.env.MODE = 'test';
     const sutTest = determineHost();

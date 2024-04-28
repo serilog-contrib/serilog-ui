@@ -12,7 +12,7 @@ import {
 } from '../../app/util/prettyPrints';
 import { AdditionalColumnLogType, LogLevel, LogType } from '../../types/types';
 
-describe('pretty prints util', () => {
+describe('util: pretty prints', () => {
   it.each([
     ['string', 'String'],
     ['', ''],

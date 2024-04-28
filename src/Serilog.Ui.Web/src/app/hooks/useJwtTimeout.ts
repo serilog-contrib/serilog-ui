@@ -8,7 +8,7 @@ import { useSerilogUiProps } from './useSerilogUiProps';
  * Run validation on JWT token every minute, to let user know if token expires
  */
 export const useJwtTimeout = () => {
-  const MINUTE = 300000;
+  const MINUTES = 300000;
   const [stopError, setStopError] = useState(false);
   const { authType } = useSerilogUiProps();
   const { jwt_bearerToken } = useAuthProperties();
@@ -27,7 +27,7 @@ export const useJwtTimeout = () => {
 
       checkErrors(result);
       if (result.error) setStopError(true);
-    }, MINUTE);
+    }, MINUTES);
 
     return () => {
       clearTimeout(id);

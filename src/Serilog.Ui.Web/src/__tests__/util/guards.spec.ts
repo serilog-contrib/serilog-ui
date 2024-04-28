@@ -7,7 +7,7 @@ import {
 } from 'app/util/guards';
 import { describe, expect, it } from 'vitest';
 
-describe('guards', () => {
+describe('util: guards', () => {
   it.each([
     [null, false],
     [, true],

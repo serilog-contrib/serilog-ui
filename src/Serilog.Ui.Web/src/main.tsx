@@ -8,7 +8,7 @@ import { createRoot } from 'react-dom/client';
 import App from './app/App';
 
 const runMsw = async () => {
-  const { worker } = await import('./__tests__/_setup/msw-worker');
+  const { worker } = await import('./__tests__/_setup/mocks/msw-worker');
   try {
     await worker.start({
       onUnhandledRequest: (req, print) => {

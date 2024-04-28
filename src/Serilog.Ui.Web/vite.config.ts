@@ -17,7 +17,7 @@ const vitestConfig: VitestUserConfigInterface = {
     },
     globals: true,
     restoreMocks: true,
-    setupFiles: './__tests__/_setup/setupTests.ts',
+    setupFiles: './__tests__/_setup/setup-tests.ts',
     outputFile: {
       'vitest-sonar-reporter': './reports/test-report.xml',
       junit: './reports/test-junit-report.xml',
