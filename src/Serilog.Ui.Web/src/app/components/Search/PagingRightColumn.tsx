@@ -26,7 +26,7 @@ export const PagingRightColumn = memo(
     const lessPages = useMediaQuery(`(max-width: ${em(800)})`);
     const totalPages = useMemo(() => {
       if (!data) return 1;
-      const pages = Math.ceil(data.total / data.count);
+      const pages = data.count > 0 ? Math.ceil(data.total / data.count) : 1;
       return Number.isNaN(pages) ? 1 : pages;
     }, [data]);
 
@@ -40,7 +40,11 @@ export const PagingRightColumn = memo(
         display={totalPages === 0 ? 'none' : 'inherit'}
       >
         <Box m="xs" style={{ justifySelf: 'end' }}>
-          <ActionIcon disabled={totalPages < 2} onClick={toggle}>
+          <ActionIcon
+            aria-label="pagination-dialog"
+            disabled={totalPages < 2}
+            onClick={toggle}
+          >
             <IconListNumbers strokeWidth={2} />
           </ActionIcon>
           <Dialog opened={opened} withCloseButton onClose={close} size="lg" radius="md">
@@ -48,6 +52,7 @@ export const PagingRightColumn = memo(
               fieldValue={field.value}
               onChange={field.onChange}
               totalPages={totalPages}
+              close={close}
             />
           </Dialog>
         </Box>
@@ -67,16 +72,16 @@ export const PagingRightColumn = memo(
 
 const DialogContent = memo(
   ({
+    close,
     fieldValue,
     onChange,
     totalPages,
   }: {
+    close: () => void;
     fieldValue: number;
     onChange: (...event: unknown[]) => void;
     totalPages: number;
   }) => {
-    const { refetch } = useQueryLogs();
-
     const [dialogPage, setDialogPage] = useState(fieldValue);
 
     const changePageInput = (val: string | number) => {
@@ -89,7 +94,6 @@ const DialogContent = memo(
     const setPage = async () => {
       onChange(dialogPage);
       close();
-      await refetch();
     };
 
     return (
@@ -108,7 +112,7 @@ const DialogContent = memo(
             suffix={` of ${totalPages}`}
             value={dialogPage}
           />
-          <Button size="sm" onClick={setPage}>
+          <Button aria-label="set-page-dialog" size="sm" onClick={setPage}>
             <IconBook />
           </Button>
         </Group>

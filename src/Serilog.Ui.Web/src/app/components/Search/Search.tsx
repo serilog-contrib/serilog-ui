@@ -48,7 +48,7 @@ const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
   }, [currentDbKey, refetch]);
 
   return (
-    <form onSubmit={() => {}}>
+    <form role="form" aria-label="search-logs-form" onSubmit={() => {}}>
       <Grid className={classes.searchFiltersGrid}>
         <SelectDbKeyInput />
         <SelectLevelInput />
@@ -142,6 +142,10 @@ const DateStartInput = () => {
     <Grid.Col span={dateStartSpan} order={dateStartOrder}>
       <DateTimePicker
         label="Start date"
+        clearable
+        timeInputProps={{
+          'aria-label': 'start-time-input',
+        }}
         withSeconds={true}
         mx="auto"
         {...startRangeField}
@@ -158,7 +162,16 @@ const DateEndInput = () => {
 
   return (
     <Grid.Col span={dateEndSpan} order={dateEndOrder}>
-      <DateTimePicker label="End date" withSeconds={true} mx="auto" {...endRangeField} />
+      <DateTimePicker
+        label="End date"
+        clearable
+        timeInputProps={{
+          'aria-label': 'end-time-input',
+        }}
+        withSeconds={true}
+        mx="auto"
+        {...endRangeField}
+      />
     </Grid.Col>
   );
 };

@@ -64,13 +64,14 @@ export const PagingLeftColumn = memo(
 
     return (
       <Box
+        aria-label="paging-left-column"
         display="grid"
         style={{ alignItems: 'center', justifyContent: 'center', gap: '0.4em' }}
       >
         <Select
           {...fieldEntries}
           onChange={setEntries}
-          label=""
+          label={fieldEntries.name}
           leftSection={<IconLayoutList />}
           data={entriesOptions}
           allowDeselect={false}
@@ -85,7 +86,7 @@ export const PagingLeftColumn = memo(
         >
           <Select
             {...fieldSortOn}
-            label=""
+            label={fieldSortOn.name}
             leftSection={<IconColumns />}
             data={sortOnOptions}
             disabled={disableSortOn}
@@ -93,6 +94,7 @@ export const PagingLeftColumn = memo(
           ></Select>
           <ActionIcon
             {...fieldSortBy}
+            aria-label={fieldSortBy.name}
             onClick={() => {
               fieldSortBy.onChange(
                 isSortByDesc ? SortDirectionOptions.Asc : SortDirectionOptions.Desc,

@@ -10,7 +10,7 @@ import { isStringGuard } from '../../util/guards';
 const BasicModal = lazy(() => import('./BasicModal'));
 const JwtModal = lazy(() => import('./JwtModal'));
 
-const AuthorizeButton = ({ customStyle }: { customStyle?: string }) => {
+const AuthorizeButton = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const { authType } = useSerilogUiProps();
   const { authHeader } = useAuthProperties();
@@ -21,7 +21,7 @@ const AuthorizeButton = ({ customStyle }: { customStyle?: string }) => {
 
   return (
     <>
-      <Button color="green" size="compact-md" onClick={open} className={customStyle}>
+      <Button color="green" size="compact-md" onClick={open}>
         {isHeaderReady ? <IconClose /> : <IconOpen />}
         Authorize
       </Button>
