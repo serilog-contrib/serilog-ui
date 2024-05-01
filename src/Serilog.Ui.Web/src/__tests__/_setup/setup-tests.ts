@@ -1,5 +1,6 @@
 import '__tests__/_setup/mocks/globals';
 import { server } from '__tests__/_setup/mocks/msw-server';
+import '__tests__/_setup/vitest-extended';
 import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
 import { UserEvent, userEvent } from './testing-utils';
 

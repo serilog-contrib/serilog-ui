@@ -1,5 +1,6 @@
 import { dbKeysMock } from '__tests__/_setup/mocks/samples';
 import {
+  fireEvent,
   getAllByRole,
   render,
   screen,
@@ -17,6 +18,7 @@ import { AuthType } from 'types/types';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 dayjs.extend(objectSupport);
+
 const headers = () => {
   const head = new Headers();
   head.append('authorization', 'test');
@@ -35,14 +37,22 @@ const ui = {
   textbox: (name: string) => byRole('textbox', { name }),
   listbox: byRole('listbox'),
   options: (listbox: ReturnType<typeof byRole>) => getAllByRole(listbox.get(), 'option'),
-  clear: byLabelText('reset filters'),
-  submit: byRole('button', { name: 'Submit' }),
+  start_date: byRole('button', { name: 'Start date' }),
   end_date: byRole('button', { name: 'End date' }),
   day_btn: (name: string) => byRole('button', { name }),
-  time_btn: (label: string) => byLabelText(label),
+  time_btn: (label: string) => byLabelText<HTMLInputElement>(label),
+  clear: byLabelText('reset filters'),
+  submit: byRole('button', { name: 'Submit' }),
 };
+const sampleDate = dayjs({
+  day: 10,
+  month: dayjs().month(),
+  hour: 15,
+  minutes: 15,
+  seconds: 30,
+});
 
-describe.only('Search', () => {
+describe('Search', () => {
   const selectTable = async () => {
     const tableInput = ui.textbox('Table').get();
 
@@ -129,21 +139,24 @@ describe.only('Search', () => {
     );
   });
 
-  it('fetch with selected end date', async () => {
+  it('fetch with selected start date', async () => {
     const spy = vi.spyOn(logs, 'fetchLogs');
 
     render(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
 
     await selectTable();
 
-    const date = dayjs({ day: 10, month: dayjs().month(), hour: 15 });
-    const endDate = ui.end_date.get();
     // open end date modal
-    await userEvent.click(endDate);
+    await userEvent.click(ui.start_date.get());
+
     // click sample day button
-    await userEvent.click(ui.day_btn(date.format('DD MMMM YYYY')).get());
-    await userEvent.type(ui.time_btn('end-time-input').get(), '15');
-    screen.debug(ui.time_btn('end-time-input').get());
+    await userEvent.click(ui.day_btn(sampleDate.format('DD MMMM YYYY')).get());
+    // click sample time button
+    // using fireEvent due to userEvent.type not supporting seconds
+    // ref https://github.com/testing-library/user-event/blob/d0362796a33c2d39713998f82ae309020c37b385/tests/event/input.ts#L298
+    fireEvent.change(ui.time_btn('start-time-input').get(), {
+      target: { value: '15:15:30' },
+    });
 
     // click submit date button
     const submitBtn = within(screen.getByRole('dialog')).getAllByRole('button').slice(-1);
@@ -156,14 +169,51 @@ describe.only('Search', () => {
     expect(spy).toHaveBeenLastCalledWith(
       expect.objectContaining({
         table: dbKeysMock[0],
-        endDate: date.toISOString(),
+        startDate: expect.toBeSameDate(sampleDate, { unit: 'seconds' }),
       }),
       expect.any(Object),
       '',
     );
   });
 
-  it('reset inputs', async () => {
+  it('fetch with selected end date', async () => {
+    const spy = vi.spyOn(logs, 'fetchLogs');
+
+    render(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
+
+    await selectTable();
+
+    // open end date modal
+    await userEvent.click(ui.end_date.get());
+
+    // click sample day button
+    await userEvent.click(ui.day_btn(sampleDate.format('DD MMMM YYYY')).get());
+    // click sample time button
+    // using fireEvent due to userEvent.type not supporting seconds
+    // ref https://github.com/testing-library/user-event/blob/d0362796a33c2d39713998f82ae309020c37b385/tests/event/input.ts#L298
+    fireEvent.change(ui.time_btn('end-time-input').get(), {
+      target: { value: '15:15:30' },
+    });
+
+    // click submit date button
+    const submitBtn = within(screen.getByRole('dialog')).getAllByRole('button').slice(-1);
+    await userEvent.click(submitBtn[0]);
+    await waitForElementToBeRemoved(screen.getByRole('dialog'));
+
+    // submit request
+    await userEvent.click(ui.submit.get());
+
+    expect(spy).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        table: dbKeysMock[0],
+        endDate: expect.toBeSameDate(sampleDate, { unit: 'seconds' }),
+      }),
+      expect.any(Object),
+      '',
+    );
+  });
+
+  it('clean inputs', async () => {
     const spy = vi.spyOn(logs, 'fetchLogs');
 
     render(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
