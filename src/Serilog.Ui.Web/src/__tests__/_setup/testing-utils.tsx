@@ -46,6 +46,18 @@ const Wrapper = ({
   );
 };
 
+const FormWrapper = ({ children }: { children: ReactNode }) => {
+  const { methods } = useSearchForm();
+  return (
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <FormProvider {...methods}>
+      <SerilogUiPropsProvider>
+        <AuthPropertiesProvider>{children}</AuthPropertiesProvider>
+      </SerilogUiPropsProvider>
+    </FormProvider>
+  );
+};
+
 export function render(
   ui: React.ReactNode,
   authType = AuthType.Jwt,
@@ -59,18 +71,6 @@ export function render(
     ),
   });
 }
-
-const FormWrapper = ({ children }: { children: ReactNode }) => {
-  const { methods } = useSearchForm();
-  return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <FormProvider {...methods}>
-      <SerilogUiPropsProvider>
-        <AuthPropertiesProvider>{children}</AuthPropertiesProvider>
-      </SerilogUiPropsProvider>
-    </FormProvider>
-  );
-};
 
 interface RenderHookConfig<T> {
   initialProps?: T;

@@ -19,7 +19,7 @@ type IDispatch = {
   toggleMobile: () => void;
 };
 interface IProps extends IDispatch {
-  isMobileOpen: boolean;
+  isMobileOpen?: boolean;
 }
 
 const Head = ({ isMobileOpen, toggleMobile }: IProps) => {
@@ -53,10 +53,11 @@ const Head = ({ isMobileOpen, toggleMobile }: IProps) => {
           target="_blank"
           size={24}
         >
-          <IconHomeDot size="1rem" stroke={3} />
+          <IconHomeDot aria-label="home-icon-btn" size="1rem" stroke={3} />
         </ActionIcon>
         <ActionIcon
           variant="default"
+          aria-label="color-scheme-changer"
           onClick={() => {
             toggleColorScheme();
           }}
