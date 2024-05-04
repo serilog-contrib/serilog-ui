@@ -21,7 +21,7 @@ describe('Header', () => {
     expect(screen.getByLabelText('home-icon-btn')).toBeInTheDocument();
     expect(screen.getByLabelText('color-scheme-changer')).toBeInTheDocument();
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Filter' })).toBeInTheDocument;
+      expect(screen.getByRole('button', { name: 'Filter' })).toBeInTheDocument();
     });
     await waitFor(() => {
       expect(screen.getByText('Serilog UI')).toBeInTheDocument();

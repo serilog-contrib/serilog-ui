@@ -1,3 +1,4 @@
+/* eslint-disable testing-library/render-result-naming-convention */
 import { MantineColorScheme, MantineTheme } from '@mantine/core';
 import dayjs from 'dayjs';
 import { theme } from 'style/theme';
@@ -110,7 +111,6 @@ describe('util: pretty prints', () => {
 
   describe('code content render', () => {
     it('returns xml prettified', async () => {
-      // eslint-disable-next-line testing-library/render-result-naming-convention
       const act = await renderCodeContent(
         '<root><my-xml>sample</my-xml></root>',
         LogType.Xml,
@@ -122,7 +122,6 @@ describe('util: pretty prints', () => {
     });
 
     it('returns json prettified', async () => {
-      // eslint-disable-next-line testing-library/render-result-naming-convention
       const act = await renderCodeContent('{ "json": "ok"}', LogType.Json);
 
       expect(act).toContain('>ok</');
@@ -132,12 +131,11 @@ describe('util: pretty prints', () => {
     it('returns error message if content cannot be parsed', async () => {
       const consoleMock = vi.fn();
       console.warn = consoleMock;
-      // eslint-disable-next-line testing-library/render-result-naming-convention
+
       const actXml = await renderCodeContent('not an XML!', LogType.Xml);
 
       expect(actXml).toBe('Content could not be parsed, as per expected type: xml');
 
-      // eslint-disable-next-line testing-library/render-result-naming-convention
       const actJson = await renderCodeContent('not a JSON!', LogType.Json);
 
       expect(actJson).toBe('Content could not be parsed, as per expected type: json');
@@ -146,14 +144,12 @@ describe('util: pretty prints', () => {
     });
 
     it.each(['', '  '])('returns content if input: %s [invalid]', async (input) => {
-      // eslint-disable-next-line testing-library/render-result-naming-convention
       const act = await renderCodeContent(input, LogType.Json);
 
       expect(act).toBe(input || '');
     });
 
     it('returns content if type is not expected', async () => {
-      // eslint-disable-next-line testing-library/render-result-naming-convention
       const act = await renderCodeContent('{ "json": "ok"}', 'fake-content');
 
       expect(act).toBe('{ "json": "ok"}');

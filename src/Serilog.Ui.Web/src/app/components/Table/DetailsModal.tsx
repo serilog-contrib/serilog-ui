@@ -42,7 +42,7 @@ const DetailsModal = ({
         overlayProps={overlayProps(colorScheme, theme.colors)}
       >
         <Suspense>
-          <CodeContent prop={modalContent} codeType={contentType as LogType} />
+          <CodeContent content={modalContent} codeType={contentType as LogType} />
         </Suspense>
       </Modal>
 

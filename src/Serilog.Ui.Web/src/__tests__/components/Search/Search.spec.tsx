@@ -1,7 +1,6 @@
 import { dbKeysMock } from '__tests__/_setup/mocks/samples';
 import {
   fireEvent,
-  getAllByRole,
   render,
   screen,
   userEvent,
@@ -36,7 +35,7 @@ vi.mock('../../../app/hooks/useAuthProperties', () => ({
 const ui = {
   textbox: (name: string) => byRole('textbox', { name }),
   listbox: byRole('listbox'),
-  options: (listbox: ReturnType<typeof byRole>) => getAllByRole(listbox.get(), 'option'),
+  options: (listbox: ReturnType<typeof byRole>) => byRole('option').getAll(listbox.get()),
   start_date: byRole('button', { name: 'Start date' }),
   end_date: byRole('button', { name: 'End date' }),
   day_btn: (name: string) => byRole('button', { name }),
@@ -161,7 +160,7 @@ describe('Search', () => {
     // click submit date button
     const submitBtn = within(screen.getByRole('dialog')).getAllByRole('button').slice(-1);
     await userEvent.click(submitBtn[0]);
-    await waitForElementToBeRemoved(screen.getByRole('dialog'));
+    await waitForElementToBeRemoved(screen.queryByRole('dialog'));
 
     // submit request
     await userEvent.click(ui.submit.get());
@@ -198,7 +197,7 @@ describe('Search', () => {
     // click submit date button
     const submitBtn = within(screen.getByRole('dialog')).getAllByRole('button').slice(-1);
     await userEvent.click(submitBtn[0]);
-    await waitForElementToBeRemoved(screen.getByRole('dialog'));
+    await waitForElementToBeRemoved(screen.queryByRole('dialog'));
 
     // submit request
     await userEvent.click(ui.submit.get());

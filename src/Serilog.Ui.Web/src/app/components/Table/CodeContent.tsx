@@ -4,14 +4,14 @@ import { useEffect, useState } from 'react';
 import classes from 'style/table.module.css';
 import { LogType } from 'types/types';
 
-const CodeContent = ({ prop, codeType }: { prop: string; codeType: LogType }) => {
+const CodeContent = ({ content, codeType }: { content: string; codeType: LogType }) => {
   const [codeContent, setCodeContent] = useState<TrustedHTML>('');
 
   useEffect(() => {
     const fetchContent = async () => {
-      if (!codeContent && prop) {
-        const content = await renderCodeContent(prop, codeType);
-        setCodeContent(content ?? '');
+      if (!codeContent && content) {
+        const transformation = await renderCodeContent(content, codeType);
+        setCodeContent(transformation ?? '');
       }
     };
 

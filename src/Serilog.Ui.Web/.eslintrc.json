@@ -1,8 +1,4 @@
 {
-  "env": {
-    "browser": true,
-    "es2021": true
-  },
   "extends": [
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
@@ -55,7 +51,7 @@
       },
       "plugins": ["vitest", "testing-library"],
       "extends": [
-        "plugin:vitest/recommended",
+        "plugin:vitest/legacy-recommended", // waiting for eslint v9 migration
         "plugin:vitest-globals/recommended",
         "plugin:testing-library/react"
       ],

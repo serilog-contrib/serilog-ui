@@ -88,7 +88,7 @@ const RenderProps = memo(
             <Accordion.Panel>
               <Suspense>
                 <CodeContent
-                  prop={prop as string}
+                  content={prop as string}
                   codeType={convertLogType(additionalColumn.codeType)}
                 />
               </Suspense>

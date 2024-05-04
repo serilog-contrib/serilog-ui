@@ -18,11 +18,11 @@ declare global {
   }
 }
 
-interface CustomAsymmetricMatchers<R = unknown> {
+interface CustomAsymmetricMatchers {
   toBeSameDate: ToBeSameDate;
 }
 
 declare module 'vitest' {
-  interface Assertion<T = any> extends CustomAsymmetricMatchers {}
+  interface Assertion extends CustomAsymmetricMatchers {}
   interface AsymmetricMatchersContaining extends CustomAsymmetricMatchers {}
 }

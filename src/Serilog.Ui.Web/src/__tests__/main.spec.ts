@@ -30,7 +30,7 @@ describe('index', () => {
   });
 
   afterEach(async () => {
-    fakeHappyDomWindow.happyDOM.abort();
+    await fakeHappyDomWindow.happyDOM.abort();
     fakeHappyDomWindow.close();
   });
 

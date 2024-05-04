@@ -74,13 +74,12 @@ export default defineConfig((env) => ({
       }),
     viteTsconfigPaths(),
     mkcert(),
-    env.mode !== 'test' &&
-      checker({
-        typescript: true,
-        eslint: {
-          lintCommand: 'eslint',
-        },
-      }),
+    checker({
+      typescript: true,
+      eslint: {
+        lintCommand: 'eslint ./**/*.{ts,tsx}',
+      },
+    }),
   ],
   preview: previewConfig,
   server: {

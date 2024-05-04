@@ -13,7 +13,7 @@ describe('HeaderActivity', () => {
       expect(screen.getByRole('button', { name: 'Authorize' })).toBeInTheDocument();
     });
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Filter' })).toBeInTheDocument;
+      expect(screen.getByRole('button', { name: 'Filter' })).toBeInTheDocument();
     });
   });
 });

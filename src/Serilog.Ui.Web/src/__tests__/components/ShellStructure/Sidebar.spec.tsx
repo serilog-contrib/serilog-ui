@@ -17,11 +17,14 @@ describe('Sidebar', () => {
 
     render(<Sidebar />);
 
-    expect(screen.getByRole('button', { name: 'Home', hidden: true })).toBeInTheDocument;
+    expect(
+      screen.getByRole('button', { name: 'Home', hidden: true }),
+    ).toBeInTheDocument();
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Filter', hidden: true }))
-        .toBeInTheDocument;
+      expect(
+        screen.getByRole('button', { name: 'Filter', hidden: true }),
+      ).toBeInTheDocument();
     });
     await waitFor(() => {
       expect(screen.getByLabelText('paging-left-column')).toBeInTheDocument();
