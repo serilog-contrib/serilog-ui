@@ -6,7 +6,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MySqlConnector" Version="2.3.6" />
 		<PackageReference Include="Serilog.Sinks.MariaDB" Version="1.0.1" />
 		<PackageReference Include="Serilog.Sinks.MySQL" Version="5.0.0" />
 		<PackageReference Include="Testcontainers.MariaDb" Version="3.8.0" />

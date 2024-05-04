@@ -13,6 +13,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" PrivateAssets="all"/>
+        <InternalsVisibleTo Include="ElasticSearch.Tests" />
     </ItemGroup>
 
     <ItemGroup>

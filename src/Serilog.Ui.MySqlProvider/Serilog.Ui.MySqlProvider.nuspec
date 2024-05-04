@@ -21,7 +21,7 @@
 				<dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="8.0.1" exclude="Build,Analyzers" />
 				<dependency id="Microsoft.Extensions.Primitives" version="8.0.0" exclude="Build,Analyzers" />
 				<dependency id="Dapper" version="2.1.35" exclude="Build,Analyzers" />
-				<dependency id="MySqlConnector" version="2.3.6" exclude="Build,Analyzers" />
+				<dependency id="MySqlConnector" version="2.3.7" exclude="Build,Analyzers" />
 				<dependency id="System.Text.Json" version="8.0.3" exclude="Build,Analyzers" />
 			</group>
 		</dependencies>

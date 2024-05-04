@@ -20,7 +20,7 @@
 				<dependency id="Ardalis.GuardClauses" version="4.5.0" exclude="Build,Analyzers" />
 				<dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="8.0.1" exclude="Build,Analyzers" />
 				<dependency id="Microsoft.Extensions.Primitives" version="8.0.0" exclude="Build,Analyzers" />
-				<dependency id="RavenDB.Client" version="6.0.101" exclude="Build,Analyzers" />
+				<dependency id="RavenDB.Client" version="6.0.102" exclude="Build,Analyzers" />
 				<dependency id="System.Text.Json" version="8.0.3" exclude="Build,Analyzers" />
 			</group>
 		</dependencies>

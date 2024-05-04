@@ -18,11 +18,9 @@ namespace Serilog.Ui.ElasticSearchProvider.Serializers
         {
             var reader = new StreamReader(stream);
 
-            using (var jsonTextReader = new JsonTextReader(reader))
-            {
-                var serializer = new JsonSerializer();
-                return serializer.Deserialize(jsonTextReader, type);
-            }
+            using var jsonTextReader = new JsonTextReader(reader);
+            var serializer = new JsonSerializer();
+            return serializer.Deserialize(jsonTextReader, type);
         }
 
         public Task<T> DeserializeAsync<T>(Stream stream, CancellationToken cancellationToken = default) =>
@@ -35,14 +33,12 @@ namespace Serilog.Ui.ElasticSearchProvider.Serializers
         {
             var writer = new StreamWriter(stream);
 
-            using (var jWriter = new JsonTextWriter(writer))
+            using var jWriter = new JsonTextWriter(writer);
+            var serializer = new JsonSerializer
             {
-                var serializer = new JsonSerializer
-                {
-                    Formatting = formatting == SerializationFormatting.Indented ? Formatting.Indented : Formatting.None
-                };
-                serializer.Serialize(jWriter, data);
-            }
+                Formatting = formatting == SerializationFormatting.Indented ? Formatting.Indented : Formatting.None
+            };
+            serializer.Serialize(jWriter, data);
         }
 
         public Task SerializeAsync<T>(

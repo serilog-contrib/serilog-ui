@@ -21,7 +21,7 @@
 				<dependency id="Microsoft.CSharp" version="4.7.0" />
 				<dependency id="Microsoft.Extensions.DependencyInjection.Abstractions" version="8.0.1" exclude="Build,Analyzers" />
 				<dependency id="Microsoft.Extensions.Primitives" version="8.0.0" exclude="Build,Analyzers" />
-				<dependency id="MongoDB.Driver" version="2.24.0" exclude="Build,Analyzers" />
+				<dependency id="MongoDB.Driver" version="2.25.0" exclude="Build,Analyzers" />
 				<dependency id="System.Text.Json" version="8.0.3" exclude="Build,Analyzers" />
 			</group>
 		</dependencies>
