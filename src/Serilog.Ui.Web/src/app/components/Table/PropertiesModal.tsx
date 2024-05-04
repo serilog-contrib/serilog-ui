@@ -32,7 +32,6 @@ const PropertiesModal = ({
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { level, message, propertyType, rowNo, timestamp, exception, ...rest } =
     modalContent;
 
@@ -44,6 +43,7 @@ const PropertiesModal = ({
         centered
         radius="sm"
         size="xl"
+        closeButtonProps={{ 'aria-label': 'close-properties-modal' }}
         title="Additional Columns"
         overlayProps={overlayProps(colorScheme, theme.colors)}
       >

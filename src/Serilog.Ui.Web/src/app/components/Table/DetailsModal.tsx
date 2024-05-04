@@ -35,6 +35,7 @@ const DetailsModal = ({
       <Modal
         opened={opened}
         onClose={close}
+        closeButtonProps={{ 'aria-label': 'close-details-modal' }}
         centered
         radius="sm"
         size="xl"
