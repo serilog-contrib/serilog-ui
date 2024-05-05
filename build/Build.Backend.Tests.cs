@@ -14,7 +14,7 @@ partial class Build
 
     [NuGetPackage(
         packageId: "dotnet-reportgenerator-globaltool",
-        packageExecutable: "dotnet-reportgenerator-globaltool.dll"
+        packageExecutable: "ReportGenerator.dll"
     )]
     readonly Tool DotnetReport;
 
