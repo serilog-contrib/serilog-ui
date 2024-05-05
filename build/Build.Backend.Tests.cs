@@ -30,6 +30,6 @@ partial class Build
         .Executes(() =>
         {
             DotnetCoverage?.Invoke(
-                @"collect -f xml -o coverage.xml dotnet test --configuration Release --no-build --collect:""XPlat Code Coverage;Format=opencover"" --logger=""trx;LogFileName=test-results.trx""");
+                @"collect -f xml -o coverage.xml dotnet test --configuration Release --no-build --collect:""XPlat Code Coverage;Format=cobertura"" --logger=""trx;LogFileName=test-results.trx""");
         });
 }
