@@ -108,7 +108,7 @@ partial class Build
                     "src/Serilog.Ui.Web/*.ts",
                     "src/Serilog.Ui.Web/*.tsx",
                     "src/Serilog.Ui.Web/*.json")
-                .SetGenericCoveragePaths("coverage/Sonarqube.xml, **/coverage/Sonarqube.xml, ./**/coverage/Sonarqube.xml")
+                .SetGenericCoveragePaths("coverage/Sonarqube.xml, ./coverage/Sonarqube.xml, **/coverage/Sonarqube.xml, ./**/coverage/Sonarqube.xml")
                 // .SetVisualStudioCoveragePaths("coverage.xml", "**/coverage.xml", "./**/coverage.xml")
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
                 .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken)
