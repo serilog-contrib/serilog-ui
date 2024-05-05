@@ -1,9 +1,7 @@
 import { render, within } from '@testing-library/react';
-import { developmentListenersHost } from '__tests__/_setup/mocks/fetch';
 import { act, render as customRender } from '__tests__/_setup/testing-utils';
 import App from 'app/App';
 import { routes } from 'app/routes';
-import { Window } from 'happy-dom';
 import { RouterProvider, createMemoryRouter } from 'react-router-dom';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
@@ -19,23 +17,11 @@ vi.mock('../app/hooks/useSerilogUiProps', () => {
 });
 
 describe('App', () => {
-  let fakeHappyDomWindow: Window;
-
   beforeAll(async () => {
     vi.useFakeTimers();
-
-    fakeHappyDomWindow = new Window({
-      url: `${developmentListenersHost}/test-serilog-ui/`,
-    });
-    await fakeHappyDomWindow.happyDOM.waitUntilComplete();
-
-    window.document = fakeHappyDomWindow.document as unknown as never;
   });
   afterAll(async () => {
     vi.useRealTimers();
-
-    await fakeHappyDomWindow.happyDOM.abort();
-    fakeHappyDomWindow.close();
   });
 
   it('renders null without route prefix', async () => {

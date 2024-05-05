@@ -12,7 +12,7 @@ const vitestConfig: VitestUserConfigInterface = {
     environment: 'happy-dom',
     environmentOptions: {
       happyDOM: {
-        url: 'https://localhost:3001',
+        url: 'https://localhost:3001/test-serilog-ui/',
       },
     },
     globals: true,
