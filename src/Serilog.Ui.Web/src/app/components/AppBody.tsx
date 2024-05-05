@@ -8,7 +8,7 @@ const Paging = lazy(() => import('./Search/Paging'));
 const SerilogResults = lazy(() => import('./Table/SerilogResults'));
 const SerilogResultsMobile = lazy(() => import('./Table/SerilogResultsMobile'));
 
-const AppBody = ({ hideMobileResults }: { hideMobileResults: boolean }) => {
+const AppBody = ({ hideMobileResults }: { hideMobileResults?: boolean }) => {
   useJwtTimeout();
 
   return (

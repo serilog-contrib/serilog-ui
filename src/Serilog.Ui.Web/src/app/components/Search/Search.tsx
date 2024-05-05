@@ -48,7 +48,7 @@ const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
   }, [currentDbKey, refetch]);
 
   return (
-    <form role="form" aria-label="search-logs-form" onSubmit={() => {}}>
+    <form aria-label="search-logs-form" onSubmit={() => {}}>
       <Grid className={classes.searchFiltersGrid}>
         <SelectDbKeyInput />
         <SelectLevelInput />

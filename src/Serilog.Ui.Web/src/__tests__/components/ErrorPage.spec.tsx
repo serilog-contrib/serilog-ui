@@ -16,19 +16,15 @@ describe('ErrorPage', () => {
   it('renders unexpected error', async () => {
     render(<ErrorBoundaryPage />);
 
-    expect(
-      screen.getByText('unexpected error occurred', { exact: false }),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/unexpected error occurred/i)).toBeInTheDocument();
   });
 
   it('renders route error response', async () => {
     mockFn.mockImplementation(() => true);
     render(<ErrorBoundaryPage />);
 
-    expect(
-      screen.queryByText('unexpected error occurred', { exact: false }),
-    ).not.toBeInTheDocument();
-    expect(screen.getByText('Page not found', { exact: false })).toBeInTheDocument();
+    expect(screen.queryByText(/unexpected error occurred/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/Page not found/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Home' })).toBeInTheDocument();
   });
 });

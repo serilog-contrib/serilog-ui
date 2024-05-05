@@ -43,7 +43,7 @@ describe('HomePageNotAuthorized', () => {
     render(<HomePageNotAuthorized />);
 
     expect(screen.queryByText('Move to')).not.toBeInTheDocument();
-    expect(screen.getByText('not authorized', { exact: false })).toBeInTheDocument();
+    expect(screen.getByText(/not authorized/i)).toBeInTheDocument();
 
     propsMock.blockHomeAccess = false;
   });

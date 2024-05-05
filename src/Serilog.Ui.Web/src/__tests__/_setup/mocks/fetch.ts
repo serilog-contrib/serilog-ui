@@ -9,7 +9,7 @@ import {
 } from '../../../types/types';
 import { dbKeysMock, fakeLogs, fakeLogs2ndTable, fakeLogs3rdTable } from './samples';
 
-const developmentListenersHost = ['https://localhost:3001'];
+export const developmentListenersHost = ['https://localhost:3001'];
 
 const tableLogs = (table: string | null) => {
   if (table === dbKeysMock[2]) return fakeLogs3rdTable;
