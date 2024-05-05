@@ -12,6 +12,12 @@ partial class Build
     )]
     readonly Tool DotnetCoverage;
 
+    [NuGetPackage(
+        packageId: "dotnet-reportgenerator-globaltool",
+        packageExecutable: "dotnet-reportgenerator-globaltool.dll"
+    )]
+    readonly Tool DotnetReport;
+
     Target Backend_Test => targetDefinition => targetDefinition
         .DependsOn(Backend_Compile)
         .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Count != 0)
@@ -31,5 +37,14 @@ partial class Build
         {
             DotnetCoverage?.Invoke(
                 @"collect -f xml -o coverage.xml dotnet test --configuration Release --no-build --collect=""XPlat Code Coverage;Format=cobertura"" --logger=""trx;LogFileName=test-results.trx""");
+        });
+
+    Target Backend_Report_Ci => targetDefinition => targetDefinition
+        .DependsOn(Backend_Test_Ci)
+        .Requires(() => DockerTasks.DockerInfo(new DockerInfoSettings()).Count != 0)
+        .Description("Runs report-generator Sonarqube reports")
+        .Executes(() =>
+        {
+            DotnetReport?.Invoke("-reports:**/coverage.cobertura.xml -reporttypes:SonarQube -targetdir:coverage");
         });
 }

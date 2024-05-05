@@ -39,7 +39,8 @@ using static CustomGithubActionsAttribute;
     FetchDepth = 0,
     ImportSecrets = new[] { nameof(SonarTokenUi), nameof(SonarToken), nameof(NugetApiKey) },
     InvokedTargets = new[] { nameof(Publish) },
-    OnWorkflowDispatchRequiredInputs = new[] {
+    OnWorkflowDispatchRequiredInputs = new[]
+    {
         nameof(ElasticProvider),
         nameof(MongoProvider),
         nameof(MsSqlProvider),
@@ -50,14 +51,22 @@ using static CustomGithubActionsAttribute;
 )]
 partial class Build
 {
-    [Parameter][Secret] readonly string SonarToken;
-    [Parameter][Secret] readonly string SonarTokenUi;
-    [Parameter][Secret] readonly string NugetApiKey;
+    [Parameter] [Secret] readonly string SonarToken;
+
+    [Parameter] [Secret] readonly string SonarTokenUi;
+
+    [Parameter] [Secret] readonly string NugetApiKey;
+
     [Parameter] readonly string ElasticProvider = string.Empty;
+
     [Parameter] readonly string MongoProvider = string.Empty;
+
     [Parameter] readonly string MsSqlProvider = string.Empty;
+
     [Parameter] readonly string MySqlProvider = string.Empty;
+
     [Parameter] readonly string PostgresProvider = string.Empty;
+
     [Parameter] readonly string Ui = string.Empty;
 
     ReleaseParams[] ReleaseInfos() =>
@@ -79,8 +88,8 @@ partial class Build
     Target Backend_SonarScan_Start => targetDefinition => targetDefinition
         .DependsOn(Backend_Restore)
         .OnlyWhenStatic(() => OnGithubActionRun &&
-            !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
-            !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
+                              !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
+                              !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
         )
         .Executes(() =>
         {
@@ -99,17 +108,18 @@ partial class Build
                     "src/Serilog.Ui.Web/*.ts",
                     "src/Serilog.Ui.Web/*.tsx",
                     "src/Serilog.Ui.Web/*.json")
-                .SetVisualStudioCoveragePaths("coverage.xml", "**/coverage.xml", "./**/coverage.xml")
+                .SetGenericCoveragePaths("coverage/Sonarqube.xml, **/coverage/Sonarqube.xml, ./**/coverage/Sonarqube.xml")
+                // .SetVisualStudioCoveragePaths("coverage.xml", "**/coverage.xml", "./**/coverage.xml")
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
                 .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken)
             );
         });
 
     Target Backend_SonarScan_End => targetDefinition => targetDefinition
-        .DependsOn(Backend_Test_Ci)
+        .DependsOn(Backend_Report_Ci)
         .OnlyWhenStatic(() => OnGithubActionRun &&
-            !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
-            !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
+                              !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
+                              !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
         )
         .Executes(() =>
         {
