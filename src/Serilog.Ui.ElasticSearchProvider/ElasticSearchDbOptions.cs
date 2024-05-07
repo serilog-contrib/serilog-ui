@@ -12,12 +12,16 @@ namespace Serilog.Ui.ElasticSearchProvider
 
         public string ProviderName => string.Join(".", "ES", IndexName);
 
+        /// <summary>
+        /// Throws if <see cref="Endpoint"/> is null.
+        /// Throws if <see cref="IndexName"/> is null or whitespace.
+        /// </summary>
         public void Validate()
         {
             Guard.Against.Null(Endpoint);
             Guard.Against.NullOrWhiteSpace(IndexName);
         }
-        
+
         /// <summary>
         /// Fluently sets IndexName.
         /// </summary>

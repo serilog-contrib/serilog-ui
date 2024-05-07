@@ -10,8 +10,6 @@ namespace Serilog.Ui.Core.Models;
 /// </summary>
 public class FetchLogsQuery
 {
-    private int _page;
-
     private FetchLogsQuery()
     {
     }
@@ -26,14 +24,14 @@ public class FetchLogsQuery
     /// </summary>
     public int Page
     {
-        get => _page - 1; // providers will use page as 0-based
-        private set => _page = value;
+        get => CurrentPage - 1; // providers will use page as 0-based
+        private set => CurrentPage = value;
     }
 
     /// <summary>
     /// Gets or sets the CurrentPage.
     /// </summary>
-    public int CurrentPage => _page;
+    public int CurrentPage { get; private set; }
 
     /// <summary>
     /// Gets or sets the Count.

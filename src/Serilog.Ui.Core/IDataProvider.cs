@@ -13,8 +13,7 @@ namespace Serilog.Ui.Core
         /// <summary>
         /// Fetches the log data asynchronous.
         /// </summary>
-        /// <returns>Task&lt;System.ValueTuple&lt;IEnumerable&lt;LogModel&gt;, System.Int32&gt;&gt;.</returns>
-        Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default);
+        Task<(IEnumerable<LogModel> results, int total)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Name of the provider, used to identify this provider when using multiple.
