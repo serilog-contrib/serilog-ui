@@ -22,7 +22,7 @@ A simple Serilog log viewer for the following sinks:
 
 # Read the [Wiki :blue_book:](https://github.com/serilog-contrib/serilog-ui/wiki)
 
-## Quick Start :dash:
+## Quick Start
 
 ### Nuget packages installation
 
@@ -63,7 +63,7 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-In the `Startup.Configure` method, enable the middleware to serve the log UI page.
+In the `Startup.Configure` method or on the WebApplication builder, enable the middleware to serve the log UI page.
 
 NOTE: call to the `UseSerilogUi` middleware must be placed **_after_** any Authentication and Authorization middleware!
 
@@ -83,21 +83,23 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 }
 ```
 
-### For further configuration: [:fast_forward:](https://github.com/serilog-contrib/serilog-ui/wiki/Install:-Configuration-Options)
+### For further configuration: [:fast_forward:](https://github.com/serilog-contrib/serilog-ui/wiki/Configure)
 
-## Running the Tests: [:test_tube:](https://github.com/serilog-contrib/serilog-ui/wiki/Development:-Testing)
-
-## License
-
-See [LICENSE](https://github.com/serilog-contrib/serilog-ui/blob/master/LICENSE).
+Do you want to test the package on-the-fly? Try out the [samples](https://github.com/serilog-contrib/serilog-ui/wiki/Develop#sample-applications), with no configuration required!
 
 ## Issues and Contribution
 
 Everything is welcome! :trophy: See the [contribution guidelines](https://github.com/serilog-contrib/serilog-ui/blob/master/CONTRIBUTING.md) for details.
 
+For details on running the project, start reading from [Develop](https://github.com/serilog-contrib/serilog-ui/wiki/Develop).
+
+## License
+
+See [LICENSE](https://github.com/serilog-contrib/serilog-ui/blob/master/LICENSE).
+
 ## Project Sponsors
 
-<a href="https://www.jetbrains.com/"><img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg" style="width:100px"/></a>
+<a href="https://www.jetbrains.com/" target="_blank"><img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg" style="width:120px"/></a>
 
 ## Contributors
 
