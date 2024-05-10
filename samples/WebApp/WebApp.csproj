@@ -23,7 +23,7 @@
         <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1"/>
         <PackageReference Include="Serilog.Sinks.MongoDB" Version="5.4.1"/>
     </ItemGroup>
-    
+
     <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.29"/>
     </ItemGroup>
@@ -36,11 +36,18 @@
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4"/>
     </ItemGroup>
 
+    <!-- Serilog UI packages  -->
     <ItemGroup>
+        <!-- comment/uncomment to directly reference Nuget release-->
+        <PackageReference Include="Serilog.UI" Version="3.0.0-alpha.1"/>
+        <PackageReference Include="Serilog.UI.MongoDbProvider" Version="3.0.0-alpha.1"/>
+        <!--  -->
+
+        <!-- comment/uncomment to directly reference solution projects
         <ProjectReference Include="..\..\src\Serilog.Ui.Core\Serilog.Ui.Core.csproj"/>
         <ProjectReference Include="..\..\src\Serilog.Ui.MongoDbProvider\Serilog.Ui.MongoDbProvider.csproj"/>
-        <ProjectReference Include="..\..\src\Serilog.Ui.MsSqlServerProvider\Serilog.Ui.MsSqlServerProvider.csproj"/>
-        <ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj"/>
+        <ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj"/> 
+        -->
     </ItemGroup>
 
 </Project>

@@ -19,11 +19,20 @@
         <PackageReference Include="Testcontainers.MsSql" Version="3.8.0"/>
     </ItemGroup>
 
+    <!-- Serilog UI packages  -->
     <ItemGroup>
+        <!-- comment/uncomment to directly reference Nuget release-->
+        <PackageReference Include="Serilog.UI" Version="3.0.0-alpha.1"/>
+        <PackageReference Include="Serilog.UI.MsSqlServerProvider" Version="3.0.0-alpha.1"/>
+        <PackageReference Include="Serilog.UI.ElasticSearchProvider" Version="3.0.0-alpha.1"/>
+        <!--  -->
+
+        <!-- comment/uncomment to directly reference solution projects
         <ProjectReference Include="..\..\src\Serilog.Ui.Core\Serilog.Ui.Core.csproj"/>
         <ProjectReference Include="..\..\src\Serilog.Ui.ElasticSearchProvider\Serilog.Ui.ElasticSearchProvider.csproj"/>
         <ProjectReference Include="..\..\src\Serilog.Ui.MsSqlServerProvider\Serilog.Ui.MsSqlServerProvider.csproj"/>
         <ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj"/>
+        -->
     </ItemGroup>
 
     <ItemGroup>
