@@ -4,7 +4,7 @@
     <PackageId>Serilog.UI</PackageId>
     <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
-    <Version>3.0.0-beta.1</Version>
+    <Version>3.0.0-alpha.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,8 +24,6 @@
     <EmbeddedResource Update="wwwroot\dist\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
-    <None Include="..\..\assets\icon.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
   <ItemGroup>
