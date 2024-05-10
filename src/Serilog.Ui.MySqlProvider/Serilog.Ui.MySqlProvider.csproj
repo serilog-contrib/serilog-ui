@@ -4,7 +4,7 @@
     <PackageId>Serilog.UI.MySqlProvider</PackageId>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <Version>3.0.0-beta.1</Version>
+    <Version>3.0.0-alpha.1</Version>
 
     <Description>MySQL and MariaDB data provider for Serilog UI.</Description>
     <PackageTags>serilog serilog-ui serilog.sinks.mysql serilog.sinks.mariadb</PackageTags>
