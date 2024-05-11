@@ -18,7 +18,7 @@ A simple Serilog log viewer for the following sinks:
 - Serilog.Sinks.**ElasticSearch** ([Nuget](https://github.com/serilog/serilog-sinks-elasticsearch))
 - Serilog.Sinks.**RavenDB** ([Nuget](https://github.com/ravendb/serilog-sinks-ravendb))
 
-<img src="TODO New Image" width="100%" />
+<img src="https://raw.githubusercontent.com/mo-esmp/serilog-ui/master/assets/serilog-ui-v3.jpg" width="100%" />
 
 # Read the [Wiki :blue_book:](https://github.com/serilog-contrib/serilog-ui/wiki)
 

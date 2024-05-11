@@ -9,7 +9,7 @@ public class HomeController : Controller
 {
     public IActionResult Index()
     {
-        Log.Error("test");
+        Log.Error(new NotImplementedException(), "A sample error log");
         return View();
     }
 
