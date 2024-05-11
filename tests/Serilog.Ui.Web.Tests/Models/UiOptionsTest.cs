@@ -6,6 +6,7 @@ using Xunit;
 
 namespace Serilog.Ui.Web.Tests.Models;
 
+[Trait("Ui-UiOptions", "Web")]
 public class UiOptionsTest
 {
     [Fact]
