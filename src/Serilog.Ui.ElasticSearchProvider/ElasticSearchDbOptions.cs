@@ -8,7 +8,7 @@ namespace Serilog.Ui.ElasticSearchProvider
     {
         private string _customProviderName = string.Empty;
 
-        public string IndexName { get; private set; } = string.Empty;
+        public string? IndexName { get; private set; }
 
         public Uri? Endpoint { get; private set; }
 

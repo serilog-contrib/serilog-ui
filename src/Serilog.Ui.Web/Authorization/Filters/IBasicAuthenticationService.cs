@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;

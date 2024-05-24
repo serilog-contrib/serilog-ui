@@ -37,7 +37,7 @@ public class SerilogUiOptionBuilderExtensionsTest
         documentStore.Urls.Should().NotBeNullOrEmpty();
         documentStore.Database.Should().Be(dbName);
     }
-    
+
     [Fact]
     public void It_registers_multiple_providers()
     {
@@ -93,5 +93,20 @@ public class SerilogUiOptionBuilderExtensionsTest
         {
             nullable.Should().Throw<ArgumentException>();
         }
+    }
+
+    [Fact]
+    public void It_returns_custom_provider_name()
+    {
+        var result = new RavenDbOptions()
+            .WithCustomProviderName("RAVEN!");
+        result.ProviderName.Should().Be("RAVEN!");
+    }
+
+    [Fact]
+    public void It_returns_default_provider_name()
+    {
+        var result = new RavenDbOptions().WithCollectionName("collection");
+        result.ProviderName.Should().Be("RavenDB.collection");
     }
 }

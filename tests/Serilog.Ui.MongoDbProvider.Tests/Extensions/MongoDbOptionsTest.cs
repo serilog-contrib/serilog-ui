@@ -14,7 +14,8 @@ public class MongoDbOptionsTest
     [Fact]
     public void It_validates_options()
     {
-        var result = () => new MongoDbOptions().WithConnectionString("mongodb://mongodb0.example.com0:27017").WithCollectionName("name").WithDatabaseName("db").Validate();
+        var result = () => new MongoDbOptions().WithConnectionString("mongodb://mongodb0.example.com0:27017").WithCollectionName("name")
+            .WithDatabaseName("db").Validate();
 
         result.Should().NotThrow();
     }
@@ -24,16 +25,17 @@ public class MongoDbOptionsTest
     {
         var nullables = new List<Action>
         {
-            () => new MongoDbOptions().WithConnectionString(null).WithCollectionName("name").WithDatabaseName("db").Validate(),
+            () => new MongoDbOptions().WithConnectionString(null!).WithCollectionName("name").WithDatabaseName("db").Validate(),
             () => new MongoDbOptions().WithConnectionString(" ").WithCollectionName("name").WithDatabaseName("db").Validate(),
             () => new MongoDbOptions().WithConnectionString("").WithCollectionName("name").WithDatabaseName("db").Validate(),
-            () => new MongoDbOptions().WithConnectionString("mongodb://mongodb0.example.com0:27017").WithCollectionName(null).WithDatabaseName("db")
+            () => new MongoDbOptions().WithConnectionString("mongodb://mongodb0.example.com0:27017").WithCollectionName(null!).WithDatabaseName("db")
                 .Validate(),
             () => new MongoDbOptions().WithConnectionString("mongodb://mongodb0.example.com0:27017").WithCollectionName(" ").WithDatabaseName("db")
                 .Validate(),
             () => new MongoDbOptions().WithConnectionString("mongodb://mongodb0.example.com0:27017").WithCollectionName("").WithDatabaseName("db")
                 .Validate(),
-            () => new MongoDbOptions().WithConnectionString("mongodb://mongodb0.example.com0:27017").WithCollectionName("name").WithDatabaseName(null)
+            () => new MongoDbOptions().WithConnectionString("mongodb://mongodb0.example.com0:27017").WithCollectionName("name")
+                .WithDatabaseName(null!)
                 .Validate(),
             () => new MongoDbOptions().WithConnectionString("mongodb://mongodb0.example.com0:27017").WithCollectionName("name").WithDatabaseName("")
                 .Validate(),
@@ -53,5 +55,21 @@ public class MongoDbOptionsTest
         // invalid connection string
         var actConfig = () => new MongoDbOptions().WithConnectionString("name").WithCollectionName("name").Validate();
         actConfig.Should().ThrowExactly<MongoConfigurationException>();
+    }
+
+    [Fact]
+    public void It_returns_custom_provider_name()
+    {
+        var result = new MongoDbOptions().WithConnectionString("mongodb://mongodb0.example.com0:27017").WithCollectionName("name")
+            .WithDatabaseName("db").WithCustomProviderName("MONGO!");
+        result.ProviderName.Should().Be("MONGO!");
+    }
+
+    [Fact]
+    public void It_returns_default_provider_name()
+    {
+        var result = new MongoDbOptions().WithConnectionString("mongodb://mongodb0.example.com0:27017").WithCollectionName("name")
+            .WithDatabaseName("db");
+        result.ProviderName.Should().Be("MongoDb.db.name");
     }
 }

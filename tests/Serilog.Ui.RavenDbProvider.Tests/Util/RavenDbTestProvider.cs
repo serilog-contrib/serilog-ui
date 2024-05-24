@@ -6,6 +6,7 @@ using Serilog;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
 using Serilog.Ui.RavenDbProvider;
+using Serilog.Ui.RavenDbProvider.Extensions;
 using Testcontainers.RavenDb;
 
 namespace RavenDb.Tests.Util;
@@ -50,7 +51,7 @@ public sealed class RavenDbTestProvider : DatabaseInstance
         });
         Collector = serilog.InitializeLogs();
 
-        Provider = new RavenDbDataProvider(_documentStore, "LogEvents");
+        Provider = new RavenDbDataProvider(_documentStore, new RavenDbOptions().WithCollectionName("LogEvents"));
 
         return Task.CompletedTask;
     }

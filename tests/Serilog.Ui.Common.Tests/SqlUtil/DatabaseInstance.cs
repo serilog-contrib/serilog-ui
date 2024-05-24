@@ -49,7 +49,7 @@ namespace Serilog.Ui.Common.Tests.SqlUtil
         protected abstract Task CheckDbReadinessAsync();
 
         /// <summary>
-        /// Register operations to setup the database in a functional status.
+        /// Register operations to set up the database in a functional status.
         /// Runs after <see cref="CheckDbReadinessAsync"/>.
         /// </summary>
         /// <returns><see cref="Task"/></returns>

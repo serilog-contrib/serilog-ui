@@ -25,8 +25,8 @@ namespace ElasticSearch.Tests.DataProvider
         {
             var suts = new List<Func<ElasticSearchDbDataProvider>>
             {
-                () => new ElasticSearchDbDataProvider(null, new()),
-                () => new ElasticSearchDbDataProvider(new ElasticClient(), null),
+                () => new ElasticSearchDbDataProvider(null!, new()),
+                () => new ElasticSearchDbDataProvider(new ElasticClient(), null!),
             };
 
             suts.ForEach(sut => sut.Should().ThrowExactly<ArgumentNullException>());

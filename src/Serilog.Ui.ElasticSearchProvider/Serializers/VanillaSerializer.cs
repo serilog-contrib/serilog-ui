@@ -20,7 +20,7 @@ namespace Serilog.Ui.ElasticSearchProvider.Serializers
 
             using var jsonTextReader = new JsonTextReader(reader);
             var serializer = new JsonSerializer();
-            return serializer.Deserialize(jsonTextReader, type);
+            return serializer.Deserialize(jsonTextReader, type)!;
         }
 
         public Task<T> DeserializeAsync<T>(Stream stream, CancellationToken cancellationToken = default) =>

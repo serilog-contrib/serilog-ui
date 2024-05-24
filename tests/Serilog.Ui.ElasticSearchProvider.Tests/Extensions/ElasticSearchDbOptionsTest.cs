@@ -36,4 +36,20 @@ public class ElasticSearchDbOptionsTest : IClusterFixture<Elasticsearch7XCluster
             nullable.Should().Throw<ArgumentException>();
         }
     }
+
+    [U]
+    public void It_returns_custom_provider_name()
+    {
+        var uri = new Uri("https://elastic.example.com");
+        var result = new ElasticSearchDbOptions().WithEndpoint(uri).WithIndex("test").WithCustomProviderName("ELASTIC!");
+        result.ProviderName.Should().Be("ELASTIC!");
+    }
+
+    [U]
+    public void It_returns_default_provider_name()
+    {
+        var uri = new Uri("https://elastic.example.com");
+        var result = new ElasticSearchDbOptions().WithEndpoint(uri).WithIndex("test");
+        result.ProviderName.Should().Be("ES.test");
+    }
 }
