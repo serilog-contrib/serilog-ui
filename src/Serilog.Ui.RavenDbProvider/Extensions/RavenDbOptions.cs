@@ -7,6 +7,8 @@ namespace Serilog.Ui.RavenDbProvider.Extensions;
 /// <inheritdoc />
 public class RavenDbOptions : IDbOptions
 {
+    private string _customProviderName = string.Empty;
+
     /// <summary>
     /// Required parameter.
     /// </summary>
@@ -16,6 +18,12 @@ public class RavenDbOptions : IDbOptions
     /// Optional parameter. Defaults to LogEvents.
     /// </summary>
     public string CollectionName { get; private set; } = "LogEvents";
+
+    /// <summary>
+    /// Provider name.
+    /// </summary>
+    public string ProviderName
+        => !string.IsNullOrWhiteSpace(_customProviderName) ? _customProviderName : string.Join(".", "RavenDB", CollectionName);
 
     /// <summary>
     /// Throws if DocumentStore is null.
@@ -50,6 +58,16 @@ public class RavenDbOptions : IDbOptions
     public RavenDbOptions WithCollectionName(string collectionName)
     {
         CollectionName = collectionName;
+        return this;
+    }
+
+    /// <summary>
+    /// Fluently sets CustomProviderName.
+    /// </summary>
+    /// <param name="customProviderName"></param>
+    public RavenDbOptions WithCustomProviderName(string customProviderName)
+    {
+        _customProviderName = customProviderName;
         return this;
     }
 }

@@ -10,7 +10,6 @@ using Dapper;
 using Microsoft.Data.SqlClient;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Attributes;
-using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.OptionsBuilder;
 using static Serilog.Ui.Core.Models.SearchOptions;
@@ -44,7 +43,7 @@ namespace Serilog.Ui.MsSqlServerProvider
 
         private readonly RelationalDbOptions _options = Guard.Against.Null(options);
 
-        public string Name => _options.ToDataProviderName(MsSqlProviderName);
+        public string Name => _options.GetProviderName(MsSqlProviderName);
 
         protected virtual string SelectQuery() => "SELECT * ";
 

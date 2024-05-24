@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
-using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Interfaces;
 using Serilog.Ui.Core.OptionsBuilder;
 
@@ -65,7 +64,7 @@ namespace Serilog.Ui.MySqlProvider.Extensions
             var customModel = typeof(T) != typeof(MySqlLogModel);
             if (customModel)
             {
-                optionsBuilder.RegisterColumnsInfo<T>(dbOptions.ToDataProviderName(MariaDbDataProvider.ProviderName));
+                optionsBuilder.RegisterColumnsInfo<T>(dbOptions.GetProviderName(MariaDbDataProvider.ProviderName));
                 optionsBuilder.Services.AddScoped<IDataProvider>(_ => new MariaDbDataProvider<T>(dbOptions));
                 return optionsBuilder;
             }

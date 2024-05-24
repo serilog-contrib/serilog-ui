@@ -15,12 +15,12 @@ public class LogModel
     /// <summary>
     /// It gets or sets Level.
     /// </summary>
-    public virtual string Level { get; set; }
+    public virtual string? Level { get; set; } = string.Empty;
 
     /// <summary>
     /// It gets or sets Message.
     /// </summary>
-    public virtual string Message { get; set; }
+    public virtual string? Message { get; set; } = string.Empty;
 
     /// <summary>
     /// It gets or sets Timestamp.
@@ -30,17 +30,17 @@ public class LogModel
     /// <summary>
     /// It gets or sets Exception.
     /// </summary>
-    public virtual string Exception { get; set; }
+    public virtual string? Exception { get; set; } = string.Empty;
 
     /// <summary>
     /// It gets or sets Properties.
     /// </summary>
-    public virtual string Properties { get; set; }
+    public virtual string? Properties { get; set; } = string.Empty;
 
     /// <summary>
     /// It gets or sets PropertyType.
     /// </summary>
-    public virtual string PropertyType { get; set; }
+    public virtual string PropertyType { get; set; } = string.Empty;
 
     /// <summary>
     /// It sets the RowNo using the RowStart and the log index.

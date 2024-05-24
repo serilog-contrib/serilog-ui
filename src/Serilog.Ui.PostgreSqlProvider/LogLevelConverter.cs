@@ -13,7 +13,7 @@
             _ => ""
         };
 
-        public static int GetLevelValue(string name) => name switch
+        public static int GetLevelValue(string? name) => name switch
         {
             "Verbose" => 0,
             "Debug" => 1,

@@ -1,5 +1,4 @@
-﻿using Serilog.Ui.Core.Extensions;
-using Serilog.Ui.Core.OptionsBuilder;
+﻿using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.MySqlProvider.Shared;
 
 namespace Serilog.Ui.MySqlProvider;
@@ -11,5 +10,5 @@ public class MySqlDataProvider(RelationalDbOptions options) : DataProvider<MySql
 
     protected override string SearchCriteriaWhereQuery() => "OR Exception LIKE @Search";
 
-    public override string Name => Options.ToDataProviderName("MySQL");
+    public override string Name => Options.GetProviderName("MySQL");
 }

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Dapper;
 using Npgsql;
 using Serilog.Ui.Core;
-using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.PostgreSqlProvider.Extensions;
 using Serilog.Ui.PostgreSqlProvider.Models;
@@ -25,7 +24,7 @@ public class PostgresDataProvider<T>(PostgreSqlDbOptions options) : IDataProvide
     private readonly PostgreSqlDbOptions _options = options ?? throw new ArgumentNullException(nameof(options));
 
     /// <inheritdoc/>
-    public string Name => _options.ToDataProviderName(ProviderName);
+    public string Name => _options.GetProviderName(ProviderName);
 
     /// <inheritdoc/>
     public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)

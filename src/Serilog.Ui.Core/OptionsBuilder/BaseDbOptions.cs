@@ -11,7 +11,12 @@ public class BaseDbOptions : IDbOptions
     /// <summary>
     /// Required parameter.
     /// </summary>
-    public string ConnectionString { get; private set; }
+    public string? ConnectionString { get; private set; }
+
+    /// <summary>
+    /// Optional parameter.
+    /// </summary>
+    protected string CustomProviderName { get; private set; } = string.Empty;
 
     /// <summary>
     /// Throws if ConnectionString is null or whitespace.
@@ -25,6 +30,11 @@ public class BaseDbOptions : IDbOptions
     internal void WithConnectionString(string connectionString)
     {
         ConnectionString = connectionString;
+    }
+
+    internal void WithCustomProviderName(string customProviderName)
+    {
+        CustomProviderName = customProviderName;
     }
 }
 
@@ -42,6 +52,18 @@ public static class BaseDbOptionsExtensions
         where T : BaseDbOptions
     {
         options.WithConnectionString(connectionString);
+        return options;
+    }
+
+    /// <summary>
+    /// Fluently sets a custom provider name.
+    /// </summary>
+    /// <param name="options">Options inheriting <see cref="BaseDbOptions"/></param>
+    /// <param name="customProviderName"></param>
+    public static T WithCustomProviderName<T>(this T options, string customProviderName)
+        where T : BaseDbOptions
+    {
+        options.WithCustomProviderName(customProviderName);
         return options;
     }
 }

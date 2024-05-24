@@ -10,12 +10,19 @@ namespace Serilog.Ui.MongoDbProvider
         /// <summary>
         /// Optional parameter. It must be set, if the database name is not found in the connection string.
         /// </summary>
-        public string DatabaseName { get; private set; }
+        public string? DatabaseName { get; private set; }
 
         /// <summary>
         /// Required parameter.
         /// </summary>
-        public string CollectionName { get; private set; }
+        public string? CollectionName { get; private set; }
+
+        /// <summary>
+        /// Provider name.
+        /// </summary>
+        public string ProviderName => !string.IsNullOrWhiteSpace(CustomProviderName)
+            ? CustomProviderName
+            : string.Join(".", "MongoDb", DatabaseName, CollectionName);
 
         /// <summary>
         /// Throws if ConnectionString, CollectionName is null or whitespace.

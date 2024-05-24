@@ -15,10 +15,10 @@ namespace Serilog.Ui.ElasticSearchProvider;
 public class ElasticSearchDbDataProvider(IElasticClient client, ElasticSearchDbOptions options) : IDataProvider
 {
     private static readonly string TimeStampPropertyName = typeof(ElasticSearchDbLogModel)
-        // get the PropertyInfo for the Sorted property
-        .GetProperty(SortProperty.Timestamp.ToString())!
-        // get the actual PropertyName used by Elastic, that was set in the JsonAttribute
-        .GetCustomAttribute<JsonPropertyAttribute>().PropertyName;
+            // get the PropertyInfo for the Sorted property
+            .GetProperty(SortProperty.Timestamp.ToString())!
+            // get the actual PropertyName used by Elastic, that was set in the JsonAttribute
+            .GetCustomAttribute<JsonPropertyAttribute>().PropertyName ?? $"{SortProperty.Timestamp}";
 
     private readonly IElasticClient _client = client ?? throw new ArgumentNullException(nameof(client));
 
@@ -54,6 +54,6 @@ public class ElasticSearchDbDataProvider(IElasticClient client, ElasticSearchDbO
 
         int.TryParse(result?.Total.ToString(), out var total);
 
-        return (result?.Documents.Select((x, index) => x.ToLogModel(rowNoStart, index)).ToList(), total);
+        return (result?.Documents.Select((x, index) => x.ToLogModel(rowNoStart, index)).ToList() ?? [], total);
     }
 }

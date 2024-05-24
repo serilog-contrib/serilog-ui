@@ -28,6 +28,12 @@ public class RelationalDbOptions : BaseDbOptions
     public string Schema { get; private set; }
 
     /// <summary>
+    /// Get the provider name.
+    /// </summary>
+    public string GetProviderName(string provider)
+        => !string.IsNullOrWhiteSpace(CustomProviderName) ? CustomProviderName : ToDataProviderName(provider);
+
+    /// <summary>
     /// Throws if ConnectionString, TableName, Schema is null or whitespace.
     /// </summary>
     /// <exception cref="ArgumentException"></exception>
@@ -38,7 +44,6 @@ public class RelationalDbOptions : BaseDbOptions
 
         base.Validate();
     }
-
 
     /// <summary>
     /// Fluently sets TableName.
@@ -57,6 +62,13 @@ public class RelationalDbOptions : BaseDbOptions
     {
         Schema = schemaName;
     }
+
+    /// <summary>
+    /// Generates a complete data provider name, by using its properties.
+    /// </summary>
+    /// <param name="providerName">Data provider name.</param>
+    /// <returns></returns>
+    private string ToDataProviderName(string providerName) => string.Join(".", providerName, Schema, TableName);
 }
 
 /// <summary>

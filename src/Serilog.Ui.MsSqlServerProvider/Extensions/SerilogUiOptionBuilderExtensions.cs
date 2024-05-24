@@ -1,9 +1,7 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using Dapper;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
-using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Interfaces;
 using Serilog.Ui.Core.OptionsBuilder;
 
@@ -50,12 +48,12 @@ namespace Serilog.Ui.MsSqlServerProvider.Extensions
             var customModel = typeof(T) != typeof(SqlServerLogModel);
             if (customModel)
             {
-                optionsBuilder.RegisterColumnsInfo<T>(dbOptions.ToDataProviderName(SqlServerDataProvider.MsSqlProviderName));
+                optionsBuilder.RegisterColumnsInfo<T>(dbOptions.GetProviderName(SqlServerDataProvider.MsSqlProviderName));
                 optionsBuilder.Services.AddScoped<IDataProvider>(_ => new SqlServerDataProvider<T>(dbOptions));
-                
+
                 return optionsBuilder;
             }
-            
+
             optionsBuilder.Services.AddScoped<IDataProvider>(_ => new SqlServerDataProvider(dbOptions));
             return optionsBuilder;
         }

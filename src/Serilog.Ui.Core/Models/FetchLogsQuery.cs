@@ -17,7 +17,7 @@ public class FetchLogsQuery
     /// <summary>
     /// Gets or sets the DatabaseKey.
     /// </summary>
-    public string DatabaseKey { get; private set; }
+    public string? DatabaseKey { get; private set; }
 
     /// <summary>
     /// Gets or sets the Page.
@@ -41,12 +41,12 @@ public class FetchLogsQuery
     /// <summary>
     /// Gets or sets the Level.
     /// </summary>
-    public string Level { get; private set; }
+    public string? Level { get; private set; }
 
     /// <summary>
     /// Gets or sets the SearchCriteria.
     /// </summary>
-    public string SearchCriteria { get; private set; }
+    public string? SearchCriteria { get; private set; }
 
     /// <summary>
     /// Gets or sets the StartDate.

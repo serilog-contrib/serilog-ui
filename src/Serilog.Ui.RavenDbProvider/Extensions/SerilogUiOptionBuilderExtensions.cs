@@ -25,8 +25,8 @@ public static class SerilogUiOptionBuilderExtensions
 
         optionsBuilder.Services.AddSingleton(dbOptions.DocumentStore);
         optionsBuilder.Services.AddScoped<IDataProvider>(serviceProvider =>
-            new RavenDbDataProvider(serviceProvider.GetRequiredService<IDocumentStore>(), dbOptions.CollectionName));
-        
+            new RavenDbDataProvider(serviceProvider.GetRequiredService<IDocumentStore>(), dbOptions));
+
         return optionsBuilder;
     }
 }

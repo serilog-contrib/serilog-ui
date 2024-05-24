@@ -2,20 +2,21 @@
 using Raven.Client.Documents.Linq;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Models;
+using Serilog.Ui.RavenDbProvider.Extensions;
 using Serilog.Ui.RavenDbProvider.Models;
 using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.RavenDbProvider;
 
 /// <inheritdoc/>
-public class RavenDbDataProvider(IDocumentStore documentStore, string collectionName) : IDataProvider
+public class RavenDbDataProvider(IDocumentStore documentStore, RavenDbOptions options) : IDataProvider
 {
     private readonly IDocumentStore _documentStore = documentStore ?? throw new ArgumentNullException(nameof(documentStore));
 
-    private readonly string _collectionName = collectionName ?? throw new ArgumentNullException(nameof(collectionName));
+    private readonly RavenDbOptions _options = options ?? throw new ArgumentNullException(nameof(options));
 
     /// <inheritdoc/>
-    public string Name => string.Join(".", "RavenDB", collectionName);
+    public string Name => _options.ProviderName;
 
     /// <inheritdoc/>
     public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
@@ -32,7 +33,7 @@ public class RavenDbDataProvider(IDocumentStore documentStore, string collection
     private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
     {
         using var session = _documentStore.OpenAsyncSession();
-        var query = session.Advanced.AsyncDocumentQuery<RavenDbLogModel>(collectionName: _collectionName).ToQueryable();
+        var query = session.Advanced.AsyncDocumentQuery<RavenDbLogModel>(collectionName: _options.CollectionName).ToQueryable();
 
         GenerateWhereClause(ref query, queryParams);
         GenerateSortClause(ref query, queryParams.SortOn, queryParams.SortBy);
@@ -46,7 +47,7 @@ public class RavenDbDataProvider(IDocumentStore documentStore, string collection
     private async Task<int> CountLogsAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
     {
         using var session = _documentStore.OpenAsyncSession();
-        var query = session.Advanced.AsyncDocumentQuery<RavenDbLogModel>(collectionName: _collectionName).ToQueryable();
+        var query = session.Advanced.AsyncDocumentQuery<RavenDbLogModel>(collectionName: _options.CollectionName).ToQueryable();
 
         GenerateWhereClause(ref query, queryParams);
 

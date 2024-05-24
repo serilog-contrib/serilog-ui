@@ -37,7 +37,7 @@ namespace Serilog.Ui.MongoDbProvider
             return (logsTask, logCountTask);
         }
 
-        public string Name => string.Join(".", "MongoDb", _options.DatabaseName, _options.CollectionName);
+        public string Name => _options.ProviderName;
 
         private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
         {

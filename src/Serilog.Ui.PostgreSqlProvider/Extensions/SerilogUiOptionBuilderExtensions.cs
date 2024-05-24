@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
-using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Interfaces;
 using Serilog.Ui.PostgreSqlProvider.Models;
 
@@ -40,7 +39,7 @@ namespace Serilog.Ui.PostgreSqlProvider.Extensions
             var customModel = typeof(T) != typeof(PostgresLogModel);
             if (customModel)
             {
-                optionsBuilder.RegisterColumnsInfo<T>(dbOptions.ToDataProviderName(PostgresDataProvider.ProviderName));
+                optionsBuilder.RegisterColumnsInfo<T>(dbOptions.GetProviderName(PostgresDataProvider.ProviderName));
                 optionsBuilder.Services.AddScoped<IDataProvider>(_ => new PostgresDataProvider<T>(dbOptions));
 
                 return optionsBuilder;

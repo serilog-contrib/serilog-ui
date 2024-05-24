@@ -21,13 +21,14 @@ namespace Serilog.Ui.ElasticSearchProvider.Extensions
         /// <param name="setupOptions">The ElasticSearch options action.</param>
         /// <exception cref="ArgumentNullException"> throw if endpoint is null </exception>
         /// <exception cref="ArgumentNullException"> throw is indexName is null </exception>
-        public static ISerilogUiOptionsBuilder UseElasticSearchDb(this ISerilogUiOptionsBuilder optionsBuilder, Action<ElasticSearchDbOptions> setupOptions)
+        public static ISerilogUiOptionsBuilder UseElasticSearchDb(this ISerilogUiOptionsBuilder optionsBuilder,
+            Action<ElasticSearchDbOptions> setupOptions)
         {
             var options = new ElasticSearchDbOptions();
             setupOptions.Invoke(options);
             options.Validate();
 
-            // sorting by property is disabled for Elastic Search
+            // sorting by property is disabled for ElasticSearch
             optionsBuilder.RegisterDisabledSortForProviderKey(options.ProviderName);
 
             var pool = new SingleNodeConnectionPool(options.Endpoint);

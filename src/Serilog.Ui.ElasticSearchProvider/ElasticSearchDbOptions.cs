@@ -6,11 +6,14 @@ namespace Serilog.Ui.ElasticSearchProvider
 {
     public class ElasticSearchDbOptions : IDbOptions
     {
-        public string IndexName { get; private set; }
+        private string _customProviderName = string.Empty;
 
-        public Uri Endpoint { get; private set; }
+        public string IndexName { get; private set; } = string.Empty;
 
-        public string ProviderName => string.Join(".", "ES", IndexName);
+        public Uri? Endpoint { get; private set; }
+
+        public string ProviderName
+            => !string.IsNullOrWhiteSpace(_customProviderName) ? _customProviderName : string.Join(".", "ES", IndexName);
 
         /// <summary>
         /// Throws if <see cref="Endpoint"/> is null.
@@ -20,6 +23,16 @@ namespace Serilog.Ui.ElasticSearchProvider
         {
             Guard.Against.Null(Endpoint);
             Guard.Against.NullOrWhiteSpace(IndexName);
+        }
+
+        /// <summary>
+        /// Fluently sets CustomProviderName.
+        /// </summary>
+        /// <param name="customProviderName"></param>
+        public ElasticSearchDbOptions WithCustomProviderName(string customProviderName)
+        {
+            _customProviderName = customProviderName;
+            return this;
         }
 
         /// <summary>
