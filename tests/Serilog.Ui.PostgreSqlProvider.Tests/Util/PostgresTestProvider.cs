@@ -41,7 +41,7 @@ public class PostgresTestProvider<T> : DatabaseInstance
 
     protected override async Task CheckDbReadinessAsync()
     {
-        DbOptions.WithConnectionString((Container as PostgreSqlContainer)?.GetConnectionString());
+        DbOptions.WithConnectionString((Container as PostgreSqlContainer)?.GetConnectionString()!);
 
         await using var dataContext = new NpgsqlConnection(DbOptions.ConnectionString);
 
@@ -54,7 +54,7 @@ public class PostgresTestProvider<T> : DatabaseInstance
         {
             logger
                 .WriteTo.PostgreSQL(
-                    DbOptions.ConnectionString,
+                    DbOptions.ConnectionString!,
                     "logs",
                     ColumnOptions,
                     schemaName: "public",

@@ -40,7 +40,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
                 ["page"] = "1",
                 ["count"] = "10",
                 ["level"] = LogCollector.Example.Level,
-                ["search"] = LogCollector.Example.Message[3..],
+                ["search"] = LogCollector.Example.Message![3..],
                 ["startDate"] = LogCollector.Example.Timestamp.AddSeconds(-2).ToString("O"),
                 ["endDate"] = LogCollector.Example.Timestamp.AddSeconds(2).ToString("O")
             };
@@ -193,7 +193,7 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             var results = logs.ToList();
             results.Should().NotBeEmpty();
             results.Should().OnlyContain(p =>
-                p.Message
+                p.Message!
                     .Split(" ", StringSplitOptions.None)
                     .Intersect(msg!.Split(" ", StringSplitOptions.None)).Any());
             count.Should().BeLessThan(100).And.BeGreaterThanOrEqualTo(1);

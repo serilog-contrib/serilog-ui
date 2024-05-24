@@ -21,8 +21,8 @@ namespace Postgres.Tests.DataProvider
         {
             var sut = new List<Action>
             {
-                () => { _ = new PostgresDataProvider(null); },
-                () => { _ = new PostgresDataProvider<PostgresTestModel>(null); },
+                () => { _ = new PostgresDataProvider(null!); },
+                () => { _ = new PostgresDataProvider<PostgresTestModel>(null!); },
             };
 
             sut.ForEach(s => s.Should().ThrowExactly<ArgumentNullException>());

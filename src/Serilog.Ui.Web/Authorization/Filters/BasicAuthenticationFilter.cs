@@ -20,7 +20,7 @@ internal class BasicAuthenticationFilter(
 
         var header = httpContext.Request.Headers.Authorization;
 
-        var authValues = AuthenticationHeaderValue.Parse(header);
+        var authValues = AuthenticationHeaderValue.Parse(header!);
 
         return
             // not basic, thus no evaluation should happen

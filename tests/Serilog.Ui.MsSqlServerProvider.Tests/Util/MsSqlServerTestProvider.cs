@@ -38,7 +38,7 @@ public class MsSqlServerTestProvider<T> : DatabaseInstance
 
     protected override async Task CheckDbReadinessAsync()
     {
-        DbOptions.WithConnectionString((Container as MsSqlContainer)?.GetConnectionString());
+        DbOptions.WithConnectionString((Container as MsSqlContainer)?.GetConnectionString()!);
 
         await using var dataContext = new SqlConnection(DbOptions.ConnectionString);
 

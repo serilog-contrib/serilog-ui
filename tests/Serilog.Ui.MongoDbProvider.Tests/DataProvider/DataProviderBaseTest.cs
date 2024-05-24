@@ -22,9 +22,9 @@ namespace MongoDb.Tests.DataProvider
         {
             var suts = new List<Func<MongoDbDataProvider>>
             {
-                () => new MongoDbDataProvider(null, null),
-                () => new MongoDbDataProvider(new MongoClient(), null),
-                () => new MongoDbDataProvider(null, new MongoDbOptions()),
+                () => new MongoDbDataProvider(null!, null!),
+                () => new MongoDbDataProvider(new MongoClient(), null!),
+                () => new MongoDbDataProvider(null!, new MongoDbOptions()),
             };
 
             suts.ForEach(sut => sut.Should().ThrowExactly<ArgumentNullException>());

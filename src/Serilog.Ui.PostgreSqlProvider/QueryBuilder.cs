@@ -52,20 +52,20 @@ internal static class QueryBuilder
 
     private static StringBuilder GenerateWhereClause<T>(this StringBuilder queryBuilder,
         SinkColumnNames _columns,
-        string level,
-        string searchCriteria,
+        string? level,
+        string? searchCriteria,
         DateTime? startDate,
         DateTime? endDate)
         where T : PostgresLogModel
     {
         var conditions = new List<string>();
 
-        if (!string.IsNullOrEmpty(level))
+        if (!string.IsNullOrWhiteSpace(level))
         {
             conditions.Add($"\"{_columns.Level}\" = @Level");
         }
 
-        if (!string.IsNullOrEmpty(searchCriteria))
+        if (!string.IsNullOrWhiteSpace(searchCriteria))
         {
             var exceptionCondition = AddExceptionToWhereClause<T>() ? $"OR \"{_columns.Exception}\" LIKE @Search" : string.Empty;
             conditions.Add($"(\"{_columns.RenderedMessage}\" LIKE @Search {exceptionCondition})");

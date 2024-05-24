@@ -39,7 +39,7 @@ namespace Serilog.Ui.Web
             var httpMethod = httpContext.Request.Method;
             var isGet = httpMethod == "GET";
 
-            if (!isGet)
+            if (!isGet || path is null)
             {
                 return _staticFileMiddleware.Invoke(httpContext);
             }

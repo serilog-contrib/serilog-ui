@@ -8,6 +8,7 @@
 		<PackageReadmeFile>README_Nuget.md</PackageReadmeFile>
 		<PackageTags>serilog serilog-ui log log-ui web-log</PackageTags>
 		<RepositoryUrl>https://github.com/serilog-contrib/serilog-ui</RepositoryUrl>
+		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
 	<ItemGroup>

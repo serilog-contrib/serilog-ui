@@ -32,7 +32,7 @@ namespace MySql.Tests.Util
         {
             Guard.Against.Null(Container);
 
-            DbOptions.WithConnectionString((Container as MySqlContainer)?.GetConnectionString());
+            DbOptions.WithConnectionString((Container as MySqlContainer)?.GetConnectionString()!);
 
             await using var dataContext = new MySqlConnection(DbOptions.ConnectionString);
 

@@ -14,19 +14,19 @@ namespace Serilog.Ui.PostgreSqlProvider.Models;
 /// </summary>
 public class PostgresLogModel : LogModel
 {
-    private string _level;
+    private string _level = string.Empty;
 
     /// <inheritdoc />
     public sealed override int RowNo => base.RowNo;
 
     /// <inheritdoc />
-    public sealed override string Message { get; set; }
+    public sealed override string? Message { get; set; } = string.Empty;
 
     /// <inheritdoc />
     public sealed override DateTime Timestamp { get; set; }
 
     /// <inheritdoc />
-    public sealed override string Level
+    public sealed override string? Level
     {
         get => _level;
         set => _level = LogLevelConverter.GetLevelName(value);
@@ -36,7 +36,7 @@ public class PostgresLogModel : LogModel
     /// It get or sets LogEventSerialized.
     /// </summary>
     [JsonIgnore]
-    public string LogEvent { get; set; }
+    public string LogEvent { get; set; } = string.Empty;
 
     /// <inheritdoc />
     public override string PropertyType => "json";

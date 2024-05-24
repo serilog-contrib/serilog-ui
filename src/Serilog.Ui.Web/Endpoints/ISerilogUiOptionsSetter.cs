@@ -4,7 +4,7 @@ namespace Serilog.Ui.Web.Endpoints
 {
     public interface ISerilogUiOptionsSetter
     {
-        UiOptions Options { get; }
+        UiOptions? Options { get; }
 
         void SetOptions(UiOptions options);
     }

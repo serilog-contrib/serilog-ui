@@ -15,11 +15,11 @@ namespace Serilog.Ui.MySqlProvider
     {
         public sealed override int RowNo => base.RowNo;
 
-        public sealed override string Level { get; set; }
+        public sealed override string? Level { get; set; } = string.Empty;
 
-        public string LogLevel { get; set; }
+        public string LogLevel { get; set; } = string.Empty;
 
-        public sealed override string Message { get; set; }
+        public sealed override string? Message { get; set; } = string.Empty;
 
         public sealed override DateTime Timestamp { get; set; }
 

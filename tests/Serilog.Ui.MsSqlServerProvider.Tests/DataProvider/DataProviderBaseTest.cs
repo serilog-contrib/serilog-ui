@@ -20,8 +20,8 @@ namespace MsSql.Tests.DataProvider
         {
             var suts = new List<Action>
             {
-                () => { _ = new SqlServerDataProvider(null); },
-                () => { _ = new SqlServerDataProvider<SqlServerTestModel>(null); },
+                () => { _ = new SqlServerDataProvider(null!); },
+                () => { _ = new SqlServerDataProvider<SqlServerTestModel>(null!); },
             };
 
             suts.ForEach(sut => sut.Should().ThrowExactly<ArgumentNullException>());

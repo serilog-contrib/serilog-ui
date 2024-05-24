@@ -18,9 +18,9 @@ namespace Serilog.Ui.Common.Tests.DataSamples
 
             MessagePiecesSamples =
             [
-                models.ElementAt(0).Message,
-                models.ElementAt(1).Message.Substring(1, models.ElementAt(1).Message.Length / 2),
-                models.ElementAt(2).Message.Substring(1, models.ElementAt(2).Message.Length / 2)
+                models.ElementAt(0).Message!,
+                models.ElementAt(1).Message!.Substring(1, models.ElementAt(1).Message!.Length / 2),
+                models.ElementAt(2).Message!.Substring(1, models.ElementAt(2).Message!.Length / 2)
             ];
             TimesSamples = new List<DateTime>
             {
@@ -31,9 +31,13 @@ namespace Serilog.Ui.Common.Tests.DataSamples
         }
 
         public IReadOnlyCollection<LogModel> DataSet { get; }
+
         public LogModel Example { get; private set; }
+
         public Dictionary<string, int> CountByLevel { get; private set; }
+
         public IEnumerable<DateTime> TimesSamples { get; private set; } = [];
+
         public IEnumerable<string> MessagePiecesSamples { get; private set; } = [];
     }
 }

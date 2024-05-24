@@ -22,7 +22,7 @@ namespace Serilog.Ui.Web.Extensions
         /// <returns>IApplicationBuilder.</returns>
         /// <exception cref="ArgumentNullException">throw if applicationBuilder is null</exception>
         /// <exception cref="ArgumentException">if <see cref="UiOptions"/> validation fails</exception>
-        public static IApplicationBuilder UseSerilogUi(this IApplicationBuilder applicationBuilder, Action<UiOptions> options = null)
+        public static IApplicationBuilder UseSerilogUi(this IApplicationBuilder applicationBuilder, Action<UiOptions>? options = null)
         {
             Guard.Against.Null(applicationBuilder);
 

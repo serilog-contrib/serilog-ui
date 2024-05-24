@@ -40,7 +40,7 @@ public class MariaDbTestProvider<T> : DatabaseInstance
     {
         Guard.Against.Null(Container);
 
-        DbOptions.WithConnectionString((Container as MariaDbContainer)?.GetConnectionString());
+        DbOptions.WithConnectionString((Container as MariaDbContainer)?.GetConnectionString()!);
 
         await using var dataContext = new MySqlConnection(DbOptions.ConnectionString);
 

@@ -7,7 +7,7 @@ namespace Serilog.Ui.Web.Endpoints
     internal class SerilogUiEndpointsDecorator(ISerilogUiEndpoints decoratedService, IAuthorizationFilterService authFilterService)
         : ISerilogUiEndpoints
     {
-        public UiOptions Options { get; private set; }
+        public UiOptions? Options { get; private set; }
 
         public Task GetApiKeysAsync()
         {

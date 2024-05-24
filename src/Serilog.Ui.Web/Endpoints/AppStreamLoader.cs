@@ -7,9 +7,9 @@ namespace Serilog.Ui.Web.Endpoints
     {
         private const string AppManifest = "Serilog.Ui.Web.wwwroot.dist.index.html";
 
-        public Stream GetIndex() =>
+        public Stream? GetIndex() =>
             typeof(AuthorizationOptions)
-            .Assembly
-            .GetManifestResourceStream(AppManifest);
+                .Assembly
+                .GetManifestResourceStream(AppManifest);
     }
 }

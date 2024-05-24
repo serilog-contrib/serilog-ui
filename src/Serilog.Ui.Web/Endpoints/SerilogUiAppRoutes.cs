@@ -21,8 +21,8 @@ namespace Serilog.Ui.Web.Endpoints
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        public UiOptions Options { get; private set; }
-        
+        public UiOptions? Options { get; private set; }
+
         public bool BlockHomeAccess { get; set; }
 
         public async Task GetHomeAsync()

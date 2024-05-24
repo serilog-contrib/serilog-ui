@@ -27,7 +27,7 @@ namespace Postgres.Tests.Extensions
         [InlineData(null, typeof(PostgreSqlAlternativeSinkColumnNames))]
         public void It_registers_provider_and_dependencies(PostgreSqlSinkType? sink, Type type)
         {
-            PostgreSqlDbOptions? opts = null!;
+            PostgreSqlDbOptions opts = null!;
             _serviceCollection.AddSerilogUi(builder =>
             {
                 builder.UseNpgSql(opt =>

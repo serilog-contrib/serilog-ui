@@ -46,5 +46,5 @@ public class SqlServerTestModel : SqlServerLogModel
     public string EnvironmentUserName { get; set; } = string.Empty;
 
     [JsonIgnore, RemovedColumn]
-    public override string Exception { get; set; } = string.Empty;
+    public override string? Exception { get; set; } = string.Empty;
 }

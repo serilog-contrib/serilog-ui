@@ -43,7 +43,7 @@ namespace Serilog.Ui.Web.Endpoints
 
         private readonly string[] _providerKeys;
 
-        public UiOptions Options { get; private set; }
+        public UiOptions? Options { get; private set; }
 
         public async Task GetApiKeysAsync()
         {

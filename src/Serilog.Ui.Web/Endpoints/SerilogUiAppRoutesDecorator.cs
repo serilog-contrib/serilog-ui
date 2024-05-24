@@ -12,8 +12,8 @@ namespace Serilog.Ui.Web.Endpoints
         ISerilogUiAppRoutes decoratedService,
         IAuthorizationFilterService authFilterService) : ISerilogUiAppRoutes
     {
-        public UiOptions Options { get; private set; }
-        
+        public UiOptions? Options { get; private set; }
+
         public bool BlockHomeAccess { get; set; }
 
         public async Task GetHomeAsync()

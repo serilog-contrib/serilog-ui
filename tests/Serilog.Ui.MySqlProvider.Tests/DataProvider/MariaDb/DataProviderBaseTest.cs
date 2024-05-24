@@ -20,8 +20,8 @@ namespace MySql.Tests.DataProvider.MariaDb
         {
             var suts = new List<Action>
             {
-                () => {_ = new MariaDbDataProvider(null);},
-                () => {_ = new MariaDbDataProvider<MariaDbTestModel>(null);},
+                () => { _ = new MariaDbDataProvider(null!); },
+                () => { _ = new MariaDbDataProvider<MariaDbTestModel>(null!); },
             };
 
             suts.ForEach(sut => sut.Should().ThrowExactly<ArgumentNullException>());
@@ -31,7 +31,8 @@ namespace MySql.Tests.DataProvider.MariaDb
         public async Task It_logs_and_throws_when_db_read_breaks_down()
         {
             var sut = new MariaDbDataProvider(new RelationalDbOptions("dbo").WithConnectionString("connString").WithTable("logs"));
-            var sutWithCols = new MariaDbDataProvider<MariaDbTestModel>(new RelationalDbOptions("dbo").WithConnectionString("connString").WithTable("logs"));
+            var sutWithCols =
+                new MariaDbDataProvider<MariaDbTestModel>(new RelationalDbOptions("dbo").WithConnectionString("connString").WithTable("logs"));
             var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "10", };
 
             var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));

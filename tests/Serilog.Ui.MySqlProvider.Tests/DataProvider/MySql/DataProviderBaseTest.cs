@@ -19,7 +19,7 @@ namespace MySql.Tests.DataProvider.MySql
         {
             var suts = new List<Func<MySqlDataProvider>>
             {
-                () => new MySqlDataProvider(null),
+                () => new MySqlDataProvider(null!),
             };
 
             suts.ForEach(sut => sut.Should().ThrowExactly<ArgumentNullException>());
