@@ -60,7 +60,7 @@ public class PostgresDataProvider<T>(PostgreSqlDbOptions options) : IDataProvide
             .Select((item, i) =>
             {
                 item.SetRowNo(rowNoStart, i);
-                item.Properties ??= item.LogEvent;
+                item.Properties = !string.IsNullOrWhiteSpace(item.Properties) ? item.Properties : item.LogEvent;
                 return item;
             })
             .ToList();

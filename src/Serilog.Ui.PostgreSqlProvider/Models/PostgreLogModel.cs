@@ -20,7 +20,7 @@ public class PostgresLogModel : LogModel
     public sealed override int RowNo => base.RowNo;
 
     /// <inheritdoc />
-    public sealed override string? Message { get; set; } = string.Empty;
+    public sealed override string? Message { get; set; }
 
     /// <inheritdoc />
     public sealed override DateTime Timestamp { get; set; }

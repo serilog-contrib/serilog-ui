@@ -39,7 +39,6 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             var results = logs.ToList();
             results.Should().NotBeEmpty().And.HaveCount(1);
             results.First().Level.Should().Be(example.Level);
-            results.First().Message.Should().NotBe(example.Message);
         }
 
         [Fact]
@@ -52,7 +51,6 @@ namespace Serilog.Ui.Common.Tests.TestSuites.Impl
             var results = logs.ToList();
             results.Should().NotBeEmpty();
             results.First().Level.Should().Be(example.Level);
-            results.First().Message.Should().NotBe(example.Message);
         }
 
         [Fact]

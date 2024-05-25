@@ -30,12 +30,12 @@ public class LogModel
     /// <summary>
     /// It gets or sets Exception.
     /// </summary>
-    public virtual string? Exception { get; set; } = string.Empty;
+    public virtual string? Exception { get; set; }
 
     /// <summary>
     /// It gets or sets Properties.
     /// </summary>
-    public virtual string? Properties { get; set; } = string.Empty;
+    public virtual string? Properties { get; set; }
 
     /// <summary>
     /// It gets or sets PropertyType.
