@@ -3,14 +3,15 @@
 A simple Serilog log viewer for the following sinks:
 
 - Serilog.Sinks.**MSSqlServer** ([Nuget](https://github.com/serilog/serilog-sinks-mssqlserver))
-- Serilog.Sinks.**MySql** ([Nuget](https://github.com/saleem-mirza/serilog-sinks-mysql)) and Serilog.Sinks.**MariaDB** [Nuget](https://github.com/TeleSoftas/serilog-sinks-mariadb)
-- Serilog.Sinks.**Postgresql** ([Nuget](https://github.com/b00ted/serilog-sinks-postgresql)) and Serilog.Sinks.\*
-  \*Postgresql.Alternative\*\* ([Nuget](https://github.com/serilog-contrib/Serilog.Sinks.Postgresql.Alternative))
+- Serilog.Sinks.**MySql** ([Nuget](https://github.com/TeleSoftas/serilog-sinks-mariadb)) and Serilog.Sinks.**MariaDB
+  ** [Nuget](https://github.com/TeleSoftas/serilog-sinks-mariadb)
+- Serilog.Sinks.**Postgresql** ([Nuget](https://github.com/b00ted/serilog-sinks-postgresql)) and Serilog.Sinks.*
+  *Postgresql.Alternative** ([Nuget](https://github.com/serilog-contrib/Serilog.Sinks.Postgresql.Alternative))
 - Serilog.Sinks.**MongoDB** ([Nuget](https://github.com/serilog/serilog-sinks-mongodb))
 - Serilog.Sinks.**ElasticSearch** ([Nuget](https://github.com/serilog/serilog-sinks-elasticsearch))
 - Serilog.Sinks.**RavenDB** ([Nuget](https://github.com/ravendb/serilog-sinks-ravendb))
 
-# Read the [Wiki :blue_book:](https://github.com/serilog-contrib/serilog-ui/wiki)
+# Read the [Wiki](https://github.com/serilog-contrib/serilog-ui/wiki)
 
 ## Quick Start
 
@@ -73,10 +74,11 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 }
 ```
 
-### For further configuration: [:fast_forward:](https://github.com/serilog-contrib/serilog-ui/wiki/Configure)
+### [For further configuration](https://github.com/serilog-contrib/serilog-ui/wiki/Configure)
 
 ## Issues and Contribution
 
-Everything is welcome! :trophy: See the [contribution guidelines](https://github.com/serilog-contrib/serilog-ui/blob/master/CONTRIBUTING.md) for details.
+Everything is welcome! See
+the [contribution guidelines](https://github.com/serilog-contrib/serilog-ui/blob/master/CONTRIBUTING.md) for details.
 
 For details on running the project, start reading from [Develop](https://github.com/serilog-contrib/serilog-ui/wiki/Develop).
