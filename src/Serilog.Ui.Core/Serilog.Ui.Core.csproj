@@ -3,7 +3,7 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 		<LangVersion>latest</LangVersion>
-		<Version>3.0.0-alpha.1</Version>
+		<Version>3.0.0-alpha.2</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
