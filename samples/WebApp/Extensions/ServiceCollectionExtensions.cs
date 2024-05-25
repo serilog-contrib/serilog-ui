@@ -74,7 +74,8 @@ internal static class ServiceCollectionExtensions
                         // .AddScopedBasicAuthFilter()
                         /* sample provider registration: MongoDb, Fluent interface */
                         .UseMongoDb(opt => opt
-                            .WithConnectionString(configuration.GetConnectionString("MongoDbDefaultConnection"))
+                            .WithConnectionString(configuration.GetConnectionString("MongoDbDefaultConnection")!)
+                            .WithCustomProviderName("MyMongoDbCollection")
                             .WithCollectionName("logs")
                         );
                 }
