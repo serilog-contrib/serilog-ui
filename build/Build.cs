@@ -19,9 +19,9 @@ partial class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Solution] readonly Solution Solution;
+    [Solution] readonly Solution? Solution;
 
-    [GitRepository] readonly GitRepository Repository;
+    [GitRepository] readonly GitRepository? Repository;
 
     static AbsolutePath FrontendWorkingDirectory => RootDirectory / "src/Serilog.Ui.Web";
 
@@ -53,7 +53,7 @@ partial class Build : NukeBuild
 
                 DotNetTasks.DotNetPack(new DotNetPackSettings()
                     .SetDescription(prj.Key)
-                    .SetProject(Solution.GetProject(prj.Project))
+                    .SetProject(Solution!.GetProject(prj.Project))
                     .SetConfiguration(Configuration)
                     .SetConfiguration(Configuration)
                     .EnableNoBuild()

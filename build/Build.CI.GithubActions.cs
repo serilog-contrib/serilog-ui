@@ -51,11 +51,11 @@ using static CustomGithubActionsAttribute;
 )]
 partial class Build
 {
-    [Parameter] [Secret] readonly string SonarToken;
+    [Parameter][Secret] readonly string? SonarToken;
 
-    [Parameter] [Secret] readonly string SonarTokenUi;
+    [Parameter][Secret] readonly string? SonarTokenUi;
 
-    [Parameter] [Secret] readonly string NugetApiKey;
+    [Parameter][Secret] readonly string? NugetApiKey;
 
     [Parameter] readonly string ElasticProvider = string.Empty;
 

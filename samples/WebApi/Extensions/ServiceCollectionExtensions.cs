@@ -129,9 +129,9 @@ internal static class ServiceCollectionExtensions
                         .AddScopedAuthorizeLocalRequestsAuthFilter()
                         /* sample provider registration: Sql Server [multiple], Fluent interface */
                         .UseSqlServer<TestLogModel>(opt =>
-                            opt.WithConnectionString(configuration.GetConnectionString("MsSqlDefaultConnection")).WithTable("logs"))
+                            opt.WithConnectionString(configuration.GetConnectionString("MsSqlDefaultConnection")!).WithTable("logs"))
                         .UseSqlServer(opt =>
-                            opt.WithConnectionString(configuration.GetConnectionString("MsSqlBackupConnection")).WithTable("logsBackup"))
+                            opt.WithConnectionString(configuration.GetConnectionString("MsSqlBackupConnection")!).WithTable("logsBackup"))
                         .UseElasticSample(enableElasticSample);
                 }
             );

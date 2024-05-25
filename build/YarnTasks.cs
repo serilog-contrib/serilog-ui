@@ -39,12 +39,12 @@ public partial class YarnTasks
     ///   <p>For more details, visit the <a href="https://yarnpkg.com/">official website</a>.</p>
     /// </summary>
     public static IReadOnlyCollection<Output> Yarn(ref ArgumentStringHandler arguments,
-        string workingDirectory = null,
-        IReadOnlyDictionary<string, string> environmentVariables = null,
+        string? workingDirectory = null,
+        IReadOnlyDictionary<string, string>? environmentVariables = null,
         int? timeout = null,
         bool? logOutput = null,
         bool? logInvocation = null,
-        Action<OutputType, string> customLogger = null)
+        Action<OutputType, string>? customLogger = null)
     {
         using var process = ProcessTasks.StartProcess(YarnPath,
             arguments, workingDirectory, environmentVariables, timeout, logOutput,
@@ -68,7 +68,7 @@ public partial class YarnTasks
     ///     <li><c>--mode</c> via <see cref="YarnInstallSettings.Mode"/></li>
     ///   </ul>
     /// </remarks>
-    public static IReadOnlyCollection<Output> YarnInstall(YarnInstallSettings toolSettings = null)
+    public static IReadOnlyCollection<Output> YarnInstall(YarnInstallSettings? toolSettings = null)
     {
         toolSettings = toolSettings ?? new YarnInstallSettings();
         using var process = ProcessTasks.StartProcess(toolSettings);
@@ -132,7 +132,7 @@ public partial class YarnTasks
     ///     <li><c>--top-level</c> via <see cref="YarnRunSettings.TopLevel"/></li>
     ///   </ul>
     /// </remarks>
-    public static IReadOnlyCollection<Output> YarnRun(YarnRunSettings toolSettings = null)
+    public static IReadOnlyCollection<Output> YarnRun(YarnRunSettings? toolSettings = null)
     {
         toolSettings = toolSettings ?? new YarnRunSettings();
         using var process = ProcessTasks.StartProcess(toolSettings);
@@ -191,7 +191,7 @@ public partial class YarnTasks
     ///     <li><c>--no-redacted</c> via <see cref="YarnGetConfigSettings.NoRedacted"/></li>
     ///   </ul>
     /// </remarks>
-    public static IReadOnlyCollection<Output> YarnGetConfig(YarnGetConfigSettings toolSettings = null)
+    public static IReadOnlyCollection<Output> YarnGetConfig(YarnGetConfigSettings? toolSettings = null)
     {
         toolSettings = toolSettings ?? new YarnGetConfigSettings();
         using var process = ProcessTasks.StartProcess(toolSettings);
@@ -249,7 +249,7 @@ public partial class YarnTasks
     ///     <li><c>--json</c> via <see cref="YarnSetConfigSettings.Json"/></li>
     ///   </ul>
     /// </remarks>
-    public static IReadOnlyCollection<Output> YarnSetConfig(YarnSetConfigSettings toolSettings = null)
+    public static IReadOnlyCollection<Output> YarnSetConfig(YarnSetConfigSettings? toolSettings = null)
     {
         toolSettings = toolSettings ?? new YarnSetConfigSettings();
         using var process = ProcessTasks.StartProcess(toolSettings);
@@ -381,7 +381,7 @@ public partial class YarnInstallSettings : ToolSettings
     /// <summary>
     ///   If the <c>--mode=<mode></c> option is set, Yarn will change which artifacts are generated.
     /// </summary>
-    public virtual YarnInstallMode Mode { get; internal set; }
+    public virtual YarnInstallMode? Mode { get; internal set; }
 
     protected override Arguments ConfigureProcessArguments(Arguments arguments)
     {
@@ -419,7 +419,7 @@ public partial class YarnRunSettings : ToolSettings
     /// <summary>
     ///   The command to be executed.
     /// </summary>
-    public virtual string Command { get; internal set; }
+    public virtual string? Command { get; internal set; }
 
     /// <summary>
     ///   Arguments passed to the script.
@@ -472,7 +472,7 @@ public partial class YarnGetConfigSettings : ToolSettings
     /// <summary>
     ///   The name of the configuration setting.
     /// </summary>
-    public virtual string Name { get; internal set; }
+    public virtual string? Name { get; internal set; }
 
     /// <summary>
     ///   Format the output as an NDJSON stream.
@@ -517,7 +517,7 @@ public partial class YarnSetConfigSettings : ToolSettings
     /// <summary>
     ///   The name of the configuration setting.
     /// </summary>
-    public virtual string Name { get; internal set; }
+    public virtual string? Name { get; internal set; }
 
     /// <summary>
     ///   Set complex configuration settings to JSON values.
@@ -527,7 +527,7 @@ public partial class YarnSetConfigSettings : ToolSettings
     /// <summary>
     ///   The value of the configuration setting.
     /// </summary>
-    public virtual string Value { get; internal set; }
+    public virtual string? Value { get; internal set; }
 
     /// <summary>
     ///   Update the home configuration instead of the project configuration.

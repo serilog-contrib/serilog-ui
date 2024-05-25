@@ -10,13 +10,13 @@ partial class Build
         packageId: "dotnet-coverage",
         packageExecutable: "dotnet-coverage.dll"
     )]
-    readonly Tool DotnetCoverage;
+    readonly Tool? DotnetCoverage;
 
     [NuGetPackage(
         packageId: "dotnet-reportgenerator-globaltool",
         packageExecutable: "ReportGenerator.dll"
     )]
-    readonly Tool DotnetReport;
+    readonly Tool? DotnetReport;
 
     Target Backend_Test => targetDefinition => targetDefinition
         .DependsOn(Backend_Compile)
