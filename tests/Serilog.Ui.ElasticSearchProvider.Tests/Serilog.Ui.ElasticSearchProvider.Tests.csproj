@@ -1,31 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<IsPackable>false</IsPackable>
-		<AssemblyName>ElasticSearch.Tests</AssemblyName>
-		<RootNamespace>ElasticSearch.Tests</RootNamespace>
-	</PropertyGroup>
-	
-	<ItemGroup>
-		<PackageReference Include="Elastic.Elasticsearch.Xunit" Version="0.4.3" />
-		<PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
-		<PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.4.1" />
-	</ItemGroup>
+    <PropertyGroup>
+        <AssemblyName>ElasticSearch.Tests</AssemblyName>
+        <RootNamespace>ElasticSearch.Tests</RootNamespace>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<Content Include="./../Serilog.Ui.Common.Tests/xunit.runner.json">
-			<Link>%(Filename)%(Extension)</Link>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Elastic.Elasticsearch.Xunit" Version="0.5.0" />
+        <PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+        <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="10.0.0" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\..\src\Serilog.Ui.ElasticSearchProvider\Serilog.Ui.ElasticSearchProvider.csproj" />
-		<ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj" />
-		<ProjectReference Include="..\Serilog.Ui.Common.Tests\Serilog.Ui.Common.Tests.csproj" />
-	</ItemGroup>
+    <ItemGroup>
+        <Content Include="./../Serilog.Ui.Common.Tests/xunit.runner.json">
+            <Link>%(Filename)%(Extension)</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Serilog.Ui.ElasticSearchProvider\Serilog.Ui.ElasticSearchProvider.csproj" />
+        <ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj" />
+        <ProjectReference Include="..\Serilog.Ui.Common.Tests\Serilog.Ui.Common.Tests.csproj" />
+    </ItemGroup>
 </Project>

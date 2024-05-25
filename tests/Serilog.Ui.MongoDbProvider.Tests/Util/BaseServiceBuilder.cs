@@ -8,18 +8,18 @@ namespace MongoDb.Tests.Util
 {
     public class BaseServiceBuilder
     {
-        internal IMongoRunner _runner;
-        internal MongoDbOptions _options;
-        internal IMongoClient _client;
-        internal IMongoDatabase _database;
-        internal IDataProvider? _sut;
-        internal LogModelPropsCollector? _collector;
+        internal readonly IMongoRunner Runner;
+        internal readonly MongoDbOptions Options;
+        internal readonly IMongoClient Client;
+        internal readonly IMongoDatabase Database;
+        internal IDataProvider? Sut;
+        internal LogModelPropsCollector? Collector;
 
         public BaseServiceBuilder(MongoDbOptions options)
         {
-            _options = options;
-            (_runner, _client) = IntegrationDbGeneration.Generate(options);
-            _database = _client.GetDatabase(options.DatabaseName);
+            Options = options;
+            (Runner, Client) = IntegrationDbGeneration.Generate(options);
+            Database = Client.GetDatabase(options.DatabaseName);
         }
     }
 }

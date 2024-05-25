@@ -1,113 +1,108 @@
 ﻿using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Models;
+using Serilog.Ui.RavenDbProvider.Extensions;
 using Serilog.Ui.RavenDbProvider.Models;
+using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.RavenDbProvider;
 
 /// <inheritdoc/>
-public class RavenDbDataProvider : IDataProvider
+public class RavenDbDataProvider(IDocumentStore documentStore, RavenDbOptions options) : IDataProvider
 {
-    private readonly string _collectionName;
-    private readonly IDocumentStore _documentStore;
+    private readonly IDocumentStore _documentStore = documentStore ?? throw new ArgumentNullException(nameof(documentStore));
 
-    public RavenDbDataProvider(IDocumentStore documentStore, string collectionName)
-    {
-        _documentStore = documentStore;
-        _collectionName = collectionName;
-    }
+    private readonly RavenDbOptions _options = options ?? throw new ArgumentNullException(nameof(options));
 
     /// <inheritdoc/>
-    public string Name => string.Join(".", "RavenDB");
+    public string Name => _options.ProviderName;
 
     /// <inheritdoc/>
-    public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
-        int page,
-        int count,
-        string? level = null,
-        string? searchCriteria = null,
-        DateTime? startDate = null,
-        DateTime? endDate = null
-    )
+    public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
     {
-        if (startDate != null && startDate.Value.Kind != DateTimeKind.Utc)
-        {
-            startDate = DateTime.SpecifyKind(startDate.Value, DateTimeKind.Utc);
-        }
+        queryParams.ToUtcDates();
 
-        if (endDate != null && endDate.Value.Kind != DateTimeKind.Utc)
-        {
-            endDate = DateTime.SpecifyKind(endDate.Value, DateTimeKind.Utc);
-        }
-
-        var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
-        var logCountTask = CountLogsAsync(level, searchCriteria, startDate, endDate);
+        var logsTask = GetLogsAsync(queryParams, cancellationToken);
+        var logCountTask = CountLogsAsync(queryParams, cancellationToken);
         await Task.WhenAll(logsTask, logCountTask);
 
         return (await logsTask, await logCountTask);
     }
 
-    private async Task<IEnumerable<LogModel>> GetLogsAsync(
-        int page,
-        int count,
-        string? level,
-        string? searchCriteria,
-        DateTime? startDate,
-        DateTime? endDate)
+    private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
     {
         using var session = _documentStore.OpenAsyncSession();
-        var query = session.Advanced.AsyncDocumentQuery<RavenDbLogModel>(collectionName: _collectionName).ToQueryable();
+        var query = session.Advanced.AsyncDocumentQuery<RavenDbLogModel>(collectionName: _options.CollectionName).ToQueryable();
 
-        GenerateWhereClause(ref query, level, searchCriteria, startDate, endDate);
+        GenerateWhereClause(ref query, queryParams);
+        GenerateSortClause(ref query, queryParams.SortOn, queryParams.SortBy);
+        var skipStart = queryParams.Count * queryParams.Page;
 
-        var logs = await query.Skip(count * page).Take(count).ToListAsync();
+        var logs = await query.Skip(skipStart).Take(queryParams.Count).ToListAsync(cancellationToken);
 
-        var index = 1;
-
-        return logs.Select(log => log.ToLogModel((page * count) + index++)).ToList();
+        return logs.Select((log, index) => log.ToLogModel(skipStart, index)).ToList();
     }
 
-    private async Task<int> CountLogsAsync(
-        string? level,
-        string? searchCriteria,
-        DateTime? startDate = null,
-        DateTime? endDate = null)
+    private async Task<int> CountLogsAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
     {
         using var session = _documentStore.OpenAsyncSession();
-        var query = session.Advanced.AsyncDocumentQuery<RavenDbLogModel>(collectionName: _collectionName).ToQueryable();
+        var query = session.Advanced.AsyncDocumentQuery<RavenDbLogModel>(collectionName: _options.CollectionName).ToQueryable();
 
-        GenerateWhereClause(ref query, level, searchCriteria, startDate, endDate);
+        GenerateWhereClause(ref query, queryParams);
 
-        return await query.CountAsync();
+        return await query.CountAsync(token: cancellationToken);
     }
 
-    private void GenerateWhereClause(
+    private static void GenerateWhereClause(
         ref IRavenQueryable<RavenDbLogModel> query,
-        string? level,
-        string? searchCriteria,
-        DateTime? startDate,
-        DateTime? endDate)
+        FetchLogsQuery queryParams)
     {
-        if (!string.IsNullOrEmpty(level))
+        if (!string.IsNullOrWhiteSpace(queryParams.Level))
         {
-            query = query.Where(q => q.Level == level);
+            query = query.Where(q => q.Level == queryParams.Level);
         }
 
-        if (!string.IsNullOrEmpty(searchCriteria))
+        if (!string.IsNullOrWhiteSpace(queryParams.SearchCriteria))
         {
             query = query
-                .Search(q => q.RenderedMessage, searchCriteria)
-                .Search(q => q.Exception, searchCriteria);
+                .Search(q => q.RenderedMessage, queryParams.SearchCriteria)
+                .Search(q => q.Exception, queryParams.SearchCriteria);
         }
 
-        if (startDate != null)
+        if (queryParams.StartDate != null)
         {
-            query = query.Where(q => q.Timestamp >= startDate.Value);
+            query = query.Where(q => q.Timestamp >= queryParams.StartDate.Value);
         }
 
-        if (endDate != null)
+        if (queryParams.EndDate != null)
         {
-            query = query.Where(q => q.Timestamp <= endDate.Value);
+            query = query.Where(q => q.Timestamp <= queryParams.EndDate.Value);
         }
+    }
+
+    private static void GenerateSortClause(
+        ref IRavenQueryable<RavenDbLogModel> query,
+        SortProperty sortOn,
+        SortDirection sortBy
+    )
+    {
+        if (sortBy == SortDirection.Asc)
+        {
+            query = sortOn switch
+            {
+                SortProperty.Level => query.OrderBy(q => q.Level),
+                SortProperty.Message => query.OrderBy(q => q.RenderedMessage),
+                _ => query.OrderBy(q => q.Timestamp),
+            };
+            return;
+        }
+
+        query = sortOn switch
+        {
+            SortProperty.Level => query.OrderByDescending(q => q.Level),
+            SortProperty.Message => query.OrderByDescending(q => q.RenderedMessage),
+            _ => query.OrderByDescending(q => q.Timestamp),
+        };
     }
 }

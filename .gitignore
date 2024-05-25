@@ -354,6 +354,8 @@ nuget.exe
 coverage.xml
 coverage/
 
+**/eslint-results.html
+
 # Nuke working files
 .nuke/temp/
 

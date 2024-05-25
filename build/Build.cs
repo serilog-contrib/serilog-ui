@@ -1,11 +1,11 @@
-using Nuke.Common;
-using Nuke.Common.IO;
-using Nuke.Common.Tools.DotNet;
-using Nuke.Common.ProjectModel;
-using Nuke.Common.Git;
-using GlobExpressions;
-using Nuke.Common.Utilities.Collections;
 using System.Linq;
+using Nuke.Common;
+using Nuke.Common.Git;
+using Nuke.Common.IO;
+using Nuke.Common.ProjectModel;
+using Nuke.Common.Tools.DotNet;
+using Nuke.Common.Utilities.Collections;
+using Serilog;
 
 partial class Build : NukeBuild
 {
@@ -19,37 +19,41 @@ partial class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Solution] readonly Solution Solution;
+    [Solution] readonly Solution? Solution;
 
-    [GitRepository] readonly GitRepository Repository;
+    [GitRepository] readonly GitRepository? Repository;
 
     static AbsolutePath FrontendWorkingDirectory => RootDirectory / "src/Serilog.Ui.Web";
+
     static AbsolutePath OutputDirectory => RootDirectory / "artifacts";
+
     static AbsolutePath SourceDirectory => RootDirectory / "src";
+
     static AbsolutePath TestsDirectory => RootDirectory / "tests";
+
     bool IsReleaseOrMasterBranch => Repository.IsOnReleaseBranch() || Repository.IsOnMainOrMasterBranch();
 
-    Target Clean => _ => _
+    Target Clean => targetDefinition => targetDefinition
         .DependsOn(Backend_Clean, Frontend_Clean)
         .Executes(() =>
         {
-            Serilog.Log.Information("--- Clean operations completed ---");
+            Log.Information("--- Clean operations completed ---");
         });
 
-    Target Pack => _ => _
+    Target Pack => targetDefinition => targetDefinition
         .DependsOn(Backend_SonarScan_End, Frontend_Tests_Ci)
         .OnlyWhenStatic(() => IsReleaseOrMasterBranch)
         .Executes(() =>
         {
-            Serilog.Log.Information("Received infos: {@Key}", ReleaseInfos());
+            Log.Information("Received infos: {@Key}", ReleaseInfos());
 
             foreach (var prj in ReleaseInfos().Where(prj => prj.Publish()))
             {
-                Serilog.Log.Information("Packing prj: {@Key}", prj.Key);
+                Log.Information("Packing prj: {@Key}", prj.Key);
 
                 DotNetTasks.DotNetPack(new DotNetPackSettings()
                     .SetDescription(prj.Key)
-                    .SetProject(Solution.GetProject(prj.Project))
+                    .SetProject(Solution!.GetProject(prj.Project))
                     .SetConfiguration(Configuration)
                     .SetConfiguration(Configuration)
                     .EnableNoBuild()
@@ -58,23 +62,22 @@ partial class Build : NukeBuild
             }
         });
 
-    Target Publish => _ => _
+    Target Publish => targetDefinition => targetDefinition
         .DependsOn(Pack)
         .OnlyWhenStatic(() => IsReleaseOrMasterBranch)
         .Executes(() =>
         {
             var localOutput = RootDirectory / "nugets-output";
-            if (IsLocalBuild) AbsolutePathExtensions.CreateDirectory(localOutput);
+            if (IsLocalBuild) localOutput.CreateDirectory();
 
             OutputDirectory.GlobFiles("*.nupkg")
-            .ForEach(filePath =>
-            {
-                DotNetTasks.DotNetNuGetPush(settings => settings
-                    .SetTargetPath(filePath)
-                    .SetSource(IsLocalBuild ?
-                        localOutput : "https://api.nuget.org/v3/index.json")
+                .ForEach(filePath =>
+                {
+                    DotNetTasks.DotNetNuGetPush(settings => settings
+                        .SetTargetPath(filePath)
+                        .SetSource(IsLocalBuild ? localOutput : "https://api.nuget.org/v3/index.json")
                         .SetApiKey(NugetApiKey)
                     );
-            });
+                });
         });
 }

@@ -1,98 +1,84 @@
-﻿using Dapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Dapper;
 using Npgsql;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Models;
+using Serilog.Ui.PostgreSqlProvider.Extensions;
 using Serilog.Ui.PostgreSqlProvider.Models;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Serilog.Ui.PostgreSqlProvider;
 
 /// <inheritdoc/>
-public class PostgresDataProvider(PostgreSqlDbOptions options) : IDataProvider
+public class PostgresDataProvider(PostgreSqlDbOptions options) : PostgresDataProvider<PostgresLogModel>(options);
+
+/// <inheritdoc />
+public class PostgresDataProvider<T>(PostgreSqlDbOptions options) : IDataProvider
+    where T : PostgresLogModel
 {
-    /// <inheritdoc/>
-    public string Name => options.ToDataProviderName("NPGSQL");
+    internal const string ProviderName = "NPGSQL";
+
+    private readonly PostgreSqlDbOptions _options = options ?? throw new ArgumentNullException(nameof(options));
 
     /// <inheritdoc/>
-    public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
-        int page,
-        int count,
-        string level = null,
-        string searchCriteria = null,
-        DateTime? startDate = null,
-        DateTime? endDate = null
-    )
+    public string Name => _options.GetProviderName(ProviderName);
+
+    /// <inheritdoc/>
+    public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
     {
-        if (startDate != null && startDate.Value.Kind != DateTimeKind.Utc)
-        {
-            startDate = DateTime.SpecifyKind(startDate.Value, DateTimeKind.Utc);
-        }
+        queryParams.ToUtcDates();
 
-        if (endDate != null && endDate.Value.Kind != DateTimeKind.Utc)
-        {
-            endDate = DateTime.SpecifyKind(endDate.Value, DateTimeKind.Utc);
-        }
-
-        var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
-        var logCountTask = CountLogsAsync(level, searchCriteria, startDate, endDate);
+        var logsTask = GetLogsAsync(queryParams);
+        var logCountTask = CountLogsAsync(queryParams);
         await Task.WhenAll(logsTask, logCountTask);
 
         return (await logsTask, await logCountTask);
     }
 
-    private async Task<IEnumerable<LogModel>> GetLogsAsync(
-        int page,
-        int count,
-        string level,
-        string searchCriteria,
-        DateTime? startDate,
-        DateTime? endDate)
+    private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
     {
-        var query = QueryBuilder.BuildFetchLogsQuery(options.Schema, options.TableName, level, searchCriteria, ref startDate, ref endDate);
+        var query = options.ColumnNames.BuildFetchLogsQuery<T>(_options.Schema, _options.TableName, queryParams);
+        var rowNoStart = queryParams.Page * queryParams.Count;
 
-        using IDbConnection connection = new NpgsqlConnection(options.ConnectionString);
+        await using var connection = new NpgsqlConnection(_options.ConnectionString);
 
-        var logs = (await connection.QueryAsync<PostgresLogModel>(query,
+        var logs = await connection.QueryAsync<T>(query,
             new
             {
-                Offset = page * count,
-                Count = count,
-                // TODO: this level could be a text column, to be passed as parameter: https://github.com/b00ted/serilog-sinks-postgresql/blob/ce73c7423383d91ddc3823fe350c1c71fc23bab9/Serilog.Sinks.PostgreSQL/Sinks/PostgreSQL/ColumnWriters.cs#L97
-                Level = LogLevelConverter.GetLevelValue(level),
-                Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
-                StartDate = startDate,
-                EndDate = endDate
-            })).ToList();
+                Offset = rowNoStart,
+                queryParams.Count,
+                Level = LogLevelConverter.GetLevelValue(queryParams.Level),
+                Search = queryParams.SearchCriteria != null ? "%" + queryParams.SearchCriteria + "%" : null,
+                queryParams.StartDate,
+                queryParams.EndDate
+            });
 
-        var index = 1;
-        foreach (var log in logs)
-        {
-            log.RowNo = (page * count) + index++;
-        }
-
-        return logs;
+        return logs
+            .Select((item, i) =>
+            {
+                item.SetRowNo(rowNoStart, i);
+                item.Properties = !string.IsNullOrWhiteSpace(item.Properties) ? item.Properties : item.LogEvent;
+                return item;
+            })
+            .ToList();
     }
 
-    private async Task<int> CountLogsAsync(
-        string level,
-        string searchCriteria,
-        DateTime? startDate = null,
-        DateTime? endDate = null)
+    private async Task<int> CountLogsAsync(FetchLogsQuery queryParams)
     {
-        var query = QueryBuilder.BuildCountLogsQuery(options.Schema, options.TableName, level, searchCriteria, ref startDate, ref endDate);
+        var query = options.ColumnNames.BuildCountLogsQuery<T>(_options.Schema, _options.TableName, queryParams);
 
-        using IDbConnection connection = new NpgsqlConnection(options.ConnectionString);
+        await using var connection = new NpgsqlConnection(_options.ConnectionString);
 
         return await connection.ExecuteScalarAsync<int>(query,
             new
             {
-                Level = LogLevelConverter.GetLevelValue(level),
-                Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
-                StartDate = startDate,
-                EndDate = endDate
+                Level = LogLevelConverter.GetLevelValue(queryParams.Level),
+                Search = queryParams.SearchCriteria != null ? "%" + queryParams.SearchCriteria + "%" : null,
+                queryParams.StartDate,
+                queryParams.EndDate
             });
     }
 }

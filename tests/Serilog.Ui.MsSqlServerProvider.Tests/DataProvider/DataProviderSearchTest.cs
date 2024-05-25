@@ -1,38 +1,41 @@
-using MsSql.Tests.Util;
-using Serilog.Ui.MsSqlServerProvider;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.Extensions.Primitives;
+using MsSql.Tests.Util;
+using Serilog.Ui.Common.Tests.TestSuites.Impl;
+using Serilog.Ui.Core.Models;
 using Xunit;
 
-namespace MsSql.Tests.DataProvider
+namespace MsSql.Tests.DataProvider;
+
+[Collection(nameof(MsSqlServerTestProvider))]
+[Trait("Integration-Search", "MsSql")]
+public class DataProviderSearchTest(MsSqlServerTestProvider instance) : IntegrationSearchTests<MsSqlServerTestProvider>(instance);
+
+[Collection(nameof(MsSqlServerAdditionalColsTestProvider))]
+[Trait("Integration-Search-AdditionalColumns", "MsSql")]
+public class DataProviderSearchAdditionalColsTest(MsSqlServerAdditionalColsTestProvider instance)
+    : IntegrationSearchTests<MsSqlServerAdditionalColsTestProvider>(instance)
 {
-    [Collection(nameof(SqlServerDataProvider))]
-    [Trait("Integration-Search", "MsSql")]
-    public class DataProviderSearchTest : IntegrationSearchTests<MsSqlServerTestProvider>
+    [Fact]
+    public async Task It_finds_data_with_expected_additional_columns()
     {
-        public DataProviderSearchTest(MsSqlServerTestProvider instance) : base(instance) { }
+        var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "1000", ["search"] = "" };
+        var res = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
-        public override Task It_finds_all_data_with_default_search()
-            => base.It_finds_all_data_with_default_search();
+        res.Item1.Should().HaveCount(LogCollector.DataSet.Count);
+        var sut = res.Item1.Cast<SqlServerTestModel>().ToArray();
+        sut.Should().AllSatisfy(it =>
+        {
+            it.Exception.Should().BeNullOrWhiteSpace();
+            it.EnvironmentName.Should().NotBeNullOrWhiteSpace();
+            it.EnvironmentUserName.Should().NotBeNullOrWhiteSpace();
+        });
 
-        public override Task It_finds_data_with_all_filters()
-            => base.It_finds_data_with_all_filters();
-
-        public override Task It_finds_only_data_emitted_after_date()
-            => base.It_finds_only_data_emitted_after_date();
-
-        public override Task It_finds_only_data_emitted_before_date()
-            => base.It_finds_only_data_emitted_before_date();
-
-        public override Task It_finds_only_data_emitted_in_dates_range()
-            => base.It_finds_only_data_emitted_in_dates_range();
-
-        public override Task It_finds_only_data_with_specific_level()
-            => base.It_finds_only_data_with_specific_level();
-
-        public override Task It_finds_only_data_with_specific_message_content()
-            => base.It_finds_only_data_with_specific_message_content();
-
-        public override Task It_finds_same_data_on_same_repeated_search()
-            => base.It_finds_same_data_on_same_repeated_search();
+        var warningItems = sut.Where(e => e.Level == "Warning").ToList();
+        warningItems.First().SampleBool.Should().BeTrue();
+        warningItems.First().SampleDate.Should().HaveDay(15).And.HaveYear(2022).And.HaveMonth(01);
     }
 }

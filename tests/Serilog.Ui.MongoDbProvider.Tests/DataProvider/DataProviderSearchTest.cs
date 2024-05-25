@@ -1,39 +1,43 @@
-﻿using MongoDb.Tests.Util;
-using MsSql.Tests.DataProvider;
-using Serilog.Ui.MongoDbProvider;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.Extensions.Primitives;
+using MongoDb.Tests.Util;
+using Serilog.Ui.Common.Tests.TestSuites.Impl;
+using Serilog.Ui.Core.Models;
+using Serilog.Ui.MongoDbProvider;
 using Xunit;
 
 namespace MongoDb.Tests.DataProvider
 {
     [Collection(nameof(MongoDbDataProvider))]
     [Trait("Integration-Search", "MongoDb")]
-    public class DataProviderSearchTest : IntegrationSearchTests<BaseIntegrationTest>
+    public class DataProviderSearchTest(BaseIntegrationTest instance) : IntegrationSearchTests<BaseIntegrationTest>(instance)
     {
-        public DataProviderSearchTest(BaseIntegrationTest instance) : base(instance) { }
+        public override async Task It_finds_only_data_emitted_in_dates_range()
+        {
+            var firstTimeStamp = LogCollector.TimesSamples.First().AddSeconds(50);
+            var lastTimeStamp = LogCollector.TimesSamples.Last().AddSeconds(50);
+            var inTimeStampCount = LogCollector.DataSet
+                .Count(p => p.Timestamp >= firstTimeStamp && p.Timestamp < lastTimeStamp);
+            var query = new Dictionary<string, StringValues>
+            {
+                ["page"] = "1",
+                ["count"] = "1000",
+                ["startDate"] = firstTimeStamp.ToString("O"),
+                ["endDate"] = lastTimeStamp.ToString("O")
+            };
 
-        public override Task It_finds_all_data_with_default_search()
-            => base.It_finds_all_data_with_default_search();
+            var (logs, count) = await Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
-        public override Task It_finds_data_with_all_filters()
-            => It_finds_data_with_all_filters_by_utc(true, false);
-
-        public override Task It_finds_only_data_emitted_after_date()
-            => It_finds_only_data_emitted_after_date_by_utc(true);
-
-        public override Task It_finds_only_data_emitted_before_date()
-            => It_finds_only_data_emitted_before_date_by_utc(true);
-
-        public override Task It_finds_only_data_emitted_in_dates_range()
-            => It_finds_only_data_emitted_in_dates_range_by_utc(true);
-
-        public override Task It_finds_only_data_with_specific_level()
-            => base.It_finds_only_data_with_specific_level();
-
-        public override Task It_finds_only_data_with_specific_message_content()
-            => base.It_finds_only_data_with_specific_message_content();
-
-        public override Task It_finds_same_data_on_same_repeated_search()
-            => base.It_finds_same_data_on_same_repeated_search();
+            var enumerateLogs = logs.ToList();
+            enumerateLogs.Should().NotBeEmpty();
+            enumerateLogs.Should().HaveCount(inTimeStampCount);
+            count.Should().Be(inTimeStampCount);
+            enumerateLogs.Should().OnlyContain(p =>
+                p.Timestamp.ToUniversalTime() >= firstTimeStamp &&
+                p.Timestamp.ToUniversalTime() < lastTimeStamp);
+        }
     }
 }

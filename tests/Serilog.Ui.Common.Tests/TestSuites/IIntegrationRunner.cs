@@ -1,6 +1,6 @@
-﻿using Serilog.Ui.Common.Tests.DataSamples;
+﻿using System;
+using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Core;
-using System;
 using Xunit;
 
 namespace Serilog.Ui.Common.Tests.TestSuites

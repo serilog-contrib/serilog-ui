@@ -1,8 +1,10 @@
-﻿namespace Serilog.Ui.Web.Endpoints
+﻿using Serilog.Ui.Web.Models;
+
+namespace Serilog.Ui.Web.Endpoints
 {
     public interface ISerilogUiOptionsSetter
     {
-        UiOptions Options { get; }
+        UiOptions? Options { get; }
 
         void SetOptions(UiOptions options);
     }
