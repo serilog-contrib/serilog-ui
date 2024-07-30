@@ -64,6 +64,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.RavenDbProvider"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.RavenDbProvider.Tests", "tests\Serilog.Ui.RavenDbProvider.Tests\Serilog.Ui.RavenDbProvider.Tests.csproj", "{B785845B-D858-4562-B224-67468B4FEE41}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.SqliteDataProvider", "src\Serilog.Ui.SqliteDataProvider\Serilog.Ui.SqliteDataProvider.csproj", "{A23F4275-DB47-40C9-96CE-1116E20F5EB7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.SqliteProvider.Tests", "tests\Serilog.Ui.SqliteProvider.Tests\Serilog.Ui.SqliteProvider.Tests.csproj", "{C9CBABEA-622C-4E11-9D68-816F685E8E0D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -140,6 +144,14 @@ Global
 		{B785845B-D858-4562-B224-67468B4FEE41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B785845B-D858-4562-B224-67468B4FEE41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B785845B-D858-4562-B224-67468B4FEE41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A23F4275-DB47-40C9-96CE-1116E20F5EB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A23F4275-DB47-40C9-96CE-1116E20F5EB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A23F4275-DB47-40C9-96CE-1116E20F5EB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A23F4275-DB47-40C9-96CE-1116E20F5EB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9CBABEA-622C-4E11-9D68-816F685E8E0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9CBABEA-622C-4E11-9D68-816F685E8E0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9CBABEA-622C-4E11-9D68-816F685E8E0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9CBABEA-622C-4E11-9D68-816F685E8E0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -164,6 +176,8 @@ Global
 		{DCB452AD-2E0E-4D6A-B46D-72D0AF247381} = {83E91BE7-19B3-4AE0-992C-9DFF30FC409E}
 		{8973E5F5-FD9B-41B1-B2D6-8B281754C443} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
 		{B785845B-D858-4562-B224-67468B4FEE41} = {75F9223B-15F2-4465-B01D-2A5A49FCD000}
+		{A23F4275-DB47-40C9-96CE-1116E20F5EB7} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
+		{C9CBABEA-622C-4E11-9D68-816F685E8E0D} = {75F9223B-15F2-4465-B01D-2A5A49FCD000}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {88374732-FEAD-4375-9CF1-75331A37CF07}
