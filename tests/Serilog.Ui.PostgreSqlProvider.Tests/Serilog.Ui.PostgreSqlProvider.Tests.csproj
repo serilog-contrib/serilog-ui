@@ -6,8 +6,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Serilog.Sinks.Postgresql.Alternative" Version="4.0.4"/>
-        <PackageReference Include="Testcontainers.PostgreSql" Version="3.8.0"/>
+        <PackageReference Include="Serilog.Sinks.Postgresql.Alternative" Version="4.1.1"/>
+        <PackageReference Include="Testcontainers.PostgreSql" Version="3.9.0"/>
     </ItemGroup>
 
     <ItemGroup>

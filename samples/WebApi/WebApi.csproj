@@ -7,16 +7,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.5"/>
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.7"/>
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1"/>
         <PackageReference Include="Serilog.Enrichers.Environment" Version="2.3.0"/>
         <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0"/>
         <PackageReference Include="Serilog.Sinks.Map" Version="1.0.2"/>
         <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="6.6.0"/>
         <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="10.0.0"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
-        <PackageReference Include="Testcontainers" Version="3.8.0"/>
-        <PackageReference Include="Testcontainers.MsSql" Version="3.8.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0"/>
+        <PackageReference Include="Testcontainers" Version="3.9.0"/>
+        <PackageReference Include="Testcontainers.MsSql" Version="3.9.0"/>
     </ItemGroup>
 
     <!-- Serilog UI packages  -->
