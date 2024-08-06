@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.Web.Endpoints;
 using Serilog.Ui.Web.Models;
 using Xunit;

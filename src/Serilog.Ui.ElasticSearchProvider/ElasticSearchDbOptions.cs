@@ -1,6 +1,6 @@
 ﻿using System;
 using Ardalis.GuardClauses;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Models.Options;
 
 namespace Serilog.Ui.ElasticSearchProvider
 {

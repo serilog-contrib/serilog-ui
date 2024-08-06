@@ -1,7 +1,7 @@
 ﻿using System;
 using EphemeralMongo;
 using MongoDB.Driver;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.MongoDbProvider;
 
 namespace MongoDb.Tests.Util

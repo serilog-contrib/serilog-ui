@@ -5,7 +5,7 @@ using ElasticSearch.Tests.Util;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.ElasticSearchProvider;
 using Serilog.Ui.ElasticSearchProvider.Extensions;
 using Serilog.Ui.Web.Extensions;

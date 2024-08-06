@@ -1,5 +1,5 @@
 ﻿using System;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Models;
 
 namespace Serilog.Ui.Core.Attributes;
 

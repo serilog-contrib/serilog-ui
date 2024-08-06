@@ -1,4 +1,4 @@
-﻿using Serilog.Ui.Core.OptionsBuilder;
+﻿using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.MySqlProvider.Shared;
 
 namespace Serilog.Ui.MySqlProvider;

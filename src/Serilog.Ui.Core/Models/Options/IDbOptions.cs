@@ -1,4 +1,4 @@
-﻿namespace Serilog.Ui.Core.OptionsBuilder;
+﻿namespace Serilog.Ui.Core.Models.Options;
 
 /// <summary>
 /// IDbOptions interface.

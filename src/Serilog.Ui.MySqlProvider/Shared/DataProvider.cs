@@ -10,7 +10,7 @@ using MySqlConnector;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Attributes;
 using Serilog.Ui.Core.Models;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Models.Options;
 
 namespace Serilog.Ui.MySqlProvider.Shared;
 

@@ -1,6 +1,8 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Common.Tests.FakeObjectModels;
+using Serilog.Ui.Core.Models;
+using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.Core.OptionsBuilder;
 using Xunit;
 

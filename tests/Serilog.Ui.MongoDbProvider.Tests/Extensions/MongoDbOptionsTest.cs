@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using MongoDB.Driver;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.MongoDbProvider;
 using Xunit;
 

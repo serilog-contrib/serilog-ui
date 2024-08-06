@@ -1,7 +1,7 @@
 using System;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.Web.Extensions;
 using Xunit;
 
@@ -35,5 +35,4 @@ public class ServiceCollectionExtensionsTest
         // Assert
         act.Should().ThrowExactly<InvalidOperationException>().WithMessage("AddSerilogUi can be invoked one time per service registration.");
     }
-
 }

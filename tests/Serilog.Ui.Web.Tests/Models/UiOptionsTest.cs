@@ -1,6 +1,6 @@
 ﻿using System;
 using FluentAssertions;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.Web.Models;
 using Xunit;
 

@@ -7,8 +7,8 @@ using MongoDB.Driver;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using Serilog.Ui.Common.Tests.TestSuites;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models;
-using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.MongoDbProvider;
 using Xunit;
 

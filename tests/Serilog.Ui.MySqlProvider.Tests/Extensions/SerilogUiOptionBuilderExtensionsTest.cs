@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MySql.Tests.Util;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Extensions;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Models;
 using Serilog.Ui.MySqlProvider;
 using Serilog.Ui.MySqlProvider.Extensions;
 using Serilog.Ui.Web.Extensions;

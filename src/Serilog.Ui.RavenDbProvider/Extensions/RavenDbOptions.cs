@@ -1,6 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using Raven.Client.Documents;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Models.Options;
 
 namespace Serilog.Ui.RavenDbProvider.Extensions;
 

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using NSubstitute.ClearExtensions;
 using Serilog.Ui.Core.Interfaces;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.Web.Authorization;
 using Serilog.Ui.Web.Endpoints;
 using Serilog.Ui.Web.Models;
@@ -148,7 +148,7 @@ public class SerilogUiDecoratorsTest
         _contextAccessor.HttpContext.Returns(context);
 
         _appRoutesMock.BlockHomeAccess.Should().BeFalse();
-        
+
         await _sutRoutesDecorator.GetHomeAsync();
 
         // Assert

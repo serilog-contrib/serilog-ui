@@ -7,7 +7,7 @@ using MySql.Tests.Util;
 using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.MySqlProvider;
 using Xunit;
 

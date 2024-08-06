@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core.Interfaces;
 using Serilog.Ui.Core.Models;
+using Serilog.Ui.Core.Models.Options;
 
 namespace Serilog.Ui.Core.OptionsBuilder;
 
@@ -12,7 +13,7 @@ namespace Serilog.Ui.Core.OptionsBuilder;
 public class SerilogUiOptionsBuilder(IServiceCollection services) : ISerilogUiOptionsBuilder
 {
     private readonly ProvidersOptions _providersOptions = new();
-    
+
     /// <inheritdoc />
     public IServiceCollection Services { get; } = services;
 

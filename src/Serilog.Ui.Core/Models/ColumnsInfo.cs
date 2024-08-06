@@ -1,44 +1,9 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Serilog.Ui.Core.Attributes;
-using Serilog.Ui.Core.Models;
 
-namespace Serilog.Ui.Core.OptionsBuilder;
-
-/// <summary>
-/// ProvidersOptions class.
-/// </summary>
-public class ProvidersOptions
-{
-    private readonly ConcurrentDictionary<string, ColumnsInfo> _additionalColumns = new();
-
-    private readonly HashSet<string> _disabledSortProviderNames = [];
-
-    /// <summary>
-    /// Gets the AdditionalColumns.
-    /// </summary>
-    /// <returns></returns>
-    public ReadOnlyDictionary<string, ColumnsInfo> AdditionalColumns => new(_additionalColumns);
-
-    /// <summary>
-    /// Gets the DisabledSortProviderNames.
-    /// </summary>
-    public IEnumerable<string> DisabledSortProviderNames => _disabledSortProviderNames.ToList().AsReadOnly();
-
-    internal void RegisterType<T>(string providerKey)
-        where T : LogModel
-    {
-        _additionalColumns.TryAdd(providerKey, ColumnsInfo.Create<T>());
-    }
-
-    internal void RegisterDisabledSortName(string name)
-    {
-        _disabledSortProviderNames.Add(name);
-    }
-}
+namespace Serilog.Ui.Core.Models;
 
 /// <summary>
 /// ColumnsInfo.
@@ -105,25 +70,4 @@ public class ColumnsInfo
             yield return nameof(LogModel.Exception);
         }
     }
-}
-
-/// <summary>
-/// AdditionalColumn class.
-/// </summary>
-public class AdditionalColumn
-{
-    /// <summary>
-    /// Gets or sets the Name.
-    /// </summary>
-    public string Name { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the TypeName.
-    /// </summary>
-    public string TypeName { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the CodeType.
-    /// </summary>
-    public CodeType? CodeType { get; set; }
 }

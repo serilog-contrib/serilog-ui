@@ -1,11 +1,11 @@
 ﻿using System;
 using Ardalis.GuardClauses;
 using MongoDB.Driver;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Models.Options;
 
 namespace Serilog.Ui.MongoDbProvider
 {
-    public class MongoDbOptions : BaseDbOptions
+    public class MongoDbOptions : DbOptionsBase
     {
         /// <summary>
         /// Optional parameter. It must be set, if the database name is not found in the connection string.

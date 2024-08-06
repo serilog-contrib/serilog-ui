@@ -1,12 +1,12 @@
 ﻿using System;
 using Ardalis.GuardClauses;
 
-namespace Serilog.Ui.Core.OptionsBuilder;
+namespace Serilog.Ui.Core.Models.Options;
 
 /// <summary>
 /// RelationDbOptions class
 /// </summary>
-public class RelationalDbOptions : BaseDbOptions
+public class RelationalDbOptions : DbOptionsBase
 {
     /// <summary>
     /// Creates a new instance of the class, setting a default schema name.

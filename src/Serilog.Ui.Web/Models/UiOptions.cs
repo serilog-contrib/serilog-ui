@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Models;
+using Serilog.Ui.Core.Models.Options;
 
 namespace Serilog.Ui.Web.Models;
 

@@ -2,7 +2,7 @@ using System;
 using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.Web.Models;
 
 namespace Serilog.Ui.Web.Extensions

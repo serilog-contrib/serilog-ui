@@ -11,7 +11,7 @@ using Microsoft.Data.SqlClient;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Attributes;
 using Serilog.Ui.Core.Models;
-using Serilog.Ui.Core.OptionsBuilder;
+using Serilog.Ui.Core.Models.Options;
 using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.MsSqlServerProvider
