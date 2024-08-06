@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using MsSql.Tests.Util;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.MsSqlServerProvider;
 using Serilog.Ui.MsSqlServerProvider.Extensions;

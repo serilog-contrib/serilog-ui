@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.OptionsBuilder;
 using Xunit;
 

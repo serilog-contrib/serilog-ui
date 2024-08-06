@@ -7,6 +7,7 @@ using Serilog;
 using Serilog.Sinks.PostgreSQL.ColumnWriters;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.PostgreSqlProvider;
 using Serilog.Ui.PostgreSqlProvider.Extensions;

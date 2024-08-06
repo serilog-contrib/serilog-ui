@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using MySql.Tests.Util;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.MySqlProvider;
 using Serilog.Ui.MySqlProvider.Extensions;
@@ -108,7 +109,6 @@ public class SerilogUiOptionBuilderExtensionsMariaDbTest
         {
             builder
                 .UseMariaDbServer<MariaDbTestModel>(opt => opt.WithConnectionString("https://sqlserver.com").WithTable("table-custom"));
-
         });
 
         var serviceProvider = _serviceCollection.BuildServiceProvider();

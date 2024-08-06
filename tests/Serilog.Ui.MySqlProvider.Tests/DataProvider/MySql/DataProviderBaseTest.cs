@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.Primitives;
 using Serilog.Ui.Common.Tests.TestSuites;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.MySqlProvider;

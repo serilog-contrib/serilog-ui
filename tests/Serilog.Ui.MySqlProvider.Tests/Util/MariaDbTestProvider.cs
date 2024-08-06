@@ -8,6 +8,7 @@ using Serilog.Sinks.MariaDB;
 using Serilog.Sinks.MariaDB.Extensions;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.MySqlProvider;
 using Testcontainers.MariaDb;
