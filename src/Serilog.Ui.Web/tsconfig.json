@@ -23,6 +23,6 @@
     "typeRoots": ["./src/types/", "./node_modules/@types/"]
   },
   "include": ["./**/*.ts", "./**/*.tsx"],
-  "exclude": ["node_modules", "wwwroot"],
+  "exclude": ["node_modules", "wwwroot", "vite.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

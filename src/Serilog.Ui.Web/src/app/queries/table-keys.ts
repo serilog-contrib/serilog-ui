@@ -16,11 +16,15 @@ export const fetchKeys = async (
 
   if (req.ok) return await (req.json() as Promise<string[]>);
 
-  if (notify) {
-    req?.status === 403
-      ? send403Notification()
-      : sendUnexpectedNotification('Failed to fetch');
+  const reject = () => Promise.reject(new UiApiError(req.status, 'Failed to fetch'));
+
+  if (!notify) return await reject();
+
+  if (req?.status === 403) {
+    send403Notification();
+  } else {
+    sendUnexpectedNotification('Failed to fetch');
   }
 
-  return await Promise.reject(new UiApiError(req.status, 'Failed to fetch'));
+  return await reject();
 };

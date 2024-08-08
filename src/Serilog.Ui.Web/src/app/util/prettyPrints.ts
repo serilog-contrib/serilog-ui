@@ -1,6 +1,5 @@
 import { MantineColorScheme, type MantineTheme } from '@mantine/core';
-import { BundledTheme, CodeOptionsMultipleThemes } from 'shiki';
-import { highlighter } from 'style/shikijiBundle';
+import { BundledTheme, CodeOptionsMultipleThemes, codeToHtml } from 'shiki';
 import formatXml from 'xml-formatter';
 import { AdditionalColumnLogType, LogLevel, LogType } from '../../types/types';
 import {
@@ -13,7 +12,7 @@ import {
 export const serilogUiUrl = 'https://github.com/serilog-contrib/serilog-ui';
 
 export const capitalize = (str?: string | null) =>
-  str ? str.charAt(0).toUpperCase() + str.slice(1) : str ?? '';
+  str ? str.charAt(0).toUpperCase() + str.slice(1) : (str ?? '');
 
 export const getBgLogLevel = (
   theme: MantineTheme,
@@ -57,6 +56,7 @@ const shikijiThemes: CodeOptionsMultipleThemes<BundledTheme> = {
     dark: 'night-owl',
   },
 };
+
 export const renderCodeContent = async (
   modalContent: string,
   contentType: string = '',
@@ -65,10 +65,9 @@ export const renderCodeContent = async (
     return modalContent;
 
   try {
-    const highlighterInstance = await highlighter();
     if (contentType === LogType.Xml) {
       const xmlResult = formatXml(modalContent, { forceSelfClosingEmptyTag: true });
-      return highlighterInstance.codeToHtml(xmlResult, {
+      return codeToHtml(xmlResult, {
         lang: 'xml',
         ...shikijiThemes,
         mergeWhitespaces: true,
@@ -77,7 +76,7 @@ export const renderCodeContent = async (
 
     if (contentType === LogType.Json) {
       const jsonResult = JSON.stringify(JSON.parse(modalContent), null, 4) ?? '{}';
-      return highlighterInstance.codeToHtml(jsonResult, {
+      return codeToHtml(jsonResult, {
         lang: 'json',
         ...shikijiThemes,
       });

@@ -23,6 +23,7 @@ interface CustomAsymmetricMatchers {
 }
 
 declare module 'vitest' {
-  interface Assertion extends CustomAsymmetricMatchers {}
-  interface AsymmetricMatchersContaining extends CustomAsymmetricMatchers {}
+  interface AsymmetricMatchersContaining extends CustomAsymmetricMatchers {
+    toBeSameDate: ToBeSameDate;
+  }
 }

@@ -31,7 +31,11 @@ export const fetchLogs = async (
     return await Promise.reject(new UiApiError(req.status, 'Failed to fetch'));
   } catch (error: unknown) {
     const err = error as UiApiError;
-    err?.code === 403 ? send403Notification() : sendUnexpectedNotification(err.message);
+    if (err?.code === 403) {
+      send403Notification();
+    } else {
+      sendUnexpectedNotification(err.message);
+    }
 
     return defaultReturn;
   }
