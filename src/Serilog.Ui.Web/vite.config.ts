@@ -65,6 +65,7 @@ export default defineConfig((env) => ({
         },
       },
     },
+    target: 'ESNEXT',
   },
   plugins: [
     env.mode !== 'development' && react(),

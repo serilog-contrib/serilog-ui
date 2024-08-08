@@ -1,5 +1,6 @@
 import { MantineColorScheme, type MantineTheme } from '@mantine/core';
-import { BundledTheme, CodeOptionsMultipleThemes, codeToHtml } from 'shiki';
+import { BundledTheme, CodeOptionsMultipleThemes } from 'shiki';
+import { highlighter } from 'style/shikijiBundle';
 import formatXml from 'xml-formatter';
 import { AdditionalColumnLogType, LogLevel, LogType } from '../../types/types';
 import {
@@ -67,7 +68,7 @@ export const renderCodeContent = async (
   try {
     if (contentType === LogType.Xml) {
       const xmlResult = formatXml(modalContent, { forceSelfClosingEmptyTag: true });
-      return codeToHtml(xmlResult, {
+      return highlighter.codeToHtml(xmlResult, {
         lang: 'xml',
         ...shikijiThemes,
         mergeWhitespaces: true,
@@ -76,7 +77,7 @@ export const renderCodeContent = async (
 
     if (contentType === LogType.Json) {
       const jsonResult = JSON.stringify(JSON.parse(modalContent), null, 4) ?? '{}';
-      return codeToHtml(jsonResult, {
+      return highlighter.codeToHtml(jsonResult, {
         lang: 'json',
         ...shikijiThemes,
       });
