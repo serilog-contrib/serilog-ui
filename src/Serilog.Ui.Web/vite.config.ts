@@ -24,7 +24,7 @@ const vitestConfig: VitestUserConfigInterface = {
     },
     coverage: {
       provider: 'istanbul',
-      reporter: 'lcov',
+      reporter: ['lcov'],
       reportsDirectory: './reports/coverage/',
       reportOnFailure: true,
     },
