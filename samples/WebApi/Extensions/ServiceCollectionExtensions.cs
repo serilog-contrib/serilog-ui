@@ -5,8 +5,8 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.Elasticsearch;
 using Serilog.Sinks.MSSqlServer;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Interfaces;
-using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.ElasticSearchProvider.Extensions;
 using Serilog.Ui.MsSqlServerProvider.Extensions;
 using Serilog.Ui.Web.Extensions;
@@ -128,10 +128,12 @@ internal static class ServiceCollectionExtensions
                         // a] default filter, sync, authorize only local requests 
                         .AddScopedAuthorizeLocalRequestsAuthFilter()
                         /* sample provider registration: Sql Server [multiple], Fluent interface */
-                        .UseSqlServer<TestLogModel>(opt =>
-                            opt.WithConnectionString(configuration.GetConnectionString("MsSqlDefaultConnection")!).WithTable("logs"))
-                        .UseSqlServer(opt =>
-                            opt.WithConnectionString(configuration.GetConnectionString("MsSqlBackupConnection")!).WithTable("logsBackup"))
+                        .UseSqlServer<TestLogModel>(opt => opt
+                            .WithConnectionString(configuration.GetConnectionString("MsSqlDefaultConnection")!)
+                            .WithTable("logs"))
+                        .UseSqlServer(opt => opt
+                            .WithConnectionString(configuration.GetConnectionString("MsSqlBackupConnection")!)
+                            .WithTable("logsBackup"))
                         .UseElasticSample(enableElasticSample);
                 }
             );

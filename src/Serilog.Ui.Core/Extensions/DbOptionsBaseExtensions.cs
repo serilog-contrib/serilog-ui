@@ -3,9 +3,9 @@
 namespace Serilog.Ui.Core.Extensions;
 
 /// <summary>
-/// BaseDbOptionsExtensions.
+/// DbOptionsBaseExtensions.
 /// </summary>
-public static class BaseDbOptionsExtensions
+public static class DbOptionsBaseExtensions
 {
     /// <summary>
     /// Fluently sets ConnectionString.
