@@ -1,7 +1,10 @@
-﻿using Elastic.Elasticsearch.Ephemeral.Plugins;
+﻿using System;
 using Elastic.Elasticsearch.Ephemeral;
+using Elastic.Elasticsearch.Ephemeral.Plugins;
 using Elastic.Elasticsearch.Xunit;
 using Elastic.Stack.ArtifactsApi.Products;
+using Serilog;
+using Serilog.Sinks.Elasticsearch;
 using Serilog.Ui.Common.Tests.DataSamples;
 
 namespace ElasticSearch.Tests.Util
@@ -10,7 +13,12 @@ namespace ElasticSearch.Tests.Util
     // https://github.com/serilog-contrib/serilog-sinks-elasticsearch/blob/dev/test/Serilog.Sinks.Elasticsearch.IntegrationTests/Bootstrap/ClientTestClusterBase.cs
     public class Elasticsearch7XCluster : TestCluster
     {
+        private const string TemplateName = "serilog-logs-7x";
+
+        public const string IndexPrefix = "logs-7x-default-";
+
         public LogModelPropsCollector? Collector;
+
         public Elasticsearch7XCluster() : base(CreateConfiguration())
         {
         }
@@ -23,18 +31,32 @@ namespace ElasticSearch.Tests.Util
             };
         }
 
-        protected override void SeedCluster() { }
+        protected override void SeedCluster()
+        {
+        }
 
         protected override void OnAfterStarted()
         {
-            var serilog = new SetupSerilog();
+            var serilog = new SerilogSinkSetup(logger =>
+            {
+                logger.WriteTo.Elasticsearch(
+                    new ElasticsearchSinkOptions(new Uri($"http://localhost:9200"))
+                    {
+                        IndexFormat = IndexPrefix + "{0:yyyy.MM.dd}",
+                        TemplateName = TemplateName,
+                        AutoRegisterTemplate = true,
+                        AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
+                    });
+            });
             Collector = serilog.InitializeLogs();
         }
     }
 
     public abstract class TestCluster : XunitClusterBase<ClientTestClusterConfiguration>
     {
-        protected TestCluster(ClientTestClusterConfiguration configuration) : base(configuration) { }
+        protected TestCluster(ClientTestClusterConfiguration configuration) : base(configuration)
+        {
+        }
     }
 
     public class ClientTestClusterConfiguration : XunitClusterConfiguration

@@ -1,18 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-		<Nullable>enable</Nullable>
-		<AssemblyName>Ui.Web.Tests</AssemblyName>
-		<RootNamespace>Ui.Web.Tests</RootNamespace>
-		<IsPackable>false</IsPackable>
+		<AssemblyName>Serilog.Ui.Web.Tests</AssemblyName>
+		<RootNamespace>Serilog.Ui.Web.Tests</RootNamespace>
 		<GenerateProgramFile>false</GenerateProgramFile>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.10" />
-		<PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
 		<PackageReference Include="Serilog.Sinks.InMemory" Version="0.11.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.32"/>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.20"/>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.7"/>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -25,6 +33,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj" />
 		<ProjectReference Include="..\..\src\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
+		<ProjectReference Include="..\Serilog.Ui.Common.Tests\Serilog.Ui.Common.Tests.csproj" />
 	</ItemGroup>
 
 </Project>

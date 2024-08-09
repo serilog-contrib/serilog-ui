@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "all-contributors-cli": "^6.26.1"
+  },
+  "scripts": {
+    "contribs:check": "all-contributors check",
+    "contribs:gen": "all-contributors generate"
+  }
+}

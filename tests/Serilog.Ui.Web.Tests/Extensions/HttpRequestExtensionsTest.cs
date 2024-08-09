@@ -1,14 +1,15 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using NSubstitute;
-using Serilog.Ui.Web;
+﻿using System;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using NSubstitute;
+using Serilog.Ui.Web.Extensions;
 using Xunit;
 
-namespace Ui.Web.Tests.Extensions
+namespace Serilog.Ui.Web.Tests.Extensions
 {
     [Trait("Ui-HttpRequest", "Web")]
     public class HttpRequestExtensionsTest
@@ -19,7 +20,7 @@ namespace Ui.Web.Tests.Extensions
             // Arrange
             var requestMock = Substitute.For<HttpRequest>();
             var httpContextMock = Substitute.For<HttpContext>();
-            var dic = new HeaderDictionary { };
+            var dic = new HeaderDictionary();
 
             httpContextMock.Connection.Returns(new ConnectionInfoMock()
                 .WithRemoteIp(IPAddress.Parse("20.100.30.10"))
@@ -40,7 +41,7 @@ namespace Ui.Web.Tests.Extensions
             // Arrange
             var requestMock = Substitute.For<HttpRequest>();
             var httpContextMock = Substitute.For<HttpContext>();
-            var dic = new HeaderDictionary { };
+            var dic = new HeaderDictionary();
             requestMock.Headers.Returns(dic);
             requestMock.HttpContext.Returns(httpContextMock);
 
@@ -67,7 +68,7 @@ namespace Ui.Web.Tests.Extensions
             // Arrange
             var requestMock = Substitute.For<HttpRequest>();
             var httpContextMock = Substitute.For<HttpContext>();
-            var dic = new HeaderDictionary { };
+            var dic = new HeaderDictionary();
 
             httpContextMock.Connection.Returns(new ConnectionInfoMock()
                 .WithRemoteIp(null)
@@ -103,7 +104,7 @@ namespace Ui.Web.Tests.Extensions
             // Arrange
             var requestMock = Substitute.For<HttpRequest>();
             var httpContextMock = Substitute.For<HttpContext>();
-            var dic = new HeaderDictionary { };
+            var dic = new HeaderDictionary();
 
             requestMock.Headers.Returns(dic);
             requestMock.HttpContext.Returns(httpContextMock);
@@ -118,9 +119,9 @@ namespace Ui.Web.Tests.Extensions
 
             httpContextMock.Connection.Returns(
                 new ConnectionInfoMock()
-                .WithRemoteIp(IPAddress.Parse("20.100.30.10"))
-                .WithLocalIp(IPAddress.Parse("231.228.97.51"))
-                );
+                    .WithRemoteIp(IPAddress.Parse("20.100.30.10"))
+                    .WithLocalIp(IPAddress.Parse("231.228.97.51"))
+            );
             requestMock
                 // Act
                 .IsLocal()
@@ -131,19 +132,33 @@ namespace Ui.Web.Tests.Extensions
         private class ConnectionInfoMock : ConnectionInfo
         {
             public override string Id { get; set; } = string.Empty;
+
             public override IPAddress? RemoteIpAddress { get; set; }
+
             public override int RemotePort { get; set; }
+
             public override IPAddress? LocalIpAddress { get; set; }
+
             public override int LocalPort { get; set; }
+
             public override X509Certificate2? ClientCertificate { get; set; }
 
             public override Task<X509Certificate2?> GetClientCertificateAsync(CancellationToken cancellationToken = default)
             {
-                throw new System.NotImplementedException();
+                throw new NotImplementedException();
             }
 
-            public ConnectionInfoMock WithRemoteIp(IPAddress? remoteIp) { RemoteIpAddress = remoteIp; return this; }
-            public ConnectionInfoMock WithLocalIp(IPAddress? localIp) { LocalIpAddress = localIp; return this; }
+            public ConnectionInfoMock WithRemoteIp(IPAddress? remoteIp)
+            {
+                RemoteIpAddress = remoteIp;
+                return this;
+            }
+
+            public ConnectionInfoMock WithLocalIp(IPAddress? localIp)
+            {
+                LocalIpAddress = localIp;
+                return this;
+            }
         }
     }
 }

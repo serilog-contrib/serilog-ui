@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Serilog.Ui.Web.Endpoints
 {
     public interface ISerilogUiEndpoints : ISerilogUiOptionsSetter
     {
-        Task GetApiKeysAsync(HttpContext httpContext);
+        Task GetApiKeysAsync();
 
-        Task GetLogsAsync(HttpContext httpContext);
+        Task GetLogsAsync();
     }
 }

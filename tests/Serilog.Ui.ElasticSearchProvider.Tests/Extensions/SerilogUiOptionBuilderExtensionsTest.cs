@@ -1,57 +1,62 @@
-﻿using Elastic.Elasticsearch.Xunit.XunitPlumbing;
+﻿using System;
+using System.Linq;
+using Elastic.Elasticsearch.Xunit.XunitPlumbing;
 using ElasticSearch.Tests.Util;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.ElasticSearchProvider;
-using Serilog.Ui.Web;
-using System;
-using System.Collections.Generic;
+using Serilog.Ui.ElasticSearchProvider.Extensions;
+using Serilog.Ui.Web.Extensions;
 using Xunit;
 
-namespace ElasticSearch.Tests.Extensions
+namespace ElasticSearch.Tests.Extensions;
+
+[Trait("DI-DataProvider", "Elastic")]
+public class SerilogUiOptionBuilderExtensionsTest : IClusterFixture<Elasticsearch7XCluster>
 {
-    [Trait("DI-DataProvider", "Elastic")]
-    public class SerilogUiOptionBuilderExtensionsTest : IClusterFixture<Elasticsearch7XCluster>
+    private readonly ServiceCollection _serviceCollection = [];
+
+    [U]
+    public void It_registers_provider_and_dependencies()
     {
-        private readonly ServiceCollection serviceCollection;
-
-        public SerilogUiOptionBuilderExtensionsTest()
+        _serviceCollection.AddSerilogUi(builder =>
         {
-            serviceCollection = new ServiceCollection();
-        }
+            builder.UseElasticSearchDb(options => options.WithEndpoint(new Uri("https://elastic.example.com")).WithIndex("my-index"));
+        });
+        var services = _serviceCollection.BuildServiceProvider();
 
-        [U]
-        public void It_registers_provider_and_dependencies()
+        services.GetRequiredService<IDataProvider>().Should().NotBeNull().And.BeOfType<ElasticSearchDbDataProvider>();
+
+        services.GetRequiredService<ProvidersOptions>().DisabledSortProviderNames.Should().HaveCount(1);
+    }
+
+    [Fact]
+    public void It_registers_multiple_providers()
+    {
+        _serviceCollection.AddSerilogUi(builder =>
         {
-            serviceCollection.AddSerilogUi((builder) =>
-            {
-                builder.UseElasticSearchDb(new Uri("https://elastic.example.com"), "my-index");
-            });
-            var services = serviceCollection.BuildServiceProvider();
+            builder
+                .UseElasticSearchDb(options => options.WithEndpoint(new Uri("https://elastic.com")).WithIndex("my-index"))
+                .UseElasticSearchDb(options => options.WithEndpoint(new Uri("https://elastic.com")).WithIndex("my-index-2"));
+        });
 
-            services.GetRequiredService<IDataProvider>().Should().NotBeNull().And.BeOfType<ElasticSearchDbDataProvider>();
-            var options = services.GetRequiredService<ElasticSearchDbOptions>();
-            options.Should().NotBeNull();
-            options.IndexName.Should().Be("my-index");
-        }
+        var serviceProvider = _serviceCollection.BuildServiceProvider();
+        using var scope = serviceProvider.CreateScope();
 
-        [U]
-        public void It_throws_on_invalid_registration()
-        {
-            var uri = new Uri("https://elastic.example.com");
-            var nullables = new List<Func<IServiceCollection>>
-            {
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseElasticSearchDb(null, "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseElasticSearchDb(uri, null)),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseElasticSearchDb(uri, " ")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseElasticSearchDb(uri, "")),
-            };
+        var providers = scope.ServiceProvider.GetServices<IDataProvider>().ToList();
+        providers.Should().HaveCount(2).And.AllBeOfType<ElasticSearchDbDataProvider>();
+        providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
+        serviceProvider.GetRequiredService<ProvidersOptions>().DisabledSortProviderNames.Should().HaveCount(2);
+    }
 
-            foreach (var nullable in nullables)
-            {
-                nullable.Should().ThrowExactly<ArgumentNullException>();
-            }
-        }
+    [U]
+    public void It_throws_on_invalid_registration()
+    {
+        var uri = new Uri("https://elastic.example.com");
+        var nullable = () => _serviceCollection.AddSerilogUi(builder => builder.UseElasticSearchDb(options => options.WithEndpoint(uri)));
+
+        nullable.Should().ThrowExactly<ArgumentNullException>();
     }
 }

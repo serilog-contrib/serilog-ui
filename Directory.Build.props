@@ -1,6 +1,24 @@
 <Project>
+	<PropertyGroup>
+		<Authors>Mohsen Esmailpour</Authors>
+		<Description>Simple web UI for several Serilog sinks.</Description>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageProjectUrl>https://github.com/serilog-contrib/serilog-ui</PackageProjectUrl>
+		<PackageReadmeFile>README_Nuget.md</PackageReadmeFile>
+		<PackageTags>serilog serilog-ui log log-ui web-log</PackageTags>
+		<RepositoryUrl>https://github.com/serilog-contrib/serilog-ui</RepositoryUrl>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
+
 	<ItemGroup>
-		<PackageReference Include="Ardalis.GuardClauses" Version="4.0.1" />
+		<None Include="..\..\README_Nuget.md" Pack="true" PackagePath="\"/>
+		<None Include="..\..\LICENSE" Pack="true" PackagePath=""/>
+		<None Include="..\..\assets\icon.png" Pack="true" PackagePath="\"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Ardalis.GuardClauses" Version="4.6.0"/>
 		<PackageReference Include="AsyncFixer" Version="1.6.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

@@ -12,10 +12,10 @@ jobs:
   upload:
     runs-on: ubuntu-latest
     steps:
-    - uses: phoenix-actions/test-reporting@v9
-      with:
-        artifact: test-results            # artifact name
-        name: DotNET - Tests              # Name of the check run which will be created
-        path: '**/test-results.trx'       # Path to test results (inside artifact .zip)
-        reporter: dotnet-trx              # Format of test results
-        output-to: checks
+      - uses: phoenix-actions/test-reporting@v14
+        with:
+          artifact: test-results # artifact name
+          name: DotNET - Tests # Name of the check run which will be created
+          path: '**/test-results.trx' # Path to test results (inside artifact .zip)
+          reporter: dotnet-trx # Format of test results
+          output-to: checks

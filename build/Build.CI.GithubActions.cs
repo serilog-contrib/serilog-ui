@@ -39,7 +39,8 @@ using static CustomGithubActionsAttribute;
     FetchDepth = 0,
     ImportSecrets = new[] { nameof(SonarTokenUi), nameof(SonarToken), nameof(NugetApiKey) },
     InvokedTargets = new[] { nameof(Publish) },
-    OnWorkflowDispatchRequiredInputs = new[] {
+    OnWorkflowDispatchRequiredInputs = new[]
+    {
         nameof(ElasticProvider),
         nameof(MongoProvider),
         nameof(MsSqlProvider),
@@ -48,73 +49,81 @@ using static CustomGithubActionsAttribute;
         nameof(Ui),
     }
 )]
-partial class Build : NukeBuild
+partial class Build
 {
-    [Parameter][Secret] readonly string SonarToken;
-    [Parameter][Secret] readonly string SonarTokenUi;
-    [Parameter][Secret] readonly string NugetApiKey;
+    [Parameter][Secret] readonly string? SonarToken;
+
+    [Parameter][Secret] readonly string? SonarTokenUi;
+
+    [Parameter][Secret] readonly string? NugetApiKey;
+
     [Parameter] readonly string ElasticProvider = string.Empty;
+
     [Parameter] readonly string MongoProvider = string.Empty;
+
     [Parameter] readonly string MsSqlProvider = string.Empty;
+
     [Parameter] readonly string MySqlProvider = string.Empty;
+
     [Parameter] readonly string PostgresProvider = string.Empty;
+
     [Parameter] readonly string Ui = string.Empty;
 
-    public ReleaseParams[] ReleaseInfos() => new ReleaseParams[]
-    {
+    ReleaseParams[] ReleaseInfos() =>
+    [
         new(nameof(ElasticProvider), ElasticProvider, "Serilog.Ui.ElasticSearchProvider"),
         new(nameof(MongoProvider), MongoProvider, "Serilog.Ui.MongoDbProvider"),
         new(nameof(MsSqlProvider), MsSqlProvider, "Serilog.Ui.MsSqlServerProvider"),
         new(nameof(MySqlProvider), MySqlProvider, "Serilog.Ui.MySqlProvider"),
         new(nameof(PostgresProvider), PostgresProvider, "Serilog.Ui.PostgreSqlProvider"),
-        new(nameof(Ui), Ui, "Serilog.Ui.Web"),
-    };
+        new(nameof(Ui), Ui, "Serilog.Ui.Web")
+    ];
 
-    public bool OnGithubActionRun = GitHubActions.Instance != null &&
-            !string.IsNullOrWhiteSpace(GitHubActions.Instance.RunId.ToString());
+    readonly bool OnGithubActionRun = GitHubActions.Instance != null &&
+                                      !string.IsNullOrWhiteSpace(GitHubActions.Instance.RunId.ToString());
 
-    public bool IsPr = GitHubActions.Instance != null &&
-        GitHubActions.Instance.IsPullRequest;
+    readonly bool IsPr = GitHubActions.Instance != null &&
+                         GitHubActions.Instance.IsPullRequest;
 
-    Target Backend_SonarScan_Start => _ => _
+    Target Backend_SonarScan_Start => targetDefinition => targetDefinition
         .DependsOn(Backend_Restore)
         .OnlyWhenStatic(() => OnGithubActionRun && !IsPr &&
-            !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
-            !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
+                              !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
+                              !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
         )
         .Executes(() =>
         {
             SonarScannerTasks.SonarScannerBegin(new SonarScannerBeginSettings()
                 .SetExcludeTestProjects(true)
-                .SetFramework("net5.0")
-                .SetAdditionalParameter("sonar.token", SonarToken) // replace deprecated .login
+                .SetToken(SonarToken)
                 .SetOrganization(SonarCloudInfo.Organization)
                 .SetProjectKey(SonarCloudInfo.BackendProjectKey)
                 .SetServer("https://sonarcloud.io")
                 .SetSourceInclusions("src/**/*")
                 .SetSourceExclusions(
-                    "src/Serilog.Ui.Web/assets/**/*",
+                    "src/Serilog.Ui.Web/src/**/*",
                     "src/Serilog.Ui.Web/wwwroot/**/*",
                     "src/Serilog.Ui.Web/node_modules/**/*",
                     "src/Serilog.Ui.Web/*.js",
+                    "src/Serilog.Ui.Web/*.ts",
+                    "src/Serilog.Ui.Web/*.tsx",
                     "src/Serilog.Ui.Web/*.json")
-                .SetVisualStudioCoveragePaths("coverage.xml", "**/coverage.xml", "./**/coverage.xml")
+                .SetGenericCoveragePaths("coverage/SonarQube.xml, ./coverage/SonarQube.xml")
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
                 .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken)
             );
         });
 
-    Target Backend_SonarScan_End => _ => _
-        .DependsOn(Backend_Test_Ci)
+    Target Backend_SonarScan_End => targetDefinition => targetDefinition
+        .DependsOn(Backend_Report_Ci)
         .OnlyWhenStatic(() => OnGithubActionRun && !IsPr &&
-            !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
-            !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
+                              !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
+                              !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
         )
         .Executes(() =>
         {
             SonarScannerTasks.SonarScannerEnd(new SonarScannerEndSettings()
-                .SetFramework("net5.0")
-                .SetProcessArgumentConfigurator(_ => _.Add("/d:sonar.token={value}", SonarToken, secret: true))
+                .SetToken(SonarToken)
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)
                 .SetProcessEnvironmentVariable("SONAR_TOKEN", SonarToken));
         });

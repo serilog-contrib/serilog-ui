@@ -1,0 +1,9 @@
+# /node_modules/* and /bower_components/* in the project root are ignored by default
+
+obj/*
+bin/*
+wwwroot/*
+coverage/*
+*.html
+mockServiceWorker.js
+src/reports/*

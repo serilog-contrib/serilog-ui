@@ -1,58 +1,60 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Serilog.Ui.Core;
-using System;
+﻿using System;
 using Dapper;
+using Microsoft.Extensions.DependencyInjection;
+using Serilog.Ui.Core;
+using Serilog.Ui.Core.Interfaces;
+using Serilog.Ui.Core.Models.Options;
 
-namespace Serilog.Ui.MsSqlServerProvider
-#nullable enable
+namespace Serilog.Ui.MsSqlServerProvider.Extensions
 {
     /// <summary>
-    ///     SQL Server data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
+    /// SQL Server data provider specific extension methods for <see cref="ISerilogUiOptionsBuilder"/>.
     /// </summary>
     public static class SerilogUiOptionBuilderExtensions
     {
-        /// <summary>
-        ///     Configures the SerilogUi to connect to a SQL Server database.
-        /// </summary>
+        /// <summary>Configures the SerilogUi to connect to a SQL Server database.</summary>
         /// <param name="optionsBuilder"> The options builder. </param>
-        /// <param name="connectionString"> The connection string. </param>
-        /// <param name="tableName"> Name of the table. </param>
-        /// <param name="schemaName">
-        ///     Name of the table schema. default value is <c> dbo </c>
-        /// </param>
+        /// <param name="setupOptions">The Ms Sql options action.</param>
         /// <param name="dateTimeCustomParsing">
         /// Delegate to customize the DateTime parsing.
-        ///  It throws <see cref="InvalidOperationException" /> if the return DateTime isn't UTC kind.
+        /// It throws <see cref="InvalidOperationException" /> if the return DateTime isn't UTC kind.
         /// </param>
-        /// <exception cref="ArgumentNullException"> throw if connectionString is null </exception>
-        /// <exception cref="ArgumentNullException"> throw is tableName is null </exception>
-        public static SerilogUiOptionsBuilder UseSqlServer(
-            this SerilogUiOptionsBuilder optionsBuilder,
-            string connectionString,
-            string tableName,
-            string schemaName = "dbo",
+        public static ISerilogUiOptionsBuilder UseSqlServer(
+            this ISerilogUiOptionsBuilder optionsBuilder,
+            Action<RelationalDbOptions> setupOptions,
             Func<string, DateTime>? dateTimeCustomParsing = null
-        )
+        ) => optionsBuilder.UseSqlServer<SqlServerLogModel>(setupOptions, dateTimeCustomParsing);
+
+        /// <summary>Configures the SerilogUi to connect to a SQL Server database.</summary>
+        /// <typeparam name="T">The log model, containing any additional columns. It must inherit <see cref="SqlServerLogModel"/>.</typeparam>
+        /// <param name="optionsBuilder"> The options builder. </param>
+        /// <param name="setupOptions">The Ms Sql options action.</param>
+        /// <param name="dateTimeCustomParsing">
+        /// Delegate to customize the DateTime parsing.
+        /// It throws <see cref="InvalidOperationException" /> if the return DateTime isn't UTC kind.
+        /// </param>
+        public static ISerilogUiOptionsBuilder UseSqlServer<T>(
+            this ISerilogUiOptionsBuilder optionsBuilder,
+            Action<RelationalDbOptions> setupOptions,
+            Func<string, DateTime>? dateTimeCustomParsing = null
+        ) where T : SqlServerLogModel
         {
-            if (string.IsNullOrWhiteSpace(connectionString))
-                throw new ArgumentNullException(nameof(connectionString));
-
-            if (string.IsNullOrWhiteSpace(tableName))
-                throw new ArgumentNullException(nameof(tableName));
-
-            var relationProvider = new RelationalDbOptions
-            {
-                ConnectionString = connectionString,
-                TableName = tableName,
-                Schema = !string.IsNullOrWhiteSpace(schemaName) ? schemaName : "dbo"
-            };
+            var dbOptions = new RelationalDbOptions("dbo");
+            setupOptions(dbOptions);
+            dbOptions.Validate();
 
             SqlMapper.AddTypeHandler(new DapperDateTimeHandler(dateTimeCustomParsing));
 
-            ((ISerilogUiOptionsBuilder) optionsBuilder).Services
-                .AddScoped<IDataProvider, SqlServerDataProvider>(p =>
-                    ActivatorUtilities.CreateInstance<SqlServerDataProvider>(p, relationProvider));
+            var customModel = typeof(T) != typeof(SqlServerLogModel);
+            if (customModel)
+            {
+                optionsBuilder.RegisterColumnsInfo<T>(dbOptions.GetProviderName(SqlServerDataProvider.MsSqlProviderName));
+                optionsBuilder.Services.AddScoped<IDataProvider>(_ => new SqlServerDataProvider<T>(dbOptions));
 
+                return optionsBuilder;
+            }
+
+            optionsBuilder.Services.AddScoped<IDataProvider>(_ => new SqlServerDataProvider(dbOptions));
             return optionsBuilder;
         }
     }

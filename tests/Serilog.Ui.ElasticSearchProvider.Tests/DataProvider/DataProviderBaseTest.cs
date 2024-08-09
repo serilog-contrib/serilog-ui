@@ -1,17 +1,19 @@
-﻿using Elastic.Elasticsearch.Xunit.XunitPlumbing;
-using Elasticsearch.Net;
-using ElasticSearch.Tests.Util;
-using FluentAssertions;
-using NSubstitute;
-using Nest;
-using Serilog.Ui.Common.Tests.TestSuites;
-using Serilog.Ui.ElasticSearchProvider;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
+using Elastic.Elasticsearch.Xunit.XunitPlumbing;
+using Elasticsearch.Net;
+using ElasticSearch.Tests.Util;
+using FluentAssertions;
+using Microsoft.Extensions.Primitives;
+using Nest;
+using NSubstitute;
 using NSubstitute.ExceptionExtensions;
+using Serilog.Ui.Common.Tests.TestSuites;
+using Serilog.Ui.Core.Models;
+using Serilog.Ui.ElasticSearchProvider;
+using Xunit;
 
 namespace ElasticSearch.Tests.DataProvider
 {
@@ -23,8 +25,8 @@ namespace ElasticSearch.Tests.DataProvider
         {
             var suts = new List<Func<ElasticSearchDbDataProvider>>
             {
-                () => new ElasticSearchDbDataProvider(null, new()),
-                () => new ElasticSearchDbDataProvider(new ElasticClient(), null),
+                () => new ElasticSearchDbDataProvider(null!, new()),
+                () => new ElasticSearchDbDataProvider(new ElasticClient(), null!),
             };
 
             suts.ForEach(sut => sut.Should().ThrowExactly<ArgumentNullException>());
@@ -39,7 +41,9 @@ namespace ElasticSearch.Tests.DataProvider
                 .ThrowsAsync(new ElasticsearchClientException("no connection to db"));
 
             var sut = new ElasticSearchDbDataProvider(elasticClientMock, new());
-            var assert = () => sut.FetchDataAsync(1, 10);
+
+            var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "10", };
+            var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
             return assert.Should().ThrowExactlyAsync<ElasticsearchClientException>().WithMessage("no connection to db");
         }

@@ -1,71 +1,73 @@
-﻿using Dapper;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Dapper;
+using DotNet.Testcontainers.Containers;
 using Npgsql;
+using Serilog;
+using Serilog.Sinks.PostgreSQL.ColumnWriters;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.PostgreSqlProvider;
-using System.Linq;
-using System.Threading.Tasks;
+using Serilog.Ui.PostgreSqlProvider.Extensions;
+using Serilog.Ui.PostgreSqlProvider.Models;
 using Testcontainers.PostgreSql;
 using Xunit;
 
-namespace Postgres.Tests.Util
+namespace Postgres.Tests.Util;
+
+[CollectionDefinition(nameof(PostgresTestProvider))]
+public class PostgresCollection : ICollectionFixture<PostgresTestProvider>;
+
+public sealed class PostgresTestProvider : PostgresTestProvider<PostgresLogModel>;
+
+public class PostgresTestProvider<T> : DatabaseInstance
+    where T : PostgresLogModel
 {
-    [CollectionDefinition(nameof(PostgresDataProvider))]
-    public class PostgresCollection : ICollectionFixture<PostgresTestProvider>
-    { }
+    protected override string Name => nameof(PostgreSqlContainer);
 
-    public sealed class PostgresTestProvider : DatabaseInstance
+    protected PostgresTestProvider()
     {
-        protected override string Name => nameof(PostgreSqlContainer);
+        Container = new PostgreSqlBuilder().Build();
+    }
 
-        public PostgresTestProvider()
+    private PostgreSqlDbOptions DbOptions { get; set; } = new PostgreSqlDbOptions("public")
+        .WithTable("logs")
+        .WithSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative);
+
+    protected sealed override IContainer? Container { get; set; }
+
+    protected virtual Dictionary<string, ColumnWriterBase>? ColumnOptions => null;
+
+    protected override async Task CheckDbReadinessAsync()
+    {
+        DbOptions.WithConnectionString((Container as PostgreSqlContainer)?.GetConnectionString()!);
+
+        await using var dataContext = new NpgsqlConnection(DbOptions.ConnectionString);
+
+        await dataContext.ExecuteAsync("SELECT 1");
+    }
+
+    protected override Task InitializeAdditionalAsync()
+    {
+        var serilog = new SerilogSinkSetup(logger =>
         {
-            Container = new PostgreSqlBuilder().Build();
-            QueryBuilder.SetSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQL);
-        }
+            logger
+                .WriteTo.PostgreSQL(
+                    DbOptions.ConnectionString!,
+                    "logs",
+                    ColumnOptions,
+                    schemaName: "public",
+                    needAutoCreateTable: true,
+                    failureCallback: exc => throw exc,
+                    batchSizeLimit: 1);
+        });
 
-        public PostgreSqlDbOptions DbOptions { get; set; } = new()
-        {
-            TableName = "logs",
-            Schema = "public",
-            SinkType = PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative
-        };
+        Collector = serilog.InitializeLogs();
 
-        protected override async Task CheckDbReadinessAsync()
-        {
-            DbOptions.ConnectionString = (Container as PostgreSqlContainer)?.GetConnectionString() ?? string.Empty;
+        var custom = typeof(T) != typeof(PostgresLogModel);
+        Provider = custom ? new PostgresDataProvider<T>(DbOptions) : new PostgresDataProvider(DbOptions);
 
-            using var dataContext = new NpgsqlConnection(DbOptions.ConnectionString);
-
-            await dataContext.ExecuteAsync("SELECT 1");
-        }
-
-        protected override async Task InitializeAdditionalAsync()
-        {
-            var logs = LogModelFaker.Logs(100)
-                .ToList();
-
-            // manual conversion due to current implementation, based on a INT level column
-            var postgresTableLogs = logs.Select(p => new
-            {
-                p.RowNo,
-                Level = LogLevelConverter.GetLevelValue(p.Level),
-                p.Message,
-                p.Exception,
-                p.PropertyType,
-                p.Properties,
-                p.Timestamp,
-            });
-
-            Collector = new LogModelPropsCollector(logs);
-
-            using var dataContext = new NpgsqlConnection(DbOptions.ConnectionString);
-
-            await dataContext.ExecuteAsync(Costants.PostgresCreateTable);
-
-            await dataContext.ExecuteAsync(Costants.PostgresInsertFakeData, postgresTableLogs);
-
-            Provider = new PostgresDataProvider(DbOptions);
-        }
+        return Task.CompletedTask;
     }
 }

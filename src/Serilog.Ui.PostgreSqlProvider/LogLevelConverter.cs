@@ -2,7 +2,7 @@
 {
     internal static class LogLevelConverter
     {
-        public static string GetLevelName(string value) => value switch
+        public static string GetLevelName(string? value) => value switch
         {
             "0" => "Verbose",
             "1" => "Debug",
@@ -13,7 +13,7 @@
             _ => ""
         };
 
-        public static int GetLevelValue(string name) => name switch
+        public static int GetLevelValue(string? name) => name switch
         {
             "Verbose" => 0,
             "Debug" => 1,

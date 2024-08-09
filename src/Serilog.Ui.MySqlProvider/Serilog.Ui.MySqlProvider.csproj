@@ -1,14 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>Serilog.UI.MySqlProvider</PackageId>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <Version>2.2.1</Version>
+    <Version>3.0.0</Version>
+
+    <Description>MySQL and MariaDB data provider for Serilog UI.</Description>
+    <PackageTags>serilog serilog-ui serilog.sinks.mysql serilog.sinks.mariadb</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.4" />
-    <PackageReference Include="MySql.Data" Version="8.1.0" />
+    <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="MySqlConnector" Version="2.3.7" />
   </ItemGroup>
 
   <ItemGroup>

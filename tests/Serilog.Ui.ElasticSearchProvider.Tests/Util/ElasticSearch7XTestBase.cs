@@ -1,10 +1,10 @@
-﻿using Elastic.Elasticsearch.Xunit.XunitPlumbing;
+﻿using Elastic.Elasticsearch.Ephemeral;
 using Elastic.Elasticsearch.Xunit;
-using Nest;
+using Elastic.Elasticsearch.Xunit.XunitPlumbing;
 using Elasticsearch.Net;
-using Elastic.Elasticsearch.Ephemeral;
-using Xunit;
 using ElasticSearch.Tests.Util;
+using Nest;
+using Xunit;
 
 [assembly: TestFramework("Elastic.Elasticsearch.Xunit.Sdk.ElasticTestFramework", "Elastic.Elasticsearch.Xunit")]
 [assembly: ElasticXunitConfiguration(typeof(SerilogSinkElasticsearchXunitRunOptions))]
@@ -19,7 +19,7 @@ namespace ElasticSearch.Tests.Util
 
         protected Elasticsearch7XCluster Cluster { get; }
 
-        public IElasticClient Client => this.CreateClient();
+        public IElasticClient Client => CreateClient();
 
         protected virtual ConnectionSettings SetClusterSettings(ConnectionSettings s) => s;
 
@@ -48,8 +48,7 @@ namespace ElasticSearch.Tests.Util
         {
             RunIntegrationTests = true;
             RunUnitTests = true;
-            ClusterFilter = null;
-            TestFilter = null;
+            PartitionFilterRegex = null;
             IntegrationTestsMayUseAlreadyRunningNode = false;
         }
     }

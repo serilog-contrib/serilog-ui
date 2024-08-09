@@ -1,15 +1,28 @@
 ﻿{
-    "compilerOptions": {
-        "noImplicitAny": false,
-        "noEmitOnError": true,
-        "removeComments": false,
-        "sourceMap": true,
-        "target": "es5",
-        "typeRoots": [ "./assets/types/", "./node_modules/@types/" ]
-    },
-    "include": [ "./**/*.ts" ],
-    "exclude": [
-        "node_modules",
-        "wwwroot"
-    ]
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    /* bundler */
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    /* linting opts */
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "typeRoots": ["./src/types/", "./node_modules/@types/"]
+  },
+  "include": ["./**/*.ts", "./**/*.tsx"],
+  "exclude": ["node_modules", "wwwroot", "vite.config.ts"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -1,62 +1,59 @@
-﻿using Nest;
-using Serilog.Ui.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Nest;
+using Newtonsoft.Json;
+using Serilog.Ui.Core;
+using Serilog.Ui.Core.Models;
+using static Serilog.Ui.Core.Models.SearchOptions;
 
-namespace Serilog.Ui.ElasticSearchProvider
+namespace Serilog.Ui.ElasticSearchProvider;
+
+public class ElasticSearchDbDataProvider(IElasticClient client, ElasticSearchDbOptions options) : IDataProvider
 {
-    public class ElasticSearchDbDataProvider : IDataProvider
+    private static readonly string TimeStampPropertyName = typeof(ElasticSearchDbLogModel)
+            // get the PropertyInfo for the Sorted property
+            .GetProperty(SortProperty.Timestamp.ToString())!
+            // get the actual PropertyName used by Elastic, that was set in the JsonAttribute
+            .GetCustomAttribute<JsonPropertyAttribute>().PropertyName ?? $"{SortProperty.Timestamp}";
+
+    private readonly IElasticClient _client = client ?? throw new ArgumentNullException(nameof(client));
+
+    private readonly ElasticSearchDbOptions _options = options ?? throw new ArgumentNullException(nameof(options));
+
+    public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
     {
-        private readonly IElasticClient _client;
-        private readonly ElasticSearchDbOptions _options;
+        return GetLogsAsync(queryParams, cancellationToken);
+    }
 
-        public ElasticSearchDbDataProvider(IElasticClient client, ElasticSearchDbOptions options)
-        {
-            _client = client ?? throw new ArgumentNullException(nameof(client));
-            _options = options ?? throw new ArgumentNullException(nameof(options));
-        }
+    public string Name => _options.ProviderName;
 
-        public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
-            int page,
-            int count,
-            string level = null,
-            string searchCriteria = null,
-            DateTime? startDate = null,
-            DateTime? endDate = null)
-        {
-            return GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
-        }
+    private async Task<(IEnumerable<LogModel>, int)> GetLogsAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
+    {
+        // since serilog-sink does not have keyword indexes on level and message, we can only sort on @timestamp
+        Func<SortDescriptor<ElasticSearchDbLogModel>, SortDescriptor<ElasticSearchDbLogModel>> sortDescriptor =
+            queryParams.SortBy == SortDirection.Desc
+                ? descriptor => descriptor.Descending(TimeStampPropertyName)
+                : descriptor => descriptor.Ascending(TimeStampPropertyName);
+        var rowNoStart = queryParams.Page * queryParams.Count;
+        var descriptor = new SearchDescriptor<ElasticSearchDbLogModel>()
+            .Index(_options.IndexName)
+            .Query(q =>
+                +q.Match(m => m.Field(f => f.Level).Query(queryParams.Level)) &&
+                +q.DateRange(dr => dr.Field(f => f.Timestamp).GreaterThanOrEquals(queryParams.StartDate).LessThanOrEquals(queryParams.EndDate)) &&
+                +q.Match(m => m.Field(f => f.Message).Query(queryParams.SearchCriteria)) ||
+                +q.Match(m => m.Field(f => f.Exceptions).Query(queryParams.SearchCriteria)))
+            .Sort(sortDescriptor)
+            .Skip(rowNoStart)
+            .Size(queryParams.Count);
 
-        public string Name => string.Join(".", "ES", _options.IndexName);
+        var result = await _client.SearchAsync<ElasticSearchDbLogModel>(descriptor, cancellationToken);
 
-        private async Task<(IEnumerable<LogModel>, int)> GetLogsAsync(
-            int page,
-            int count,
-            string level,
-            string searchCriteria,
-            DateTime? startDate = null,
-            DateTime? endDate = null,
-            CancellationToken cancellationToken = default)
-        {
-            var descriptor = new SearchDescriptor<ElasticSearchDbLogModel>()
-                .Index(_options.IndexName)
-                .Sort(m => m.Descending(f => f.Timestamp))
-                .Size(count)
-                .Skip(page * count)
-                .Query(q =>
-                    +q.Match(m => m.Field(f => f.Level).Query(level)) &&
-                    +q.DateRange(dr => dr.Field(f => f.Timestamp).GreaterThanOrEquals(startDate).LessThanOrEquals(endDate)) &&
-                    +q.Match(m => m.Field(f => f.Message).Query(searchCriteria)) ||
-                    +q.Match(m => m.Field(f => f.Exceptions).Query(searchCriteria)));
+        int.TryParse(result?.Total.ToString(), out var total);
 
-            var result = await _client.SearchAsync<ElasticSearchDbLogModel>(descriptor, cancellationToken);
-
-            int.TryParse(result?.Total.ToString(), out var total);
-
-            return (result?.Documents.Select((x, index) => x.ToLogModel(index)).ToList(), total);
-        }
+        return (result?.Documents.Select((x, index) => x.ToLogModel(rowNoStart, index)).ToList() ?? [], total);
     }
 }

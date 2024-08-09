@@ -1,28 +1,29 @@
-﻿using Nuke.Common.CI.GitHubActions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.CI.GitHubActions.Configuration;
 using Nuke.Common.Execution;
 using Nuke.Common.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 /// <summary>
 /// from: https://github.com/RicoSuter/NSwag/blob/master/build/Build.CI.GitHubActions.cs
 /// </summary>
-class CustomGithubActionsAttribute : GitHubActionsAttribute
+class CustomGithubActionsAttribute(string name, GitHubActionsImage image, params GitHubActionsImage[] images)
+    : GitHubActionsAttribute(name, image, images)
 {
-    public CustomGithubActionsAttribute(string name, GitHubActionsImage image, params GitHubActionsImage[] images) : base(name, image, images)
-    {
-    }
-
     public GithubAction[] AddGithubActions { get; set; } = Array.Empty<GithubAction>();
 
     public enum GithubAction
     {
         Frontend_SonarScan_Task,
+
         Frontend_Reporter,
+
         Frontend_Artifact,
+
         Backend_Reporter,
+
         Backend_Artifact,
     }
 
@@ -39,18 +40,16 @@ class CustomGithubActionsAttribute : GitHubActionsAttribute
                     newSteps.Add(new GithubActionSonarCloud());
                     break;
                 case GithubAction.Frontend_Artifact:
-                    newSteps.Add(new GithubActionUploadArtifact("'**/jest-*.xml'"));
+                    newSteps.Add(new GithubActionUploadArtifact("'**/test-junit-report.xml'"));
                     break;
                 case GithubAction.Frontend_Reporter:
-                    newSteps.Add(new GithubActionReporter("JS - Tests", "'**/jest-*.xml'", "jest-junit"));
+                    newSteps.Add(new GithubActionReporter("JS - Tests", "'**/test-junit-report.xml'", "jest-junit"));
                     break;
                 case GithubAction.Backend_Artifact:
                     newSteps.Add(new GithubActionUploadArtifact("'**/test-results.trx'"));
                     break;
                 case GithubAction.Backend_Reporter:
                     newSteps.Add(new GithubActionReporter("DotNET - Tests", "'**/test-results.trx'", "dotnet-trx"));
-                    break;
-                default:
                     break;
             }
         }
@@ -69,7 +68,7 @@ class GitHubActionSetupJava17 : GitHubActionsStep
     {
         writer.WriteLine(); // empty line to separate tasks
 
-        writer.WriteLine("- uses: actions/setup-java@v3");
+        writer.WriteLine("- uses: actions/setup-java@v4");
 
         using (writer.Indent())
         {
@@ -84,15 +83,8 @@ class GitHubActionSetupJava17 : GitHubActionsStep
     }
 }
 
-class GithubActionUploadArtifact : GitHubActionsStep
+class GithubActionUploadArtifact(string path) : GitHubActionsStep
 {
-    readonly string Path;
-
-    public GithubActionUploadArtifact(string path)
-    {
-        Path = path;
-    }
-
     public override void Write(CustomFileWriter writer)
     {
         writer.WriteLine(); // empty line to separate tasks
@@ -107,7 +99,7 @@ class GithubActionUploadArtifact : GitHubActionsStep
             using (writer.Indent())
             {
                 writer.WriteLine($"name: test-results");
-                writer.WriteLine($"path: {Path}");
+                writer.WriteLine($"path: {path}");
             }
         }
     }
@@ -140,16 +132,16 @@ class GithubActionSonarCloud : GitHubActionsStep
             writer.WriteLine("with:");
             using (writer.Indent())
             {
-                writer.WriteLine($"args: >");
+                writer.WriteLine("args: >");
                 using (writer.Indent())
                 {
                     writer.WriteLine($"-Dsonar.organization={SonarCloudInfo.Organization}");
                     writer.WriteLine($"-Dsonar.projectKey={SonarCloudInfo.FrontendProjectKey}");
-                    writer.WriteLine("-Dsonar.sources=src/Serilog.Ui.Web/assets/");
-                    writer.WriteLine($"-Dsonar.tests=src/Serilog.Ui.Web/assets/");
-                    writer.WriteLine($"-Dsonar.exclusions=src/Serilog.Ui.Web/assets/__tests__/**/*");
-                    writer.WriteLine($"-Dsonar.test.inclusions=src/Serilog.Ui.Web/assets/__tests__/**/*");
-                    writer.WriteLine($"-Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/coverage/lcov.info");
+                    writer.WriteLine("-Dsonar.sources=src/Serilog.Ui.Web/src/");
+                    writer.WriteLine("-Dsonar.tests=src/Serilog.Ui.Web/src/");
+                    writer.WriteLine("-Dsonar.exclusions=src/Serilog.Ui.Web/src/__tests__/**/*,src/Serilog.Ui.Web/src/mockServiceWorker.*,src/Serilog.Ui.Web/src/style/**/*");
+                    writer.WriteLine("-Dsonar.test.inclusions=src/Serilog.Ui.Web/src/__tests__/**/*");
+                    writer.WriteLine("-Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/src/reports/coverage/lcov.info");
                 }
             }
         }
@@ -158,25 +150,15 @@ class GithubActionSonarCloud : GitHubActionsStep
 
 /// <summary>
 /// using: https://github.com/phoenix-actions/test-reporting
-/// from dorny/test-reporter@v1.6.0 => using fork to overcome issue #67
+/// from dorny/test-reporter => using fork to overcome issue #67
 /// </summary>
-class GithubActionReporter : GitHubActionsStep
+class GithubActionReporter(string name, string path, string reporter) : GitHubActionsStep
 {
-    readonly string name;
-    readonly string path;
-    readonly string reporter;
-
-    public GithubActionReporter(string name, string path, string reporter)
-    {
-        this.name = name;
-        this.path = path;
-        this.reporter = reporter;
-    }
     public override void Write(CustomFileWriter writer)
     {
         writer.WriteLine(); // empty line to separate tasks
 
-        writer.WriteLine("- uses: phoenix-actions/test-reporting@v9");
+        writer.WriteLine("- uses: phoenix-actions/test-reporting@v14");
 
         using (writer.Indent())
         {

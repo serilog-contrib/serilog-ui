@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.7"/>
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1"/>
+        <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1"/>
+        <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0"/>
+        <PackageReference Include="Serilog.Sinks.Map" Version="2.0.0"/>
+        <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="6.6.0"/>
+        <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="10.0.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0"/>
+        <PackageReference Include="Testcontainers" Version="3.9.0"/>
+        <PackageReference Include="Testcontainers.MsSql" Version="3.9.0"/>
+    </ItemGroup>
+
+    <!-- Serilog UI packages  -->
+    <ItemGroup>
+        <!-- comment/uncomment to directly reference Nuget release
+        <PackageReference Include="Serilog.UI" Version="3.0.0"/>
+        <PackageReference Include="Serilog.UI.MsSqlServerProvider" Version="3.0.0"/>
+        <PackageReference Include="Serilog.UI.ElasticSearchProvider" Version="3.0.0"/>
+        -->
+
+        <!-- comment/uncomment to directly reference solution projects -->
+        <ProjectReference Include="..\..\src\Serilog.Ui.Core\Serilog.Ui.Core.csproj"/>
+        <ProjectReference Include="..\..\src\Serilog.Ui.ElasticSearchProvider\Serilog.Ui.ElasticSearchProvider.csproj"/>
+        <ProjectReference Include="..\..\src\Serilog.Ui.MsSqlServerProvider\Serilog.Ui.MsSqlServerProvider.csproj"/>
+        <ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj"/>
+        <!-- -->
+    </ItemGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute"/>
+    </ItemGroup>
+
+</Project>

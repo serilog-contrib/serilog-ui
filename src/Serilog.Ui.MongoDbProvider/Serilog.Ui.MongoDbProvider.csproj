@@ -1,18 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
+		<PackageId>Serilog.UI.MongoDbProvider</PackageId>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<LangVersion>latest</LangVersion>
-		<Version>2.3.2</Version>
+		<Version>3.0.0</Version>
+
+		<Authors>Christian Haase</Authors>
+		<Description>MongoDB data provider for Serilog UI.</Description>
+		<PackageTags>serilog serilog-ui serilog.sinks.mongodb mongodb</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageReference Include="MongoDB.Driver" Version="2.21.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="MongoDB.Driver" Version="2.28.0"/>
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" PrivateAssets="all" />
 	</ItemGroup>
+
 </Project>

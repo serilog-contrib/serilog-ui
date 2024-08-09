@@ -1,56 +1,52 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
-using System;
+using Serilog.Ui.Core.Interfaces;
+using Serilog.Ui.PostgreSqlProvider.Models;
 
-namespace Serilog.Ui.PostgreSqlProvider
+namespace Serilog.Ui.PostgreSqlProvider.Extensions
 {
     /// <summary>
-    ///     PostgreSQL data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
+    ///  PostgreSQL data provider specific extension methods for <see cref="ISerilogUiOptionsBuilder"/>.
     /// </summary>
     public static class SerilogUiOptionBuilderExtensions
     {
         /// <summary>
-        ///     Configures the SerilogUi to connect to a PostgreSQL database.
+        ///  Configures the SerilogUi to connect to a PostgreSQL database.
         /// </summary>
-        /// <param name="sinkType">
-        ///     The sink that used to store logs in the PostgreSQL database. This data provider supports
-        ///     <a href="https://github.com/b00ted/serilog-sinks-postgresql">Serilog.Sinks.Postgresql</a> and
-        ///     <a href="https://github.com/serilog-contrib/Serilog.Sinks.Postgresql.Alternative">Serilog.Sinks.Postgresql.Alternative</a> sinks.
-        /// </param>
         /// <param name="optionsBuilder"> The Serilog UI option builder. </param>
-        /// <param name="connectionString"> The connection string. </param>
-        /// <param name="tableName"> Name of the table. </param>
-        /// <param name="schemaName">
-        ///     Name of the table schema. default value is <c> public </c>
-        /// </param>
-        /// <exception cref="ArgumentNullException"> throw if connectionString is null </exception>
-        /// <exception cref="ArgumentNullException"> throw is tableName is null </exception>
-        public static void UseNpgSql(
-            this SerilogUiOptionsBuilder optionsBuilder,
-            PostgreSqlSinkType sinkType,
-            string connectionString,
-            string tableName,
-            string schemaName = "public"
-        )
+        /// <param name="setupOptions">The Postgres Sql options action.</param>
+        public static ISerilogUiOptionsBuilder UseNpgSql(
+            this ISerilogUiOptionsBuilder optionsBuilder,
+            Action<PostgreSqlDbOptions> setupOptions
+        ) => optionsBuilder.UseNpgSql<PostgresLogModel>(setupOptions);
+
+        /// <summary>
+        ///  Configures the SerilogUi to connect to a PostgreSQL database.
+        /// </summary>
+        /// <typeparam name="T">The log model, containing any additional columns. It must inherit <see cref="PostgresLogModel"/>.</typeparam>
+        /// <param name="optionsBuilder"> The Serilog UI option builder. </param>
+        /// <param name="setupOptions">The Postgres Sql options action.</param>
+        public static ISerilogUiOptionsBuilder UseNpgSql<T>(
+            this ISerilogUiOptionsBuilder optionsBuilder,
+            Action<PostgreSqlDbOptions> setupOptions
+        ) where T : PostgresLogModel
         {
-            if (string.IsNullOrWhiteSpace(connectionString))
-                throw new ArgumentNullException(nameof(connectionString));
+            var dbOptions = new PostgreSqlDbOptions("public");
+            setupOptions(dbOptions);
+            dbOptions.Validate();
 
-            if (string.IsNullOrWhiteSpace(tableName))
-                throw new ArgumentNullException(nameof(tableName));
-
-            var relationProvider = new PostgreSqlDbOptions
+            var customModel = typeof(T) != typeof(PostgresLogModel);
+            if (customModel)
             {
-                ConnectionString = connectionString,
-                TableName = tableName,
-                Schema = !string.IsNullOrWhiteSpace(schemaName) ? schemaName : "public",
-                SinkType = sinkType
-            };
+                optionsBuilder.RegisterColumnsInfo<T>(dbOptions.GetProviderName(PostgresDataProvider.ProviderName));
+                optionsBuilder.Services.AddScoped<IDataProvider>(_ => new PostgresDataProvider<T>(dbOptions));
 
-            QueryBuilder.SetSinkType(sinkType);
+                return optionsBuilder;
+            }
 
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services
-                .AddScoped<IDataProvider, PostgresDataProvider>(p => ActivatorUtilities.CreateInstance<PostgresDataProvider>(p, relationProvider));
+            optionsBuilder.Services.AddScoped<IDataProvider>(_ => new PostgresDataProvider(dbOptions));
+            return optionsBuilder;
         }
     }
 }

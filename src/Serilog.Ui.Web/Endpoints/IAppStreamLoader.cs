@@ -4,6 +4,6 @@ namespace Serilog.Ui.Web.Endpoints
 {
     internal interface IAppStreamLoader
     {
-        Stream GetIndex();
+        Stream? GetIndex();
     }
 }
