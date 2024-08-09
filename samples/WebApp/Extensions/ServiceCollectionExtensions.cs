@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Serilog.Ui.Core.Extensions;
-using Serilog.Ui.Core.OptionsBuilder;
 using Serilog.Ui.MongoDbProvider.Extensions;
 using Serilog.Ui.Web.Extensions;
 using WebApp.Authentication;
