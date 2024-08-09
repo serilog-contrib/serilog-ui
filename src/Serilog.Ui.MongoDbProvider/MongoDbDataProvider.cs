@@ -61,7 +61,7 @@ namespace Serilog.Ui.MongoDbProvider
                     .Find(builder)
                     .Skip(count * page)
                     .Limit(count)
-                    .SortByDescending(entry => entry.Timestamp)
+                    .SortByDescending(entry => entry.UtcTimeStamp)
                     .ToListAsync();
 
                 var index = 1;
