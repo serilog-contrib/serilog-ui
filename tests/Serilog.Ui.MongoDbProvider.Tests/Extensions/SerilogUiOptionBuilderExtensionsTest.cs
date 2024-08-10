@@ -1,11 +1,13 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Linq;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.MongoDbProvider;
-using Serilog.Ui.Web;
-using System;
-using System.Collections.Generic;
+using Serilog.Ui.MongoDbProvider.Extensions;
+using Serilog.Ui.Web.Extensions;
 using Xunit;
 
 namespace MongoDb.Tests.Extensions
@@ -13,52 +15,75 @@ namespace MongoDb.Tests.Extensions
     [Trait("DI-DataProvider", "MongoDb")]
     public class SerilogUiOptionBuilderExtensionsTest
     {
-        private readonly ServiceCollection serviceCollection;
-
-        public SerilogUiOptionBuilderExtensionsTest()
-        {
-            serviceCollection = new ServiceCollection();
-        }
+        private readonly ServiceCollection _serviceCollection = [];
 
         [Fact]
-        public void It_registers_provider_and_dependencies_with_connstring_and_collection()
+        public void It_registers_provider_and_dependencies_with_connection_string_and_collection()
         {
-            serviceCollection.AddSerilogUi((builder) =>
+            _serviceCollection.AddSerilogUi(builder =>
             {
-                builder.UseMongoDb("mongodb://mongodb0.example.com:27017/my-db", "my-collection");
+                builder.UseMongoDb(options => options
+                    .WithConnectionString("mongodb://mongodb0.example.com:27017/my-db")
+                    .WithCollectionName("my-collection"));
             });
-            var services = serviceCollection.BuildServiceProvider();
+            var services = _serviceCollection.BuildServiceProvider();
 
-            services.GetRequiredService<MongoDbOptions>().Should().NotBeNull();
             services.GetRequiredService<IDataProvider>().Should().NotBeNull().And.BeOfType<MongoDbDataProvider>();
             services.GetRequiredService<IMongoClient>().Should().NotBeNull();
         }
 
         [Fact]
-        public void It_registers_provider_and_dependencies_with_connstring_collection_and_dbname()
+        public void It_registers_provider_and_dependencies_with_connection_string_collection_and_dbname()
         {
-            serviceCollection.AddSerilogUi((builder) =>
+            _serviceCollection.AddSerilogUi(builder =>
             {
-                builder.UseMongoDb("mongodb://mongodb0.example.com:27017", "my-db", "my-collection");
+                builder.UseMongoDb(options => options
+                    .WithConnectionString("mongodb://mongodb0.example.com:27017/")
+                    .WithDatabaseName("my-db")
+                    .WithCollectionName("my-collection"));
             });
-            var services = serviceCollection.BuildServiceProvider();
+            var services = _serviceCollection.BuildServiceProvider();
 
-            services.GetRequiredService<MongoDbOptions>().Should().NotBeNull();
             services.GetRequiredService<IDataProvider>().Should().NotBeNull().And.BeOfType<MongoDbDataProvider>();
             services.GetRequiredService<IMongoClient>().Should().NotBeNull();
             services.GetRequiredService<IMongoClient>().Settings.ApplicationName.Should().BeNullOrWhiteSpace();
         }
 
         [Fact]
+        public void It_registers_multiple_providers()
+        {
+            _serviceCollection.AddSerilogUi(builder =>
+            {
+                builder
+                    .UseMongoDb(options => options
+                        .WithConnectionString("mongodb://mongodb0.example.com:27017/my-db")
+                        .WithCollectionName("my-collection"))
+                    .UseMongoDb(options => options
+                        .WithConnectionString("mongodb://mongodb0.example.com:27017/my-db")
+                        .WithCollectionName("my-collection-2"));
+            });
+
+            var serviceProvider = _serviceCollection.BuildServiceProvider();
+            using var scope = serviceProvider.CreateScope();
+
+            var providers = scope.ServiceProvider.GetServices<IDataProvider>().ToList();
+            providers.Should().HaveCount(2).And.AllBeOfType<MongoDbDataProvider>();
+            providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
+        }
+
+        [Fact]
         public void It_registers_IMongoClient_only_when_not_registered()
         {
-            serviceCollection.AddSingleton<IMongoClient>(p =>
+            _serviceCollection.AddSingleton<IMongoClient>(_ =>
                 new MongoClient(new MongoClientSettings { ApplicationName = "my-app" }));
-            serviceCollection.AddSerilogUi((builder) =>
+            _serviceCollection.AddSerilogUi(builder =>
             {
-                builder.UseMongoDb("mongodb://mongodb0.example.com:27017", "my-db", "my-collection");
+                builder.UseMongoDb(options => options
+                    .WithConnectionString("mongodb://mongodb0.example.com:27017/")
+                    .WithDatabaseName("my-db")
+                    .WithCollectionName("my-collection"));
             });
-            var services = serviceCollection.BuildServiceProvider();
+            var services = _serviceCollection.BuildServiceProvider();
 
             services.GetRequiredService<IMongoClient>().Settings.ApplicationName.Should().Be("my-app");
         }
@@ -66,29 +91,9 @@ namespace MongoDb.Tests.Extensions
         [Fact]
         public void It_throws_on_invalid_registration()
         {
-            var nullables = new List<Func<IServiceCollection>>
-            {
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb(null, "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb(" ", "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("", "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("name", null)),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("name", " ")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("name", "")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("name", "name", null)),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("name", "name", "")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("name", "name", " ")),
-            };
-
-            foreach (var nullable in nullables)
-            {
-                nullable.Should().ThrowExactly<ArgumentNullException>();
-            }
-
-            var act = () => serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("mongodb://mongodb0.example.com:27017", "name"));
-            act.Should().ThrowExactly<ArgumentException>();
-
-            var actConfig = () => serviceCollection.AddSerilogUi((builder) => builder.UseMongoDb("name", "name"));
-            actConfig.Should().ThrowExactly<MongoConfigurationException>();
+            var act = () => _serviceCollection.AddSerilogUi(builder => builder.UseMongoDb(options =>
+                options.WithConnectionString("mongodb://mongodb0.example.com0:27017").WithCollectionName("name")));
+            act.Should().ThrowExactly<ArgumentNullException>();
         }
     }
 }

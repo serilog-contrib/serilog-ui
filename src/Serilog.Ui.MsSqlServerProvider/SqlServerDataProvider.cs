@@ -1,147 +1,168 @@
-﻿using Dapper;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Ardalis.GuardClauses;
+using Dapper;
 using Microsoft.Data.SqlClient;
 using Serilog.Ui.Core;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Text;
-using System.Threading.Tasks;
+using Serilog.Ui.Core.Attributes;
+using Serilog.Ui.Core.Models;
+using Serilog.Ui.Core.Models.Options;
+using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.MsSqlServerProvider
 {
-    public class SqlServerDataProvider : IDataProvider
+    public class SqlServerDataProvider(RelationalDbOptions options) : SqlServerDataProvider<SqlServerLogModel>(options)
     {
-        private readonly RelationalDbOptions _options;
+        protected override string SearchCriteriaWhereQuery() => "OR [Exception] LIKE @Search";
 
-        public SqlServerDataProvider(RelationalDbOptions options)
+        protected override string SelectQuery()
         {
-            _options = options ?? throw new ArgumentNullException(nameof(options));
+            const string level = $"[{ColumnLevelName}]";
+            const string message = $"[{ColumnMessageName}]";
+            const string timestamp = $"[{ColumnTimestampName}]";
+
+            return $"SELECT [Id], {message}, {level}, {timestamp}, [Exception], [Properties] ";
         }
+    }
 
-        public string Name => _options.ToDataProviderName("MsSQL");
+    public class SqlServerDataProvider<T>(RelationalDbOptions options) : IDataProvider
+        where T : SqlServerLogModel
+    {
+        internal const string MsSqlProviderName = "MsSQL";
 
-        public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
-            int page,
-            int count,
-            string level = null,
-            string searchCriteria = null,
-            DateTime? startDate = null,
-            DateTime? endDate = null
-        )
+        private protected const string ColumnTimestampName = "TimeStamp";
+
+        private protected const string ColumnLevelName = "Level";
+
+        private protected const string ColumnMessageName = "Message";
+
+        private readonly RelationalDbOptions _options = Guard.Against.Null(options);
+
+        public string Name => _options.GetProviderName(MsSqlProviderName);
+
+        protected virtual string SelectQuery() => "SELECT * ";
+
+        public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
         {
-            var logsTask = GetLogsAsync(page - 1, count, level, searchCriteria, startDate, endDate);
-            var logCountTask = CountLogsAsync(level, searchCriteria, startDate, endDate);
+            // since sink stores dates in local time, we query by local time
+            queryParams.ToLocalDates();
+
+            var logsTask = GetLogsAsync(queryParams);
+            var logCountTask = CountLogsAsync(queryParams);
 
             await Task.WhenAll(logsTask, logCountTask);
 
             return (await logsTask, await logCountTask);
         }
 
-        private async Task<IEnumerable<LogModel>> GetLogsAsync(
-            int page,
-            int count,
-            string level,
-            string searchCriteria,
-            DateTime? startDate,
-            DateTime? endDate)
+        private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
         {
             var queryBuilder = new StringBuilder();
-            queryBuilder.Append("SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [");
-            queryBuilder.Append(_options.Schema);
-            queryBuilder.Append("].[");
-            queryBuilder.Append(_options.TableName);
-            queryBuilder.Append("] ");
 
-            GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
+            queryBuilder.Append(SelectQuery());
+            queryBuilder.Append($"FROM [{_options.Schema}].[{_options.TableName}] ");
 
-            queryBuilder.Append("ORDER BY Id DESC OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY");
+            GenerateWhereClause(queryBuilder, queryParams);
 
-            using (IDbConnection connection = new SqlConnection(_options.ConnectionString))
-            {
-                var logs = await connection.QueryAsync<SqlServerLogModel>(queryBuilder.ToString(),
-                    new
-                    {
-                        Offset = page * count,
-                        Count = count,
-                        Level = level,
-                        Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
-                        StartDate = startDate,
-                        EndDate = endDate
-                    });
+            GenerateSortClause(queryBuilder, queryParams.SortOn, queryParams.SortBy);
 
-                var index = 1;
-                foreach (var log in logs)
-                    log.RowNo = (page * count) + index++;
+            queryBuilder.Append("OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY");
 
-                return logs;
-            }
+            var rowNoStart = queryParams.Page * queryParams.Count;
+
+            using IDbConnection connection = new SqlConnection(_options.ConnectionString);
+            var logs = await connection.QueryAsync<T>(queryBuilder.ToString(),
+                new
+                {
+                    Offset = rowNoStart,
+                    queryParams.Count,
+                    queryParams.Level,
+                    Search = queryParams.SearchCriteria != null ? $"%{queryParams.SearchCriteria}%" : null,
+                    queryParams.StartDate,
+                    queryParams.EndDate
+                });
+
+            return logs.Select((item, i) => item.SetRowNo(rowNoStart, i)).ToList();
         }
 
-        private async Task<int> CountLogsAsync(
-            string level,
-            string searchCriteria,
-            DateTime? startDate = null,
-            DateTime? endDate = null)
+        private async Task<int> CountLogsAsync(FetchLogsQuery queryParams)
         {
             var queryBuilder = new StringBuilder();
-            queryBuilder.Append("SELECT COUNT(Id) FROM [");
-            queryBuilder.Append(_options.Schema);
-            queryBuilder.Append("].[");
-            queryBuilder.Append(_options.TableName);
-            queryBuilder.Append("] ");
+            queryBuilder.Append($"SELECT COUNT(Id) FROM [{_options.Schema}].[{_options.TableName}]");
 
-            GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
+            GenerateWhereClause(queryBuilder, queryParams);
 
-            using (IDbConnection connection = new SqlConnection(_options.ConnectionString))
-            {
-                return await connection.ExecuteScalarAsync<int>(queryBuilder.ToString(),
-                    new
-                    {
-                        Level = level,
-                        Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
-                        StartDate = startDate,
-                        EndDate = endDate
-                    });
-            }
+            using IDbConnection connection = new SqlConnection(_options.ConnectionString);
+            return await connection.ExecuteScalarAsync<int>(queryBuilder.ToString(),
+                new
+                {
+                    queryParams.Level,
+                    Search = queryParams.SearchCriteria != null ? "%" + queryParams.SearchCriteria + "%" : null,
+                    queryParams.StartDate,
+                    queryParams.EndDate
+                });
         }
 
-        private void GenerateWhereClause(
-            StringBuilder queryBuilder,
-            string level,
-            string searchCriteria,
-            DateTime? startDate = null,
-            DateTime? endDate = null)
+        /// <summary>
+        /// If Exception property is flagged with <see cref="RemovedColumnAttribute"/>,
+        /// it removes the Where query part on the Exception field. 
+        /// </summary>
+        /// <returns></returns>
+        protected virtual string SearchCriteriaWhereQuery()
         {
-            var whereIncluded = false;
+            var exceptionProperty = typeof(T).GetProperty(nameof(SqlServerLogModel.Exception));
+            var att = exceptionProperty?.GetCustomAttribute<RemovedColumnAttribute>();
+            return att is null ? "OR [Exception] LIKE @Search" : string.Empty;
+        }
 
-            if (!string.IsNullOrEmpty(level))
+        private void GenerateWhereClause(StringBuilder queryBuilder, FetchLogsQuery queryParams)
+        {
+            var conditionStart = "WHERE";
+
+            if (!string.IsNullOrEmpty(queryParams.Level))
             {
-                queryBuilder.Append("WHERE [LEVEL] = @Level ");
-                whereIncluded = true;
+                queryBuilder.Append($"{conditionStart} [{ColumnLevelName}] = @Level ");
+                conditionStart = "AND";
             }
 
-            if (!string.IsNullOrEmpty(searchCriteria))
+            if (!string.IsNullOrEmpty(queryParams.SearchCriteria))
             {
-                queryBuilder.Append(whereIncluded
-                    ? "AND [Message] LIKE @Search OR [Exception] LIKE @Search "
-                    : "WHERE [Message] LIKE @Search OR [Exception] LIKE @Search ");
-                whereIncluded = true;
+                queryBuilder.Append($"{conditionStart} [{ColumnMessageName}] LIKE @Search {SearchCriteriaWhereQuery()} ");
+                conditionStart = "AND";
             }
 
-            if (startDate != null)
+            if (queryParams.StartDate != null)
             {
-                queryBuilder.Append(whereIncluded
-                    ? "AND [TimeStamp] >= @StartDate "
-                    : "WHERE [TimeStamp] >= @StartDate ");
-                whereIncluded = true;
+                queryBuilder.Append($"{conditionStart} [{ColumnTimestampName}] >= @StartDate ");
+                conditionStart = "AND";
             }
 
-            if (endDate != null)
+            if (queryParams.EndDate != null)
             {
-                queryBuilder.Append(whereIncluded
-                    ? "AND [TimeStamp] <= @EndDate "
-                    : "WHERE [TimeStamp] <= @EndDate ");
+                queryBuilder.Append($"{conditionStart} [{ColumnTimestampName}] <= @EndDate ");
             }
         }
+
+        private static void GenerateSortClause(StringBuilder queryBuilder, SortProperty sortOn, SortDirection sortBy)
+        {
+            var sortOnCol = GetColumnName(sortOn);
+            var sortByCol = sortBy.ToString().ToUpper();
+
+            queryBuilder.Append($"ORDER BY [{sortOnCol}] {sortByCol} ");
+        }
+
+        private static string GetColumnName(SortProperty sortOn)
+            => sortOn switch
+            {
+                SortProperty.Level => ColumnLevelName,
+                SortProperty.Message => ColumnMessageName,
+                SortProperty.Timestamp => ColumnTimestampName,
+                _ => ColumnTimestampName
+            };
     }
 }

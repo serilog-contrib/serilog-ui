@@ -1,32 +1,38 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Primitives;
 using MsSql.Tests.Util;
 using Serilog.Ui.Common.Tests.TestSuites.Impl;
-using Serilog.Ui.MsSqlServerProvider;
-using System.Threading.Tasks;
+using Serilog.Ui.Core.Models;
 using Xunit;
 
-namespace MsSql.Tests.DataProvider
+namespace MsSql.Tests.DataProvider;
+
+[Collection(nameof(MsSqlServerTestProvider))]
+[Trait("Integration-Pagination", "MsSql")]
+public class DataProviderPaginationTest(MsSqlServerTestProvider instance) : IntegrationPaginationTests<MsSqlServerTestProvider>(instance)
 {
-    [Collection(nameof(SqlServerDataProvider))]
-    [Trait("Integration-Pagination", "MsSql")]
-    public class DataProviderPaginationTest : IntegrationPaginationTests<MsSqlServerTestProvider>
+    [Fact]
+    public override Task It_throws_when_skip_is_zero()
     {
-        public DataProviderPaginationTest(MsSqlServerTestProvider instance) : base(instance)
-        {
-        }
+        var query = new Dictionary<string, StringValues> { ["page"] = "0", ["count"] = "1" };
+        var test = () => Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
+        return test.Should().ThrowAsync<SqlException>();
+    }
+}
 
-        public override Task It_fetches_with_limit() => base.It_fetches_with_limit();
-
-        public override Task It_fetches_with_limit_and_skip() => base.It_fetches_with_limit_and_skip();
-
-        public override Task It_fetches_with_skip() => base.It_fetches_with_skip();
-
-        [Fact]
-        public override Task It_throws_when_skip_is_zero()
-        {
-            var test = () => provider.FetchDataAsync(0, 1);
-            return test.Should().ThrowAsync<SqlException>();
-        }
+[Collection(nameof(MsSqlServerAdditionalColsTestProvider))]
+[Trait("Integration-Pagination-AdditionalColumns", "MsSql")]
+public class DataProviderPaginationAdditionalColsTest(MsSqlServerAdditionalColsTestProvider instance)
+    : IntegrationPaginationTests<MsSqlServerAdditionalColsTestProvider>(instance)
+{
+    [Fact]
+    public override Task It_throws_when_skip_is_zero()
+    {
+        var query = new Dictionary<string, StringValues> { ["page"] = "0", ["count"] = "1" };
+        var test = () => Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
+        return test.Should().ThrowAsync<SqlException>();
     }
 }

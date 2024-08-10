@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
+using Microsoft.AspNetCore.Http;
 
-namespace Serilog.Ui.Web
+namespace Serilog.Ui.Web.Extensions
 {
     public static class HttpRequestExtensions
     {

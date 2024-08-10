@@ -1,0 +1,40 @@
+.mobileGrid {
+  grid-template-columns: 1fr 2fr;
+  gap: 0.5em;
+
+  @media (min-width: em(440)) {
+    grid-template-columns: 2fr 2fr;
+  }
+}
+
+.desktopGrid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1em;
+}
+
+.activityGroup {
+  grid-column: 1 / 2;
+  height: 100%;
+  justify-content: start;
+  align-content: center;
+}
+
+.bannerGroup {
+  grid-column: 2 / 3;
+  height: 100%;
+  justify-content: end;
+  align-content: center;
+}
+
+.sidebarBoxNavlink {
+  height: 100%;
+  margin: var(--mantine-spacing-md);
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  border-radius: em(4px);
+}
+
+.searchFiltersModalTitle {
+  display: flex;
+  justify-content: space-around;
+  gap: 0.4em;
+}

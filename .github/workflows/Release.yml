@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -72,7 +72,7 @@ jobs:
           NugetApiKey: ${{ secrets.NUGET_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: phoenix-actions/test-reporting@v9
+      - uses: phoenix-actions/test-reporting@v14
         if: always()
         with:
           name: DotNET - Tests
@@ -91,17 +91,17 @@ jobs:
           args: >
             -Dsonar.organization=followynne
             -Dsonar.projectKey=followynne_serilog-ui_assets
-            -Dsonar.sources=src/Serilog.Ui.Web/assets/
-            -Dsonar.tests=src/Serilog.Ui.Web/assets/
-            -Dsonar.exclusions=src/Serilog.Ui.Web/assets/__tests__/**/*
-            -Dsonar.test.inclusions=src/Serilog.Ui.Web/assets/__tests__/**/*
-            -Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/coverage/lcov.info
+            -Dsonar.sources=src/Serilog.Ui.Web/src/
+            -Dsonar.tests=src/Serilog.Ui.Web/src/
+            -Dsonar.exclusions=src/Serilog.Ui.Web/src/__tests__/**/*,src/Serilog.Ui.Web/src/mockServiceWorker.*,src/Serilog.Ui.Web/src/style/**/*
+            -Dsonar.test.inclusions=src/Serilog.Ui.Web/src/__tests__/**/*
+            -Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/src/reports/coverage/lcov.info
 
-      - uses: phoenix-actions/test-reporting@v9
+      - uses: phoenix-actions/test-reporting@v14
         if: always()
         with:
           name: JS - Tests
           output-to: checks
-          path: '**/jest-*.xml'
+          path: '**/test-junit-report.xml'
           reporter: jest-junit
           fail-on-error: false

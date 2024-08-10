@@ -1,36 +1,50 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using NSubstitute;
-using Serilog.Ui.Core;
-using Serilog.Ui.Web.Endpoints;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using NSubstitute;
+using Serilog.Ui.Core;
+using Serilog.Ui.Core.Models;
+using Serilog.Ui.Web.Endpoints;
 using Xunit;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace Ui.Web.Tests.Endpoints
+namespace Serilog.Ui.Web.Tests.Endpoints
 {
     [Trait("Ui-Api-Endpoints", "Web")]
     public class SerilogUiEndpointsTest
     {
         private readonly ILogger<SerilogUiEndpoints> _loggerMock;
+
         private readonly SerilogUiEndpoints _sut;
+
         private readonly DefaultHttpContext _testContext;
+
+        private readonly IHttpContextAccessor _contextAccessor;
 
         public SerilogUiEndpointsTest()
         {
             _loggerMock = Substitute.For<ILogger<SerilogUiEndpoints>>();
-            _testContext = new DefaultHttpContext();
-            _testContext.Request.Host = new HostString("test.dev");
-            _testContext.Request.Scheme = "https";
-            _sut = new SerilogUiEndpoints(_loggerMock);
+            _testContext = new DefaultHttpContext
+            {
+                Request =
+                {
+                    Host = new HostString("test.dev"),
+                    Scheme = "https"
+                }
+            };
+            _contextAccessor = Substitute.For<IHttpContextAccessor>();
+            _contextAccessor.HttpContext.Returns(_testContext);
+            var aggregateDataProvider = new AggregateDataProvider(new IDataProvider[] { new FakeProvider(), new FakeSecondProvider() });
+            _sut = new SerilogUiEndpoints(_contextAccessor, _loggerMock, aggregateDataProvider);
         }
 
         [Fact]
@@ -60,8 +74,9 @@ namespace Ui.Web.Tests.Endpoints
         public async Task It_gets_logs_with_search_parameters()
         {
             // Arrange
-            _testContext.Request.QueryString = new QueryString("?page=2&count=30&level=Verbose" +
-                "&search=test&startDate=2020-01-02%2018:00:00&endDate=2020-02-02%2018:00:00&key=FakeSecondProvider");
+            _testContext.Request.QueryString =
+                new QueryString(
+                    "?page=2&count=30&level=Verbose&search=test&startDate=2020-01-02%2018:00:00&endDate=2020-02-02%2018:00:00&key=FakeSecondProvider");
 
             // Act
             var result = await HappyPath<AnonymousObject>(_sut.GetLogsAsync);
@@ -78,44 +93,39 @@ namespace Ui.Web.Tests.Endpoints
         {
             // Arrange
             _testContext.Response.Body = new MemoryStream();
+            var sut = new SerilogUiEndpoints(_contextAccessor, _loggerMock, new AggregateDataProvider(new[] { new BrokenProvider() }));
 
             // Act
-            await _sut.GetLogsAsync(_testContext);
+            await sut.GetLogsAsync();
 
             // Assert
             _testContext.Response.StatusCode.Should().Be(500);
             _testContext.Response.Body.Seek(0, SeekOrigin.Begin);
             var result = await new StreamReader(_testContext.Response.Body).ReadToEndAsync();
 
-            _testContext.Response.StatusCode.Should().Be((int) HttpStatusCode.InternalServerError);
+            _testContext.Response.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
             _testContext.Response.ContentType.Should().Be("application/problem+json");
-            
-            var problemDetails = JsonSerializer.Deserialize<ProblemDetails>(result) ?? throw new InvalidOperationException("JsonSerializer.Deserialize<ProblemDetails>(result) == null");
+
+            var problemDetails = JsonSerializer.Deserialize<ProblemDetails>(result)!;
 
             problemDetails.Title.Should().StartWith("An error occured");
             problemDetails.Detail.Should().NotBeNullOrWhiteSpace();
             problemDetails.Status.Should().Be((int)HttpStatusCode.InternalServerError);
             problemDetails.Extensions.Should().ContainKey("traceId");
-            ((JsonElement) problemDetails.Extensions["traceId"]!).GetString().Should().NotBeNullOrWhiteSpace();
+            ((JsonElement)problemDetails.Extensions["traceId"]!).GetString().Should().NotBeNullOrWhiteSpace();
         }
 
-        private async Task<T> HappyPath<T>(Func<HttpContext, Task> call)
+        private async Task<T> HappyPath<T>(Func<Task> call)
         {
             // Arrange
-            var mockProvider = Substitute.For<IServiceProvider>();
-            mockProvider
-                .GetService(typeof(AggregateDataProvider))
-                .Returns(new AggregateDataProvider(new IDataProvider[] { new FakeProvider(), new FakeSecondProvider() }));
-            _testContext.RequestServices = mockProvider;
             _testContext.Response.Body = new MemoryStream();
 
             // Act
-            await call(_testContext);
+            await call();
 
             // Assert
             _testContext.Response.ContentType.Should().Be("application/json;charset=utf-8");
             _testContext.Response.StatusCode.Should().Be(200);
-            mockProvider.Received().GetService(typeof(AggregateDataProvider));
             _testContext.Response.Body.Seek(0, SeekOrigin.Begin);
             var result = await new StreamReader(_testContext.Response.Body).ReadToEndAsync();
             return JsonSerializer.Deserialize<T>(result)!;
@@ -125,14 +135,14 @@ namespace Ui.Web.Tests.Endpoints
         {
             public string Name => "FakeFirstProvider";
 
-            public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page, int count, string? level = null, string? searchCriteria = null, DateTime? startDate = null, DateTime? endDate = null)
+            public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
             {
-                if (page != 1 ||
-                    count != 10 ||
-                    !string.IsNullOrWhiteSpace(level) ||
-                    !string.IsNullOrWhiteSpace(searchCriteria) ||
-                    startDate != null ||
-                    endDate != null)
+                if (queryParams.Page != 0 ||
+                    queryParams.Count != 10 ||
+                    !string.IsNullOrWhiteSpace(queryParams.Level) ||
+                    !string.IsNullOrWhiteSpace(queryParams.SearchCriteria) ||
+                    queryParams.StartDate != null ||
+                    queryParams.EndDate != null)
                     return Task.FromResult<(IEnumerable<LogModel>, int)>((Array.Empty<LogModel>(), 0));
 
                 var modelArray = new LogModel[10];
@@ -145,14 +155,14 @@ namespace Ui.Web.Tests.Endpoints
         {
             public string Name => "FakeSecondProvider";
 
-            public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(int page, int count, string? level = null, string? searchCriteria = null, DateTime? startDate = null, DateTime? endDate = null)
+            public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
             {
-                if (page != 2 ||
-                    count != 30 ||
-                    !(level?.Equals("Verbose") ?? false) ||
-                    !(searchCriteria?.Equals("test") ?? false) ||
-                    !startDate.HasValue || startDate.Value.Equals(DateTime.MinValue) ||
-                    !endDate.HasValue || endDate.Value.Equals(DateTime.MinValue))
+                if (queryParams.Page != 1 ||
+                    queryParams.Count != 30 ||
+                    !(queryParams.Level?.Equals("Verbose") ?? false) ||
+                    !(queryParams.SearchCriteria?.Equals("test") ?? false) ||
+                    !queryParams.StartDate.HasValue || queryParams.StartDate.Value.Equals(DateTime.MinValue) ||
+                    !queryParams.EndDate.HasValue || queryParams.EndDate.Value.Equals(DateTime.MinValue))
                     return Task.FromResult<(IEnumerable<LogModel>, int)>((Array.Empty<LogModel>(), 0));
 
                 var modelArray = new LogModel[5];
@@ -161,14 +171,27 @@ namespace Ui.Web.Tests.Endpoints
             }
         }
 
-        private class AnonymousObject
+        private class BrokenProvider : IDataProvider
+        {
+            public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
+            {
+                throw new NotImplementedException();
+            }
+
+            public string Name { get; } = "BrokenProvider";
+        };
+
+        private record AnonymousObject
         {
             [JsonPropertyName("logs")]
             public IEnumerable<LogModel>? Logs { get; set; }
+
             [JsonPropertyName("total")]
             public int Total { get; set; }
+
             [JsonPropertyName("count")]
             public int Count { get; set; }
+
             [JsonPropertyName("currentPage")]
             public int CurrentPage { get; set; }
         }

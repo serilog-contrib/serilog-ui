@@ -1,42 +1,44 @@
-﻿using Ardalis.GuardClauses;
+﻿using System;
+using System.Threading.Tasks;
+using Ardalis.GuardClauses;
 using MongoDb.Tests.Util.Builders;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core;
 using Serilog.Ui.MongoDbProvider;
-using System;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace MongoDb.Tests.Util
 {
     [CollectionDefinition(nameof(MongoDbDataProvider))]
-    public class MongoCollection : ICollectionFixture<BaseIntegrationTest> { }
+    public class MongoCollection : ICollectionFixture<BaseIntegrationTest>
+    {
+    }
 
     public class BaseIntegrationTest : IIntegrationRunner
     {
         private bool _disposedValue;
 
-        internal BaseServiceBuilder? _builder;
+        internal BaseServiceBuilder? Builder;
 
         public Task DisposeAsync() => Task.CompletedTask;
 
         public virtual async Task InitializeAsync()
         {
-            _builder = await MongoDbDataProviderBuilder.Build(false);
+            Builder = await MongoDbDataProviderBuilder.Build();
         }
 
-        public IDataProvider GetDataProvider() => Guard.Against.Null(_builder?._sut)!;
+        public IDataProvider GetDataProvider() => Guard.Against.Null(Builder?.Sut);
 
-        public LogModelPropsCollector GetPropsCollector() => Guard.Against.Null(_builder?._collector)!;
+        public LogModelPropsCollector GetPropsCollector() => Guard.Against.Null(Builder?.Collector);
 
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
             {
-                if (disposing && _builder != null)
+                if (disposing && Builder != null)
                 {
-                    _builder._runner.Dispose();
+                    Builder.Runner.Dispose();
                 }
 
                 _disposedValue = true;
@@ -50,5 +52,4 @@ namespace MongoDb.Tests.Util
             GC.SuppressFinalize(this);
         }
     }
-
 }

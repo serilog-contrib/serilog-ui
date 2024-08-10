@@ -1,36 +1,28 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
 using Serilog.Ui.Web.Authorization;
-using System.Threading.Tasks;
+using Serilog.Ui.Web.Models;
 
 namespace Serilog.Ui.Web.Endpoints
 {
-    internal class SerilogUiEndpointsDecorator : ISerilogUiEndpoints
+    internal class SerilogUiEndpointsDecorator(ISerilogUiEndpoints decoratedService, IAuthorizationFilterService authFilterService)
+        : ISerilogUiEndpoints
     {
-        private readonly ISerilogUiEndpoints _decoratedService;
-        private readonly IAuthorizationFilterService _authFilterService;
+        public UiOptions? Options { get; private set; }
 
-        public SerilogUiEndpointsDecorator(ISerilogUiEndpoints decoratedService, IAuthorizationFilterService authFilterService)
+        public Task GetApiKeysAsync()
         {
-            _decoratedService = decoratedService;
-            _authFilterService = authFilterService;
+            return authFilterService.CheckAccessAsync(decoratedService.GetApiKeysAsync);
         }
 
-        public UiOptions Options { get; private set; }
-
-        public Task GetApiKeysAsync(HttpContext httpContext)
+        public Task GetLogsAsync()
         {
-            return _authFilterService.CheckAccessAsync(httpContext, Options, _decoratedService.GetApiKeysAsync);
-        }
-
-        public Task GetLogsAsync(HttpContext httpContext)
-        {
-            return _authFilterService.CheckAccessAsync(httpContext, Options, _decoratedService.GetLogsAsync);
+            return authFilterService.CheckAccessAsync(decoratedService.GetLogsAsync);
         }
 
         public void SetOptions(UiOptions options)
         {
             Options = options;
-            _decoratedService.SetOptions(options);
+            decoratedService.SetOptions(options);
         }
     }
 }

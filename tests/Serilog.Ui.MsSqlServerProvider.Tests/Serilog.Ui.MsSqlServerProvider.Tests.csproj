@@ -1,15 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-		<Nullable>enable</Nullable>
 		<AssemblyName>MsSql.Tests</AssemblyName>
 		<RootNamespace>MsSql.Tests</RootNamespace>
-		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Testcontainers.MsSql" Version="3.4.0" />
+		<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="6.6.1"/>
+		<PackageReference Include="Testcontainers.MsSql" Version="3.9.0"/>
 	</ItemGroup>
 
 	<ItemGroup>

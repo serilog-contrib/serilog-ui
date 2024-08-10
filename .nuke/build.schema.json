@@ -93,6 +93,7 @@
             "enum": [
               "Backend_Clean",
               "Backend_Compile",
+              "Backend_Report_Ci",
               "Backend_Restore",
               "Backend_SonarScan_End",
               "Backend_SonarScan_Start",
@@ -129,6 +130,7 @@
             "enum": [
               "Backend_Clean",
               "Backend_Compile",
+              "Backend_Report_Ci",
               "Backend_Restore",
               "Backend_SonarScan_End",
               "Backend_SonarScan_Start",
