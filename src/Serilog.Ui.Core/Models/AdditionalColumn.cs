@@ -1,6 +1,4 @@
-﻿using Serilog.Ui.Core.Attributes;
-
-namespace Serilog.Ui.Core.Models;
+﻿namespace Serilog.Ui.Core.Models;
 
 /// <summary>
 /// AdditionalColumn class.

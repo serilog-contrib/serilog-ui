@@ -14,24 +14,3 @@ public class CodeColumnAttribute(CodeType codeType) : Attribute
     /// </summary>
     public readonly CodeType CodeType = codeType;
 }
-
-/// <summary>
-/// CodeType enum.
-/// </summary>
-public enum CodeType
-{
-    /// <summary>
-    /// Default value
-    /// </summary>
-    None,
-
-    /// <summary>
-    /// Xml code type
-    /// </summary>
-    Xml,
-
-    /// <summary>
-    /// Json code type
-    /// </summary>
-    Json
-}

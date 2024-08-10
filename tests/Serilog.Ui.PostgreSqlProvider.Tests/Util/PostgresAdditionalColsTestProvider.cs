@@ -5,6 +5,7 @@ using NpgsqlTypes;
 using Serilog.Sinks.PostgreSQL;
 using Serilog.Sinks.PostgreSQL.ColumnWriters;
 using Serilog.Ui.Core.Attributes;
+using Serilog.Ui.Core.Models;
 using Serilog.Ui.PostgreSqlProvider.Models;
 using Xunit;
 
@@ -23,13 +24,13 @@ public sealed class PostgresAdditionalColsTestProvider : PostgresTestProvider<Po
         [DefaultColumnNames.Timestamp] = new TimestampColumnWriter(),
         [DefaultColumnNames.LogEventSerialized] = new LogEventSerializedColumnWriter(),
         [nameof(PostgresTestModel.SampleBool)] = new SinglePropertyColumnWriter(nameof(PostgresTestModel.SampleBool))
-            { WriteMethod = PropertyWriteMethod.Raw, DbType = NpgsqlDbType.Boolean, Order = 0 },
+        { WriteMethod = PropertyWriteMethod.Raw, DbType = NpgsqlDbType.Boolean, Order = 0 },
         [nameof(PostgresTestModel.SampleDate)] = new SinglePropertyColumnWriter(nameof(PostgresTestModel.SampleDate))
-            { DbType = NpgsqlDbType.Date, WriteMethod = PropertyWriteMethod.Raw, Order = 0 },
+        { DbType = NpgsqlDbType.Date, WriteMethod = PropertyWriteMethod.Raw, Order = 0 },
         [nameof(PostgresTestModel.EnvironmentName)] = new SinglePropertyColumnWriter(nameof(PostgresTestModel.EnvironmentName))
-            { DbType = NpgsqlDbType.Varchar, Order = 0 },
+        { DbType = NpgsqlDbType.Varchar, Order = 0 },
         [nameof(PostgresTestModel.EnvironmentUserName)] = new SinglePropertyColumnWriter(nameof(PostgresTestModel.EnvironmentUserName))
-            { DbType = NpgsqlDbType.Varchar, Order = 0 },
+        { DbType = NpgsqlDbType.Varchar, Order = 0 },
     };
 }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Serilog.Ui.Core.Attributes;
+using Serilog.Ui.Core.Models;
 using Serilog.Ui.MySqlProvider;
 using Xunit;
 

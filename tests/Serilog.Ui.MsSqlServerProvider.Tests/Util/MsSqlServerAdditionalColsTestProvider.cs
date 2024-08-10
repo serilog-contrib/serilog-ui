@@ -5,6 +5,7 @@ using System.Text.Json.Serialization;
 using Serilog.Sinks.MSSqlServer;
 using Serilog.Ui.Common.Tests.FakeObjectModels;
 using Serilog.Ui.Core.Attributes;
+using Serilog.Ui.Core.Models;
 using Serilog.Ui.MsSqlServerProvider;
 using Xunit;
 
