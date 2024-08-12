@@ -1,141 +1,118 @@
-﻿using Dapper;
+﻿using Ardalis.GuardClauses;
+using Dapper;
 using Microsoft.Data.Sqlite;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Models;
+using Serilog.Ui.Core.Models.Options;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using static Serilog.Ui.Core.Models.SearchOptions;
 
 namespace Serilog.Ui.SqliteDataProvider
 {
-    public class SqliteDataProvider : IDataProvider
+    public class SqliteDataProvider(RelationalDbOptions options) : IDataProvider
     {
-        private readonly RelationalDbOptions _options;
+        internal const string SqliteProviderName = "SQLite";
+        private readonly RelationalDbOptions _options = Guard.Against.Null(options);
 
-        public SqliteDataProvider(RelationalDbOptions options)
+        public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
         {
-            _options = options ?? throw new ArgumentNullException(nameof(options));
-        }
-
-        public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(
-            int page,
-            int count,
-            string level = null,
-            string searchCriteria = null,
-            DateTime? startDate = null,
-            DateTime? endDate = null
-        )
-        {
-            var logsTask = GetLogs(page - 1, count, level, searchCriteria, startDate, endDate);
-            var logCountTask = CountLogs(level, searchCriteria, startDate, endDate);
+            var logsTask = GetLogsAsync(queryParams);
+            var logCountTask = CountLogsAsync(queryParams);
 
             await Task.WhenAll(logsTask, logCountTask);
 
             return (await logsTask, await logCountTask);
         }
 
-        public string Name => _options.ToDataProviderName("Sqlite");
+        public string Name => _options.GetProviderName(SqliteProviderName);
 
-        private Task<IEnumerable<LogModel>> GetLogs(
-            int page,
-            int count,
-            string level,
-            string searchCriteria,
-            DateTime? startDate,
-            DateTime? endDate)
+        private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
         {
             var queryBuilder = new StringBuilder();
-            queryBuilder.Append("SELECT Id, RenderedMessage AS Message, Level, Timestamp, Exception, Properties FROM ");
-            queryBuilder.Append(_options.TableName);
-            queryBuilder.Append(" ");
+            queryBuilder.Append("SELECT Id, RenderedMessage AS Message, Level, Timestamp, Exception, Properties ");
+            queryBuilder.Append($"FROM {_options.TableName} ");
 
-            GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
+            GenerateWhereClause(queryBuilder, queryParams);
 
-            queryBuilder.Append("ORDER BY Id DESC LIMIT @Offset, @Count");
+            GenerateSortClause(queryBuilder, queryParams.SortOn, queryParams.SortBy);
 
-            using (var connection = new SqliteConnection(_options.ConnectionString))
+            queryBuilder.Append("LIMIT @Offset, @Count");
+
+            var rowNoStart = queryParams.Page * queryParams.Count;
+
+            using var connection = new SqliteConnection(_options.ConnectionString);
+            var queryParameters = new
             {
-                var param = new
+                Offset = rowNoStart,
+                queryParams.Count,
+                queryParams.Level,
+                Search = queryParams.SearchCriteria != null ? $"%{queryParams.SearchCriteria}%" : null,
+                queryParams.StartDate,
+                queryParams.EndDate
+            };
+            var logs = await connection.QueryAsync<LogModel>(queryBuilder.ToString(), queryParameters);
+
+            return logs.Select((item, i) => item.SetRowNo(rowNoStart, i)).ToList();
+        }
+
+        private Task<int> CountLogsAsync(FetchLogsQuery queryParams)
+        {
+            var queryBuilder = new StringBuilder();
+            queryBuilder.Append($"SELECT COUNT(Id) FROM {_options.TableName} ");
+
+            GenerateWhereClause(queryBuilder, queryParams);
+
+            using var connection = new SqliteConnection(_options.ConnectionString);
+
+            return connection.QueryFirstOrDefaultAsync<int>(
+                queryBuilder.ToString(),
+                new
                 {
-                    Offset = page * count,
-                    Count = count,
-                    Level = level,
-                    Search = searchCriteria != null ? $"%{searchCriteria}%" : null,
-                    StartDate = startDate,
-                    EndDate = endDate
-                };
-                var logs = connection.Query<LogModel>(queryBuilder.ToString(), param);
-                var index = 1;
-                foreach (var log in logs)
-                    log.RowNo = (page * count) + index++;
+                    queryParams.Level,
+                    Search = queryParams.SearchCriteria != null ? $"%{queryParams.SearchCriteria}%" : null,
+                    queryParams.StartDate,
+                    queryParams.EndDate
+                });
+        }
 
-                return Task.FromResult(logs);
+        private void GenerateWhereClause(StringBuilder queryBuilder, FetchLogsQuery queryParams)
+        {
+            var conditionStart = "WHERE";
+
+            if (!string.IsNullOrWhiteSpace(queryParams.Level))
+            {
+                queryBuilder.Append($"{conditionStart} Level = @Level ");
+                conditionStart = "AND";
+            }
+
+            if (!string.IsNullOrWhiteSpace(queryParams.SearchCriteria))
+            {
+                // TODO Exception as RemovableColumn?
+                queryBuilder.Append($"{conditionStart} (RenderedMessage LIKE @Search OR Exception LIKE @Search) ");
+                conditionStart = "AND";
+            }
+
+            if (queryParams.StartDate != null)
+            {
+                queryBuilder.Append($"{conditionStart} Timestamp >= @StartDate ");
+                conditionStart = "AND";
+            }
+
+            if (queryParams.EndDate != null)
+            {
+                queryBuilder.Append($"{conditionStart} Timestamp <= @EndDate ");
             }
         }
 
-        private Task<int> CountLogs(
-            string level,
-            string searchCriteria,
-            DateTime? startDate = null,
-            DateTime? endDate = null)
+        private void GenerateSortClause(StringBuilder queryBuilder, SortProperty sortOn, SortDirection sortBy)
         {
-            var queryBuilder = new StringBuilder();
-            queryBuilder.Append("SELECT COUNT(Id) FROM ");
-            queryBuilder.Append(_options.TableName);
-            queryBuilder.Append(" ");
-
-            GenerateWhereClause(queryBuilder, level, searchCriteria, startDate, endDate);
-
-            using (var connection = new SqliteConnection(_options.ConnectionString))
-            {
-                return Task.FromResult(connection.QueryFirstOrDefault<int>(queryBuilder.ToString(),
-                    new
-                    {
-                        Level = level,
-                        Search = searchCriteria != null ? "%" + searchCriteria + "%" : null,
-                        StartDate = startDate,
-                        EndDate = endDate
-                    }));
-            }
-        }
-
-        private void GenerateWhereClause(
-            StringBuilder queryBuilder,
-            string level,
-            string searchCriteria,
-            DateTime? startDate = null,
-            DateTime? endDate = null)
-        {
-            var whereIncluded = false;
-
-            if (!string.IsNullOrEmpty(level))
-            {
-                queryBuilder.Append("WHERE Level = @Level ");
-                whereIncluded = true;
-            }
-
-            if (!string.IsNullOrEmpty(searchCriteria))
-            {
-                queryBuilder.Append(whereIncluded
-                    ? "AND (RenderedMessage LIKE @Search OR Exception LIKE @Search) "
-                    : "WHERE (RenderedMessage LIKE @Search OR Exception LIKE @Search) ");
-                whereIncluded = true;
-            }
-
-            if (startDate != null)
-            {
-                queryBuilder.Append(whereIncluded
-                    ? "AND Timestamp >= @StartDate "
-                    : "WHERE Timestamp >= @StartDate ");
-                whereIncluded = true;
-            }
-
-            if (endDate != null)
-            {
-                queryBuilder.Append(whereIncluded
-                    ? "AND Timestamp <= @EndDate "
-                    : "WHERE Timestamp <= @EndDate ");
-            }
+            // TODO
+            queryBuilder.Append("ORDER BY Id DESC ");
         }
     }
 }

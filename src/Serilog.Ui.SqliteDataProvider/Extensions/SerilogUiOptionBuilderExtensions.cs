@@ -1,47 +1,34 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Interfaces;
+using Serilog.Ui.Core.Models.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Serilog.Ui.SqliteDataProvider
+namespace Serilog.Ui.SqliteDataProvider.Extensions
 {
     /// <summary>
-    ///     Sqlite data provider specific extension methods for <see cref="SerilogUiOptionsBuilder"/>.
+    /// SQLite data provider specific extension methods for <see cref="ISerilogUiOptionsBuilder"/>.
     /// </summary>
     public static class SerilogUiOptionBuilderExtensions
     {
-        /// <summary>
-        ///     Configures the SerilogUi to connect to a Sqlite database.
-        /// </summary>
+        /// <summary> Configures the SerilogUi to connect to a SQLite database.</summary>
         /// <param name="optionsBuilder"> The options builder. </param>
-        /// <param name="connectionString"> The connection string. </param>
-        /// <param name="tableName"> Name of the table. </param>
-        /// <exception cref="ArgumentNullException"> throw if connectionString is null </exception>
-        /// <exception cref="ArgumentNullException"> throw is tableName is null </exception>
-        public static void UseSqliteServer(
-            this SerilogUiOptionsBuilder optionsBuilder,
-            string connectionString,
-            string tableName
-        )
+        /// <param name="setupOptions">The SQLite options action.</param>
+        public static ISerilogUiOptionsBuilder UseSqliteServer(
+            this ISerilogUiOptionsBuilder optionsBuilder,
+            Action<RelationalDbOptions> setupOptions)
         {
-            if (string.IsNullOrWhiteSpace(connectionString))
-                throw new ArgumentNullException(nameof(connectionString));
+            var dbOptions = new RelationalDbOptions(string.Empty);
+            setupOptions(dbOptions);
+            dbOptions.Validate();
 
-            if (string.IsNullOrWhiteSpace(tableName))
-                throw new ArgumentNullException(nameof(tableName));
+            optionsBuilder.Services.AddScoped<IDataProvider, SqliteDataProvider>(p => new SqliteDataProvider(dbOptions));
 
-            var relationProvider = new RelationalDbOptions
-            {
-                ConnectionString = connectionString,
-                TableName = tableName
-            };
-
-            ((ISerilogUiOptionsBuilder)optionsBuilder).Services
-                .AddScoped<IDataProvider, SqliteDataProvider>(p => ActivatorUtilities.CreateInstance<SqliteDataProvider>(p, relationProvider));
-
+            return optionsBuilder;
         }
     }
 }
