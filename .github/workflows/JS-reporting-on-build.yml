@@ -12,10 +12,10 @@ jobs:
   upload:
     runs-on: ubuntu-latest
     steps:
-    - uses: phoenix-actions/test-reporting@v9
-      with:
-        artifact: test-results            # artifact name
-        name: JS - Tests                  # Name of the check run which will be created
-        path: '**/jest-*.xml'             # Path to test results (inside artifact .zip)
-        reporter: jest-junit              # Format of test results
-        output-to: checks
+      - uses: phoenix-actions/test-reporting@v14
+        with:
+          artifact: test-results # artifact name
+          name: JS - Tests # Name of the check run which will be created
+          path: '**/test-junit-report.xml' # Path to test results (inside artifact .zip)
+          reporter: jest-junit # Format of test results
+          output-to: checks

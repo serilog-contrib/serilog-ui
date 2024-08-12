@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Serilog.Ui.Web.Endpoints
 {
-    public interface ISerilogUiAppRoutes: ISerilogUiOptionsSetter
+    public interface ISerilogUiAppRoutes : ISerilogUiOptionsSetter
     {
-        Task GetHomeAsync(HttpContext httpContext);
+        protected internal bool BlockHomeAccess { get; set; }
 
-        Task RedirectHomeAsync(HttpContext httpContext);
+        Task GetHomeAsync();
+
+        Task RedirectHomeAsync();
     }
 }

@@ -1,10 +1,10 @@
-﻿using MongoDB.Bson;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using Bogus;
+using MongoDB.Bson;
 using Serilog.Ui.Common.Tests.FakeObjectModels;
 using Serilog.Ui.MongoDbProvider;
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
-using Bogus;
 
 namespace Serilog.Ui.Common.Tests.DataSamples
 {
@@ -22,13 +22,13 @@ namespace Serilog.Ui.Common.Tests.DataSamples
             var logs = originalLogs.Select(p => new MongoDbLogModel
             {
                 Id = p.RowNo,
-                Level = p.Level,
-                RenderedMessage = p.Message,
+                Level = p.Level!,
+                RenderedMessage = p.Message!,
                 Timestamp = p.Timestamp,
                 UtcTimeStamp = p.Timestamp.ToUniversalTime(),
-                Properties = JsonConvert.DeserializeObject<Properties>(p.Properties),
+                Properties = JsonSerializer.Deserialize<Properties>(p.Properties!),
                 Exception = faker.System.Exception() // Serialization round-trip not possible for an exception, so we generate a new exception.
-                    .ToBsonDocument(),
+                    .ToBsonDocument()
             });
 
             return (logs, modelCollector);

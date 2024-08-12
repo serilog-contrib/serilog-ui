@@ -1,8 +1,11 @@
+using System;
 using Ardalis.GuardClauses;
 using Microsoft.AspNetCore.Builder;
-using System;
+using Microsoft.Extensions.DependencyInjection;
+using Serilog.Ui.Core.Models.Options;
+using Serilog.Ui.Web.Models;
 
-namespace Serilog.Ui.Web
+namespace Serilog.Ui.Web.Extensions
 {
     /// <summary>
     ///   Contains extensions for configuring routing on an <see cref="IApplicationBuilder"/>.
@@ -17,13 +20,16 @@ namespace Serilog.Ui.Web
         /// </param>
         /// <param name="options">The options to configure Serilog UI dashboard.</param>
         /// <returns>IApplicationBuilder.</returns>
-        /// <exception cref="ArgumentNullException">throw if applicationBuilder if null</exception>
-        public static IApplicationBuilder UseSerilogUi(this IApplicationBuilder applicationBuilder, Action<UiOptions> options = null)
+        /// <exception cref="ArgumentNullException">throw if applicationBuilder is null</exception>
+        /// <exception cref="ArgumentException">if <see cref="UiOptions"/> validation fails</exception>
+        public static IApplicationBuilder UseSerilogUi(this IApplicationBuilder applicationBuilder, Action<UiOptions>? options = null)
         {
-            Guard.Against.Null(applicationBuilder, nameof(applicationBuilder));
+            Guard.Against.Null(applicationBuilder);
 
-            var uiOptions = new UiOptions();
+            var providerOptions = applicationBuilder.ApplicationServices.GetRequiredService<ProvidersOptions>();
+            var uiOptions = new UiOptions(providerOptions);
             options?.Invoke(uiOptions);
+            uiOptions.Validate();
 
             return applicationBuilder.UseMiddleware<SerilogUiMiddleware>(uiOptions);
         }

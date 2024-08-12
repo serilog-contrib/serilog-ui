@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="style/favicon.ico" />
+    <title>Serilog UI</title>
+    <meta name="dummy" content="%(HeadContent)">
+    <style>
+      body.serilog-ui-app {
+        margin-right: 0 !important;
+        overflow: auto !important;
+      }
+
+      .serilog-ui-app .right-scroll-bar-position {
+        right: 0 !important;
+      }
+    </style>
+  </head>
+
+  <body class="serilog-ui-app">
+    <div hidden id="serilog-ui-props">%(Configs)</div>
+    <div id="serilog-ui-app"></div>
+
+    <script type="module" src="main.tsx"></script>
+    <meta name="dummy" content="%(BodyContent)">
+  </body>
+
+</html>

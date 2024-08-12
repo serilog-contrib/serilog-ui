@@ -1,0 +1,89 @@
+{
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "project": "tsconfig.json",
+    "sourceType": "module"
+  },
+  "ignorePatterns": ["vite.config.ts"],
+  "plugins": [
+    "@typescript-eslint",
+    "import",
+    "jsx-a11y",
+    "prettier",
+    "promise",
+    "react",
+    "react-hooks",
+    "html"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "no-shadow": "off",
+    "react/display-name": 0,
+    "react/prop-types": 1,
+    "react/jsx-props-no-spreading": 1,
+    "react/jsx-uses-vars": 1,
+    "react/jsx-filename-extension": [2, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
+    "react/react-in-jsx-scope": "off",
+    "react/require-default-props": "off",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-floating-promises": "error",
+    "@typescript-eslint/no-unused-vars": [
+      0,
+      {
+        "ignoreRestSiblings": true
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["**/__tests__/**/*", "**/*.{spec,test}.*"],
+      "env": {
+        "vitest-globals/env": true
+      },
+      "plugins": ["vitest", "testing-library"],
+      "extends": [
+        "plugin:vitest/legacy-recommended", // waiting for eslint v9 migration
+        "plugin:vitest-globals/recommended",
+        "plugin:testing-library/react"
+      ],
+      // A subset of the recommended rules:
+      "rules": {
+        // https://github.com/testing-library/eslint-plugin-testing-library
+        "testing-library/await-async-queries": "error",
+        "testing-library/await-async-utils": "error",
+        "testing-library/no-await-sync-queries": "error",
+        "testing-library/no-container": "error",
+        "testing-library/no-debugging-utils": "error",
+        "testing-library/no-dom-import": ["error", "react"],
+        "testing-library/no-node-access": ["error", { "allowContainerFirstChild": true }],
+        "testing-library/no-promise-in-fire-event": "error",
+        "testing-library/no-render-in-lifecycle": "error",
+        "testing-library/no-unnecessary-act": "error",
+        "testing-library/no-wait-for-multiple-assertions": "error",
+        "testing-library/no-wait-for-side-effects": "error",
+        "testing-library/no-wait-for-snapshot": "error",
+        "testing-library/prefer-find-by": "error",
+        "testing-library/prefer-presence-queries": "error",
+        "testing-library/prefer-query-by-disappearance": "error",
+        "testing-library/prefer-screen-queries": "error",
+        "testing-library/render-result-naming-convention": "error"
+      }
+    }
+  ]
+}

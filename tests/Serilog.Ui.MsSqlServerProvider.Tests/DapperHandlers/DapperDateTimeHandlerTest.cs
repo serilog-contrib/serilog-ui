@@ -9,6 +9,7 @@ using Xunit;
 
 namespace MsSql.Tests.DapperHandlers;
 
+[Trait("Unit-DapperTimeHandler", "MsSql")]
 public class DapperDateTimeHandlerTest
 {
     private readonly DapperDateTimeHandler _sut = new();

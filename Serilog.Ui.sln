@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.MongoDbProvider"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{157CA77C-513A-409F-8045-E68739AAC8C8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleWebApp", "samples\SampleWebApp\SampleWebApp.csproj", "{30C8AE36-8117-4E52-8140-8440D3C9AD39}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.ElasticSearchProvider", "src\Serilog.Ui.ElasticSearchProvider\Serilog.Ui.ElasticSearchProvider.csproj", "{4CC537BE-8695-4976-BA43-B8484664C169}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.MySqlProvider", "src\Serilog.Ui.MySqlProvider\Serilog.Ui.MySqlProvider.csproj", "{3363E5F5-54A0-413D-807C-D27DBFD52CC8}"
@@ -49,13 +47,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assets", "assets", "{04B4A8FE-0D7F-48AB-BDE5-AF934CEAD7DF}"
 	ProjectSection(SolutionItems) = preProject
-		assets\serilog-ui-2.jpg = assets\serilog-ui-2.jpg
 		assets\serilog-ui.jpg = assets\serilog-ui.jpg
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{5D0F29B0-11F4-4FEA-8D90-FD917F680D6D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests-related", "tests-related", "{DCB452AD-2E0E-4D6A-B46D-72D0AF247381}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{DCB452AD-2E0E-4D6A-B46D-72D0AF247381}"
 	ProjectSection(SolutionItems) = preProject
 		tests\Directory.Build.Props = tests\Directory.Build.Props
 	EndProjectSection
@@ -67,6 +64,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.SqliteDataProvider", "src\Serilog.Ui.SqliteDataProvider\Serilog.Ui.SqliteDataProvider.csproj", "{A23F4275-DB47-40C9-96CE-1116E20F5EB7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.Ui.SqliteProvider.Tests", "tests\Serilog.Ui.SqliteProvider.Tests\Serilog.Ui.SqliteProvider.Tests.csproj", "{C9CBABEA-622C-4E11-9D68-816F685E8E0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApp", "samples\WebApp\WebApp.csproj", "{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "samples\WebApi\WebApi.csproj", "{A2701899-102D-4926-B054-FD76F59A0791}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -94,10 +95,6 @@ Global
 		{A6195106-0818-4CE1-A889-BB734960DD8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6195106-0818-4CE1-A889-BB734960DD8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6195106-0818-4CE1-A889-BB734960DD8D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{30C8AE36-8117-4E52-8140-8440D3C9AD39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{30C8AE36-8117-4E52-8140-8440D3C9AD39}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{30C8AE36-8117-4E52-8140-8440D3C9AD39}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{30C8AE36-8117-4E52-8140-8440D3C9AD39}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4CC537BE-8695-4976-BA43-B8484664C169}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4CC537BE-8695-4976-BA43-B8484664C169}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CC537BE-8695-4976-BA43-B8484664C169}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -152,6 +149,14 @@ Global
 		{C9CBABEA-622C-4E11-9D68-816F685E8E0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9CBABEA-622C-4E11-9D68-816F685E8E0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9CBABEA-622C-4E11-9D68-816F685E8E0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2701899-102D-4926-B054-FD76F59A0791}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2701899-102D-4926-B054-FD76F59A0791}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2701899-102D-4926-B054-FD76F59A0791}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2701899-102D-4926-B054-FD76F59A0791}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -162,7 +167,6 @@ Global
 		{0862FA16-35A3-4CF9-B797-67F70F6CFB8B} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
 		{0004A882-82C9-40C3-9D6C-CD297D1A50E7} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
 		{A6195106-0818-4CE1-A889-BB734960DD8D} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
-		{30C8AE36-8117-4E52-8140-8440D3C9AD39} = {157CA77C-513A-409F-8045-E68739AAC8C8}
 		{4CC537BE-8695-4976-BA43-B8484664C169} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
 		{3363E5F5-54A0-413D-807C-D27DBFD52CC8} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
 		{7F66E2A5-7994-43E9-B8C4-026924273DF6} = {75F9223B-15F2-4465-B01D-2A5A49FCD000}
@@ -178,6 +182,8 @@ Global
 		{B785845B-D858-4562-B224-67468B4FEE41} = {75F9223B-15F2-4465-B01D-2A5A49FCD000}
 		{A23F4275-DB47-40C9-96CE-1116E20F5EB7} = {ACA69857-2E3E-468C-B0B0-A86852E3492D}
 		{C9CBABEA-622C-4E11-9D68-816F685E8E0D} = {75F9223B-15F2-4465-B01D-2A5A49FCD000}
+		{8F9A0E5E-8C1D-4FF8-8865-1B362CF51765} = {157CA77C-513A-409F-8045-E68739AAC8C8}
+		{A2701899-102D-4926-B054-FD76F59A0791} = {157CA77C-513A-409F-8045-E68739AAC8C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {88374732-FEAD-4375-9CF1-75331A37CF07}
