@@ -1,4 +1,4 @@
-﻿using MsSql.Tests.DataProvider;
+﻿using MsSql.Tests.DataProvider; // TODO nope
 using MySql.Tests.Util;
 using Serilog.Ui.SqliteDataProvider;
 using System.Threading.Tasks;
@@ -10,6 +10,27 @@ namespace Sqlite.Tests.DataProvider
     [Trait("Integration-Search", "Sqlite")]
     public class DataProviderSearchTest : IntegrationSearchTests<SqliteTestProvider>
     {
+
+        // https://github.com/saleem-mirza/serilog-sinks-sqlite/blob/dev/src/Serilog.Sinks.SQLite/Sinks/SQLite/SQLiteSink.cs
+        public const string SqliteCreateTable = "CREATE TABLE IF NOT EXISTS Logs (" +
+            "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+            "Timestamp TEXT," +
+            "LogLevel VARCHAR(10)," +
+            "Exception TEXT," +
+            "Message TEXT," +
+            "Properties TEXT," +
+            "_ts TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%f','now'))" + // SQLite equivalent for CURRENT_TIMESTAMP
+        ")";
+
+        public const string SqliteInsertFakeData = "INSERT INTO Logs" +
+            "(Timestamp, LogLevel, Exception, Message, Properties)" +
+            "VALUES (" +
+            $"@{nameof(LogModel.Timestamp)}," +
+            $"@{nameof(LogModel.Level)}," +
+            $"@{nameof(LogModel.Exception)}," +
+            $"@{nameof(LogModel.Message)}," +
+            $"@{nameof(LogModel.Properties)}" +
+            ")";
         public DataProviderSearchTest(SqliteTestProvider instance) : base(instance)
         {
         }
