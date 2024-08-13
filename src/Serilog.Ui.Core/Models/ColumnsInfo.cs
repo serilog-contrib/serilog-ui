@@ -67,7 +67,7 @@ public class ColumnsInfo
         var isPropRemoved = propertiesProperty?.GetCustomAttribute<RemovedColumnAttribute>();
         if (isPropRemoved is not null)
         {
-            yield return nameof(LogModel.Exception);
+            yield return nameof(LogModel.Properties);
         }
     }
 }
