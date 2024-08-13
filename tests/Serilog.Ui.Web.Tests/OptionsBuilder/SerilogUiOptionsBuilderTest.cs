@@ -42,7 +42,10 @@ public class SerilogUiOptionsBuilderTest
         var service = sut.Services.BuildServiceProvider().GetRequiredService<ProvidersOptions>();
         service.AdditionalColumns.Should().HaveCount(2);
         service.AdditionalColumns.Should().ContainKeys("test", "test2");
-        service.AdditionalColumns.Values.Should().AllBeEquivalentTo(_columnsInfoSample);
+        service.AdditionalColumns.Values.Should()
+            .AllBeEquivalentTo(_columnsInfoSample)
+            .And
+            .AllSatisfy(s => s.RemovedColumns.Should().BeEquivalentTo([nameof(LogModel.Exception), nameof(LogModel.Properties)]));
     }
 
     [Fact]
