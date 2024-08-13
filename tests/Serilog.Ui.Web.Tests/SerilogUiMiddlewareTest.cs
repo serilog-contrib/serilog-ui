@@ -21,6 +21,7 @@ namespace Serilog.Ui.Web.Tests
         [InlineData("/serilog-ui/api/logs/", 409)]
         [InlineData("/serilog-ui/", 418)]
         [InlineData("/serilog-ui/index.html", 400)]
+        [InlineData("/serilog-ui", 400)]
         public async Task It_hits_ui_endpoint_when_request_matches_method_and_options_prefix(string pathReq, int statusCode)
         {
             // Act
@@ -35,6 +36,7 @@ namespace Serilog.Ui.Web.Tests
         [InlineData("/test/api/logs/", 409)]
         [InlineData("/test/", 418)]
         [InlineData("/test/index.html", 400)]
+        [InlineData("/test", 400)]
         public async Task It_hits_ui_endpoint_when_request_matches_method_and_custom_options_prefix(string pathReq, int statusCode)
         {
             // Act
@@ -43,7 +45,7 @@ namespace Serilog.Ui.Web.Tests
             // Assert
             send.StatusCode.Should().Be((HttpStatusCode)statusCode);
         }
-        
+
         [Theory]
         [InlineData("/serilog-ui/assets/index.js")]
         [InlineData("/serilog-ui/assets/index.js?query=query", "?query=query")]
@@ -83,6 +85,7 @@ namespace Serilog.Ui.Web.Tests
         [InlineData("/fake-prefix", 400)]
         [InlineData("/fake-prefix/", 400)]
         [InlineData("/fake-prefix/index.html", 418)]
+        [InlineData("/fake-prefix", 418)]
         public async Task It_proceeds_onwards_when_request_does_not_match_options_prefix(string pathReq, int statusCode)
         {
             // Act
@@ -97,6 +100,7 @@ namespace Serilog.Ui.Web.Tests
         [InlineData("/serilog-ui/api/logs/", 409)]
         [InlineData("/serilog-ui/", 400)]
         [InlineData("/serilog-ui/index.html", 418)]
+        [InlineData("/serilog-ui", 418)]
         public async Task It_proceeds_onwards_when_request_is_not_a_get(string pathReq, int statusCode)
         {
             // Arrange
