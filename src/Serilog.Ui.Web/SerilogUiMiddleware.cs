@@ -49,7 +49,11 @@ namespace Serilog.Ui.Web
 
             if (CheckPath(path, "/api/keys/?")) return uiEndpoints.GetApiKeysAsync();
             if (CheckPath(path, "/api/logs/?")) return uiEndpoints.GetLogsAsync();
-            if (CheckPath(path, "/index.html")) return uiAppRoutes.RedirectHomeAsync();
+
+            // prefix without trailing slash or old index.html routing
+            if (CheckPath(path, "/index.html") || CheckPath(path, "")) return uiAppRoutes.RedirectHomeAsync();
+
+            // asset request, we remove any extra path part since it's always served from the serilog-ui root
             if (CheckPath(path, "/(?:.*(.*/))(?:(assets/)).*")) return ChangeAssetRequestPath(httpContext);
 
             return CheckPath(path, "/(?!.*(assets/)).*") ? uiAppRoutes.GetHomeAsync() : _staticFileMiddleware.Invoke(httpContext);

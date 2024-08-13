@@ -52,8 +52,9 @@ namespace Serilog.Ui.Web.Endpoints
             var httpContext = Guard.Against.Null(httpContextAccessor.HttpContext);
 
             var indexUrl = httpContext.Request.GetEncodedUrl().Replace("index.html", "");
+            var indexUrlWithTrailingSlash = indexUrl.EndsWith('/') ? indexUrl : $"{indexUrl}/";
 
-            httpContext.Response.Redirect(indexUrl, true);
+            httpContext.Response.Redirect(indexUrlWithTrailingSlash, true);
 
             return Task.CompletedTask;
         }
