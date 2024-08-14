@@ -18,13 +18,10 @@ export const useException = (logException?: string, logPropertyType?: string) =>
     [currentDbKey, renderExceptionAsStringKeys],
   );
 
-  const exceptionContent = !isExceptionAsString
-    ? logException
-    : logException?.replace(' at ', '\nat ');
   const logType = !isExceptionAsString ? logPropertyType : 'string';
 
   return {
-    exceptionContent,
+    exceptionContent: logException ?? '',
     logType,
     removeException,
   };

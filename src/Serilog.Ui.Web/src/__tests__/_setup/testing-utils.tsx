@@ -36,6 +36,7 @@ const Wrapper = ({
           homeUrl: 'https://test-google.com',
           columnsInfo,
           disabledSortOnKeys: ['disabled-sort-db'],
+          renderExceptionAsStringKeys: ['exception-string-sample'],
         })}
       </div>
 
