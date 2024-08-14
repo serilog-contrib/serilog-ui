@@ -10,5 +10,6 @@ public class MySqlDataProvider(RelationalDbOptions options) : DataProvider<MySql
 
     protected override string SearchCriteriaWhereQuery() => "OR Exception LIKE @Search";
 
-    public override string Name => Options.GetProviderName("MySQL");
+    internal const string MySqlProviderName = "MySQL";
+    public override string Name => Options.GetProviderName(MySqlProviderName);
 }

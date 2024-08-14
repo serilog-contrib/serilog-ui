@@ -143,6 +143,11 @@ public class UiOptions(ProvidersOptions options)
     internal IEnumerable<string> DisabledSortOnKeys { get; } = options.DisabledSortProviderNames;
 
     /// <summary>
+    /// Gets or sets the database keys that renders exceptions as simple strings.
+    /// </summary>
+    internal IEnumerable<string> RenderExceptionAsStringKeys { get; } = options.ExceptionAsStringProviderNames;
+
+    /// <summary>
     ///   Gets or sets the head content, a string that will be placed in the &lt;head&gt; of the index.html
     /// </summary>
     /// <value>The head content.</value>

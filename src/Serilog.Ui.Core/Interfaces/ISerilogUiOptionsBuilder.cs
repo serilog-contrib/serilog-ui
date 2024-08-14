@@ -26,4 +26,10 @@ public interface ISerilogUiOptionsBuilder
     /// <param name="providerKey">The IDataProvider <see cref="IDataProvider.Name"/>.</param>
     /// <typeparam name="T"></typeparam>
     void RegisterColumnsInfo<T>(string providerKey) where T : LogModel;
+
+    /// <summary>
+    /// Register a Provider Key Name that saves the Exception field as string. 
+    /// </summary>
+    /// <param name="providerKey">The IDataProvider <see cref="IDataProvider.Name"/>.</param>
+    void RegisterExceptionAsStringForProviderKey(string providerKey);
 }
