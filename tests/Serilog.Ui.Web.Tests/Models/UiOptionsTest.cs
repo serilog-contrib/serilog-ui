@@ -19,6 +19,7 @@ public class UiOptionsTest
         sut.BodyContent.Should().BeEmpty();
         sut.HeadContent.Should().BeEmpty();
         sut.ShowBrand.Should().BeTrue();
+        sut.ExpandDropdownsByDefault.Should().BeFalse();
         sut.Authorization.AuthenticationType.Should().Be(AuthenticationType.Custom);
         sut.Authorization.RunAuthorizationFilterOnAppRoutes.Should().BeFalse();
     }
@@ -33,11 +34,13 @@ public class UiOptionsTest
             .WithAuthenticationType(AuthenticationType.Basic)
             .WithRoutePrefix("prefix")
             .HideSerilogUiBrand()
+            .WithExpandedDropdownsByDefault()
             .EnableAuthorizationOnAppRoutes();
 
         sut.HomeUrl.Should().Be("test");
         sut.RoutePrefix.Should().Be("prefix");
         sut.ShowBrand.Should().BeFalse();
+        sut.ExpandDropdownsByDefault.Should().BeTrue();
         sut.Authorization.AuthenticationType.Should().Be(AuthenticationType.Basic);
         sut.Authorization.RunAuthorizationFilterOnAppRoutes.Should().BeTrue();
     }

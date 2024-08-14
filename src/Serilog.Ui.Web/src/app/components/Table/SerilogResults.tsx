@@ -106,7 +106,7 @@ const TableHead = memo(() => {
         {!removeException && (
           <TableHeader text="Exception" columnType={ColumnType.code} />
         )}
-        <TableHeader text="Additional Columns" columnType={ColumnType.code} />
+        <TableHeader text="Enrichment Data" columnType={ColumnType.code} />
       </Table.Tr>
     </Table.Thead>
   );
