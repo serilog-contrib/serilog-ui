@@ -83,7 +83,7 @@ export const renderCodeContent = async (
       });
     }
   } catch {
-    console.warn(`${modalContent} is not a valid json!`);
-    return `Content could not be parsed, as per expected type: ${contentType}`;
+    console.warn(`Content could not be parsed, as per expected type: ${contentType}`);
+    return modalContent;
   }
 };

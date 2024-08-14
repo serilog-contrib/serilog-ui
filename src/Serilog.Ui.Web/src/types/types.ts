@@ -103,6 +103,7 @@ export interface SerilogUiConfig {
   showBrand?: boolean;
   blockHomeAccess?: boolean;
   disabledSortOnKeys?: string[];
+  renderExceptionAsStringKeys?: string[];
   columnsInfo?: ColumnsInfo;
 }
 

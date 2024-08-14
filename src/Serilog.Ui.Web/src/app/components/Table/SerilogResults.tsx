@@ -6,10 +6,11 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { useColumnsInfo } from 'app/hooks/useColumnsInfo';
+import { useException } from 'app/hooks/useException';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { Suspense, lazy, memo, useCallback, useMemo } from 'react';
 import classes from 'style/table.module.css';
-import { ColumnType, LogLevel } from '../../../types/types';
+import { ColumnType, EncodedSeriLogObject, LogLevel } from '../../../types/types';
 import useQueryLogs from '../../hooks/useQueryLogs';
 import { isArrayGuard, isObjectGuard, isStringGuard } from '../../util/guards';
 import { getBgLogLevel, splitPrintDate } from '../../util/prettyPrints';
@@ -20,8 +21,6 @@ const PropertiesModal = lazy(() => import('./PropertiesModal'));
 const SerilogResults = () => {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
-  const { removeException } = useColumnsInfo();
-
   const { data, isFetching } = useQueryLogs();
 
   const getCellColor = useMemo(
@@ -45,14 +44,7 @@ const SerilogResults = () => {
         <TableCell content={log.rowNo} columnType={ColumnType.shortstring} />
         <TableCell content={log.timestamp} columnType={ColumnType.datetime} />
         <TableCell content={log.message} columnType={ColumnType.text} />
-        {!removeException && (
-          <TableCell
-            content={log.exception}
-            columnType={ColumnType.code}
-            codeContentType={log.propertyType}
-            codeModalTitle="Exception details"
-          />
-        )}
+        <ExceptionCell log={log} />
         <Table.Td>
           <Suspense>
             <PropertiesModal modalContent={log} title="View" />
@@ -60,7 +52,7 @@ const SerilogResults = () => {
         </Table.Td>
       </Table.Tr>
     ));
-  }, [data?.logs, getCellColor, removeException]);
+  }, [data?.logs, getCellColor]);
 
   return (
     <Table.ScrollContainer minWidth={1250}>
@@ -200,5 +192,24 @@ const TableCell = memo(
     }
   },
 );
+
+const ExceptionCell = memo(({ log }: { log: EncodedSeriLogObject }) => {
+  const { exceptionContent, logType, removeException } = useException(
+    log.exception,
+    log.propertyType,
+  );
+
+  if (removeException) return null;
+  {
+    return (
+      <TableCell
+        content={exceptionContent}
+        columnType={ColumnType.code}
+        codeContentType={logType}
+        codeModalTitle="Exception details"
+      />
+    );
+  }
+});
 
 export default SerilogResults;

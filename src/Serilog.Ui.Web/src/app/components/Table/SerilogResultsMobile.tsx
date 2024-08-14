@@ -11,7 +11,7 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { IconSearchOff } from '@tabler/icons-react';
-import { useColumnsInfo } from 'app/hooks/useColumnsInfo';
+import { useException } from 'app/hooks/useException';
 import useQueryLogs from 'app/hooks/useQueryLogs';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { getBgLogLevel, printDate } from 'app/util/prettyPrints';
@@ -69,7 +69,6 @@ const MobileSkeleton = () => {
 const LogCard = memo(({ log, isUtc }: { log: EncodedSeriLogObject; isUtc?: boolean }) => {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
-  const { removeException } = useColumnsInfo();
 
   const colorByLogLevel = getBgLogLevel(theme, colorScheme, LogLevel[log.level]);
 
@@ -111,22 +110,33 @@ const LogCard = memo(({ log, isUtc }: { log: EncodedSeriLogObject; isUtc?: boole
           alignContent: 'center',
         }}
       >
-        {!removeException && (
-          <Suspense>
-            <DetailsModal
-              modalContent={log.exception ?? ''}
-              modalTitle="Exception details"
-              buttonTitle="exception"
-              contentType={log.propertyType}
-              disabled={!log.exception}
-            />
-          </Suspense>
-        )}
+        <ExceptionCard log={log} />
         <Suspense>
           <PropertiesModal modalContent={log} />
         </Suspense>
       </Card.Section>
     </Card>
+  );
+});
+
+const ExceptionCard = memo(({ log }: { log: EncodedSeriLogObject }) => {
+  const { exceptionContent, logType, removeException } = useException(
+    log.exception,
+    log.propertyType,
+  );
+
+  if (removeException) return null;
+
+  return (
+    <Suspense>
+      <DetailsModal
+        modalContent={exceptionContent ?? ''}
+        modalTitle="Exception details"
+        buttonTitle="exception"
+        contentType={logType}
+        disabled={!exceptionContent}
+      />
+    </Suspense>
   );
 });
 

@@ -19,6 +19,7 @@ const defaults: SerilogUiConfig = {
   authType: AuthType.Jwt,
   columnsInfo: {},
   disabledSortOnKeys: [],
+  renderExceptionAsStringKeys: [],
   homeUrl: 'https://google.com',
   routePrefix: 'serilog-ui',
   showBrand: true,
