@@ -44,7 +44,7 @@ const PropertiesModal = ({
         radius="sm"
         size="xl"
         closeButtonProps={{ 'aria-label': 'close-properties-modal' }}
-        title="Additional Columns"
+        title="Enrichment Data"
         overlayProps={overlayProps(colorScheme, theme.colors)}
       >
         <Box display="grid" style={boxGridProperties}>
@@ -73,16 +73,17 @@ const RenderProps = memo(
     prop: unknown;
     logPropertyType: string;
   }) => {
-    const { isUtc } = useSerilogUiProps();
+    const { expandDropdownsByDefault, isUtc } = useSerilogUiProps();
     const { additionalColumn, removeProperties } = useColumnsInfo(name, logPropertyType);
 
     if (!additionalColumn) return null;
 
     const propertyName = capitalize(name);
+    const defaultAccordionValue = expandDropdownsByDefault ? propertyName : null;
 
     if (additionalColumn.codeType && !removeProperties) {
       return (
-        <Accordion style={{ order: 1 }}>
+        <Accordion defaultValue={defaultAccordionValue} style={{ order: 1 }}>
           <Accordion.Item value={propertyName}>
             <Accordion.Control icon={<IconCodeDots />}>{propertyName}</Accordion.Control>
             <Accordion.Panel>
