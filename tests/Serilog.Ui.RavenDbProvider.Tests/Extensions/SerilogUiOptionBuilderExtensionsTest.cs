@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Raven.Client.Documents;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.RavenDbProvider;
 using Serilog.Ui.RavenDbProvider.Extensions;
 using Serilog.Ui.Web.Extensions;
@@ -36,6 +37,10 @@ public class SerilogUiOptionBuilderExtensionsTest
         documentStore.Should().NotBeNull();
         documentStore.Urls.Should().NotBeNullOrEmpty();
         documentStore.Database.Should().Be(dbName);
+
+        var providersOptions = services.GetRequiredService<ProvidersOptions>();
+        providersOptions.DisabledSortProviderNames.Should().BeEmpty();
+        providersOptions.ExceptionAsStringProviderNames.Should().BeEmpty();
     }
 
     [Fact]
@@ -55,6 +60,10 @@ public class SerilogUiOptionBuilderExtensionsTest
         var providers = scope.ServiceProvider.GetServices<IDataProvider>().ToList();
         providers.Should().HaveCount(2).And.AllBeOfType<RavenDbDataProvider>();
         providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
+
+        var providersOptions = serviceProvider.GetRequiredService<ProvidersOptions>();
+        providersOptions.DisabledSortProviderNames.Should().BeEmpty();
+        providersOptions.ExceptionAsStringProviderNames.Should().BeEmpty();
     }
 
     [Fact]

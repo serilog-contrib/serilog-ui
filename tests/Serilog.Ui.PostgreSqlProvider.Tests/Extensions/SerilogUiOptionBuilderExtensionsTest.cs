@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Postgres.Tests.Util;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Extensions;
+using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.PostgreSqlProvider;
 using Serilog.Ui.PostgreSqlProvider.Extensions;
 using Serilog.Ui.PostgreSqlProvider.Models;
@@ -47,6 +48,8 @@ namespace Postgres.Tests.Extensions
             var provider = scope.ServiceProvider.GetService<IDataProvider>();
             provider.Should().NotBeNull().And.BeOfType<PostgresDataProvider>();
             opts.ColumnNames.Should().BeOfType(type);
+            serviceProvider.GetRequiredService<ProvidersOptions>().DisabledSortProviderNames.Should().BeEmpty();
+            serviceProvider.GetRequiredService<ProvidersOptions>().ExceptionAsStringProviderNames.Should().HaveCount(1);
         }
 
         [Fact]
@@ -64,6 +67,8 @@ namespace Postgres.Tests.Extensions
 
             var provider = scope.ServiceProvider.GetService<IDataProvider>();
             provider.Should().NotBeNull().And.BeOfType<PostgresDataProvider<PostgresTestModel>>();
+            serviceProvider.GetRequiredService<ProvidersOptions>().DisabledSortProviderNames.Should().BeEmpty();
+            serviceProvider.GetRequiredService<ProvidersOptions>().ExceptionAsStringProviderNames.Should().HaveCount(1);
         }
 
         [Fact]
@@ -105,6 +110,8 @@ namespace Postgres.Tests.Extensions
             providers.Skip(2).Take(2).Should().AllBeOfType<PostgresDataProvider<PostgresTestModel>>();
 
             providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
+            serviceProvider.GetRequiredService<ProvidersOptions>().DisabledSortProviderNames.Should().BeEmpty();
+            serviceProvider.GetRequiredService<ProvidersOptions>().ExceptionAsStringProviderNames.Should().HaveCount(4);
         }
 
         [Fact]

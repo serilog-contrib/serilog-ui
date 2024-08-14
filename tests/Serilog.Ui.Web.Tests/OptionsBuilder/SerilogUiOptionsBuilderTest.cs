@@ -29,6 +29,21 @@ public class SerilogUiOptionsBuilderTest
     }
 
     [Fact]
+    public void It_adds_entry_in_exception_as_string_keys()
+    {
+        // Act
+        var sut = GetBuilder();
+        sut.RegisterExceptionAsStringForProviderKey("test");
+        sut.RegisterExceptionAsStringForProviderKey("test");
+        sut.RegisterExceptionAsStringForProviderKey("test2");
+
+        // Assert
+        sut.RegisterProviderServices();
+        var provider = sut.Services.BuildServiceProvider();
+        provider.GetRequiredService<ProvidersOptions>().ExceptionAsStringProviderNames.Should().BeEquivalentTo(["test", "test2"]);
+    }
+
+    [Fact]
     public void It_creates_entries_in_additional_columns()
     {
         // Act

@@ -8,6 +8,7 @@ using MySql.Tests.Util;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models;
+using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.MySqlProvider;
 using Serilog.Ui.MySqlProvider.Extensions;
 using Serilog.Ui.Web.Extensions;
@@ -34,6 +35,10 @@ public class SerilogUiOptionBuilderExtensionsMySqlTest
 
         var provider = scope.ServiceProvider.GetService<IDataProvider>();
         provider.Should().NotBeNull().And.BeOfType<MySqlDataProvider>();
+
+        var providersOptions = serviceProvider.GetRequiredService<ProvidersOptions>();
+        providersOptions.DisabledSortProviderNames.Should().BeEmpty();
+        providersOptions.ExceptionAsStringProviderNames.Should().HaveCount(1);
     }
 
     [Fact]
@@ -52,6 +57,10 @@ public class SerilogUiOptionBuilderExtensionsMySqlTest
         var providers = scope.ServiceProvider.GetServices<IDataProvider>().ToList();
         providers.Should().HaveCount(2).And.AllBeOfType<MySqlDataProvider>();
         providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
+
+        var providersOptions = serviceProvider.GetRequiredService<ProvidersOptions>();
+        providersOptions.DisabledSortProviderNames.Should().BeEmpty();
+        providersOptions.ExceptionAsStringProviderNames.Should().HaveCount(2);
     }
 
     [Fact]
@@ -100,6 +109,10 @@ public class SerilogUiOptionBuilderExtensionsMariaDbTest
 
         var provider = scope.ServiceProvider.GetService<IDataProvider>();
         provider.Should().NotBeNull().And.BeOfType<MariaDbDataProvider>();
+
+        var providersOptions = serviceProvider.GetRequiredService<ProvidersOptions>();
+        providersOptions.DisabledSortProviderNames.Should().BeEmpty();
+        providersOptions.ExceptionAsStringProviderNames.Should().HaveCount(1);
     }
 
     [Fact]
@@ -116,6 +129,10 @@ public class SerilogUiOptionBuilderExtensionsMariaDbTest
 
         var provider = scope.ServiceProvider.GetService<IDataProvider>();
         provider.Should().NotBeNull().And.BeOfType<MariaDbDataProvider<MariaDbTestModel>>();
+
+        var providersOptions = serviceProvider.GetRequiredService<ProvidersOptions>();
+        providersOptions.DisabledSortProviderNames.Should().BeEmpty();
+        providersOptions.ExceptionAsStringProviderNames.Should().HaveCount(1);
     }
 
     [Fact]
@@ -138,6 +155,10 @@ public class SerilogUiOptionBuilderExtensionsMariaDbTest
         providers.Take(2).Should().AllBeOfType<MariaDbDataProvider>();
         providers.Skip(2).Take(2).Should().AllBeOfType<MariaDbDataProvider<MariaDbTestModel>>();
         providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
+
+        var providersOptions = serviceProvider.GetRequiredService<ProvidersOptions>();
+        providersOptions.DisabledSortProviderNames.Should().BeEmpty();
+        providersOptions.ExceptionAsStringProviderNames.Should().HaveCount(4);
     }
 
     [Fact]
