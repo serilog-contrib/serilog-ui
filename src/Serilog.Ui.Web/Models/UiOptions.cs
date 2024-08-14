@@ -30,6 +30,11 @@ public class UiOptions(ProvidersOptions options)
     public string RoutePrefix { get; private set; } = "serilog-ui";
 
     /// <summary>
+    /// Get the option to auto-expand dropdowns in the log viewer.
+    /// </summary>
+    public bool ExpandDropdownsByDefault { get; private set; }
+
+    /// <summary>
     /// Sets the type of the authentication.
     /// </summary>
     public UiOptions WithAuthenticationType(AuthenticationType authType)
@@ -55,6 +60,16 @@ public class UiOptions(ProvidersOptions options)
         ShowBrand = false;
         return this;
     }
+
+    /// <summary>
+    /// Sets the serilog-ui brand visibility to false.
+    /// </summary>
+    public UiOptions WithExpandedDropdownsByDefault()
+    {
+        ExpandDropdownsByDefault = true;
+        return this;
+    }
+
 
     /// <summary>
     /// Injects additional CSS stylesheets into the index.html page.

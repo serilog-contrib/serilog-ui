@@ -39,6 +39,7 @@ app.UseAuthorization();
 app.UseSerilogUi(options => options
     .WithHomeUrl("/#Test")
     .WithAuthenticationType(AuthenticationType.Jwt)
+    .WithExpandedDropdownsByDefault()
     .EnableAuthorizationOnAppRoutes()
     .InjectJavascript("/js/serilog-ui/custom.js")
 );

@@ -33,11 +33,13 @@ public class UiOptionsTest
             .WithAuthenticationType(AuthenticationType.Basic)
             .WithRoutePrefix("prefix")
             .HideSerilogUiBrand()
+            .WithExpandedDropdownsByDefault()
             .EnableAuthorizationOnAppRoutes();
 
         sut.HomeUrl.Should().Be("test");
         sut.RoutePrefix.Should().Be("prefix");
         sut.ShowBrand.Should().BeFalse();
+        sut.ExpandDropdownsByDefault.Should().BeTrue();
         sut.Authorization.AuthenticationType.Should().Be(AuthenticationType.Basic);
         sut.Authorization.RunAuthorizationFilterOnAppRoutes.Should().BeTrue();
     }
