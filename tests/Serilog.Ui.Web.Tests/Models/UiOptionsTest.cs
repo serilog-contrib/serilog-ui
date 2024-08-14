@@ -19,6 +19,7 @@ public class UiOptionsTest
         sut.BodyContent.Should().BeEmpty();
         sut.HeadContent.Should().BeEmpty();
         sut.ShowBrand.Should().BeTrue();
+        sut.ExpandDropdownsByDefault.Should().BeFalse();
         sut.Authorization.AuthenticationType.Should().Be(AuthenticationType.Custom);
         sut.Authorization.RunAuthorizationFilterOnAppRoutes.Should().BeFalse();
     }
