@@ -62,7 +62,7 @@ public class UiOptions(ProvidersOptions options)
     }
 
     /// <summary>
-    /// Sets the serilog-ui brand visibility to false.
+    /// Sets the expand dropdowns by default property to true.
     /// </summary>
     public UiOptions WithExpandedDropdownsByDefault()
     {
