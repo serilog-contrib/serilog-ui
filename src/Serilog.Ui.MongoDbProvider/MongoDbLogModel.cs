@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Text.Json;
@@ -35,6 +35,7 @@ namespace Serilog.Ui.MongoDbProvider
         {
             return new LogModel
             {
+                Id = Id,
                 Level = Level,
                 Message = RenderedMessage,
                 Timestamp = (Timestamp ?? UtcTimeStamp).ToUniversalTime(),

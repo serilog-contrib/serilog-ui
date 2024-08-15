@@ -13,6 +13,11 @@ public class LogModel
     public virtual int RowNo { get; private set; }
 
     /// <summary>
+    /// It gets or sets Id.
+    /// </summary>
+    public virtual string? Id { get; set; } = null;
+
+    /// <summary>
     /// It gets or sets Level.
     /// </summary>
     public virtual string? Level { get; set; } = string.Empty;
