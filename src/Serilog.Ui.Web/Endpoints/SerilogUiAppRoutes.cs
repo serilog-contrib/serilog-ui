@@ -78,6 +78,7 @@ namespace Serilog.Ui.Web.Endpoints
                 options.HomeUrl,
                 BlockHomeAccess,
                 options.RoutePrefix,
+                options.ExpandDropdownsByDefault
             };
             var encodeAuthOpts = Uri.EscapeDataString(JsonSerializer.Serialize(feOpts, JsonSerializerOptions));
 
