@@ -8,6 +8,8 @@ namespace Serilog.Ui.ElasticSearchProvider
 {
     public class ElasticSearchDbLogModel
     {
+        public string? Id { get; set; }
+
         [JsonProperty("level")]
         public string? Level { get; set; }
 
@@ -23,10 +25,11 @@ namespace Serilog.Ui.ElasticSearchProvider
         [JsonProperty("fields")]
         public Dictionary<string, object>? Fields { get; set; }
 
-        internal LogModel ToLogModel(int rowNoStart, int index)
+        internal LogModel ToLogModel(int rowNoStart, int index, string hitIndex)
         {
             return new LogModel
             {
+                Id = hitIndex,
                 Level = Level,
                 Message = Message,
                 Timestamp = Timestamp.ToUniversalTime(),

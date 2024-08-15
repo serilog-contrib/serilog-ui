@@ -54,6 +54,8 @@ public class ElasticSearchDbDataProvider(IElasticClient client, ElasticSearchDbO
 
         int.TryParse(result?.Total.ToString(), out var total);
 
-        return (result?.Documents.Select((x, index) => x.ToLogModel(rowNoStart, index)).ToList() ?? [], total);
+        return (result?.Hits
+            .Select((x, index) => x.Source.ToLogModel(rowNoStart, index, x.Id))
+            .ToList() ?? [], total);
     }
 }
