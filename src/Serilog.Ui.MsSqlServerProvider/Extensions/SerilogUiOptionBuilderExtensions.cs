@@ -43,12 +43,15 @@ namespace Serilog.Ui.MsSqlServerProvider.Extensions
             setupOptions(dbOptions);
             dbOptions.Validate();
 
+            var providerName = dbOptions.GetProviderName(SqlServerDataProvider.MsSqlProviderName);
+
+            optionsBuilder.RegisterExceptionAsStringForProviderKey(providerName);
             SqlMapper.AddTypeHandler(new DapperDateTimeHandler(dateTimeCustomParsing));
 
             var customModel = typeof(T) != typeof(SqlServerLogModel);
             if (customModel)
             {
-                optionsBuilder.RegisterColumnsInfo<T>(dbOptions.GetProviderName(SqlServerDataProvider.MsSqlProviderName));
+                optionsBuilder.RegisterColumnsInfo<T>(providerName);
                 optionsBuilder.Services.AddScoped<IDataProvider>(_ => new SqlServerDataProvider<T>(dbOptions));
 
                 return optionsBuilder;

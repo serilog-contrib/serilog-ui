@@ -73,6 +73,7 @@ namespace Serilog.Ui.Web.Endpoints
                 authType,
                 options.ColumnsInfo,
                 options.DisabledSortOnKeys,
+                options.RenderExceptionAsStringKeys,
                 options.ShowBrand,
                 options.HomeUrl,
                 BlockHomeAccess,

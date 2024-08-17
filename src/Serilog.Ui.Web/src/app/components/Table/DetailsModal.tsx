@@ -7,7 +7,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Suspense, lazy, memo } from 'react';
-import { boxButton, overlayProps } from 'style/modal';
+import { boxButton, boxGridProperties, overlayProps } from 'style/modal';
 import { LogType } from 'types/types';
 import { capitalize } from '../../util/prettyPrints';
 
@@ -19,12 +19,14 @@ const DetailsModal = ({
   modalTitle,
   contentType,
   disabled,
+  fullScreen,
 }: {
   modalContent: string;
   buttonTitle: string;
   modalTitle?: string;
   contentType?: string;
   disabled?: boolean;
+  fullScreen?: boolean;
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const theme = useMantineTheme();
@@ -38,13 +40,16 @@ const DetailsModal = ({
         closeButtonProps={{ 'aria-label': 'close-details-modal' }}
         centered
         radius="sm"
-        size="xl"
+        size="80%"
         title={modalTitle}
         overlayProps={overlayProps(colorScheme, theme.colors)}
+        fullScreen={fullScreen}
       >
-        <Suspense>
-          <CodeContent content={modalContent} codeType={contentType as LogType} />
-        </Suspense>
+        <Box display="grid" style={boxGridProperties}>
+          <Suspense>
+            <CodeContent content={modalContent} codeType={contentType as LogType} />
+          </Suspense>
+        </Box>
       </Modal>
 
       <Box display="grid" style={boxButton}>

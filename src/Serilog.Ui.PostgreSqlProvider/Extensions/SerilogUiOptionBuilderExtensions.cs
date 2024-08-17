@@ -36,10 +36,14 @@ namespace Serilog.Ui.PostgreSqlProvider.Extensions
             setupOptions(dbOptions);
             dbOptions.Validate();
 
+            var providerName = dbOptions.GetProviderName(PostgresDataProvider.ProviderName);
+
+            optionsBuilder.RegisterExceptionAsStringForProviderKey(providerName);
+
             var customModel = typeof(T) != typeof(PostgresLogModel);
             if (customModel)
             {
-                optionsBuilder.RegisterColumnsInfo<T>(dbOptions.GetProviderName(PostgresDataProvider.ProviderName));
+                optionsBuilder.RegisterColumnsInfo<T>(providerName);
                 optionsBuilder.Services.AddScoped<IDataProvider>(_ => new PostgresDataProvider<T>(dbOptions));
 
                 return optionsBuilder;

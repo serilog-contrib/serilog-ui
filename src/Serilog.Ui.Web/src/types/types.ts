@@ -104,6 +104,7 @@ export interface SerilogUiConfig {
   expandDropdownsByDefault?: boolean;
   blockHomeAccess?: boolean;
   disabledSortOnKeys?: string[];
+  renderExceptionAsStringKeys?: string[];
   columnsInfo?: ColumnsInfo;
 }
 

@@ -27,6 +27,10 @@ namespace Serilog.Ui.MySqlProvider.Extensions
             setupOptions(dbOptions);
             dbOptions.Validate();
 
+            var providerName = dbOptions.GetProviderName(MySqlDataProvider.MySqlProviderName);
+
+            optionsBuilder.RegisterExceptionAsStringForProviderKey(providerName);
+
             optionsBuilder.Services.AddScoped<IDataProvider, MySqlDataProvider>(_ => new MySqlDataProvider(dbOptions));
 
             return optionsBuilder;
@@ -61,10 +65,14 @@ namespace Serilog.Ui.MySqlProvider.Extensions
             setupOptions(dbOptions);
             dbOptions.Validate();
 
+            var providerName = dbOptions.GetProviderName(MariaDbDataProvider.ProviderName);
+
+            optionsBuilder.RegisterExceptionAsStringForProviderKey(providerName);
+
             var customModel = typeof(T) != typeof(MySqlLogModel);
             if (customModel)
             {
-                optionsBuilder.RegisterColumnsInfo<T>(dbOptions.GetProviderName(MariaDbDataProvider.ProviderName));
+                optionsBuilder.RegisterColumnsInfo<T>(providerName);
                 optionsBuilder.Services.AddScoped<IDataProvider>(_ => new MariaDbDataProvider<T>(dbOptions));
                 return optionsBuilder;
             }

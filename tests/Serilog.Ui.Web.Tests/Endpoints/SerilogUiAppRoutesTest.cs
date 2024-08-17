@@ -74,7 +74,7 @@ namespace Serilog.Ui.Web.Tests.Endpoints
                 "<!DOCTYPE html><html lang=\"en\"><head><div>head-test</div></head>" +
                 "<body><div id=\"serilog-ui-app\"></div>" +
                 "<script>const config = '%7B%22authType%22%3A%22Jwt%22%2C%22columnsInfo%22%3A%7B%7D%2C%22" +
-                "disabledSortOnKeys%22%3A%5B%5D%2C%22showBrand%22%3Atrue%2C%22homeUrl%22%3A%22home-url" +
+                "disabledSortOnKeys%22%3A%5B%5D%2C%22renderExceptionAsStringKeys%22%3A%5B%5D%2C%22showBrand%22%3Atrue%2C%22homeUrl%22%3A%22home-url" +
                 "%22%2C%22blockHomeAccess%22%3Afalse%2C%22routePrefix%22%3A%22" +
                 "test%22%2C%22expandDropdownsByDefault%22%3Afalse%7D';</script><div>body-test</div></body></html>"
             );

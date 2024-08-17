@@ -29,6 +29,12 @@ public class SerilogUiOptionsBuilder(IServiceCollection services) : ISerilogUiOp
         _providersOptions.RegisterType<T>(providerKey);
     }
 
+    /// <inheritdoc />
+    public void RegisterExceptionAsStringForProviderKey(string providerKey)
+    {
+        _providersOptions.RegisterExceptionAsStringProvider(providerKey);
+    }
+
     /// <summary>
     /// Register the <see cref="ProvidersOptions"/> in <see cref="IServiceCollection"/>.
     /// </summary>
