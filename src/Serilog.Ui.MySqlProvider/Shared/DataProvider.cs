@@ -114,13 +114,13 @@ public abstract class DataProvider<T>(RelationalDbOptions options) : IDataProvid
     {
         var conditionStart = "WHERE";
 
-        if (!string.IsNullOrEmpty(queryParams.Level))
+        if (!string.IsNullOrWhiteSpace(queryParams.Level))
         {
             queryBuilder.Append($"WHERE {ColumnLevelName} = @Level ");
             conditionStart = "AND";
         }
 
-        if (!string.IsNullOrEmpty(queryParams.SearchCriteria))
+        if (!string.IsNullOrWhiteSpace(queryParams.SearchCriteria))
         {
             queryBuilder.Append($"{conditionStart} ({ColumnMessageName} LIKE @Search {SearchCriteriaWhereQuery()}) ");
             conditionStart = "AND";
