@@ -124,13 +124,13 @@ namespace Serilog.Ui.MsSqlServerProvider
         {
             var conditionStart = "WHERE";
 
-            if (!string.IsNullOrEmpty(queryParams.Level))
+            if (!string.IsNullOrWhiteSpace(queryParams.Level))
             {
                 queryBuilder.Append($"{conditionStart} [{ColumnLevelName}] = @Level ");
                 conditionStart = "AND";
             }
 
-            if (!string.IsNullOrEmpty(queryParams.SearchCriteria))
+            if (!string.IsNullOrWhiteSpace(queryParams.SearchCriteria))
             {
                 queryBuilder.Append($"{conditionStart} [{ColumnMessageName}] LIKE @Search {SearchCriteriaWhereQuery()} ");
                 conditionStart = "AND";
