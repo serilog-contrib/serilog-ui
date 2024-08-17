@@ -16,6 +16,7 @@ import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { capitalize, convertLogType, printDate } from 'app/util/prettyPrints';
 import { Suspense, lazy, memo } from 'react';
 import { boxButton, boxGridProperties, overlayProps } from 'style/modal';
+import classes from 'style/table.module.css';
 import { ColumnType, EncodedSeriLogObject } from 'types/types';
 import { CopySection } from '../Util/Copy';
 
@@ -23,10 +24,12 @@ const CodeContent = lazy(() => import('./CodeContent'));
 
 const PropertiesModal = ({
   modalContent,
+  fullScreen,
   title = 'Properties',
 }: {
   modalContent: EncodedSeriLogObject;
   title?: string;
+  fullScreen?: boolean;
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
   const theme = useMantineTheme();
@@ -42,10 +45,11 @@ const PropertiesModal = ({
         onClose={close}
         centered
         radius="sm"
-        size="xl"
+        size="80%"
         closeButtonProps={{ 'aria-label': 'close-properties-modal' }}
         title="Enrichment Data"
         overlayProps={overlayProps(colorScheme, theme.colors)}
+        fullScreen={fullScreen}
       >
         <Box display="grid" style={boxGridProperties}>
           {Object.keys(rest).map((k) => (
@@ -136,6 +140,7 @@ const RenderProps = memo(
         rightSection={<CopySection value={prop as string} />}
         minRows={1}
         maxRows={4}
+        classNames={{ input: classes.modalTextAreaInputWrapper }}
       />
     );
   },

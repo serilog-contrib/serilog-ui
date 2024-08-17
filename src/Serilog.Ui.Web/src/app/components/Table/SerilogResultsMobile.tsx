@@ -112,7 +112,7 @@ const LogCard = memo(({ log, isUtc }: { log: EncodedSeriLogObject; isUtc?: boole
       >
         <ExceptionCard log={log} />
         <Suspense>
-          <PropertiesModal modalContent={log} />
+          <PropertiesModal fullScreen modalContent={log} />
         </Suspense>
       </Card.Section>
     </Card>
@@ -135,6 +135,7 @@ const ExceptionCard = memo(({ log }: { log: EncodedSeriLogObject }) => {
         buttonTitle="exception"
         contentType={logType}
         disabled={!exceptionContent}
+        fullScreen
       />
     </Suspense>
   );

@@ -36,14 +36,15 @@ const CodeContent = ({ content, codeType }: { content: string; codeType: LogType
         rightSectionPointerEvents="all"
         rightSection={<CopySection value={codeContent as string} />}
         minRows={1}
-        maxRows={25}
+        maxRows={20}
+        classNames={{ input: classes.modalTextAreaInputWrapper }}
       />
     );
 
   return (
     <div
       dangerouslySetInnerHTML={{ __html: codeContent }}
-      className={classes.detailModalCode}
+      className={classes.modalCode}
     ></div>
   );
 };
