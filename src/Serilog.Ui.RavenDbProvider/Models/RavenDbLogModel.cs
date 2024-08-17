@@ -23,7 +23,6 @@ internal class RavenDbLogModel
 
     public LogModel ToLogModel(int rowNo, int index) => new LogModel()
     {
-        Id = null, // no id is registered for RavenDb
         Level = Level,
         Message = RenderedMessage,
         Timestamp = Timestamp.DateTime.ToUniversalTime(),
