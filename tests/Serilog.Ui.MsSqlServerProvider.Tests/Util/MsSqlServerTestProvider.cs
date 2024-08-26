@@ -29,9 +29,9 @@ public class MsSqlServerTestProvider<T> : DatabaseInstance
         Container = new MsSqlBuilder().Build();
     }
 
-    private RelationalDbOptions DbOptions { get; set; } = new RelationalDbOptions("dbo").WithTable("Logs");
+    private RelationalDbOptions DbOptions { get; } = new RelationalDbOptions("dbo").WithTable("Logs");
 
-    protected sealed override IContainer? Container { get; set; }
+    protected override sealed IContainer Container { get; set; }
 
     protected override string Name => nameof(MsSqlContainer);
 
