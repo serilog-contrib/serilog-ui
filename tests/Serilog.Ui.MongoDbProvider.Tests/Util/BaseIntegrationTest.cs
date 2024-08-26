@@ -19,13 +19,15 @@ namespace MongoDb.Tests.Util
     {
         private bool _disposedValue;
 
-        internal BaseServiceBuilder? Builder;
+        internal MongoDbDataProviderBuilder? Builder;
 
         public Task DisposeAsync() => Task.CompletedTask;
 
-        public virtual async Task InitializeAsync()
+        public virtual Task InitializeAsync()
         {
-            Builder = await MongoDbDataProviderBuilder.Build();
+            Builder = MongoDbDataProviderBuilder.Build();
+
+            return Task.CompletedTask;
         }
 
         public IDataProvider GetDataProvider() => Guard.Against.Null(Builder?.Sut);

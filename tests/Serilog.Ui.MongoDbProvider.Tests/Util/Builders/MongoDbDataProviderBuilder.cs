@@ -1,44 +1,58 @@
-﻿using System.Threading.Tasks;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
+﻿using EphemeralMongo;
 using MongoDB.Driver;
+using Serilog;
 using Serilog.Ui.Common.Tests.DataSamples;
+using Serilog.Ui.Core;
 using Serilog.Ui.MongoDbProvider;
 
 namespace MongoDb.Tests.Util.Builders
 {
-    public class MongoDbDataProviderBuilder : BaseServiceBuilder
+    public class MongoDbDataProviderBuilder
     {
         private const string DefaultDbName = "IntegrationTests";
 
-        private readonly IMongoCollection<MongoDbLogModel> _mongoCollection;
+        internal readonly IMongoRunner Runner;
+        internal readonly MongoDbOptions Options;
+        internal readonly IMongoClient Client;
+        internal readonly IMongoDatabase Database;
+        internal IDataProvider? Sut;
+        internal LogModelPropsCollector? Collector;
 
-        private MongoDbDataProviderBuilder(MongoDbOptions options) : base(options)
+        private MongoDbDataProviderBuilder(MongoDbOptions options)
         {
-            _mongoCollection = Database.GetCollection<MongoDbLogModel>(Options.CollectionName);
+            Options = options;
+            (Runner, Client) = IntegrationDbGeneration.Generate(options);
+            Database = Client.GetDatabase(options.DatabaseName);
+
             Sut = new MongoDbDataProvider(Client, Options);
+            Collector = Seed(Options.ConnectionString);
         }
 
-        public static async Task<MongoDbDataProviderBuilder> Build()
+        public static MongoDbDataProviderBuilder Build()
         {
-            var options = new MongoDbOptions().WithCollectionName("LogCollection").WithDatabaseName(DefaultDbName);
-            var builder = new MongoDbDataProviderBuilder(options);
-            builder.Collector = await Seed(builder._mongoCollection);
-            return builder;
+            var options = new MongoDbOptions()
+                .WithCollectionName("LogCollection")
+                .WithDatabaseName(DefaultDbName);
+            return new MongoDbDataProviderBuilder(options);
         }
 
-        private static async Task<LogModelPropsCollector> Seed(IMongoCollection<MongoDbLogModel> collection)
+        private static LogModelPropsCollector Seed(string? connectionString)
         {
-            var (array, collector) = MongoDbLogModelFaker.Logs(100);
+            var connectionWithDbName = connectionString!.Replace("?", $"{DefaultDbName}?");
 
-            // https://stackoverflow.com/a/75637412/15129749
-            var objectSerializer = new ObjectSerializer(type => ObjectSerializer.DefaultAllowedTypes(type) ||
-                                                                (type.FullName?.StartsWith("Serilog.Ui.Common.Tests") ?? false) ||
-                                                                (type.FullName?.StartsWith("MongoDB.Bson.BsonDocument") ?? false)
-            );
-            BsonSerializer.RegisterSerializer(objectSerializer);
+            var serilog = new SerilogSinkSetup(logger =>
+            {
+                logger
+                    .WriteTo.MongoDBBson((sink) =>
+                    {
+                        sink.SetConnectionString(connectionWithDbName ?? string.Empty);
+                        sink.SetCollectionName("LogCollection");
+                        sink.SetCreateCappedCollection(1024, 500);
+                    });
+            });
 
-            await collection.InsertManyAsync(array);
+            var collector = serilog.InitializeLogs();
+
             return collector;
         }
     }
