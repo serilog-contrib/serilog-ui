@@ -33,7 +33,7 @@ public class MariaDbTestProvider<T> : DatabaseInstance
 
     private RelationalDbOptions DbOptions { get; set; } = new RelationalDbOptions("dbo").WithTable("Logs");
 
-    protected sealed override IContainer? Container { get; set; }
+    protected override sealed IContainer Container { get; set; }
 
     protected virtual Dictionary<string, string>? PropertiesToColumnsMapping => new MariaDBSinkOptions().PropertiesToColumnsMapping;
 

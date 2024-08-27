@@ -35,7 +35,7 @@ public class PostgresTestProvider<T> : DatabaseInstance
         .WithTable("logs")
         .WithSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative);
 
-    protected sealed override IContainer? Container { get; set; }
+    protected override sealed IContainer Container { get; set; }
 
     protected virtual Dictionary<string, ColumnWriterBase>? ColumnOptions => null;
 
