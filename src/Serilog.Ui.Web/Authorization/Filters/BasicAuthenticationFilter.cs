@@ -9,18 +9,12 @@ internal class BasicAuthenticationFilter(
     : IUiAsyncAuthorizationFilter
 {
     private const string AuthenticationScheme = "Basic";
+    private readonly HttpContext _httpContext = Guard.Against.Null(httpContextAccessor.HttpContext);
 
     public async Task<bool> AuthorizeAsync()
     {
-        var httpContext = httpContextAccessor.HttpContext;
-        if (httpContext is null)
-        {
-            return false;
-        }
-
-        var header = httpContext.Request.Headers.Authorization;
-
-        var authValues = AuthenticationHeaderValue.Parse(header!);
+        StringValues header = _httpContext.Request.Headers.Authorization;
+        AuthenticationHeaderValue authValues = AuthenticationHeaderValue.Parse(header!);
 
         return
             // not basic, thus no evaluation should happen
@@ -31,6 +25,6 @@ internal class BasicAuthenticationFilter(
 
     private static bool IsBasicAuthentication(AuthenticationHeaderValue authValues)
     {
-        return AuthenticationScheme.Equals(authValues.Scheme, StringComparison.InvariantCultureIgnoreCase);
+        return AuthenticationScheme.Equals(authValues.Scheme, StringComparison.OrdinalIgnoreCase);
     }
 }
