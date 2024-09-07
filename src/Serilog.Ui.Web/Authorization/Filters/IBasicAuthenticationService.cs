@@ -1,46 +1,16 @@
-﻿using System;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+﻿using System.Net.Http.Headers;
 
 namespace Serilog.Ui.Web.Authorization.Filters;
 
+/// <summary>
+/// Provides basic authentication services.
+/// </summary>
 public interface IBasicAuthenticationService
 {
+    /// <summary>
+    /// Determines whether access is granted based on the provided basic authentication header.
+    /// </summary>
+    /// <param name="basicHeader">The basic authentication header containing the credentials.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains a boolean indicating whether access is granted.</returns>
     Task<bool> CanAccessAsync(AuthenticationHeaderValue basicHeader);
-}
-
-internal class BasicAuthServiceByConfiguration(IConfiguration configuration) : IBasicAuthenticationService
-{
-    private string? UserName { get; } = configuration["SerilogUi:UserName"];
-
-    private string? Password { get; } = configuration["SerilogUi:Password"];
-
-    public Task<bool> CanAccessAsync(AuthenticationHeaderValue basicHeader)
-    {
-        var header = basicHeader.Parameter;
-
-        return Task.FromResult(EvaluateAuthResult(header));
-    }
-
-    private bool EvaluateAuthResult(string? header)
-    {
-        var tokens = ExtractAuthenticationTokens(header);
-        var matchCredentials = CredentialsMatch(tokens);
-
-        return matchCredentials;
-    }
-
-    private static (string, string) ExtractAuthenticationTokens(string? authValues)
-    {
-        var parameter = Encoding.UTF8.GetString(Convert.FromBase64String(authValues ?? string.Empty));
-        var parts = parameter.Split(':');
-        return (parts[0], parts[1]);
-    }
-
-    private bool CredentialsMatch((string Username, string Password) tokens)
-    {
-        return tokens.Username == UserName && tokens.Password == Password;
-    }
 }

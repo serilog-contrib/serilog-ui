@@ -1,93 +1,78 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Ardalis.GuardClauses;
-using Microsoft.AspNetCore.Http;
+﻿using System.Text;
 using Microsoft.AspNetCore.Http.Extensions;
 using Serilog.Ui.Web.Models;
 
-namespace Serilog.Ui.Web.Endpoints
+namespace Serilog.Ui.Web.Endpoints;
+
+internal class SerilogUiAppRoutes(IHttpContextAccessor httpContextAccessor, IAppStreamLoader appStreamLoader)
+    : ISerilogUiAppRoutes
 {
-    internal class SerilogUiAppRoutes(
-        IHttpContextAccessor httpContextAccessor,
-        IAppStreamLoader appStreamLoader) : ISerilogUiAppRoutes
+    private readonly HttpContext _httpContext = Guard.Against.Null(httpContextAccessor.HttpContext);
+
+    public bool BlockHomeAccess { get; set; }
+
+    public UiOptions? Options { get; private set; }
+
+    public void SetOptions(UiOptions options)
     {
-        private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+        Options = options;
+    }
+
+    public async Task GetHomeAsync()
+    {
+        Guard.Against.Null(Options, nameof(Options));
+
+        var response = _httpContext.Response;
+
+        await using Stream? stream = appStreamLoader.GetIndex();
+        if (stream is null)
         {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            response.StatusCode = 500;
+            await response.WriteAsync("<div>Server error while loading assets. Please contact administration.</div>", Encoding.UTF8);
+            return;
+        }
+
+        response.StatusCode = 200;
+        response.ContentType = "text/html;charset=utf-8";
+        string htmlString = await LoadStream(stream, Options);
+
+        await response.WriteAsync(htmlString, Encoding.UTF8);
+    }
+
+    public Task RedirectHomeAsync()
+    {
+        string indexUrl = _httpContext.Request.GetEncodedUrl().Replace("index.html", "");
+        string indexUrlWithTrailingSlash = indexUrl.EndsWith('/') ? indexUrl : $"{indexUrl}/";
+
+        _httpContext.Response.Redirect(indexUrlWithTrailingSlash, true);
+
+        return Task.CompletedTask;
+    }
+
+    private async Task<string> LoadStream(Stream stream, UiOptions options)
+    {
+        StringBuilder htmlStringBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
+        string authType = options.Authorization.AuthenticationType.ToString();
+
+        var feOpts = new
+        {
+            authType,
+            options.ColumnsInfo,
+            options.DisabledSortOnKeys,
+            options.RenderExceptionAsStringKeys,
+            options.ShowBrand,
+            options.HomeUrl,
+            BlockHomeAccess,
+            options.RoutePrefix,
+            options.ExpandDropdownsByDefault
         };
+        string encodeAuthOpts = Uri.EscapeDataString(JsonSerializer.Serialize(feOpts, JsonSerializerOptionsFactory.GetDefaultOptions));
 
-        public UiOptions? Options { get; private set; }
+        htmlStringBuilder
+            .Replace("%(Configs)", encodeAuthOpts)
+            .Replace("<meta name=\"dummy\" content=\"%(HeadContent)\">", options.HeadContent)
+            .Replace("<meta name=\"dummy\" content=\"%(BodyContent)\">", options.BodyContent);
 
-        public bool BlockHomeAccess { get; set; }
-
-        public async Task GetHomeAsync()
-        {
-            Guard.Against.Null(Options, nameof(Options));
-            var httpContext = Guard.Against.Null(httpContextAccessor.HttpContext);
-
-            var response = httpContext.Response;
-
-            await using var stream = appStreamLoader.GetIndex();
-            if (stream is null)
-            {
-                response.StatusCode = 500;
-                await response.WriteAsync("<div>Server error while loading assets. Please contact administration.</div>", Encoding.UTF8);
-                return;
-            }
-
-            var htmlString = await LoadStream(stream, Options);
-            response.StatusCode = 200;
-            response.ContentType = "text/html;charset=utf-8";
-
-            await response.WriteAsync(htmlString, Encoding.UTF8);
-        }
-
-        public Task RedirectHomeAsync()
-        {
-            var httpContext = Guard.Against.Null(httpContextAccessor.HttpContext);
-
-            var indexUrl = httpContext.Request.GetEncodedUrl().Replace("index.html", "");
-            var indexUrlWithTrailingSlash = indexUrl.EndsWith('/') ? indexUrl : $"{indexUrl}/";
-
-            httpContext.Response.Redirect(indexUrlWithTrailingSlash, true);
-
-            return Task.CompletedTask;
-        }
-
-        public void SetOptions(UiOptions options)
-        {
-            Options = options;
-        }
-
-        private async Task<string> LoadStream(Stream stream, UiOptions options)
-        {
-            var htmlStringBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
-            var authType = options.Authorization.AuthenticationType.ToString();
-            var feOpts = new
-            {
-                authType,
-                options.ColumnsInfo,
-                options.DisabledSortOnKeys,
-                options.RenderExceptionAsStringKeys,
-                options.ShowBrand,
-                options.HomeUrl,
-                BlockHomeAccess,
-                options.RoutePrefix,
-                options.ExpandDropdownsByDefault
-            };
-            var encodeAuthOpts = Uri.EscapeDataString(JsonSerializer.Serialize(feOpts, JsonSerializerOptions));
-
-            htmlStringBuilder
-                .Replace("%(Configs)", encodeAuthOpts)
-                .Replace("<meta name=\"dummy\" content=\"%(HeadContent)\">", options.HeadContent)
-                .Replace("<meta name=\"dummy\" content=\"%(BodyContent)\">", options.BodyContent);
-
-            return htmlStringBuilder.ToString();
-        }
+        return htmlStringBuilder.ToString();
     }
 }

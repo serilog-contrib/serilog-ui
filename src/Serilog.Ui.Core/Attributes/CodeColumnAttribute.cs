@@ -12,5 +12,5 @@ public class CodeColumnAttribute(CodeType codeType) : Attribute
     /// <summary>
     /// Gets the CodeType.
     /// </summary>
-    public readonly CodeType CodeType = codeType;
+    public CodeType CodeType { get; } = codeType;
 }

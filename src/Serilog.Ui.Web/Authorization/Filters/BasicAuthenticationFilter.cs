@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using System.Net.Http.Headers;
 using Serilog.Ui.Core.Interfaces;
 
 namespace Serilog.Ui.Web.Authorization.Filters;
@@ -16,7 +13,10 @@ internal class BasicAuthenticationFilter(
     public async Task<bool> AuthorizeAsync()
     {
         var httpContext = httpContextAccessor.HttpContext;
-        if (httpContext is null) return false;
+        if (httpContext is null)
+        {
+            return false;
+        }
 
         var header = httpContext.Request.Headers.Authorization;
 

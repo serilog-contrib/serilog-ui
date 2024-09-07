@@ -1,11 +1,19 @@
-﻿using System.Threading.Tasks;
+﻿namespace Serilog.Ui.Web.Endpoints;
 
-namespace Serilog.Ui.Web.Endpoints
+/// <summary>
+/// Provides endpoints for Serilog UI and inherits methods to set options.
+/// </summary>
+public interface ISerilogUiEndpoints : ISerilogUiOptionsSetter
 {
-    public interface ISerilogUiEndpoints : ISerilogUiOptionsSetter
-    {
-        Task GetApiKeysAsync();
+    /// <summary>
+    /// Asynchronously retrieves API keys.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task GetApiKeysAsync();
 
-        Task GetLogsAsync();
-    }
+    /// <summary>
+    /// Asynchronously retrieves logs.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task GetLogsAsync();
 }

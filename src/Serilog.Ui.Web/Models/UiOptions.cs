@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Text;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.Models.Options;
@@ -70,10 +68,9 @@ public class UiOptions(ProvidersOptions options)
         return this;
     }
 
-
     /// <summary>
     /// Injects additional CSS stylesheets into the index.html page.
-    /// Each call to the method adds a stylesheet entry.  
+    /// Each call to the method adds a stylesheet entry.
     /// </summary>
     /// <param name="path">A path to the stylesheet - i.e. the link "href" attribute</param>
     /// <param name="media">The target media - i.e. the link "media" attribute</param>
@@ -168,5 +165,5 @@ public class UiOptions(ProvidersOptions options)
     /// <value>The head content.</value>
     internal string HeadContent { get; set; } = string.Empty;
 
-    #endregion
+    #endregion internals
 }

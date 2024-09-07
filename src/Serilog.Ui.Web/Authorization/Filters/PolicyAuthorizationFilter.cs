@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Serilog.Ui.Core.Interfaces;
 
 namespace Serilog.Ui.Web.Authorization.Filters;
@@ -8,15 +6,18 @@ namespace Serilog.Ui.Web.Authorization.Filters;
 internal class PolicyAuthorizationFilter(
     IHttpContextAccessor httpContextAccessor,
     IAuthorizationService authorizationService,
-    string policy)
-    : IUiAsyncAuthorizationFilter
+    string policy
+    ) : IUiAsyncAuthorizationFilter
 {
     public async Task<bool> AuthorizeAsync()
     {
         var httpContext = httpContextAccessor.HttpContext;
-        if (httpContext is null) return false;
+        if (httpContext is null)
+        {
+            return false;
+        }
 
-        var result = await authorizationService.AuthorizeAsync(httpContext.User, policy);
+        AuthorizationResult result = await authorizationService.AuthorizeAsync(httpContext.User, policy);
         return result.Succeeded;
     }
 }
