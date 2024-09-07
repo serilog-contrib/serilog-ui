@@ -1,26 +1,22 @@
 import {
-  IAuthPropertiesData,
-  IAuthPropertiesStorageKeys,
   checkErrors,
   clearAuth,
   getAuthorizationHeader,
+  IAuthPropertiesData,
+  IAuthPropertiesStorageKeys,
   initialAuthProps,
   saveAuthKey,
 } from 'app/util/auth';
 import { createRequestInit } from 'app/util/queries';
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react';
 import { useSerilogUiProps } from './useSerilogUiProps';
+import { isStringGuard } from '../util/guards.ts';
+import { AuthType } from '../../types/types.ts';
 
 interface AuthProps {
   authProps: IAuthPropertiesData;
   authHeader: string;
+  isHeaderReady?: boolean;
   fetchInfo: {
     headers: RequestInit;
     routePrefix?: string;
@@ -35,6 +31,7 @@ interface AuthProps {
 const AuthPropertiesContext = createContext<AuthProps>({
   authProps: {},
   authHeader: '',
+  isHeaderReady: false,
   fetchInfo: {
     headers: {},
   },
@@ -59,7 +56,8 @@ export const AuthPropertiesProvider = ({
     () => getAuthorizationHeader(authInfo, authType),
     [authInfo, authType],
   );
-
+  const isHeaderReady = authType === AuthType.Custom || isStringGuard(authHeader);
+  
   const fetchInfo = useMemo(
     () => ({
       headers: createRequestInit(authType, authHeader),
@@ -100,11 +98,12 @@ export const AuthPropertiesProvider = ({
     () => ({
       authProps: authInfo,
       authHeader,
+      isHeaderReady,
       fetchInfo,
       saveAuthState,
       clearAuthState,
     }),
-    [authInfo, authHeader, clearAuthState, fetchInfo, saveAuthState],
+    [authInfo, authHeader, isHeaderReady, clearAuthState, fetchInfo, saveAuthState],
   );
 
   return (
@@ -115,12 +114,13 @@ export const AuthPropertiesProvider = ({
 };
 
 export const useAuthProperties = () => {
-  const { authProps, authHeader, fetchInfo, clearAuthState, saveAuthState } =
+  const { authProps, authHeader, fetchInfo, isHeaderReady, clearAuthState, saveAuthState } =
     useContext(AuthPropertiesContext);
 
   return {
     ...authProps,
     authHeader,
+    isHeaderReady,
     clearAuthState,
     fetchInfo,
     saveAuthState,
