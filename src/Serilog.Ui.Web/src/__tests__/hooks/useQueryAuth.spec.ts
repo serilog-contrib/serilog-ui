@@ -8,6 +8,7 @@ const mockedProps = {
 };
 const mockAuthProps = {
   authHeader: '',
+  isHeaderReady: false,
 };
 const mockTableKeys = {
   refetch: vi.fn(),
@@ -47,6 +48,7 @@ describe('useQueryAuth', () => {
     async (response) => {
       mockedProps.blockHomeAccess = true;
       mockAuthProps.authHeader = 'ready';
+      mockAuthProps.isHeaderReady = true;
       mockTableKeys.refetch.mockResolvedValueOnce({ data: response });
 
       renderHook(() => useQueryAuth());
@@ -61,6 +63,8 @@ describe('useQueryAuth', () => {
   it('runs request and set true if response is array with element', async () => {
     mockedProps.blockHomeAccess = true;
     mockAuthProps.authHeader = 'ready';
+    mockAuthProps.isHeaderReady = true;
+
     mockTableKeys.refetch.mockResolvedValueOnce({ data: ['key'] });
 
     renderHook(() => useQueryAuth());
