@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using NSubstitute;
-using NSubstitute.ClearExtensions;
 using Serilog.Ui.Core.Interfaces;
 using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.Web.Authorization;
@@ -17,13 +16,13 @@ namespace Serilog.Ui.Web.Tests.Endpoints;
 [Trait("Ui-Api-Decorators", "Web")]
 public class SerilogUiDecoratorsTest
 {
-    private readonly IHttpContextAccessor _contextAccessor;
+    private readonly IHttpContextAccessor _contextAccessor = Substitute.For<IHttpContextAccessor>();
 
     private readonly List<IUiAuthorizationFilter> _syncFilters = [];
 
-    private readonly ISerilogUiAppRoutes _appRoutesMock;
+    private readonly ISerilogUiAppRoutes _appRoutesMock = Substitute.For<ISerilogUiAppRoutes>();
 
-    private readonly ISerilogUiEndpoints _endpointMock;
+    private readonly ISerilogUiEndpoints _endpointMock = Substitute.For<ISerilogUiEndpoints>();
 
     private readonly SerilogUiAppRoutesDecorator _sutRoutesDecorator;
 
@@ -31,17 +30,9 @@ public class SerilogUiDecoratorsTest
 
     public SerilogUiDecoratorsTest()
     {
-        var context = new DefaultHttpContext();
-        _contextAccessor = Substitute.For<IHttpContextAccessor>();
-        _contextAccessor.HttpContext.Returns(context);
-
-        var authMock = new AuthorizationFilterService(_contextAccessor, _syncFilters, []);
-
-        _appRoutesMock = Substitute.For<ISerilogUiAppRoutes>();
-        _endpointMock = Substitute.For<ISerilogUiEndpoints>();
-
-        _sutRoutesDecorator = new SerilogUiAppRoutesDecorator(_contextAccessor, _appRoutesMock, authMock);
-        _sutEndpointsDecorator = new SerilogUiEndpointsDecorator(_endpointMock, authMock);
+        var (serilogUiAppRoutesDecorator, serilogUiEndpointsDecorator) = CreateTarget();
+        _sutRoutesDecorator = serilogUiAppRoutesDecorator;
+        _sutEndpointsDecorator = serilogUiEndpointsDecorator;
     }
 
     [Fact]
@@ -103,33 +94,28 @@ public class SerilogUiDecoratorsTest
     [Fact]
     public async Task It_blocks_the_call_on_failed_authentication()
     {
-        // Arrange
+        // Arrange: reset target to register the new HttpContext variable
         var uiOpts = new UiOptions(new ProvidersOptions()).EnableAuthorizationOnAppRoutes();
 
         _syncFilters.Add(new ForbidLocalRequestFilter(_contextAccessor));
-        _sutRoutesDecorator.SetOptions(uiOpts);
-        _sutEndpointsDecorator.SetOptions(uiOpts);
-
-        // Arrange
-        _contextAccessor.ClearSubstitute();
-        var cleanContext = new DefaultHttpContext();
-        _contextAccessor.HttpContext.Returns(cleanContext);
+        var (_, logsEndpointDecorator) = CreateTarget();
+        logsEndpointDecorator.SetOptions(uiOpts);
 
         // Act
-        await _sutEndpointsDecorator.GetLogsAsync();
+        await logsEndpointDecorator.GetLogsAsync();
+
         // Assert
-        cleanContext.Response.StatusCode.Should().Be(403);
+        _contextAccessor.HttpContext!.Response.StatusCode.Should().Be(403);
         await _endpointMock.DidNotReceive().GetLogsAsync();
 
-        // Arrange
-        _contextAccessor.ClearSubstitute();
-        var cleanContext2 = new DefaultHttpContext();
-        _contextAccessor.HttpContext.Returns(cleanContext2);
+        // Arrange: reset target to register the new HttpContext variable
+        var (_, apiKeysEndpointDecorator) = CreateTarget();
+        apiKeysEndpointDecorator.SetOptions(uiOpts);
 
         // Act
-        await _sutEndpointsDecorator.GetApiKeysAsync();
+        await apiKeysEndpointDecorator.GetApiKeysAsync();
         // Assert
-        cleanContext2.Response.StatusCode.Should().Be(403);
+        _contextAccessor.HttpContext.Response.StatusCode.Should().Be(403);
         await _endpointMock.DidNotReceive().GetApiKeysAsync();
     }
 
@@ -159,4 +145,16 @@ public class SerilogUiDecoratorsTest
     }
 
     private static UiOptions GetOptions() => new(new ProvidersOptions());
+
+    private (SerilogUiAppRoutesDecorator, SerilogUiEndpointsDecorator) CreateTarget()
+    {
+        var context = new DefaultHttpContext();
+        _contextAccessor.HttpContext.Returns(context);
+
+        var authMock = new AuthorizationFilterService(_contextAccessor, _syncFilters, []);
+
+        return (
+            new SerilogUiAppRoutesDecorator(_contextAccessor, _appRoutesMock, authMock),
+            new SerilogUiEndpointsDecorator(_endpointMock, authMock));
+    }
 }

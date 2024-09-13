@@ -1,48 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Serilog.Ui.Core.Interfaces;
+﻿using Serilog.Ui.Core.Interfaces;
 
-namespace Serilog.Ui.Web.Authorization
+namespace Serilog.Ui.Web.Authorization;
+
+internal sealed class AuthorizationFilterService(
+    IHttpContextAccessor httpContextAccessor,
+    IEnumerable<IUiAuthorizationFilter> syncFilters,
+    IEnumerable<IUiAsyncAuthorizationFilter> asyncFilters
+    ) : IAuthorizationFilterService
 {
-    internal sealed class AuthorizationFilterService(
-        IHttpContextAccessor httpContextAccessor,
-        IEnumerable<IUiAuthorizationFilter> syncFilters,
-        IEnumerable<IUiAsyncAuthorizationFilter> asyncFilters) : IAuthorizationFilterService
+    private readonly HttpContext _httpContext = Guard.Against.Null(httpContextAccessor.HttpContext);
+
+    public async Task CheckAccessAsync(Func<Task> onSuccess, Func<Task>? onFailure = null)
     {
-        public async Task CheckAccessAsync(
-            Func<Task> onSuccess,
-            Func<Task>? onFailure = null)
+        bool accessCheck = await CanAccessAsync();
+        if (accessCheck)
         {
-            var httpContext = httpContextAccessor.HttpContext;
-            if (httpContext is null) return;
-
-            var accessCheck = await CanAccessAsync();
-
-            if (accessCheck)
-            {
-                await onSuccess();
-                return;
-            }
-
-            httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-            if (onFailure != null)
-            {
-                await onFailure.Invoke();
-            }
+            await onSuccess();
+            return;
         }
 
-        private async Task<bool> CanAccessAsync()
+        _httpContext.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+        if (onFailure != null)
         {
-            var syncFilterResult = syncFilters.Any(filter => !filter.Authorize());
-
-            var asyncFilter = await Task.WhenAll(asyncFilters.Select(filter => filter.AuthorizeAsync()));
-            var asyncFilterResult = Array.Exists(asyncFilter, filter => !filter);
-
-            return !syncFilterResult && !asyncFilterResult;
+            await onFailure.Invoke();
         }
+    }
+
+    private async Task<bool> CanAccessAsync()
+    {
+        // Evaluate all synchronous filters and check if any of them deny access.
+        bool syncAuthorizeResult = syncFilters.Any(filter => !filter.Authorize());
+
+        // Evaluate all asynchronous filters and check if any of them deny access.
+        bool[] asyncFilter = await Task.WhenAll(asyncFilters.Select(filter => filter.AuthorizeAsync()));
+        bool asyncAuthorizeResult = Array.Exists(asyncFilter, filter => !filter);
+
+        // Return true if all filters grant access, otherwise return false.
+        return !syncAuthorizeResult && !asyncAuthorizeResult;
     }
 }

@@ -1,13 +1,24 @@
-﻿using System.Threading.Tasks;
+﻿namespace Serilog.Ui.Web.Endpoints;
 
-namespace Serilog.Ui.Web.Endpoints
+/// <summary>
+/// Provides application routes for Serilog UI and inherits methods to set options.
+/// </summary>
+public interface ISerilogUiAppRoutes : ISerilogUiOptionsSetter
 {
-    public interface ISerilogUiAppRoutes : ISerilogUiOptionsSetter
-    {
-        protected internal bool BlockHomeAccess { get; set; }
+    /// <summary>
+    /// Gets or sets a value indicating whether access to the home route is blocked.
+    /// </summary>
+    protected internal bool BlockHomeAccess { get; set; }
 
-        Task GetHomeAsync();
+    /// <summary>
+    /// Asynchronously retrieves the home page.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task GetHomeAsync();
 
-        Task RedirectHomeAsync();
-    }
+    /// <summary>
+    /// Asynchronously redirects to the home page.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    Task RedirectHomeAsync();
 }

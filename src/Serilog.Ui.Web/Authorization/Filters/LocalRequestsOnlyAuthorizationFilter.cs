@@ -1,16 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
-using Serilog.Ui.Core.Interfaces;
+﻿using Serilog.Ui.Core.Interfaces;
 using Serilog.Ui.Web.Extensions;
 
-namespace Serilog.Ui.Web.Authorization.Filters
-{
-    internal class LocalRequestsOnlyAuthorizationFilter(IHttpContextAccessor httpContextAccessor) : IUiAuthorizationFilter
-    {
-        public bool Authorize()
-        {
-            var httpContext = httpContextAccessor.HttpContext;
+namespace Serilog.Ui.Web.Authorization.Filters;
 
-            return httpContext is not null && httpContext.Request.IsLocal();
-        }
-    }
+internal class LocalRequestsOnlyAuthorizationFilter(IHttpContextAccessor httpContextAccessor) : IUiAuthorizationFilter
+{
+    public bool Authorize() =>
+         httpContextAccessor.HttpContext is not null &&
+         httpContextAccessor.HttpContext.Request.IsLocal();
 }
