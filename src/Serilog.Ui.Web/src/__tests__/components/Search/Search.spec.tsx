@@ -29,6 +29,7 @@ vi.mock('../../../app/hooks/useAuthProperties', () => ({
       headers: { headers: headers() },
       routePrefix: '',
     },
+    isHeaderReady: true,
   }),
 }));
 

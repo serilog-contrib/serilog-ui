@@ -4,7 +4,7 @@ import { useAuthProperties } from './useAuthProperties';
 import { useSearchForm } from './useSearchForm';
 
 const useQueryLogs = () => {
-  const { fetchInfo } = useAuthProperties();
+  const { fetchInfo, isHeaderReady } = useAuthProperties();
   const { getValues, watch } = useSearchForm();
   const currentDbKey = watch('table');
 
@@ -12,6 +12,8 @@ const useQueryLogs = () => {
     enabled: false,
     queryKey: ['get-logs'],
     queryFn: async () => {
+      if (!isHeaderReady) return null;
+      
       return currentDbKey
         ? await fetchLogs(getValues(), fetchInfo.headers, fetchInfo.routePrefix)
         : null;

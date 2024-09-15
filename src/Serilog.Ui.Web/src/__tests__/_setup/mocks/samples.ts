@@ -153,7 +153,9 @@ export const fakeLogs: SearchResult = {
 
 export const fakeLogs2ndTable: SearchResult = {
   ...fakeLogs,
-  logs: faker.helpers.multiple(createRandomLogWithAdditionalColumns, { count: 95 }),
+  logs: faker.helpers.multiple(() => createRandomLogWithAdditionalColumns(), {
+    count: 95,
+  }),
   total: 95,
 };
 
