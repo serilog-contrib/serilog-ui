@@ -21,7 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Nuke.Common" Version="8.1.0" />
+		<PackageReference Include="Nuke.Common" Version="8.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
