@@ -20,7 +20,7 @@
         <PackageReference Include="Serilog.AspNetCore" Version="8.0.2"/>
         <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.2"/>
         <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0"/>
-        <PackageReference Include="Serilog.Sinks.MongoDB" Version="5.4.1"/>
+        <PackageReference Include="Serilog.Sinks.MongoDB" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
