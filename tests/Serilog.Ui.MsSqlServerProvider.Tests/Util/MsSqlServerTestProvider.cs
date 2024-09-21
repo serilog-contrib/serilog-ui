@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Dapper;
+using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Microsoft.Data.SqlClient;
 using Serilog;
@@ -26,7 +27,13 @@ public class MsSqlServerTestProvider<T> : DatabaseInstance
 {
     protected MsSqlServerTestProvider()
     {
-        Container = new MsSqlBuilder().Build();
+        // ref: https://github.com/testcontainers/testcontainers-dotnet/issues/1220#issuecomment-2247831975
+        var waitStrategy = Wait
+            .ForUnixContainer()
+            .UntilCommandIsCompleted("/opt/mssql-tools18/bin/sqlcmd", "-C", "-Q", "SELECT 1;");
+        Container = new MsSqlBuilder()
+            .WithWaitStrategy(waitStrategy)
+            .Build();
     }
 
     private RelationalDbOptions DbOptions { get; } = new RelationalDbOptions("dbo").WithTable("Logs");

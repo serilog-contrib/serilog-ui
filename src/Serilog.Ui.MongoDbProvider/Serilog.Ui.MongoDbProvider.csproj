@@ -4,7 +4,7 @@
 		<PackageId>Serilog.UI.MongoDbProvider</PackageId>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<LangVersion>latest</LangVersion>
-		<Version>3.1.0</Version>
+		<Version>3.0.0</Version>
 
 		<Authors>Christian Haase</Authors>
 		<Description>MongoDB data provider for Serilog UI.</Description>
@@ -13,7 +13,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageReference Include="MongoDB.Driver" Version="2.28.0"/>
+		<PackageReference Include="MongoDB.Driver" Version="2.29.0" />
 	</ItemGroup>
 
 	<ItemGroup>
