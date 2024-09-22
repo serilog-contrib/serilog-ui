@@ -13,10 +13,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="Dapper" Version="2.1.35" />
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1"/>
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" PrivateAssets="All" />
+		<InternalsVisibleTo Include="MsSql.Tests" />
 	</ItemGroup>
 </Project>

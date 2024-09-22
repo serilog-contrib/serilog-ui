@@ -1,17 +1,15 @@
 ﻿using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.QueryBuilder.Sql;
-using Serilog.Ui.PostgreSqlProvider.Models;
 using System;
 using System.Text;
-using static Serilog.Ui.Core.Models.SearchOptions;
 
-namespace Serilog.Ui.PostgreSqlProvider;
+namespace Serilog.Ui.MsSqlServerProvider;
 
 /// <summary>
-/// Provides methods to build SQL queries specifically for PostgreSQL to fetch and count logs.
+/// Provides methods to build SQL queries specifically for SQL Server to fetch and count logs.
 /// </summary>
 /// <typeparam name="TModel">The type of the log model.</typeparam>
-public class PostgresQueryBuilder<TModel> : SqlQueryBuilder<TModel> where TModel : LogModel
+public class SqlServerQueryBuilder<TModel> : SqlQueryBuilder<TModel> where TModel : LogModel
 {
     ///<inheritdoc />
     public override string BuildFetchLogsQuery(SinkColumnNames columns, string schema, string tableName, FetchLogsQuery query)
@@ -27,22 +25,28 @@ public class PostgresQueryBuilder<TModel> : SqlQueryBuilder<TModel> where TModel
         return queryStr.ToString();
     }
 
-    ///<inheritdoc />
+    /// <summary>
+    /// Builds a SQL query to count logs in the specified table.
+    /// </summary>
+    /// <param name="columns">The column names used in the sink for logging.</param>
+    /// <param name="schema">The schema of the table.</param>
+    /// <param name="tableName">The name of the table.</param>
+    /// <param name="query">The query parameters for counting logs.</param>
+    /// <returns>A SQL query string to count logs.</returns>
     public override string BuildCountLogsQuery(SinkColumnNames columns, string schema, string tableName, FetchLogsQuery query)
     {
         StringBuilder queryStr = new();
 
-        queryStr.Append($"SELECT COUNT(\"{columns.Message}\") ")
-                .Append($"FROM \"{schema}\".\"{tableName}\"");
+        queryStr.Append("SELECT COUNT([Id]) ")
+                .Append($"FROM [{schema}].[{tableName}] ");
 
         GenerateWhereClause(queryStr, columns, query.Level, query.SearchCriteria, query.StartDate, query.EndDate);
 
         return queryStr.ToString();
     }
 
-    ///<inheritdoc />
-    protected override string GenerateSortClause(SinkColumnNames columns, SortProperty sortOn, SortDirection sortBy)
-        => $"ORDER BY \"{GetSortColumnName(columns, sortOn)}\" {sortBy.ToString().ToUpper()}";
+    protected override string GenerateSortClause(SinkColumnNames columns, SearchOptions.SortProperty sortOn, SearchOptions.SortDirection sortBy)
+        => $"ORDER BY [{GetSortColumnName(columns, sortOn)}] {sortBy.ToString().ToUpper()}";
 
     /// <summary>
     /// Generates the SELECT clause for the SQL query.
@@ -53,21 +57,21 @@ public class PostgresQueryBuilder<TModel> : SqlQueryBuilder<TModel> where TModel
     /// <param name="tableName">The name of the table.</param>
     private static void GenerateSelectClause(StringBuilder queryBuilder, SinkColumnNames columns, string schema, string tableName)
     {
-        if (typeof(TModel) != typeof(PostgresLogModel))
+        if (typeof(TModel) != typeof(SqlServerLogModel))
         {
-            queryBuilder.Append("SELECT *");
+            queryBuilder.Append("SELECT * ");
         }
         else
         {
-            queryBuilder.Append($"SELECT \"{columns.Message}\", ")
-                .Append($"\"{columns.MessageTemplate}\", ")
-                .Append($"\"{columns.Level}\", ")
-                .Append($"\"{columns.Timestamp}\", ")
-                .Append($"\"{columns.Exception}\", ")
-                .Append($"\"{columns.LogEventSerialized}\" AS \"Properties\"");
+            queryBuilder.Append("SELECT [Id], ")
+                .Append($"[{columns.Message}], ")
+                .Append($"[{columns.Level}], ")
+                .Append($"[{columns.Timestamp}], ")
+                .Append($"[{columns.Exception}], ")
+                .Append($"[{columns.LogEventSerialized}] ");
         }
 
-        queryBuilder.Append($" FROM \"{schema}\".\"{tableName}\" ");
+        queryBuilder.Append($"FROM [{schema}].[{tableName}] ");
     }
 
     /// <summary>
@@ -87,36 +91,36 @@ public class PostgresQueryBuilder<TModel> : SqlQueryBuilder<TModel> where TModel
         DateTime? startDate,
         DateTime? endDate)
     {
-        StringBuilder conditions = new();
+        StringBuilder conditions2 = new();
 
         if (!string.IsNullOrWhiteSpace(level))
         {
-            conditions.Append($"AND \"{columns.Level}\" = @Level ");
+            conditions2.Append($"AND [{columns.Level}] = @Level ");
         }
 
         if (!string.IsNullOrWhiteSpace(searchCriteria))
         {
-            conditions.Append($"AND (\"{columns.Message}\" LIKE @Search ");
-            conditions.Append(AddExceptionToWhereClause() ? $"OR \"{columns.Exception}\" LIKE @Search) " : ") ");
+            conditions2.Append($"AND ([{columns.Message}] LIKE @Search ");
+            conditions2.Append(AddExceptionToWhereClause() ? $"OR [{columns.Exception}] LIKE @Search) " : ") ");
         }
 
         if (startDate.HasValue)
         {
-            conditions.Append($"AND \"{columns.Timestamp}\" >= @StartDate ");
+            conditions2.Append($"AND [{columns.Timestamp}] >= @StartDate ");
         }
 
         if (endDate.HasValue)
         {
-            conditions.Append($"AND \"{columns.Timestamp}\" <= @EndDate ");
+            conditions2.Append($"AND [{columns.Timestamp}] <= @EndDate ");
         }
 
-        if (conditions.Length <= 0)
+        if (conditions2.Length <= 0)
         {
             return;
         }
 
         queryBuilder
             .Append("WHERE TRUE ")
-            .Append(conditions);
+            .Append(conditions2);
     }
 }

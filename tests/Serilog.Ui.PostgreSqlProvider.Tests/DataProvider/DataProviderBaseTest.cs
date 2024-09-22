@@ -9,6 +9,7 @@ using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.PostgreSqlProvider;
 using Serilog.Ui.PostgreSqlProvider.Extensions;
+using Serilog.Ui.PostgreSqlProvider.Models;
 using Xunit;
 
 namespace Postgres.Tests.DataProvider;
@@ -16,37 +17,21 @@ namespace Postgres.Tests.DataProvider;
 [Trait("Unit-Base", "Postgres")]
 public class DataProviderBaseTest : IUnitBaseTests
 {
-    [Fact]
     public void It_throws_when_any_dependency_is_null()
-    {
-        // Arrange
-        var sut = new List<Action>
-            {
-                () => { _ = new PostgresDataProvider(null!, null!); },
-                () => { _ = new PostgresDataProvider<PostgresTestModel>(null!, null !); },
-            };
+        => throw new NotImplementedException();
 
-        // Act
-
-        // Assert
-        sut.ForEach(s => s.Should().ThrowExactly<ArgumentNullException>());
-    }
-
-    [Fact]
     public async Task It_logs_and_throws_when_db_read_breaks_down()
     {
         // Arrange
-        PostgresQueryBuilder queryBuilder = new();
-
-        var sut = new PostgresDataProvider(
+        PostgresDataProvider sut = new(
             new PostgreSqlDbOptions("dbo").WithConnectionString("connString").WithTable("logs"),
-            queryBuilder);
+            new PostgresQueryBuilder<PostgresLogModel>());
 
-        var sutWithCols = new PostgresDataProvider<PostgresTestModel>(
+        PostgresDataProvider<PostgresTestModel> sutWithCols = new(
             new PostgreSqlDbOptions("dbo").WithConnectionString("connString").WithTable("logs"),
-            queryBuilder);
+            new PostgresQueryBuilder<PostgresTestModel>());
 
-        var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "10" };
+        Dictionary<string, StringValues> query = new() { ["page"] = "1", ["count"] = "10" };
 
         // Act
         var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));

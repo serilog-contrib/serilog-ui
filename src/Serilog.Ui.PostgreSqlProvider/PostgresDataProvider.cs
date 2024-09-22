@@ -4,7 +4,6 @@ using Serilog.Ui.Core;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.PostgreSqlProvider.Extensions;
 using Serilog.Ui.PostgreSqlProvider.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -13,26 +12,25 @@ using System.Threading.Tasks;
 namespace Serilog.Ui.PostgreSqlProvider;
 
 /// <inheritdoc/>
-public class PostgresDataProvider(PostgreSqlDbOptions options, PostgresQueryBuilder queryBuilder)
+public class PostgresDataProvider(PostgreSqlDbOptions options, PostgresQueryBuilder<PostgresLogModel> queryBuilder)
     : PostgresDataProvider<PostgresLogModel>(options, queryBuilder);
 
 /// <inheritdoc />
-public class PostgresDataProvider<T>(PostgreSqlDbOptions options, PostgresQueryBuilder queryBuilder) : IDataProvider
+public class PostgresDataProvider<T>(PostgreSqlDbOptions options, PostgresQueryBuilder<T> queryBuilder) : IDataProvider
     where T : PostgresLogModel
 {
     internal const string ProviderName = "NPGSQL";
-    private readonly PostgreSqlDbOptions _options = options ?? throw new ArgumentNullException(nameof(options));
 
     /// <inheritdoc/>
-    public string Name => _options.GetProviderName(ProviderName);
+    public string Name => options.GetProviderName(ProviderName);
 
     /// <inheritdoc/>
     public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
     {
         queryParams.ToUtcDates();
 
-        var logsTask = GetLogsAsync(queryParams);
-        var logCountTask = CountLogsAsync(queryParams);
+        Task<IEnumerable<LogModel>> logsTask = GetLogsAsync(queryParams);
+        Task<int> logCountTask = CountLogsAsync(queryParams);
         await Task.WhenAll(logsTask, logCountTask);
 
         return (await logsTask, await logCountTask);
@@ -40,12 +38,12 @@ public class PostgresDataProvider<T>(PostgreSqlDbOptions options, PostgresQueryB
 
     private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
     {
-        var query = queryBuilder.BuildFetchLogsQuery<T>(options.ColumnNames, _options.Schema, _options.TableName, queryParams);
-        var rowNoStart = queryParams.Page * queryParams.Count;
+        string query = queryBuilder.BuildFetchLogsQuery(options.ColumnNames, options.Schema, options.TableName, queryParams);
+        int rowNoStart = queryParams.Page * queryParams.Count;
 
-        await using var connection = new NpgsqlConnection(_options.ConnectionString);
+        await using NpgsqlConnection connection = new(options.ConnectionString);
 
-        var logs = await connection.QueryAsync<T>(query,
+        IEnumerable<T> logs = await connection.QueryAsync<T>(query,
             new
             {
                 Offset = rowNoStart,
@@ -68,9 +66,9 @@ public class PostgresDataProvider<T>(PostgreSqlDbOptions options, PostgresQueryB
 
     private async Task<int> CountLogsAsync(FetchLogsQuery queryParams)
     {
-        var query = queryBuilder.BuildCountLogsQuery<T>(_options.ColumnNames, _options.Schema, _options.TableName, queryParams);
+        string query = queryBuilder.BuildCountLogsQuery(options.ColumnNames, options.Schema, options.TableName, queryParams);
 
-        await using var connection = new NpgsqlConnection(_options.ConnectionString);
+        await using NpgsqlConnection connection = new(options.ConnectionString);
 
         return await connection.ExecuteScalarAsync<int>(query,
             new

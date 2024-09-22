@@ -66,8 +66,9 @@ public class PostgresTestProvider<T> : DatabaseInstance
         Collector = serilog.InitializeLogs();
 
         var custom = typeof(T) != typeof(PostgresLogModel);
-        PostgresQueryBuilder queryBuilder = new();
-        Provider = custom ? new PostgresDataProvider<T>(DbOptions, queryBuilder) : new PostgresDataProvider(DbOptions, queryBuilder);
+        Provider = custom
+            ? new PostgresDataProvider<T>(DbOptions, new PostgresQueryBuilder<T>())
+            : new PostgresDataProvider(DbOptions, new PostgresQueryBuilder<PostgresLogModel>());
 
         return Task.CompletedTask;
     }

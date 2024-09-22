@@ -31,6 +31,7 @@ public class PostgreSqlDbOptions : RelationalDbOptions
         ColumnNames = sinkType == PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative
             ? new PostgreSqlAlternativeSinkColumnNames()
             : new PostgreSqlSinkColumnNames();
+
         return this;
     }
 
