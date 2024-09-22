@@ -17,23 +17,23 @@ public class PostgresLogModel : LogModel
     private string _level = string.Empty;
 
     /// <inheritdoc />
-    public sealed override int RowNo => base.RowNo;
+    public override sealed int RowNo => base.RowNo;
 
     /// <inheritdoc />
-    public sealed override string? Message { get; set; }
+    public override sealed string? Message { get; set; }
 
     /// <inheritdoc />
-    public sealed override DateTime Timestamp { get; set; }
+    public override sealed DateTime Timestamp { get; set; }
 
     /// <inheritdoc />
-    public sealed override string? Level
+    public override sealed string? Level
     {
         get => _level;
         set => _level = LogLevelConverter.GetLevelName(value);
     }
 
     /// <summary>
-    /// It get or sets LogEventSerialized.
+    /// It gets or sets LogEventSerialized.
     /// </summary>
     [JsonIgnore]
     public string LogEvent { get; set; } = string.Empty;

@@ -31,7 +31,7 @@ public class PostgresTestProvider<T> : DatabaseInstance
         Container = new PostgreSqlBuilder().Build();
     }
 
-    private PostgreSqlDbOptions DbOptions { get; set; } = new PostgreSqlDbOptions("public")
+    private PostgreSqlDbOptions DbOptions { get; } = new PostgreSqlDbOptions("public")
         .WithTable("logs")
         .WithSinkType(PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative);
 
@@ -66,7 +66,8 @@ public class PostgresTestProvider<T> : DatabaseInstance
         Collector = serilog.InitializeLogs();
 
         var custom = typeof(T) != typeof(PostgresLogModel);
-        Provider = custom ? new PostgresDataProvider<T>(DbOptions) : new PostgresDataProvider(DbOptions);
+        PostgresQueryBuilder queryBuilder = new();
+        Provider = custom ? new PostgresDataProvider<T>(DbOptions, queryBuilder) : new PostgresDataProvider(DbOptions, queryBuilder);
 
         return Task.CompletedTask;
     }

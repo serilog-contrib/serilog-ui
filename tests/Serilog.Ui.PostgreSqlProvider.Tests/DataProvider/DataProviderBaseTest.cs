@@ -11,39 +11,49 @@ using Serilog.Ui.PostgreSqlProvider;
 using Serilog.Ui.PostgreSqlProvider.Extensions;
 using Xunit;
 
-namespace Postgres.Tests.DataProvider
+namespace Postgres.Tests.DataProvider;
+
+[Trait("Unit-Base", "Postgres")]
+public class DataProviderBaseTest : IUnitBaseTests
 {
-    [Trait("Unit-Base", "Postgres")]
-    public class DataProviderBaseTest : IUnitBaseTests
+    [Fact]
+    public void It_throws_when_any_dependency_is_null()
     {
-        [Fact]
-        public void It_throws_when_any_dependency_is_null()
-        {
-            var sut = new List<Action>
+        // Arrange
+        var sut = new List<Action>
             {
-                () => { _ = new PostgresDataProvider(null!); },
-                () => { _ = new PostgresDataProvider<PostgresTestModel>(null!); },
+                () => { _ = new PostgresDataProvider(null!, null!); },
+                () => { _ = new PostgresDataProvider<PostgresTestModel>(null!, null !); },
             };
 
-            sut.ForEach(s => s.Should().ThrowExactly<ArgumentNullException>());
-        }
+        // Act
 
-        [Fact]
-        public async Task It_logs_and_throws_when_db_read_breaks_down()
-        {
-            var sut = new PostgresDataProvider(new PostgreSqlDbOptions("dbo")
-                .WithConnectionString("connString")
-                .WithTable("logs"));
-            var sutWithCols = new PostgresDataProvider<PostgresTestModel>(new PostgreSqlDbOptions("dbo")
-                .WithConnectionString("connString")
-                .WithTable("logs"));
-            var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "10" };
+        // Assert
+        sut.ForEach(s => s.Should().ThrowExactly<ArgumentNullException>());
+    }
 
-            var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
-            var assertWithCols = () => sutWithCols.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
+    [Fact]
+    public async Task It_logs_and_throws_when_db_read_breaks_down()
+    {
+        // Arrange
+        PostgresQueryBuilder queryBuilder = new();
 
-            await assert.Should().ThrowExactlyAsync<ArgumentException>();
-            await assertWithCols.Should().ThrowExactlyAsync<ArgumentException>();
-        }
+        var sut = new PostgresDataProvider(
+            new PostgreSqlDbOptions("dbo").WithConnectionString("connString").WithTable("logs"),
+            queryBuilder);
+
+        var sutWithCols = new PostgresDataProvider<PostgresTestModel>(
+            new PostgreSqlDbOptions("dbo").WithConnectionString("connString").WithTable("logs"),
+            queryBuilder);
+
+        var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "10" };
+
+        // Act
+        var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
+        var assertWithCols = () => sutWithCols.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
+
+        // Assert
+        await assert.Should().ThrowExactlyAsync<ArgumentException>();
+        await assertWithCols.Should().ThrowExactlyAsync<ArgumentException>();
     }
 }

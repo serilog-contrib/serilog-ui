@@ -1,8 +1,8 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Interfaces;
 using Serilog.Ui.PostgreSqlProvider.Models;
+using System;
 
 namespace Serilog.Ui.PostgreSqlProvider.Extensions
 {
@@ -44,12 +44,12 @@ namespace Serilog.Ui.PostgreSqlProvider.Extensions
             if (customModel)
             {
                 optionsBuilder.RegisterColumnsInfo<T>(providerName);
-                optionsBuilder.Services.AddScoped<IDataProvider>(_ => new PostgresDataProvider<T>(dbOptions));
+                optionsBuilder.Services.AddScoped<IDataProvider>(_ => new PostgresDataProvider<T>(dbOptions, new PostgresQueryBuilder()));
 
                 return optionsBuilder;
             }
 
-            optionsBuilder.Services.AddScoped<IDataProvider>(_ => new PostgresDataProvider(dbOptions));
+            optionsBuilder.Services.AddScoped<IDataProvider>(_ => new PostgresDataProvider(dbOptions, new PostgresQueryBuilder()));
             return optionsBuilder;
         }
     }

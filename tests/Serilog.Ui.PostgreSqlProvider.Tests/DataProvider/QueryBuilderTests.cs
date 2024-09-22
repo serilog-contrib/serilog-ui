@@ -14,7 +14,7 @@ namespace Postgres.Tests.DataProvider;
 [Trait("Unit-QueryBuilder", "Postgres")]
 public class QueryBuilderTests
 {
-    private readonly PostgreSqlAlternativeSinkColumnNames _sut = new();
+    private readonly PostgresQueryBuilder _sut = new();
 
     [Theory]
     [ClassData(typeof(QueryBuilderTestData))]
@@ -36,8 +36,10 @@ public class QueryBuilderTests
             ["endDate"] = endDate?.ToString("O")
         };
 
+        PostgreSqlAlternativeSinkColumnNames sinkColumns = new();
+
         // Act
-        var query = _sut.BuildFetchLogsQuery<PostgresLogModel>(schema, tableName, FetchLogsQuery.ParseQuery(queryLogs));
+        var query = _sut.BuildFetchLogsQuery<PostgresLogModel>(sinkColumns, schema, tableName, FetchLogsQuery.ParseQuery(queryLogs));
 
         // Assert
         query.Should().Be(expectedQuery);
@@ -53,8 +55,10 @@ public class QueryBuilderTests
             ["search"] = "criteria"
         };
 
+        PostgreSqlAlternativeSinkColumnNames sinkColumns = new();
+
         // Act
-        var query = _sut.BuildFetchLogsQuery<PostgresTestModel>("test", "logs", FetchLogsQuery.ParseQuery(queryLogs));
+        var query = _sut.BuildFetchLogsQuery<PostgresTestModel>(sinkColumns, "test", "logs", FetchLogsQuery.ParseQuery(queryLogs));
 
         // Assert
         query.ToLowerInvariant().Should().StartWith("select *");
