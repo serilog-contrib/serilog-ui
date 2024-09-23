@@ -17,9 +17,11 @@ namespace Postgres.Tests.DataProvider;
 [Trait("Unit-Base", "Postgres")]
 public class DataProviderBaseTest : IUnitBaseTests
 {
+    [Fact(Skip = "Not required")]
     public void It_throws_when_any_dependency_is_null()
         => throw new NotImplementedException();
 
+    [Fact]
     public async Task It_logs_and_throws_when_db_read_breaks_down()
     {
         // Arrange

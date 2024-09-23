@@ -16,6 +16,7 @@ namespace MsSql.Tests.DataProvider;
 [Trait("Unit-Base", "MsSql")]
 public class DataProviderBaseTest : IUnitBaseTests
 {
+    [Fact(Skip = "Not required")]
     public void It_throws_when_any_dependency_is_null()
         => throw new NotImplementedException();
 

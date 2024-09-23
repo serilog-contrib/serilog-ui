@@ -6,5 +6,5 @@ namespace Serilog.Ui.MsSqlServerProvider.Extensions;
 
 public class SqlServerDbOptions(string defaultSchemaName) : RelationalDbOptions(defaultSchemaName)
 {
-    internal SinkColumnNames ColumnNames { get; } = new SqlServerSinkColumnNames();
+    public SinkColumnNames ColumnNames { get; } = new SqlServerSinkColumnNames();
 }

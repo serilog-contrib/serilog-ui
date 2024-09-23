@@ -9,8 +9,8 @@ using Serilog.Sinks.MariaDB.Extensions;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
 using Serilog.Ui.Core.Extensions;
-using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.MySqlProvider;
+using Serilog.Ui.MySqlProvider.Extensions;
 using Testcontainers.MariaDb;
 using Xunit;
 
@@ -29,9 +29,10 @@ public class MariaDbTestProvider<T> : DatabaseInstance
     protected MariaDbTestProvider()
     {
         Container = new MariaDbBuilder().Build();
+        DbOptions = new MariaDbOptions("dbo").WithTable("Logs");
     }
 
-    private RelationalDbOptions DbOptions { get; set; } = new RelationalDbOptions("dbo").WithTable("Logs");
+    private MariaDbOptions DbOptions { get; }
 
     protected override sealed IContainer Container { get; set; }
 
@@ -50,7 +51,7 @@ public class MariaDbTestProvider<T> : DatabaseInstance
 
     protected override Task InitializeAdditionalAsync()
     {
-        var serilog = new SerilogSinkSetup(logger =>
+        SerilogSinkSetup serilog = new(logger =>
         {
             logger
                 .WriteTo.MariaDB(
@@ -62,10 +63,13 @@ public class MariaDbTestProvider<T> : DatabaseInstance
                         PropertiesToColumnsMapping = PropertiesToColumnsMapping
                     });
         });
+
         Collector = serilog.InitializeLogs();
 
         var custom = typeof(T) != typeof(MySqlLogModel);
-        Provider = custom ? new MariaDbDataProvider<T>(DbOptions) : new MariaDbDataProvider(DbOptions);
+        Provider = custom
+            ? new MariaDbDataProvider<T>(DbOptions, new MySqlQueryBuilder<T>())
+            : new MariaDbDataProvider(DbOptions, new MySqlQueryBuilder<MySqlLogModel>());
 
         return Task.CompletedTask;
     }

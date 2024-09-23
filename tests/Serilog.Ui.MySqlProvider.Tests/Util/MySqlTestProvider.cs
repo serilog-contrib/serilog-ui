@@ -8,6 +8,7 @@ using Serilog.Ui.Common.Tests.SqlUtil;
 using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.MySqlProvider;
+using Serilog.Ui.MySqlProvider.Extensions;
 using Testcontainers.MySql;
 using Xunit;
 
@@ -25,9 +26,10 @@ namespace MySql.Tests.Util
         public MySqlTestProvider()
         {
             Container = new MySqlBuilder().Build();
+            DbOptions = new MySqlDbOptions("dbo").WithTable("Logs");
         }
 
-        public RelationalDbOptions DbOptions { get; set; } = new RelationalDbOptions("dbo").WithTable("Logs");
+        public MySqlDbOptions DbOptions { get; }
 
         protected override async Task CheckDbReadinessAsync()
         {
@@ -42,13 +44,14 @@ namespace MySql.Tests.Util
 
         protected override Task InitializeAdditionalAsync()
         {
-            var serilog = new SerilogSinkSetup(logger =>
+            SerilogSinkSetup serilog = new(logger =>
             {
                 logger.WriteTo.MySQL(DbOptions.ConnectionString, batchSize: 1, storeTimestampInUtc: true);
             });
+
             Collector = serilog.InitializeLogs();
 
-            Provider = new MySqlDataProvider(DbOptions);
+            Provider = new MySqlDataProvider(DbOptions, new MySqlQueryBuilder<MySqlLogModel>());
 
             return Task.CompletedTask;
         }

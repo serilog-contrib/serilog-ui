@@ -50,7 +50,7 @@ public class PostgresTestProvider<T> : DatabaseInstance
 
     protected override Task InitializeAdditionalAsync()
     {
-        var serilog = new SerilogSinkSetup(logger =>
+        SerilogSinkSetup serilog = new(logger =>
         {
             logger
                 .WriteTo.PostgreSQL(
