@@ -16,7 +16,7 @@ public class QueryBuilderTests
 {
     [Theory]
     [ClassData(typeof(QueryBuilderTestData))]
-    public void BuildFetchLogsQuery_ForAlternativeSink_ReturnsCorrectQuery(
+    public void BuildFetchLogsQuery_ForSink_ReturnsCorrectQuery(
         string schema,
         string tableName,
         string level,
