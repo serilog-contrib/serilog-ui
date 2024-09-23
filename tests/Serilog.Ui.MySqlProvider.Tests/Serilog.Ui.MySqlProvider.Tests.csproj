@@ -1,6 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
 		<AssemblyName>MySql.Tests</AssemblyName>
 		<RootNamespace>MySql.Tests</RootNamespace>
 	</PropertyGroup>
