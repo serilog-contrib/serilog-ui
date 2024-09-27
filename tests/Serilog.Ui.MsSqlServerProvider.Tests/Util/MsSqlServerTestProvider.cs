@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Microsoft.Data.SqlClient;
@@ -10,6 +9,7 @@ using Serilog.Ui.Common.Tests.SqlUtil;
 using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.MsSqlServerProvider;
 using Serilog.Ui.MsSqlServerProvider.Extensions;
+using System.Threading.Tasks;
 using Testcontainers.MsSql;
 using Xunit;
 
@@ -32,6 +32,7 @@ public class MsSqlServerTestProvider<T> : DatabaseInstance
             .ForUnixContainer()
             .UntilCommandIsCompleted("/opt/mssql-tools18/bin/sqlcmd", "-C", "-Q", "SELECT 1;");
         Container = new MsSqlBuilder()
+            .WithImage("mcr.microsoft.com/mssql/server:2019-lates")
             .WithWaitStrategy(waitStrategy)
             .Build();
     }
