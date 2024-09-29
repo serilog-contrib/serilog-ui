@@ -32,6 +32,7 @@ public class MsSqlServerTestProvider<T> : DatabaseInstance
             .ForUnixContainer()
             .UntilCommandIsCompleted("/opt/mssql-tools18/bin/sqlcmd", "-C", "-Q", "SELECT 1;");
         Container = new MsSqlBuilder()
+            .WithImage("mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04")
             .WithWaitStrategy(waitStrategy)
             .Build();
     }
