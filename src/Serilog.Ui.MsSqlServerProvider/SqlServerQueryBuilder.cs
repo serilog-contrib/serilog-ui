@@ -20,7 +20,7 @@ public class SqlServerQueryBuilder<TModel> : SqlQueryBuilder<TModel> where TMode
 
         GenerateWhereClause(queryStr, columns, query.Level, query.SearchCriteria, query.StartDate, query.EndDate);
 
-        queryStr.Append($"{GenerateSortClause(columns, query.SortOn, query.SortBy)} LIMIT @Count OFFSET @Offset");
+        queryStr.Append($"{GenerateSortClause(columns, query.SortOn, query.SortBy)} OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY");
 
         return queryStr.ToString();
     }
@@ -120,7 +120,7 @@ public class SqlServerQueryBuilder<TModel> : SqlQueryBuilder<TModel> where TMode
         }
 
         queryBuilder
-            .Append("WHERE TRUE ")
+            .Append("WHERE 1 = 1 ")
             .Append(conditions2);
     }
 }

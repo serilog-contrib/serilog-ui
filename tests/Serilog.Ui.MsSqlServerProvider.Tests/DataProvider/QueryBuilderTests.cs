@@ -71,31 +71,31 @@ public class QueryBuilderTests
         [
             [
                 "dbo", "logs", null!, null!, null!, null!,
-                "SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [dbo].[logs] ORDER BY [TimeStamp] DESC LIMIT @Count OFFSET @Offset"
+                "SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [dbo].[logs] ORDER BY [TimeStamp] DESC OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY"
             ],
             [
                 "dbo", "logs", null!, null!, null!, DateTime.Now,
-                "SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [dbo].[logs] WHERE TRUE AND [TimeStamp] <= @EndDate ORDER BY [TimeStamp] DESC LIMIT @Count OFFSET @Offset"
+                "SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [dbo].[logs] WHERE 1 = 1 AND [TimeStamp] <= @EndDate ORDER BY [TimeStamp] DESC OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY"
             ],
             [
                 "dbo", "logs", null!, null!, DateTime.Now, DateTime.Now,
-                "SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [dbo].[logs] WHERE TRUE AND [TimeStamp] >= @StartDate AND [TimeStamp] <= @EndDate ORDER BY [TimeStamp] DESC LIMIT @Count OFFSET @Offset"
+                "SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [dbo].[logs] WHERE 1 = 1 AND [TimeStamp] >= @StartDate AND [TimeStamp] <= @EndDate ORDER BY [TimeStamp] DESC OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY"
             ],
             [
                 "dbo", "logs", "Information", null!, null!, null!,
-                "SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [dbo].[logs] WHERE TRUE AND [Level] = @Level ORDER BY [TimeStamp] DESC LIMIT @Count OFFSET @Offset"
+                "SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [dbo].[logs] WHERE 1 = 1 AND [Level] = @Level ORDER BY [TimeStamp] DESC OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY"
             ],
             [
                 "dbo", "logs", null!, "Test", null!, null!,
-                "SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [dbo].[logs] WHERE TRUE AND ([Message] LIKE @Search OR [Exception] LIKE @Search) ORDER BY [TimeStamp] DESC LIMIT @Count OFFSET @Offset"
+                "SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [dbo].[logs] WHERE 1 = 1 AND ([Message] LIKE @Search OR [Exception] LIKE @Search) ORDER BY [TimeStamp] DESC OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY"
             ],
             [
                 "dbo", "logs", "Information", "Test", null!, null!,
-                "SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [dbo].[logs] WHERE TRUE AND [Level] = @Level AND ([Message] LIKE @Search OR [Exception] LIKE @Search) ORDER BY [TimeStamp] DESC LIMIT @Count OFFSET @Offset"
+                "SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [dbo].[logs] WHERE 1 = 1 AND [Level] = @Level AND ([Message] LIKE @Search OR [Exception] LIKE @Search) ORDER BY [TimeStamp] DESC OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY"
             ],
             [
                 "dbo", "logs", "Information", "Test", DateTime.Now, DateTime.Now,
-                "SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [dbo].[logs] WHERE TRUE AND [Level] = @Level AND ([Message] LIKE @Search OR [Exception] LIKE @Search) AND [TimeStamp] >= @StartDate AND [TimeStamp] <= @EndDate ORDER BY [TimeStamp] DESC LIMIT @Count OFFSET @Offset"
+                "SELECT [Id], [Message], [Level], [TimeStamp], [Exception], [Properties] FROM [dbo].[logs] WHERE 1 = 1 AND [Level] = @Level AND ([Message] LIKE @Search OR [Exception] LIKE @Search) AND [TimeStamp] >= @StartDate AND [TimeStamp] <= @EndDate ORDER BY [TimeStamp] DESC OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY"
             ]
         ];
 
