@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<AssemblyName>MySql.Tests</AssemblyName>
 		<RootNamespace>MySql.Tests</RootNamespace>

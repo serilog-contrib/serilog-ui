@@ -1,4 +1,5 @@
 ﻿using Serilog.Ui.Core.Models.Options;
+using Serilog.Ui.Core.QueryBuilder.Sql;
 using Serilog.Ui.PostgreSqlProvider.Models;
 
 namespace Serilog.Ui.PostgreSqlProvider.Extensions;
@@ -9,9 +10,8 @@ public class PostgreSqlDbOptions : RelationalDbOptions
     /// <inheritdoc />
     public PostgreSqlDbOptions(string defaultSchemaName) : base(defaultSchemaName)
     {
+        ColumnNames = new PostgreSqlAlternativeSinkColumnNames();
     }
-
-    internal SinkColumnNames ColumnNames = new PostgreSqlAlternativeSinkColumnNames();
 
     /// <summary>
     /// It gets or sets SinkType.
@@ -31,6 +31,9 @@ public class PostgreSqlDbOptions : RelationalDbOptions
         ColumnNames = sinkType == PostgreSqlSinkType.SerilogSinksPostgreSQLAlternative
             ? new PostgreSqlAlternativeSinkColumnNames()
             : new PostgreSqlSinkColumnNames();
+
         return this;
     }
+
+    internal SinkColumnNames ColumnNames { get; set; }
 }

@@ -1,168 +1,76 @@
-﻿using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Ardalis.GuardClauses;
-using Dapper;
+﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using Serilog.Ui.Core;
-using Serilog.Ui.Core.Attributes;
 using Serilog.Ui.Core.Models;
-using Serilog.Ui.Core.Models.Options;
-using static Serilog.Ui.Core.Models.SearchOptions;
+using Serilog.Ui.MsSqlServerProvider.Extensions;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace Serilog.Ui.MsSqlServerProvider
+namespace Serilog.Ui.MsSqlServerProvider;
+
+/// <inheritdoc/>
+public class SqlServerDataProvider(SqlServerDbOptions options, SqlServerQueryBuilder<SqlServerLogModel> queryBuilder)
+    : SqlServerDataProvider<SqlServerLogModel>(options, queryBuilder);
+
+/// <inheritdoc/>
+public class SqlServerDataProvider<T>(SqlServerDbOptions options, SqlServerQueryBuilder<T> queryBuilder) : IDataProvider
+    where T : SqlServerLogModel
 {
-    public class SqlServerDataProvider(RelationalDbOptions options) : SqlServerDataProvider<SqlServerLogModel>(options)
+    internal const string MsSqlProviderName = "MsSQL";
+
+    /// <inheritdoc/>
+    public string Name => options.GetProviderName(MsSqlProviderName);
+
+    public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
     {
-        protected override string SearchCriteriaWhereQuery() => "OR [Exception] LIKE @Search";
+        // since sink stores dates in local time, we query by local time
+        queryParams.ToLocalDates();
 
-        protected override string SelectQuery()
-        {
-            const string level = $"[{ColumnLevelName}]";
-            const string message = $"[{ColumnMessageName}]";
-            const string timestamp = $"[{ColumnTimestampName}]";
+        var logsTask = GetLogsAsync(queryParams);
+        var logCountTask = CountLogsAsync(queryParams);
 
-            return $"SELECT [Id], {message}, {level}, {timestamp}, [Exception], [Properties] ";
-        }
+        await Task.WhenAll(logsTask, logCountTask);
+
+        return (await logsTask, await logCountTask);
     }
 
-    public class SqlServerDataProvider<T>(RelationalDbOptions options) : IDataProvider
-        where T : SqlServerLogModel
+    private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
     {
-        internal const string MsSqlProviderName = "MsSQL";
+        string query = queryBuilder.BuildFetchLogsQuery(options.ColumnNames, options.Schema, options.TableName, queryParams);
+        int rowNoStart = queryParams.Page * queryParams.Count;
 
-        private protected const string ColumnTimestampName = "TimeStamp";
+        using IDbConnection connection = new SqlConnection(options.ConnectionString);
 
-        private protected const string ColumnLevelName = "Level";
-
-        private protected const string ColumnMessageName = "Message";
-
-        private readonly RelationalDbOptions _options = Guard.Against.Null(options);
-
-        public string Name => _options.GetProviderName(MsSqlProviderName);
-
-        protected virtual string SelectQuery() => "SELECT * ";
-
-        public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
-        {
-            // since sink stores dates in local time, we query by local time
-            queryParams.ToLocalDates();
-
-            var logsTask = GetLogsAsync(queryParams);
-            var logCountTask = CountLogsAsync(queryParams);
-
-            await Task.WhenAll(logsTask, logCountTask);
-
-            return (await logsTask, await logCountTask);
-        }
-
-        private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
-        {
-            var queryBuilder = new StringBuilder();
-
-            queryBuilder.Append(SelectQuery());
-            queryBuilder.Append($"FROM [{_options.Schema}].[{_options.TableName}] ");
-
-            GenerateWhereClause(queryBuilder, queryParams);
-
-            GenerateSortClause(queryBuilder, queryParams.SortOn, queryParams.SortBy);
-
-            queryBuilder.Append("OFFSET @Offset ROWS FETCH NEXT @Count ROWS ONLY");
-
-            var rowNoStart = queryParams.Page * queryParams.Count;
-
-            using IDbConnection connection = new SqlConnection(_options.ConnectionString);
-            var logs = await connection.QueryAsync<T>(queryBuilder.ToString(),
-                new
-                {
-                    Offset = rowNoStart,
-                    queryParams.Count,
-                    queryParams.Level,
-                    Search = queryParams.SearchCriteria != null ? $"%{queryParams.SearchCriteria}%" : null,
-                    queryParams.StartDate,
-                    queryParams.EndDate
-                });
-
-            return logs.Select((item, i) => item.SetRowNo(rowNoStart, i)).ToList();
-        }
-
-        private async Task<int> CountLogsAsync(FetchLogsQuery queryParams)
-        {
-            var queryBuilder = new StringBuilder();
-            queryBuilder.Append($"SELECT COUNT(Id) FROM [{_options.Schema}].[{_options.TableName}]");
-
-            GenerateWhereClause(queryBuilder, queryParams);
-
-            using IDbConnection connection = new SqlConnection(_options.ConnectionString);
-            return await connection.ExecuteScalarAsync<int>(queryBuilder.ToString(),
-                new
-                {
-                    queryParams.Level,
-                    Search = queryParams.SearchCriteria != null ? "%" + queryParams.SearchCriteria + "%" : null,
-                    queryParams.StartDate,
-                    queryParams.EndDate
-                });
-        }
-
-        /// <summary>
-        /// If Exception property is flagged with <see cref="RemovedColumnAttribute"/>,
-        /// it removes the Where query part on the Exception field. 
-        /// </summary>
-        /// <returns></returns>
-        protected virtual string SearchCriteriaWhereQuery()
-        {
-            var exceptionProperty = typeof(T).GetProperty(nameof(SqlServerLogModel.Exception));
-            var att = exceptionProperty?.GetCustomAttribute<RemovedColumnAttribute>();
-            return att is null ? "OR [Exception] LIKE @Search" : string.Empty;
-        }
-
-        private void GenerateWhereClause(StringBuilder queryBuilder, FetchLogsQuery queryParams)
-        {
-            var conditionStart = "WHERE";
-
-            if (!string.IsNullOrWhiteSpace(queryParams.Level))
+        IEnumerable<T> logs = await connection.QueryAsync<T>(query,
+            new
             {
-                queryBuilder.Append($"{conditionStart} [{ColumnLevelName}] = @Level ");
-                conditionStart = "AND";
-            }
+                Offset = rowNoStart,
+                queryParams.Count,
+                queryParams.Level,
+                Search = queryParams.SearchCriteria != null ? $"%{queryParams.SearchCriteria}%" : null,
+                queryParams.StartDate,
+                queryParams.EndDate
+            });
 
-            if (!string.IsNullOrWhiteSpace(queryParams.SearchCriteria))
+        return logs.Select((item, i) => item.SetRowNo(rowNoStart, i)).ToList();
+    }
+
+    private async Task<int> CountLogsAsync(FetchLogsQuery queryParams)
+    {
+        string query = queryBuilder.BuildCountLogsQuery(options.ColumnNames, options.Schema, options.TableName, queryParams);
+
+        using IDbConnection connection = new SqlConnection(options.ConnectionString);
+
+        return await connection.ExecuteScalarAsync<int>(query,
+            new
             {
-                queryBuilder.Append($"{conditionStart} [{ColumnMessageName}] LIKE @Search {SearchCriteriaWhereQuery()} ");
-                conditionStart = "AND";
-            }
-
-            if (queryParams.StartDate != null)
-            {
-                queryBuilder.Append($"{conditionStart} [{ColumnTimestampName}] >= @StartDate ");
-                conditionStart = "AND";
-            }
-
-            if (queryParams.EndDate != null)
-            {
-                queryBuilder.Append($"{conditionStart} [{ColumnTimestampName}] <= @EndDate ");
-            }
-        }
-
-        private static void GenerateSortClause(StringBuilder queryBuilder, SortProperty sortOn, SortDirection sortBy)
-        {
-            var sortOnCol = GetColumnName(sortOn);
-            var sortByCol = sortBy.ToString().ToUpper();
-
-            queryBuilder.Append($"ORDER BY [{sortOnCol}] {sortByCol} ");
-        }
-
-        private static string GetColumnName(SortProperty sortOn)
-            => sortOn switch
-            {
-                SortProperty.Level => ColumnLevelName,
-                SortProperty.Message => ColumnMessageName,
-                SortProperty.Timestamp => ColumnTimestampName,
-                _ => ColumnTimestampName
-            };
+                queryParams.Level,
+                Search = queryParams.SearchCriteria != null ? "%" + queryParams.SearchCriteria + "%" : null,
+                queryParams.StartDate,
+                queryParams.EndDate
+            });
     }
 }

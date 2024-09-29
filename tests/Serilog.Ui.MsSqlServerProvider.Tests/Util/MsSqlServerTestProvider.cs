@@ -8,8 +8,8 @@ using Serilog.Sinks.MSSqlServer;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
 using Serilog.Ui.Core.Extensions;
-using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.MsSqlServerProvider;
+using Serilog.Ui.MsSqlServerProvider.Extensions;
 using Testcontainers.MsSql;
 using Xunit;
 
@@ -32,11 +32,12 @@ public class MsSqlServerTestProvider<T> : DatabaseInstance
             .ForUnixContainer()
             .UntilCommandIsCompleted("/opt/mssql-tools18/bin/sqlcmd", "-C", "-Q", "SELECT 1;");
         Container = new MsSqlBuilder()
+            .WithImage("mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04")
             .WithWaitStrategy(waitStrategy)
             .Build();
     }
 
-    private RelationalDbOptions DbOptions { get; } = new RelationalDbOptions("dbo").WithTable("Logs");
+    private SqlServerDbOptions DbOptions { get; } = new SqlServerDbOptions("dbo").WithTable("Logs");
 
     protected override sealed IContainer Container { get; set; }
 
@@ -69,8 +70,11 @@ public class MsSqlServerTestProvider<T> : DatabaseInstance
         Collector = serilog.InitializeLogs();
 
         SqlMapper.AddTypeHandler(new DapperDateTimeHandler());
+
         var custom = typeof(T) != typeof(SqlServerLogModel);
-        Provider = custom ? new SqlServerDataProvider<T>(DbOptions) : new SqlServerDataProvider(DbOptions);
+        Provider = custom
+            ? new SqlServerDataProvider<T>(DbOptions, new SqlServerQueryBuilder<T>())
+            : new SqlServerDataProvider(DbOptions, new SqlServerQueryBuilder<SqlServerLogModel>());
 
         return Task.CompletedTask;
     }

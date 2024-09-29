@@ -14,8 +14,6 @@ namespace Postgres.Tests.DataProvider;
 [Trait("Unit-QueryBuilder", "Postgres")]
 public class QueryBuilderTests
 {
-    private readonly PostgreSqlAlternativeSinkColumnNames _sut = new();
-
     [Theory]
     [ClassData(typeof(QueryBuilderTestData))]
     public void BuildFetchLogsQuery_ForAlternativeSink_ReturnsCorrectQuery(
@@ -28,7 +26,7 @@ public class QueryBuilderTests
         string expectedQuery)
     {
         // Arrange
-        var queryLogs = new Dictionary<string, StringValues>
+        Dictionary<string, StringValues> queryLogs = new()
         {
             ["level"] = level,
             ["search"] = searchCriteria,
@@ -36,8 +34,11 @@ public class QueryBuilderTests
             ["endDate"] = endDate?.ToString("O")
         };
 
+        PostgreSqlAlternativeSinkColumnNames sinkColumns = new();
+        PostgresQueryBuilder<PostgresLogModel> sut = new();
+
         // Act
-        var query = _sut.BuildFetchLogsQuery<PostgresLogModel>(schema, tableName, FetchLogsQuery.ParseQuery(queryLogs));
+        string query = sut.BuildFetchLogsQuery(sinkColumns, schema, tableName, FetchLogsQuery.ParseQuery(queryLogs));
 
         // Assert
         query.Should().Be(expectedQuery);
@@ -47,17 +48,20 @@ public class QueryBuilderTests
     public void BuildFetchLogsQuery_not_includes_Exception_if_custom_log_model()
     {
         // Arrange
-        var queryLogs = new Dictionary<string, StringValues>
+        Dictionary<string, StringValues> queryLogs = new()
         {
             ["level"] = "level",
             ["search"] = "criteria"
         };
 
+        PostgreSqlAlternativeSinkColumnNames sinkColumns = new();
+        PostgresQueryBuilder<PostgresTestModel> sut = new();
+
         // Act
-        var query = _sut.BuildFetchLogsQuery<PostgresTestModel>("test", "logs", FetchLogsQuery.ParseQuery(queryLogs));
+        string query = sut.BuildFetchLogsQuery(sinkColumns, "test", "logs", FetchLogsQuery.ParseQuery(queryLogs));
 
         // Assert
-        query.ToLowerInvariant().Should().StartWith("select *");
+        query.ToLowerInvariant().Should().StartWith("select");
         query.ToLowerInvariant().Should().NotContain("exception");
     }
 

@@ -1,15 +1,14 @@
-﻿using Serilog.Ui.Core.Models.Options;
+﻿using Serilog.Ui.MySqlProvider.Extensions;
 using Serilog.Ui.MySqlProvider.Shared;
 
 namespace Serilog.Ui.MySqlProvider;
 
-public class MySqlDataProvider(RelationalDbOptions options) : DataProvider<MySqlLogModel>(options)
+public class MySqlDataProvider(MySqlDbOptions options, MySqlQueryBuilder<MySqlLogModel> queryBuilder)
+    : DataProvider<MySqlLogModel>(options, queryBuilder)
 {
-    protected override string SelectQuery
-        => $"SELECT Id, {ColumnMessageName}, {ColumnLevelName}, {ColumnTimestampName}, Exception, Properties ";
-
-    protected override string SearchCriteriaWhereQuery() => "OR Exception LIKE @Search";
+    private readonly MySqlDbOptions _options = options;
 
     internal const string MySqlProviderName = "MySQL";
-    public override string Name => Options.GetProviderName(MySqlProviderName);
+
+    public override string Name => _options.GetProviderName(MySqlProviderName);
 }

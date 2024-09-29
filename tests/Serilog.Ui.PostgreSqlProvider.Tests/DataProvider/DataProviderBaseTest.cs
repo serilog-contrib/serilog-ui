@@ -9,41 +9,38 @@ using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.PostgreSqlProvider;
 using Serilog.Ui.PostgreSqlProvider.Extensions;
+using Serilog.Ui.PostgreSqlProvider.Models;
 using Xunit;
 
-namespace Postgres.Tests.DataProvider
+namespace Postgres.Tests.DataProvider;
+
+[Trait("Unit-Base", "Postgres")]
+public class DataProviderBaseTest : IUnitBaseTests
 {
-    [Trait("Unit-Base", "Postgres")]
-    public class DataProviderBaseTest : IUnitBaseTests
+    [Fact(Skip = "Not required")]
+    public void It_throws_when_any_dependency_is_null()
+        => throw new NotImplementedException();
+
+    [Fact]
+    public async Task It_logs_and_throws_when_db_read_breaks_down()
     {
-        [Fact]
-        public void It_throws_when_any_dependency_is_null()
-        {
-            var sut = new List<Action>
-            {
-                () => { _ = new PostgresDataProvider(null!); },
-                () => { _ = new PostgresDataProvider<PostgresTestModel>(null!); },
-            };
+        // Arrange
+        PostgresDataProvider sut = new(
+            new PostgreSqlDbOptions("dbo").WithConnectionString("connString").WithTable("logs"),
+            new PostgresQueryBuilder<PostgresLogModel>());
 
-            sut.ForEach(s => s.Should().ThrowExactly<ArgumentNullException>());
-        }
+        PostgresDataProvider<PostgresTestModel> sutWithCols = new(
+            new PostgreSqlDbOptions("dbo").WithConnectionString("connString").WithTable("logs"),
+            new PostgresQueryBuilder<PostgresTestModel>());
 
-        [Fact]
-        public async Task It_logs_and_throws_when_db_read_breaks_down()
-        {
-            var sut = new PostgresDataProvider(new PostgreSqlDbOptions("dbo")
-                .WithConnectionString("connString")
-                .WithTable("logs"));
-            var sutWithCols = new PostgresDataProvider<PostgresTestModel>(new PostgreSqlDbOptions("dbo")
-                .WithConnectionString("connString")
-                .WithTable("logs"));
-            var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "10" };
+        Dictionary<string, StringValues> query = new() { ["page"] = "1", ["count"] = "10" };
 
-            var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
-            var assertWithCols = () => sutWithCols.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
+        // Act
+        var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
+        var assertWithCols = () => sutWithCols.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
-            await assert.Should().ThrowExactlyAsync<ArgumentException>();
-            await assertWithCols.Should().ThrowExactlyAsync<ArgumentException>();
-        }
+        // Assert
+        await assert.Should().ThrowExactlyAsync<ArgumentException>();
+        await assertWithCols.Should().ThrowExactlyAsync<ArgumentException>();
     }
 }

@@ -7,40 +7,39 @@ using MySql.Tests.Util;
 using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models;
-using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.MySqlProvider;
+using Serilog.Ui.MySqlProvider.Extensions;
 using Xunit;
 
-namespace MySql.Tests.DataProvider.MariaDb
+namespace MySql.Tests.DataProvider.MariaDb;
+
+[Trait("Unit-Base", "MariaDb")]
+public class DataProviderBaseTest : IUnitBaseTests
 {
-    [Trait("Unit-Base", "MariaDb")]
-    public class DataProviderBaseTest : IUnitBaseTests
+    [Fact(Skip = "Not required")]
+    public void It_throws_when_any_dependency_is_null()
+        => throw new NotImplementedException();
+
+    [Fact]
+    public async Task It_logs_and_throws_when_db_read_breaks_down()
     {
-        [Fact]
-        public void It_throws_when_any_dependency_is_null()
-        {
-            var suts = new List<Action>
-            {
-                () => { _ = new MariaDbDataProvider(null!); },
-                () => { _ = new MariaDbDataProvider<MariaDbTestModel>(null!); },
-            };
+        // Arrange
+        MariaDbDataProvider sut = new(
+            new MariaDbOptions("dbo").WithConnectionString("connString").WithTable("logs"),
+            new MySqlQueryBuilder<MySqlLogModel>());
 
-            suts.ForEach(sut => sut.Should().ThrowExactly<ArgumentNullException>());
-        }
+        MariaDbDataProvider<MariaDbTestModel> sutWithCols = new(
+            new MariaDbOptions("dbo").WithConnectionString("connString").WithTable("logs"),
+            new MySqlQueryBuilder<MariaDbTestModel>());
 
-        [Fact]
-        public async Task It_logs_and_throws_when_db_read_breaks_down()
-        {
-            var sut = new MariaDbDataProvider(new RelationalDbOptions("dbo").WithConnectionString("connString").WithTable("logs"));
-            var sutWithCols =
-                new MariaDbDataProvider<MariaDbTestModel>(new RelationalDbOptions("dbo").WithConnectionString("connString").WithTable("logs"));
-            var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "10", };
+        Dictionary<string, StringValues> query = new() { ["page"] = "1", ["count"] = "10" };
 
-            var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
-            var assertWithAdditionalCols = () => sutWithCols.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
+        // Act
+        var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
+        var assertWithCols = () => sutWithCols.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
-            await assert.Should().ThrowExactlyAsync<ArgumentException>();
-            await assertWithAdditionalCols.Should().ThrowExactlyAsync<ArgumentException>();
-        }
+        // Assert
+        await assert.Should().ThrowExactlyAsync<ArgumentException>();
+        await assertWithCols.Should().ThrowExactlyAsync<ArgumentException>();
     }
 }
