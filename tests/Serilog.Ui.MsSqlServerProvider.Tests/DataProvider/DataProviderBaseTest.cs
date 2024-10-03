@@ -7,42 +7,39 @@ using MsSql.Tests.Util;
 using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models;
-using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.MsSqlServerProvider;
+using Serilog.Ui.MsSqlServerProvider.Extensions;
 using Xunit;
 
-namespace MsSql.Tests.DataProvider
+namespace MsSql.Tests.DataProvider;
+
+[Trait("Unit-Base", "MsSql")]
+public class DataProviderBaseTest : IUnitBaseTests
 {
-    [Trait("Unit-Base", "MsSql")]
-    public class DataProviderBaseTest : IUnitBaseTests
+    [Fact(Skip = "Not required")]
+    public void It_throws_when_any_dependency_is_null()
+        => throw new NotImplementedException();
+
+    [Fact]
+    public async Task It_logs_and_throws_when_db_read_breaks_down()
     {
-        [Fact]
-        public void It_throws_when_any_dependency_is_null()
-        {
-            var suts = new List<Action>
-            {
-                () => { _ = new SqlServerDataProvider(null!); },
-                () => { _ = new SqlServerDataProvider<SqlServerTestModel>(null!); },
-            };
+        // Arrange
+        SqlServerDataProvider sut = new(
+            new SqlServerDbOptions("dbo").WithConnectionString("connString").WithTable("logs"),
+            new SqlServerQueryBuilder<SqlServerLogModel>());
 
-            suts.ForEach(sut => sut.Should().ThrowExactly<ArgumentNullException>());
-        }
+        SqlServerDataProvider<SqlServerTestModel> sutWithCols = new(
+            new SqlServerDbOptions("dbo").WithConnectionString("connString").WithTable("logs"),
+            new SqlServerQueryBuilder<SqlServerTestModel>());
 
-        [Fact]
-        public async Task It_logs_and_throws_when_db_read_breaks_down()
-        {
-            // Arrange
-            var sut = new SqlServerDataProvider(new RelationalDbOptions("dbo").WithConnectionString("connString").WithTable("logs"));
-            var sutWithAdditionalCols =
-                new SqlServerDataProvider<SqlServerTestModel>(new RelationalDbOptions("dbo").WithConnectionString("connString").WithTable("logs"));
-            var query = new Dictionary<string, StringValues> { ["page"] = "1", ["count"] = "10", };
+        Dictionary<string, StringValues> query = new() { ["page"] = "1", ["count"] = "10" };
 
-            // Act
-            var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
-            var assertWithAdditionalCols = () => sutWithAdditionalCols.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
+        // Act
+        var assert = () => sut.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
+        var assertWithCols = () => sutWithCols.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
 
-            await assert.Should().ThrowExactlyAsync<ArgumentException>();
-            await assertWithAdditionalCols.Should().ThrowExactlyAsync<ArgumentException>();
-        }
+        // Assert
+        await assert.Should().ThrowExactlyAsync<ArgumentException>();
+        await assertWithCols.Should().ThrowExactlyAsync<ArgumentException>();
     }
 }

@@ -8,6 +8,7 @@ using MsSql.Tests.Util;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Core.Models;
+using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.MsSqlServerProvider;
 using Serilog.Ui.MsSqlServerProvider.Extensions;
 using Serilog.Ui.Web.Extensions;
@@ -36,6 +37,10 @@ namespace MsSql.Tests.Extensions
 
             var provider = scope.ServiceProvider.GetService<IDataProvider>();
             provider.Should().NotBeNull().And.BeOfType<SqlServerDataProvider>();
+
+            var providersOptions = serviceProvider.GetRequiredService<ProvidersOptions>();
+            providersOptions.DisabledSortProviderNames.Should().BeEmpty();
+            providersOptions.ExceptionAsStringProviderNames.Should().HaveCount(1);
         }
 
         [Fact]
@@ -53,6 +58,10 @@ namespace MsSql.Tests.Extensions
 
             var provider = scope.ServiceProvider.GetService<IDataProvider>();
             provider.Should().NotBeNull().And.BeOfType<SqlServerDataProvider<SqlServerTestModel>>();
+
+            var providersOptions = serviceProvider.GetRequiredService<ProvidersOptions>();
+            providersOptions.DisabledSortProviderNames.Should().BeEmpty();
+            providersOptions.ExceptionAsStringProviderNames.Should().HaveCount(1);
         }
 
         [Fact]
@@ -75,6 +84,10 @@ namespace MsSql.Tests.Extensions
             providers.Take(2).Should().AllBeOfType<SqlServerDataProvider>();
             providers.Skip(2).Take(2).Should().AllBeOfType<SqlServerDataProvider<SqlServerTestModel>>();
             providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
+
+            var providersOptions = serviceProvider.GetRequiredService<ProvidersOptions>();
+            providersOptions.DisabledSortProviderNames.Should().BeEmpty();
+            providersOptions.ExceptionAsStringProviderNames.Should().HaveCount(4);
         }
 
         [Fact]

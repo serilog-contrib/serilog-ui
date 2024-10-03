@@ -134,11 +134,11 @@ describe('util: pretty prints', () => {
 
       const actXml = await renderCodeContent('not an XML!', LogType.Xml);
 
-      expect(actXml).toBe('Content could not be parsed, as per expected type: xml');
+      expect(actXml).toBe('not an XML!');
 
       const actJson = await renderCodeContent('not a JSON!', LogType.Json);
 
-      expect(actJson).toBe('Content could not be parsed, as per expected type: json');
+      expect(actJson).toBe('not a JSON!');
 
       expect(consoleMock).toHaveBeenCalledTimes(2);
     });

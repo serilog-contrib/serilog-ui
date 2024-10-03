@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
@@ -18,14 +19,12 @@ namespace Serilog.Ui.Web.Tests.Extensions;
 public class SerilogUiOptionBuilderExtensionsTest
 {
     private readonly IServiceCollection _services = new ServiceCollection();
-
     private readonly SerilogUiOptionsBuilder _builder;
 
     public SerilogUiOptionBuilderExtensionsTest()
     {
-        _services.AddHttpContextAccessor();
+        _services.AddSingleton<IHttpContextAccessor>(new HttpContextAccessor() { HttpContext = new DefaultHttpContext() });
         _services.AddScoped(_ => Substitute.For<IAuthorizationService>());
-
         _builder = new SerilogUiOptionsBuilder(_services);
     }
 
@@ -112,9 +111,11 @@ public class SerilogUiOptionBuilderExtensionsTest
 
         // Assert
         using var scope = serviceProvider.CreateScope();
+
         scope.ServiceProvider.GetService<IUiAsyncAuthorizationFilter>()
             .Should().NotBeNull()
             .And.BeOfType<BasicAuthenticationFilter>();
+
         scope.ServiceProvider.GetService<IBasicAuthenticationService>()
             .Should().NotBeNull()
             .And.BeOfType<BasicService>();

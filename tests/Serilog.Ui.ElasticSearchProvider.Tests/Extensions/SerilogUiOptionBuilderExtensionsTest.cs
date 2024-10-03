@@ -29,7 +29,9 @@ public class SerilogUiOptionBuilderExtensionsTest : IClusterFixture<Elasticsearc
 
         services.GetRequiredService<IDataProvider>().Should().NotBeNull().And.BeOfType<ElasticSearchDbDataProvider>();
 
-        services.GetRequiredService<ProvidersOptions>().DisabledSortProviderNames.Should().HaveCount(1);
+        var providersOptions = services.GetRequiredService<ProvidersOptions>();
+        providersOptions.DisabledSortProviderNames.Should().HaveCount(1);
+        providersOptions.ExceptionAsStringProviderNames.Should().BeEmpty();
     }
 
     [Fact]
@@ -48,7 +50,10 @@ public class SerilogUiOptionBuilderExtensionsTest : IClusterFixture<Elasticsearc
         var providers = scope.ServiceProvider.GetServices<IDataProvider>().ToList();
         providers.Should().HaveCount(2).And.AllBeOfType<ElasticSearchDbDataProvider>();
         providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
-        serviceProvider.GetRequiredService<ProvidersOptions>().DisabledSortProviderNames.Should().HaveCount(2);
+
+        var providersOptions = serviceProvider.GetRequiredService<ProvidersOptions>();
+        providersOptions.DisabledSortProviderNames.Should().HaveCount(2);
+        providersOptions.ExceptionAsStringProviderNames.Should().BeEmpty();
     }
 
     [U]

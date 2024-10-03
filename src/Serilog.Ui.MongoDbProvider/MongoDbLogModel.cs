@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Text.Json;
@@ -12,8 +12,8 @@ namespace Serilog.Ui.MongoDbProvider
     [BsonDiscriminator(RootClass = true)]
     public class MongoDbLogModel
     {
-        [BsonIgnore]
-        public int Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
 
         public string? Level { get; set; } = string.Empty;
 

@@ -1,16 +1,13 @@
 import { Alert, Button, Fieldset, Group, PasswordInput, TextInput } from '@mantine/core';
 import { IconAlertTriangleFilled } from '@tabler/icons-react';
 import { useAuthProperties } from 'app/hooks/useAuthProperties';
-import { isStringGuard } from 'app/util/guards';
 import { ChangeEvent, useState } from 'react';
 
 const BasicModal = ({ onClose }: { onClose: () => void }) => {
-  const { authHeader, basic_pwd, basic_user, clearAuthState, saveAuthState } =
+  const { isHeaderReady, basic_pwd, basic_user, clearAuthState, saveAuthState } =
     useAuthProperties();
   const [user, setUser] = useState(basic_user ?? '');
   const [pwd, setPwd] = useState(basic_pwd ?? '');
-
-  const isHeaderReady = isStringGuard(authHeader);
 
   const onSave = async () => {
     saveAuthState({ basic_pwd: pwd, basic_user: user });

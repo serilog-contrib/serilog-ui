@@ -1,6 +1,7 @@
 ﻿import dayjs from 'dayjs';
-import { HttpResponse, http } from 'msw';
+import { http, HttpResponse } from 'msw';
 import {
+  AuthType,
   EncodedSeriLogObject,
   LogLevel,
   SearchParameters,
@@ -8,6 +9,7 @@ import {
   SortPropertyOptions,
 } from '../../../types/types';
 import { dbKeysMock, fakeLogs, fakeLogs2ndTable, fakeLogs3rdTable } from './samples';
+import { defaultAuthType } from '../../../app/hooks/useSerilogUiProps.tsx';
 
 export const developmentListenersHost = ['https://localhost:3001'];
 
@@ -20,7 +22,7 @@ const tableLogs = (table: string | null) => {
 export const handlers = developmentListenersHost.flatMap((dlh) => [
   http.get(`${dlh}/api/logs`, ({ request }) => {
     const auth = request.headers.get('authorization');
-    if (!auth) return HttpResponse.error();
+    if (defaultAuthType !== AuthType.Custom && !auth) return HttpResponse.error();
 
     const req = new URL(request.url);
     const params = getSearchParams(req.searchParams);
@@ -49,7 +51,7 @@ export const handlers = developmentListenersHost.flatMap((dlh) => [
   http.get(`${dlh}/api/keys`, ({ request }) => {
     const auth = request.headers.get('authorization');
 
-    return !auth ? HttpResponse.error() : HttpResponse.json(dbKeysMock);
+    return defaultAuthType !== AuthType.Custom && !auth ? HttpResponse.error() : HttpResponse.json(dbKeysMock);
   }),
 ]);
 

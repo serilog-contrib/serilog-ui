@@ -1,14 +1,16 @@
-﻿namespace Serilog.Ui.PostgreSqlProvider.Models;
+﻿using Serilog.Ui.Core.QueryBuilder.Sql;
+
+namespace Serilog.Ui.PostgreSqlProvider.Models;
 
 internal class PostgreSqlSinkColumnNames : SinkColumnNames
 {
     public PostgreSqlSinkColumnNames()
     {
-        RenderedMessage = "message";
-        MessageTemplate = "message_template";
-        Level = "level";
-        Timestamp = "timestamp";
         Exception = "exception";
+        Level = "level";
         LogEventSerialized = "log_event";
+        Message = "message";
+        MessageTemplate = "message_template";
+        Timestamp = "timestamp";
     }
 }

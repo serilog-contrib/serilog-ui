@@ -1,22 +1,17 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<IsTestProject>false</IsTestProject>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Bogus" Version="35.6.0"/>
-		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.1"/>
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
-		<PackageReference Include="MySqlConnector" Version="2.3.7" />
-		<PackageReference Include="Npgsql" Version="8.0.3" />
+		<PackageReference Include="Bogus" Version="35.6.1"/>
 		<PackageReference Include="Serilog" Version="4.0.1" />
 		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1"/>
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
-		<ProjectReference Include="..\..\src\Serilog.Ui.MongoDbProvider\Serilog.Ui.MongoDbProvider.csproj" />
 	</ItemGroup>
 
 </Project>

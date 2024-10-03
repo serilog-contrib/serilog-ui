@@ -46,6 +46,7 @@ app.MapGet("/weatherforecast", () =>
     })
     .WithName("GetWeatherForecast")
     .WithOpenApi();
+app.MapGet("/exception", () => { throw new InvalidOperationException("This route doesn't exist!"); });
 
 app.Run();
 

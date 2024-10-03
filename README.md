@@ -2,11 +2,9 @@
 
 [![DotNET-build](https://github.com/serilog-contrib/serilog-ui/actions/workflows/DotNET-build.yml/badge.svg?branch=master)](https://github.com/serilog-contrib/serilog-ui/actions/workflows/DotNET-build.yml)
 [![DotNET Coverage](https://sonarcloud.io/api/project_badges/measure?project=followynne_serilog-ui&metric=coverage)](https://sonarcloud.io/summary/new_code?id=followynne_serilog-ui)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=followynne_serilog-ui&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=followynne_serilog-ui)
 
 [![JS-build](https://github.com/serilog-contrib/serilog-ui/actions/workflows/JS-build.yml/badge.svg?branch=master)](https://github.com/serilog-contrib/serilog-ui/actions/workflows/JS-build.yml)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=followynne_serilog-ui_assets&metric=coverage)](https://sonarcloud.io/summary/new_code?id=followynne_serilog-ui_assets)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=followynne_serilog-ui_assets&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=followynne_serilog-ui_assets)
 
 A simple Serilog log viewer for the following sinks:
 

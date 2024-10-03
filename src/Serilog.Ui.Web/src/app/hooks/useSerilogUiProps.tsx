@@ -1,11 +1,4 @@
-import {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { AuthType, SerilogUiConfig } from 'types/types';
 
 interface SerilogUiProps extends SerilogUiConfig {
@@ -15,10 +8,12 @@ interface SerilogUiProps extends SerilogUiConfig {
   setAuthenticatedFromAccessDenied: (value: boolean) => void;
 }
 
+export const defaultAuthType: AuthType = AuthType.Jwt;
 const defaults: SerilogUiConfig = {
-  authType: AuthType.Jwt,
+  authType: defaultAuthType,
   columnsInfo: {},
   disabledSortOnKeys: [],
+  renderExceptionAsStringKeys: [],
   homeUrl: 'https://google.com',
   routePrefix: 'serilog-ui',
   showBrand: true,

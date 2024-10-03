@@ -101,8 +101,10 @@ export interface SerilogUiConfig {
   routePrefix?: string;
   homeUrl?: string;
   showBrand?: boolean;
+  expandDropdownsByDefault?: boolean;
   blockHomeAccess?: boolean;
   disabledSortOnKeys?: string[];
+  renderExceptionAsStringKeys?: string[];
   columnsInfo?: ColumnsInfo;
 }
 

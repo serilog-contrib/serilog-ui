@@ -2,10 +2,9 @@ import { Button, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconLockCheck, IconLockOpen } from '@tabler/icons-react';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { Suspense, lazy, memo } from 'react';
+import { lazy, memo, Suspense } from 'react';
 import { AuthType } from 'types/types';
 import { useAuthProperties } from '../../hooks/useAuthProperties';
-import { isStringGuard } from '../../util/guards';
 
 const BasicModal = lazy(() => import('./BasicModal'));
 const JwtModal = lazy(() => import('./JwtModal'));
@@ -13,11 +12,9 @@ const JwtModal = lazy(() => import('./JwtModal'));
 const AuthorizeButton = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const { authType } = useSerilogUiProps();
-  const { authHeader } = useAuthProperties();
+  const { isHeaderReady } = useAuthProperties();
 
   if (![AuthType.Basic, AuthType.Jwt].includes(authType ?? AuthType.Custom)) return null;
-
-  const isHeaderReady = isStringGuard(authHeader);
 
   return (
     <>

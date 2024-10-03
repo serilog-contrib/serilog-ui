@@ -1,8 +1,9 @@
-import { Box, Loader } from '@mantine/core';
+import { Box, Loader, Textarea } from '@mantine/core';
 import { renderCodeContent } from 'app/util/prettyPrints';
 import { useEffect, useState } from 'react';
 import classes from 'style/table.module.css';
 import { LogType } from 'types/types';
+import { CopySection } from '../Util/Copy';
 
 const CodeContent = ({ content, codeType }: { content: string; codeType: LogType }) => {
   const [codeContent, setCodeContent] = useState<TrustedHTML>('');
@@ -26,10 +27,24 @@ const CodeContent = ({ content, codeType }: { content: string; codeType: LogType
       </Box>
     );
 
+  if ((codeType as unknown as string) === 'string')
+    return (
+      <Textarea
+        autosize
+        value={codeContent as string}
+        disabled
+        rightSectionPointerEvents="all"
+        rightSection={<CopySection value={codeContent as string} />}
+        minRows={1}
+        maxRows={20}
+        classNames={{ input: classes.modalTextAreaInputWrapper }}
+      />
+    );
+
   return (
     <div
       dangerouslySetInnerHTML={{ __html: codeContent }}
-      className={classes.detailModalCode}
+      className={classes.modalCode}
     ></div>
   );
 };

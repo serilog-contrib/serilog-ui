@@ -6,11 +6,13 @@ import { useSerilogUiProps } from './useSerilogUiProps';
 
 export const useQueryTableKeys = (shouldNotify = false) => {
   const { blockHomeAccess, setAuthenticatedFromAccessDenied } = useSerilogUiProps();
-  const { authHeader, fetchInfo } = useAuthProperties();
+  const { authHeader, isHeaderReady, fetchInfo } = useAuthProperties();
 
   return useQuery({
     queryKey: ['get-keys', fetchInfo.routePrefix, authHeader],
     queryFn: async () => {
+      if (!isHeaderReady) return [];
+
       if (fetchInfo?.routePrefix === undefined) return [];
 
       const result = await fetchKeys(

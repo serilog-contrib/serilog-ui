@@ -1,23 +1,16 @@
-﻿using Serilog.Ui.Core.Models.Options;
+﻿using Serilog.Ui.MySqlProvider.Extensions;
 using Serilog.Ui.MySqlProvider.Shared;
 
 namespace Serilog.Ui.MySqlProvider;
 
-public class MariaDbDataProvider(RelationalDbOptions options) : MariaDbDataProvider<MySqlLogModel>(options)
-{
-    protected override string SelectQuery
-        => $"SELECT Id, {ColumnMessageName}, {ColumnLevelName} AS 'Level', {ColumnTimestampName}, Exception, Properties ";
+public class MariaDbDataProvider(MariaDbOptions options, MySqlQueryBuilder<MySqlLogModel> queryBuilder)
+    : MariaDbDataProvider<MySqlLogModel>(options, queryBuilder);
 
-    protected override string SearchCriteriaWhereQuery() => "OR Exception LIKE @Search";
-}
-
-public class MariaDbDataProvider<T>(RelationalDbOptions options) : DataProvider<T>(options)
+public class MariaDbDataProvider<T>(MariaDbOptions options, MySqlQueryBuilder<T> queryBuilder) : DataProvider<T>(options, queryBuilder)
     where T : MySqlLogModel
 
 {
     internal const string ProviderName = "MariaDb";
 
-    protected override string ColumnLevelName => "LogLevel";
-
-    public override string Name => Options.GetProviderName(ProviderName);
+    public override string Name => options.GetProviderName(ProviderName);
 }

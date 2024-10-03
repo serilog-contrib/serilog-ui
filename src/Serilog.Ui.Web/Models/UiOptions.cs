@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Text;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.Core.Models.Options;
@@ -30,6 +28,11 @@ public class UiOptions(ProvidersOptions options)
     public string RoutePrefix { get; private set; } = "serilog-ui";
 
     /// <summary>
+    /// Get the option to auto-expand dropdowns in the log viewer.
+    /// </summary>
+    public bool ExpandDropdownsByDefault { get; private set; }
+
+    /// <summary>
     /// Sets the type of the authentication.
     /// </summary>
     public UiOptions WithAuthenticationType(AuthenticationType authType)
@@ -57,8 +60,17 @@ public class UiOptions(ProvidersOptions options)
     }
 
     /// <summary>
+    /// Sets the expand dropdowns by default property to true.
+    /// </summary>
+    public UiOptions WithExpandedDropdownsByDefault()
+    {
+        ExpandDropdownsByDefault = true;
+        return this;
+    }
+
+    /// <summary>
     /// Injects additional CSS stylesheets into the index.html page.
-    /// Each call to the method adds a stylesheet entry.  
+    /// Each call to the method adds a stylesheet entry.
     /// </summary>
     /// <param name="path">A path to the stylesheet - i.e. the link "href" attribute</param>
     /// <param name="media">The target media - i.e. the link "media" attribute</param>
@@ -143,10 +155,15 @@ public class UiOptions(ProvidersOptions options)
     internal IEnumerable<string> DisabledSortOnKeys { get; } = options.DisabledSortProviderNames;
 
     /// <summary>
+    /// Gets or sets the database keys that renders exceptions as simple strings.
+    /// </summary>
+    internal IEnumerable<string> RenderExceptionAsStringKeys { get; } = options.ExceptionAsStringProviderNames;
+
+    /// <summary>
     ///   Gets or sets the head content, a string that will be placed in the &lt;head&gt; of the index.html
     /// </summary>
     /// <value>The head content.</value>
     internal string HeadContent { get; set; } = string.Empty;
 
-    #endregion
+    #endregion internals
 }

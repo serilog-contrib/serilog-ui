@@ -1,13 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<AssemblyName>MsSql.Tests</AssemblyName>
 		<RootNamespace>MsSql.Tests</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="6.6.1"/>
-		<PackageReference Include="Testcontainers.MsSql" Version="3.9.0"/>
+		<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="7.0.1" />
+		<PackageReference Include="Testcontainers.MsSql" Version="3.10.0"/>
 	</ItemGroup>
 
 	<ItemGroup>

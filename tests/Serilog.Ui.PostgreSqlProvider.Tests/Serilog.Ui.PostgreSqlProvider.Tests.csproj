@@ -1,13 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
     <PropertyGroup>
-        <AssemblyName>Postgres.Tests</AssemblyName>
-        <RootNamespace>Postgres.Tests</RootNamespace>
+			<AssemblyName>Postgres.Tests</AssemblyName>
+	    <RootNamespace>Postgres.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Serilog.Sinks.Postgresql.Alternative" Version="4.1.1"/>
-        <PackageReference Include="Testcontainers.PostgreSql" Version="3.9.0"/>
+        <PackageReference Include="Testcontainers.PostgreSql" Version="3.10.0"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -22,5 +21,4 @@
         <ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj"/>
         <ProjectReference Include="..\Serilog.Ui.Common.Tests\Serilog.Ui.Common.Tests.csproj"/>
     </ItemGroup>
-
 </Project>

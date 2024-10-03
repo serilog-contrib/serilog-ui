@@ -29,6 +29,21 @@ public class SerilogUiOptionsBuilderTest
     }
 
     [Fact]
+    public void It_adds_entry_in_exception_as_string_keys()
+    {
+        // Act
+        var sut = GetBuilder();
+        sut.RegisterExceptionAsStringForProviderKey("test");
+        sut.RegisterExceptionAsStringForProviderKey("test");
+        sut.RegisterExceptionAsStringForProviderKey("test2");
+
+        // Assert
+        sut.RegisterProviderServices();
+        var provider = sut.Services.BuildServiceProvider();
+        provider.GetRequiredService<ProvidersOptions>().ExceptionAsStringProviderNames.Should().BeEquivalentTo(["test", "test2"]);
+    }
+
+    [Fact]
     public void It_creates_entries_in_additional_columns()
     {
         // Act
@@ -42,7 +57,10 @@ public class SerilogUiOptionsBuilderTest
         var service = sut.Services.BuildServiceProvider().GetRequiredService<ProvidersOptions>();
         service.AdditionalColumns.Should().HaveCount(2);
         service.AdditionalColumns.Should().ContainKeys("test", "test2");
-        service.AdditionalColumns.Values.Should().AllBeEquivalentTo(_columnsInfoSample);
+        service.AdditionalColumns.Values.Should()
+            .AllBeEquivalentTo(_columnsInfoSample)
+            .And
+            .AllSatisfy(s => s.RemovedColumns.Should().BeEquivalentTo([nameof(LogModel.Exception), nameof(LogModel.Properties)]));
     }
 
     [Fact]

@@ -14,6 +14,8 @@ public class ProvidersOptions
 
     private readonly HashSet<string> _disabledSortProviderNames = [];
 
+    private readonly HashSet<string> _exceptionAsStringProviderNames = [];
+
     /// <summary>
     /// Gets the AdditionalColumns.
     /// </summary>
@@ -25,6 +27,11 @@ public class ProvidersOptions
     /// </summary>
     public IEnumerable<string> DisabledSortProviderNames => _disabledSortProviderNames.ToList().AsReadOnly();
 
+    /// <summary>
+    /// Gets the ExceptionAsStringProviderNames.
+    /// </summary>
+    public IEnumerable<string> ExceptionAsStringProviderNames => _exceptionAsStringProviderNames.ToList().AsReadOnly();
+
     internal void RegisterType<T>(string providerKey)
         where T : LogModel
     {
@@ -34,5 +41,10 @@ public class ProvidersOptions
     internal void RegisterDisabledSortName(string name)
     {
         _disabledSortProviderNames.Add(name);
+    }
+
+    internal void RegisterExceptionAsStringProvider(string name)
+    {
+        _exceptionAsStringProviderNames.Add(name);
     }
 }

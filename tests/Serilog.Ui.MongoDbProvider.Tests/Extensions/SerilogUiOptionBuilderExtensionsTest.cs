@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Extensions;
+using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.MongoDbProvider;
 using Serilog.Ui.MongoDbProvider.Extensions;
 using Serilog.Ui.Web.Extensions;
@@ -30,6 +31,10 @@ namespace MongoDb.Tests.Extensions
 
             services.GetRequiredService<IDataProvider>().Should().NotBeNull().And.BeOfType<MongoDbDataProvider>();
             services.GetRequiredService<IMongoClient>().Should().NotBeNull();
+
+            var providersOptions = services.GetRequiredService<ProvidersOptions>();
+            providersOptions.DisabledSortProviderNames.Should().BeEmpty();
+            providersOptions.ExceptionAsStringProviderNames.Should().BeEmpty();
         }
 
         [Fact]
@@ -47,6 +52,10 @@ namespace MongoDb.Tests.Extensions
             services.GetRequiredService<IDataProvider>().Should().NotBeNull().And.BeOfType<MongoDbDataProvider>();
             services.GetRequiredService<IMongoClient>().Should().NotBeNull();
             services.GetRequiredService<IMongoClient>().Settings.ApplicationName.Should().BeNullOrWhiteSpace();
+
+            var providersOptions = services.GetRequiredService<ProvidersOptions>();
+            providersOptions.DisabledSortProviderNames.Should().BeEmpty();
+            providersOptions.ExceptionAsStringProviderNames.Should().BeEmpty();
         }
 
         [Fact]
@@ -69,6 +78,10 @@ namespace MongoDb.Tests.Extensions
             var providers = scope.ServiceProvider.GetServices<IDataProvider>().ToList();
             providers.Should().HaveCount(2).And.AllBeOfType<MongoDbDataProvider>();
             providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
+
+            var providersOptions = serviceProvider.GetRequiredService<ProvidersOptions>();
+            providersOptions.DisabledSortProviderNames.Should().BeEmpty();
+            providersOptions.ExceptionAsStringProviderNames.Should().BeEmpty();
         }
 
         [Fact]
