@@ -30,7 +30,7 @@ namespace Sqlite.Tests.DataProvider
         public Task It_logs_and_throws_when_db_read_breaks_down()
         {
             var sut = new SqliteDataProvider(
-                new SqliteDbOptions(string.Empty).WithConnectionString("connString").WithTable("Logs"),
+                new SqliteDbOptions().WithConnectionString("connString").WithTable("Logs"),
                 new SqliteQueryBuilder()
                 );
 

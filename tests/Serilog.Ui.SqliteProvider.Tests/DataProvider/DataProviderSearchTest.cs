@@ -5,6 +5,6 @@ using Xunit;
 
 namespace Sqlite.Tests.DataProvider;
 
-[Collection(nameof(SqliteDataProvider))]
+[Collection(nameof(SqliteTestProvider))]
 [Trait("Integration-Search", "Sqlite")]
 public class DataProviderSearchTest(SqliteTestProvider instance) : IntegrationSearchTests<SqliteTestProvider>(instance);

@@ -4,7 +4,7 @@ using Serilog.Ui.SqliteDataProvider.Models;
 
 namespace Serilog.Ui.SqliteDataProvider.Extensions;
 
-public class SqliteDbOptions(string defaultSchemaName) : RelationalDbOptions(defaultSchemaName)
+public class SqliteDbOptions() : RelationalDbOptions("ununsed")
 {
     public SinkColumnNames ColumnNames { get; } = new SqliteSinkColumnNames();
 }

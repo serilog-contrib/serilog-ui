@@ -28,7 +28,7 @@ namespace Sqlite.Tests.Util
             // No need to set up a container for SQLite - using in-memory database
         }
 
-        public SqliteDbOptions DbOptions { get; set; } = new SqliteDbOptions(string.Empty).WithTable("Logs");
+        public SqliteDbOptions DbOptions { get; set; } = new SqliteDbOptions().WithTable("Logs");
 
         private async Task CheckDbReadinessAsync()
         {

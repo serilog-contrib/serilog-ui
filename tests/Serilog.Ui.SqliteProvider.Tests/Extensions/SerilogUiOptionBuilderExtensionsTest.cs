@@ -1,13 +1,17 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Extensions;
+using Serilog.Ui.Core.Models.Options;
 using Serilog.Ui.SqliteDataProvider;
-using Serilog.Ui.Web;
+using Serilog.Ui.SqliteDataProvider.Extensions;
+using Serilog.Ui.Web.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
-namespace MySql.Tests.Extensions
+namespace Sqlite.Tests.Extensions
 {
     [Trait("DI-DataProvider", "Sqlite")]
     public class SerilogUiOptionBuilderExtensionsTest
@@ -22,9 +26,9 @@ namespace MySql.Tests.Extensions
         [Fact]
         public void It_registers_provider_and_dependencies()
         {
-            serviceCollection.AddSerilogUi((builder) =>
+            serviceCollection.AddSerilogUi(builder =>
             {
-                builder.UseSqliteServer("https://mysqlserver.example.com", "my-table");
+                builder.UseSqliteServer(opt => opt.WithConnectionString("https://sqliteserver.example.com").WithTable("my-table"));
             });
             var services = serviceCollection.BuildServiceProvider();
 
@@ -36,16 +40,51 @@ namespace MySql.Tests.Extensions
         }
 
         [Fact]
+        public void It_registers_multiple_providers()
+        {
+            serviceCollection.AddSerilogUi(builder =>
+            {
+                builder.UseSqliteServer(opt => opt.WithConnectionString("https://sqliteserver.example.com").WithTable("my-table"));
+                builder.UseSqliteServer(opt => opt.WithConnectionString("https://sqliteserver2.example.com").WithTable("my-table2"));
+            });
+
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            using var scope = serviceProvider.CreateScope();
+
+            var providers = scope.ServiceProvider.GetServices<IDataProvider>().ToList();
+            providers.Should().HaveCount(2).And.AllBeOfType<SqliteDataProvider>();
+            providers.Select(p => p.Name).Should().OnlyHaveUniqueItems();
+
+            var providersOptions = serviceProvider.GetRequiredService<ProvidersOptions>();
+            providersOptions.DisabledSortProviderNames.Should().BeEmpty();
+            providersOptions.ExceptionAsStringProviderNames.Should().BeEmpty();
+        }
+
+        [Fact]
         public void It_throws_on_invalid_registration()
         {
             var nullables = new List<Func<IServiceCollection>>
             {
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqliteServer(null, "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqliteServer(" ", "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqliteServer("", "name")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqliteServer("name", null)),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqliteServer("name", " ")),
-                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqliteServer("name", "")),
+                () => serviceCollection.AddSerilogUi((builder) => builder.UseSqliteServer(_ => {})),
+                () => serviceCollection.AddSerilogUi(builder => builder.UseSqliteServer(opt =>
+                    opt.WithConnectionString(null!).WithTable("my-table"))),
+                () => serviceCollection.AddSerilogUi(builder => builder.UseSqliteServer(opt =>
+                    opt.WithConnectionString(" ").WithTable("my-table"))),
+                () => serviceCollection.AddSerilogUi(builder => builder.UseSqliteServer(opt =>
+                    opt.WithConnectionString(string.Empty).WithTable("my-table"))),
+                () => serviceCollection.AddSerilogUi(builder => builder.UseSqliteServer(opt =>
+                    opt.WithConnectionString("name").WithTable(null!))),
+                () => serviceCollection.AddSerilogUi(builder => builder.UseSqliteServer(opt =>
+                    opt.WithConnectionString("name").WithTable(" "))),
+                () => serviceCollection.AddSerilogUi(builder => builder.UseSqliteServer(opt =>
+                    opt.WithConnectionString("name").WithTable(string.Empty))),
+                // if user sets an invalid schema, default value will be overridden an validation should fail
+                () => serviceCollection.AddSerilogUi(builder =>
+                    builder.UseSqliteServer(opt => opt.WithConnectionString("conn").WithTable("ok").WithSchema(null!))),
+                () => serviceCollection.AddSerilogUi(builder =>
+                    builder.UseSqliteServer(opt => opt.WithConnectionString("conn").WithTable("ok").WithSchema(" "))),
+                () => serviceCollection.AddSerilogUi(builder =>
+                    builder.UseSqliteServer(opt => opt.WithConnectionString("conn").WithTable("ok").WithSchema(string.Empty))),
             };
 
             foreach (var nullable in nullables)

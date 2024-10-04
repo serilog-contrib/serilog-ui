@@ -18,7 +18,7 @@ public static class SerilogUiOptionBuilderExtensions
         this ISerilogUiOptionsBuilder optionsBuilder,
         Action<RelationalDbOptions> setupOptions)
     {
-        var dbOptions = new SqliteDbOptions(string.Empty);
+        var dbOptions = new SqliteDbOptions();
         setupOptions(dbOptions);
         dbOptions.Validate();
 
