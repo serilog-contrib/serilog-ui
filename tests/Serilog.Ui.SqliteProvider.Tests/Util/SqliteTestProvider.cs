@@ -3,7 +3,6 @@ using Dapper;
 using Microsoft.Data.Sqlite;
 using Serilog;
 using Serilog.Ui.Common.Tests.DataSamples;
-using Serilog.Ui.Common.Tests.SqlUtil;
 using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Extensions;
@@ -28,18 +27,20 @@ namespace Sqlite.Tests.Util
             // No need to set up a container for SQLite - using in-memory database
         }
 
-        public SqliteDbOptions DbOptions { get; set; } = new SqliteDbOptions().WithTable("Logs");
+        public SqliteDbOptions DbOptions { get; set; } = new SqliteDbOptions()
+            .WithTable("Logs")
+            .WithConnectionString("Data Source=hello.db");
 
         private async Task CheckDbReadinessAsync()
         {
             Guard.Against.Null(DbOptions);
 
-            using var connection = new SqliteConnection("DataSource=:memory:");
+            using var connection = new SqliteConnection(DbOptions.ConnectionString);
             await connection.OpenAsync();
 
-            DbOptions.WithConnectionString(connection.ConnectionString);
-
             await connection.ExecuteAsync("SELECT 1");
+
+            InitializeAdditional();
         }
 
         private void InitializeAdditional()
@@ -47,7 +48,7 @@ namespace Sqlite.Tests.Util
             var serilog = new SerilogSinkSetup(logger =>
                 logger
                     .WriteTo
-                    .SQLite(DbOptions.ConnectionString));
+                    .SQLite(@"hello.db", batchSize: 1));
             _collector = serilog.InitializeLogs();
 
             _provider = new SqliteDataProvider(DbOptions, new SqliteQueryBuilder());
@@ -57,20 +58,13 @@ namespace Sqlite.Tests.Util
 
         public LogModelPropsCollector GetPropsCollector() => _collector!;
 
-        public async Task InitializeAsync()
+        public Task InitializeAsync()
         {
-            await CheckDbReadinessAsync();
-            InitializeAdditional();
+            return CheckDbReadinessAsync();
         }
 
-        public Task DisposeAsync()
-        {
-            return Task.CompletedTask;
-        }
+        public Task DisposeAsync() => Task.CompletedTask;
 
-        public void Dispose()
-        {
-
-        }
+        public void Dispose() { }
     }
 }
