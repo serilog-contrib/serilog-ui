@@ -1,12 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net7.0</TargetFramework>
-		<Nullable>enable</Nullable>
 		<AssemblyName>Sqlite.Tests</AssemblyName>
 		<RootNamespace>Sqlite.Tests</RootNamespace>
-		<IsPackable>false</IsPackable>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Serilog.Sinks.SQLite" Version="6.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.8" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="./../Serilog.Ui.Common.Tests/xunit.runner.json">

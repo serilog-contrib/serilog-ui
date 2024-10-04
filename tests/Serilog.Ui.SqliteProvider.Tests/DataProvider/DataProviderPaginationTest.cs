@@ -1,32 +1,24 @@
 ﻿using FluentAssertions;
 using Microsoft.Data.Sqlite;
-using MySql.Tests.Util;
+using Microsoft.Extensions.Primitives;
 using Serilog.Ui.Common.Tests.TestSuites.Impl;
-using Serilog.Ui.SqliteDataProvider;
+using Serilog.Ui.Core.Models;
+using Sqlite.Tests.Util;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Sqlite.Tests.DataProvider
+namespace Sqlite.Tests.DataProvider;
+
+[Collection(nameof(SqliteTestProvider))]
+[Trait("Integration-Pagination", "Sqlite")]
+public class DataProviderPaginationTest(SqliteTestProvider instance) : IntegrationPaginationTests<SqliteTestProvider>(instance)
 {
-    [Collection(nameof(SqliteDataProvider))]
-    [Trait("Integration-Pagination", "Sqlite")]
-    public class DataProviderPaginationTest : IntegrationPaginationTests<SqliteTestProvider>
+    [Fact]
+    public override Task It_throws_when_skip_is_zero()
     {
-        public DataProviderPaginationTest(SqliteTestProvider instance) : base(instance)
-        {
-        }
-
-        public override Task It_fetches_with_limit() => base.It_fetches_with_limit();
-
-        public override Task It_fetches_with_limit_and_skip() => base.It_fetches_with_limit_and_skip();
-
-        public override Task It_fetches_with_skip() => base.It_fetches_with_skip();
-
-        [Fact]
-        public override Task It_throws_when_skip_is_zero()
-        {
-            var test = () => provider.FetchDataAsync(0, 1);
-            return test.Should().ThrowAsync<SqliteException>();
-        }
+        var query = new Dictionary<string, StringValues> { ["page"] = "0", ["count"] = "1" };
+        var test = () => Provider.FetchDataAsync(FetchLogsQuery.ParseQuery(query));
+        return test.Should().ThrowAsync<SqliteException>();
     }
 }

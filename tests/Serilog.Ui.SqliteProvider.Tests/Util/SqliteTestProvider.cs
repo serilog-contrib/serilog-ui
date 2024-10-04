@@ -1,58 +1,76 @@
 ﻿using Ardalis.GuardClauses;
 using Dapper;
 using Microsoft.Data.Sqlite;
+using Serilog;
 using Serilog.Ui.Common.Tests.DataSamples;
 using Serilog.Ui.Common.Tests.SqlUtil;
+using Serilog.Ui.Common.Tests.TestSuites;
 using Serilog.Ui.Core;
+using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.SqliteDataProvider;
+using Serilog.Ui.SqliteDataProvider.Extensions;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace MySql.Tests.Util
+namespace Sqlite.Tests.Util
 {
-    [CollectionDefinition(nameof(SqliteDataProvider))]
-    public class MySqlCollection : ICollectionFixture<SqliteTestProvider> { }
+    [CollectionDefinition(nameof(SqliteTestProvider))]
+    public class SqliteCollection : ICollectionFixture<SqliteTestProvider> { }
 
-    public sealed class SqliteTestProvider : DatabaseInstance
+    public sealed class SqliteTestProvider : IIntegrationRunner
     {
-        protected override string Name => "SqliteInMemory";
+        private LogModelPropsCollector? _collector;
+
+        private SqliteDataProvider? _provider;
 
         public SqliteTestProvider() : base()
         {
             // No need to set up a container for SQLite - using in-memory database
         }
 
-        public RelationalDbOptions DbOptions { get; set; } = new()
-        {
-            TableName = "Logs",
-            Schema = "dbo"
-        };
+        public SqliteDbOptions DbOptions { get; set; } = new SqliteDbOptions(string.Empty).WithTable("Logs");
 
-        protected override async Task CheckDbReadinessAsync()
+        private async Task CheckDbReadinessAsync()
         {
             Guard.Against.Null(DbOptions);
 
             using var connection = new SqliteConnection("DataSource=:memory:");
             await connection.OpenAsync();
 
-            DbOptions.ConnectionString = connection.ConnectionString;
+            DbOptions.WithConnectionString(connection.ConnectionString);
 
             await connection.ExecuteAsync("SELECT 1");
         }
 
-        protected override async Task InitializeAdditionalAsync()
+        private void InitializeAdditional()
         {
-            var logs = LogModelFaker.Logs(100);
-            Collector = new LogModelPropsCollector(logs);
+            var serilog = new SerilogSinkSetup(logger =>
+                logger
+                    .WriteTo
+                    .SQLite(DbOptions.ConnectionString));
+            _collector = serilog.InitializeLogs();
 
-            using var connection = new SqliteConnection(DbOptions.ConnectionString);
-            await connection.OpenAsync();
+            _provider = new SqliteDataProvider(DbOptions, new SqliteQueryBuilder());
+        }
 
-            await connection.ExecuteAsync(Costants.SqliteCreateTable);
+        public IDataProvider GetDataProvider() => _provider!;
 
-            await connection.ExecuteAsync(Costants.SqliteInsertFakeData, logs);
+        public LogModelPropsCollector GetPropsCollector() => _collector!;
 
-            Provider = new SqliteDataProvider(DbOptions); // Update this if needed for SQLite
+        public async Task InitializeAsync()
+        {
+            await CheckDbReadinessAsync();
+            InitializeAdditional();
+        }
+
+        public Task DisposeAsync()
+        {
+            return Task.CompletedTask;
+        }
+
+        public void Dispose()
+        {
+
         }
     }
 }
