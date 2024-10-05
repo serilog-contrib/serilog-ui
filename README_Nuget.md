@@ -3,11 +3,12 @@
 A simple Serilog log viewer for the following sinks:
 
 - Serilog.Sinks.**MSSqlServer** ([Nuget](https://github.com/serilog/serilog-sinks-mssqlserver))
-- Serilog.Sinks.**MySql** ([Nuget](https://github.com/TeleSoftas/serilog-sinks-mariadb)) and Serilog.Sinks.**MariaDB** [Nuget](https://github.com/TeleSoftas/serilog-sinks-mariadb)
+- Serilog.Sinks.**MySql** ([Nuget](https://github.com/saleem-mirza/serilog-sinks-mysql)) and Serilog.Sinks.**MariaDB** [Nuget](https://github.com/TeleSoftas/serilog-sinks-mariadb)
 - Serilog.Sinks.**Postgresql** ([Nuget](https://github.com/b00ted/serilog-sinks-postgresql)) and Serilog.Sinks.**Postgresql.Alternative** ([Nuget](https://github.com/serilog-contrib/Serilog.Sinks.Postgresql.Alternative))
 - Serilog.Sinks.**MongoDB** ([Nuget](https://github.com/serilog/serilog-sinks-mongodb))
 - Serilog.Sinks.**ElasticSearch** ([Nuget](https://github.com/serilog/serilog-sinks-elasticsearch))
 - Serilog.Sinks.**RavenDB** ([Nuget](https://github.com/ravendb/serilog-sinks-ravendb))
+- Serilog.Sinks.**SQLite** ([Nuget](https://github.com/saleem-mirza/serilog-sinks-sqlite/))
 
 # Read the [Wiki](https://github.com/serilog-contrib/serilog-ui/wiki)
 
@@ -35,6 +36,7 @@ Install one or more of the available providers, based upon your sink(s):
 | **Serilog.UI.MongoDbProvider** [[NuGet](https://www.nuget.org/packages/Serilog.UI.MongoDbProvider)]             | `dotnet add package Serilog.UI.MongoDbProvider`       | `Install-Package Serilog.UI.MongoDbProvider`       |
 | **Serilog.UI.ElasticSearchProvider** [[NuGet](https://www.nuget.org/packages/Serilog.UI.ElasticSearchProvider)] | `dotnet add package Serilog.UI.ElasticSearchProvider` | `Install-Package Serilog.UI.ElasticSearchProvider` |
 | **Serilog.UI.RavenDbProvider** [[NuGet](https://www.nuget.org/packages/Serilog.UI.RavenDbProvider)]             | `dotnet add package Serilog.UI.RavenDbProvider`       | `Install-Package Serilog.UI.RavenDbProvider`       |
+| **Serilog.UI.SQLiteProvider** [[NuGet](https://www.nuget.org/packages/Serilog.UI.SQLiteProvider)]               | `dotnet add package Serilog.UI.SQLiteProvider`        | `Install-Package Serilog.UI.SQLiteProvider`        |
 
 ### DI registration
 
