@@ -46,7 +46,12 @@ public class SqliteDataProvider(SqliteDbOptions options, SqliteQueryBuilder quer
         };
         var logs = await connection.QueryAsync<LogModel>(query.ToString(), queryParameters);
 
-        return logs.Select((item, i) => item.SetRowNo(rowNoStart, i)).ToList();
+        return logs.Select((item, i) =>
+        {
+            item.PropertyType = "json";
+            item.SetRowNo(rowNoStart, i);
+            return item;
+        }).ToList();
     }
 
     private Task<int> CountLogsAsync(FetchLogsQuery queryParams)

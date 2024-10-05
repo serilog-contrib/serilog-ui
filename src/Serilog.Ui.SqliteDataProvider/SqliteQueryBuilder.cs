@@ -43,7 +43,7 @@ public class SqliteQueryBuilder : SqlQueryBuilder<LogModel>
     /// <inheritdoc/>
     private static void GenerateSelectClause(StringBuilder queryBuilder, SinkColumnNames columns, string schema, string tableName)
     {
-        queryBuilder.Append($"SELECT Id, {columns.Message} AS Message, {columns.Level}, {columns.Timestamp}, {columns.Exception}, {columns.Exception} ");
+        queryBuilder.Append($"SELECT Id, {columns.Message} AS Message, {columns.Level}, {columns.Timestamp}, {columns.Exception}, {columns.LogEventSerialized} ");
         queryBuilder.Append($"FROM {tableName} ");
     }
 
