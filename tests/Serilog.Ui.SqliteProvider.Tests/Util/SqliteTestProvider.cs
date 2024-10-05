@@ -8,6 +8,7 @@ using Serilog.Ui.Core;
 using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.SqliteDataProvider;
 using Serilog.Ui.SqliteDataProvider.Extensions;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -18,6 +19,9 @@ namespace Sqlite.Tests.Util
 
     public sealed class SqliteTestProvider : IIntegrationRunner
     {
+        private static string DbName() => $"integration-{DateTime.UtcNow:O}.db".Replace(':', '-');
+        private string _dbInstanceName = string.Empty;
+
         private LogModelPropsCollector? _collector;
 
         private SqliteDataProvider? _provider;
@@ -27,13 +31,13 @@ namespace Sqlite.Tests.Util
             // No need to set up a container for SQLite - using in-memory database
         }
 
-        public SqliteDbOptions DbOptions { get; set; } = new SqliteDbOptions()
-            .WithTable("Logs")
-            .WithConnectionString("Data Source=hello.db");
-
+        public SqliteDbOptions DbOptions { get; set; } = new SqliteDbOptions().WithTable("Logs");
         private async Task CheckDbReadinessAsync()
         {
             Guard.Against.Null(DbOptions);
+
+            _dbInstanceName = DbName();
+            DbOptions.WithConnectionString($"Data Source={_dbInstanceName}");
 
             using var connection = new SqliteConnection(DbOptions.ConnectionString);
             await connection.OpenAsync();
@@ -48,7 +52,7 @@ namespace Sqlite.Tests.Util
             var serilog = new SerilogSinkSetup(logger =>
                 logger
                     .WriteTo
-                    .SQLite(@"hello.db", batchSize: 1));
+                    .SQLite(_dbInstanceName, batchSize: 1, storeTimestampInUtc: true));
             _collector = serilog.InitializeLogs();
 
             _provider = new SqliteDataProvider(DbOptions, new SqliteQueryBuilder());

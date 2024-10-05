@@ -22,6 +22,8 @@ public static class SerilogUiOptionBuilderExtensions
         setupOptions(dbOptions);
         dbOptions.Validate();
 
+        string providerName = dbOptions.GetProviderName(SqliteDataProvider.SqliteProviderName);
+        optionsBuilder.RegisterExceptionAsStringForProviderKey(providerName);
         optionsBuilder.Services.AddScoped<IDataProvider, SqliteDataProvider>(_ => new SqliteDataProvider(dbOptions, new SqliteQueryBuilder()));
 
         return optionsBuilder;

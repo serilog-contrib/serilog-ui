@@ -30,7 +30,7 @@ public class SqliteQueryBuilder : SqlQueryBuilder<LogModel>
     {
         StringBuilder queryStr = new();
 
-        queryStr.Append($"SELECT COUNT(Id) FROM {tableName}");
+        queryStr.Append($"SELECT COUNT(Id) FROM {tableName} ");
 
         GenerateWhereClause(queryStr, columns, query.Level, query.SearchCriteria, query.StartDate, query.EndDate);
 
@@ -38,7 +38,7 @@ public class SqliteQueryBuilder : SqlQueryBuilder<LogModel>
     }
 
     protected override string GenerateSortClause(SinkColumnNames columns, SearchOptions.SortProperty sortOn, SearchOptions.SortDirection sortBy)
-        => $"ORDER BY [{GetSortColumnName(columns, sortOn)}] {sortBy.ToString().ToUpper()}";
+        => $"ORDER BY {GetSortColumnName(columns, sortOn)} {sortBy.ToString().ToUpper()}";
 
     /// <inheritdoc/>
     private static void GenerateSelectClause(StringBuilder queryBuilder, SinkColumnNames columns, string schema, string tableName)

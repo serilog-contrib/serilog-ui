@@ -4,6 +4,7 @@ using Microsoft.Data.Sqlite;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.SqliteDataProvider.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -49,6 +50,9 @@ public class SqliteDataProvider(SqliteDbOptions options, SqliteQueryBuilder quer
         return logs.Select((item, i) =>
         {
             item.PropertyType = "json";
+            // both sinks save UTC but MariaDb is queried as Unspecified, MySql is queried as Local
+            var ts = DateTime.SpecifyKind(item.Timestamp, item.Timestamp.Kind == DateTimeKind.Unspecified ? DateTimeKind.Local : item.Timestamp.Kind);
+            item.Timestamp = ts.ToUniversalTime();
             item.SetRowNo(rowNoStart, i);
             return item;
         }).ToList();

@@ -4,7 +4,7 @@
     <PackageId>Serilog.UI.Sqlite</PackageId>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <Version>1.0.0-beta.1</Version>
+    <Version>1.0.0</Version>
 
     <Description>SQLite data provider for Serilog UI.</Description>
     <PackageTags>serilog serilog-ui serilog.sinks.sqlite sqlite</PackageTags>
