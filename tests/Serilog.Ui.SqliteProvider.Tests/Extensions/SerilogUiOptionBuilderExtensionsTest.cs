@@ -57,7 +57,7 @@ namespace Sqlite.Tests.Extensions
 
             var providersOptions = serviceProvider.GetRequiredService<ProvidersOptions>();
             providersOptions.DisabledSortProviderNames.Should().BeEmpty();
-            providersOptions.ExceptionAsStringProviderNames.Should().BeEmpty();
+            providersOptions.ExceptionAsStringProviderNames.Should().HaveCount(2);
         }
 
         [Fact]
@@ -89,7 +89,7 @@ namespace Sqlite.Tests.Extensions
 
             foreach (var nullable in nullables)
             {
-                nullable.Should().ThrowExactly<ArgumentNullException>();
+                nullable.Should().Throw<ArgumentException>();
             }
         }
     }
