@@ -52,7 +52,7 @@ namespace Sqlite.Tests.Util
             var serilog = new SerilogSinkSetup(logger =>
                 logger
                     .WriteTo
-                    .SQLite(_dbInstanceName, batchSize: 1, storeTimestampInUtc: true));
+                    .SQLite(_dbInstanceName, storeTimestampInUtc: true));
             _collector = serilog.InitializeLogs();
 
             _provider = new SqliteDataProvider(DbOptions, new SqliteQueryBuilder());

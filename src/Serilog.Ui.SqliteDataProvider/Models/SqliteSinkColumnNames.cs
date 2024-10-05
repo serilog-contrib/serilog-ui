@@ -11,6 +11,6 @@ internal class SqliteSinkColumnNames : SinkColumnNames
         LogEventSerialized = "Properties";
         Message = "RenderedMessage";
         MessageTemplate = "";
-        Timestamp = "TimeStamp";
+        Timestamp = "Timestamp";
     }
 }

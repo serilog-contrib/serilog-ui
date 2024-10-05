@@ -19,6 +19,8 @@ public class SqliteDataProvider(SqliteDbOptions options, SqliteQueryBuilder quer
 
     public async Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
     {
+        queryParams.ToUtcDates(); // assuming data is saved in UTC, due to UTC predictability
+
         var logsTask = GetLogsAsync(queryParams);
         var logCountTask = CountLogsAsync(queryParams);
 
@@ -42,17 +44,18 @@ public class SqliteDataProvider(SqliteDbOptions options, SqliteQueryBuilder quer
             queryParams.Count,
             queryParams.Level,
             Search = queryParams.SearchCriteria != null ? $"%{queryParams.SearchCriteria}%" : null,
-            queryParams.StartDate,
-            queryParams.EndDate
+            StartDate = StringifyDate(queryParams.StartDate),
+            EndDate = StringifyDate(queryParams.EndDate)
         };
         var logs = await connection.QueryAsync<LogModel>(query.ToString(), queryParameters);
 
         return logs.Select((item, i) =>
         {
             item.PropertyType = "json";
-            // both sinks save UTC but MariaDb is queried as Unspecified, MySql is queried as Local
-            var ts = DateTime.SpecifyKind(item.Timestamp, item.Timestamp.Kind == DateTimeKind.Unspecified ? DateTimeKind.Local : item.Timestamp.Kind);
+
+            var ts = DateTime.SpecifyKind(item.Timestamp, item.Timestamp.Kind == DateTimeKind.Unspecified ? DateTimeKind.Utc : item.Timestamp.Kind);
             item.Timestamp = ts.ToUniversalTime();
+
             item.SetRowNo(rowNoStart, i);
             return item;
         }).ToList();
@@ -70,8 +73,10 @@ public class SqliteDataProvider(SqliteDbOptions options, SqliteQueryBuilder quer
             {
                 queryParams.Level,
                 Search = queryParams.SearchCriteria != null ? $"%{queryParams.SearchCriteria}%" : null,
-                queryParams.StartDate,
-                queryParams.EndDate
+                StartDate = StringifyDate(queryParams.StartDate),
+                EndDate = StringifyDate(queryParams.EndDate)
             });
     }
+
+    private static string StringifyDate(DateTime? date) => date.HasValue ? date.Value.ToString("s") + ".999" : "null";
 }
