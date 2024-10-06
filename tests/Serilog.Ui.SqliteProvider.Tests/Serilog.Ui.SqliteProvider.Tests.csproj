@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<AssemblyName>Sqlite.Tests</AssemblyName>
+		<RootNamespace>Sqlite.Tests</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Serilog.Sinks.SQLite" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.*" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.*"/>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.*"/>
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.*"/>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="./../Serilog.Ui.Common.Tests/xunit.runner.json">
+			<Link>%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Serilog.Ui.SqliteDataProvider\Serilog.Ui.SqliteDataProvider.csproj" />
+		<ProjectReference Include="..\..\src\Serilog.Ui.Web\Serilog.Ui.Web.csproj" />
+		<ProjectReference Include="..\Serilog.Ui.Common.Tests\Serilog.Ui.Common.Tests.csproj" />
+	</ItemGroup>
+
+</Project>
