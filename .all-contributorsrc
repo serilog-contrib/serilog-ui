@@ -120,6 +120,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "techgarage-ir",
+      "name": "Tech Garage",
+      "avatar_url": "https://avatars.githubusercontent.com/u/126519308?v=4",
+      "profile": "https://techgarage.ir/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 10
