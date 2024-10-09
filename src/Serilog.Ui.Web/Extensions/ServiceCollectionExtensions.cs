@@ -40,12 +40,17 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAuthorizationFilterService, AuthorizationFilterService>();
         services.AddSingleton<IAppStreamLoader, AppStreamLoader>();
 
-        services.AddScoped<ISerilogUiEndpoints, SerilogUiEndpoints>();
-        services.Decorate<ISerilogUiEndpoints, SerilogUiEndpointsDecorator>();
+        services.AddScoped<SerilogUiEndpoints>();
+        services.AddScoped<ISerilogUiEndpoints>(sp => new SerilogUiEndpointsDecorator(
+            sp.GetRequiredService<SerilogUiEndpoints>(),
+            sp.GetRequiredService<IAuthorizationFilterService>()));
 
-        services.AddScoped<ISerilogUiAppRoutes, SerilogUiAppRoutes>();
-        services.Decorate<ISerilogUiAppRoutes, SerilogUiAppRoutesDecorator>();
-
+        services.AddScoped<SerilogUiAppRoutes>();
+        services.AddScoped<ISerilogUiAppRoutes>(sp => new SerilogUiAppRoutesDecorator(
+            sp.GetRequiredService<IHttpContextAccessor>(),
+            sp.GetRequiredService<SerilogUiAppRoutes>(),
+            sp.GetRequiredService<IAuthorizationFilterService>()));
+        
         services.AddScoped<AggregateDataProvider>();
 
         return services;

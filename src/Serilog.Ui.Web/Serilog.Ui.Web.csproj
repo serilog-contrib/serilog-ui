@@ -8,14 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Scrutor" Version="5.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" PrivateAssets="all"/>
   </ItemGroup>
 
