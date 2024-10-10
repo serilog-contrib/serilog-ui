@@ -122,6 +122,7 @@ See [LICENSE](https://github.com/serilog-contrib/serilog-ui/blob/master/LICENSE)
     <tr>
       <td align="center" valign="top" width="10%"><a href="https://github.com/uthmanrahimi"><img src="https://avatars.githubusercontent.com/u/45357615?v=4?s=60" width="60px;" alt="Uthman"/><br /><sub><b>Uthman</b></sub></a><br /><a href="https://github.com/serilog-contrib/serilog-ui/commits?author=uthmanrahimi" title="Code">💻</a></td>
       <td align="center" valign="top" width="10%"><a href="https://github.com/jorgevp"><img src="https://avatars.githubusercontent.com/u/3268148?v=4?s=60" width="60px;" alt="jorgevp"/><br /><sub><b>jorgevp</b></sub></a><br /><a href="https://github.com/serilog-contrib/serilog-ui/commits?author=jorgevp" title="Code">💻</a></td>
+      <td align="center" valign="top" width="10%"><a href="https://techgarage.ir/"><img src="https://avatars.githubusercontent.com/u/126519308?v=4?s=60" width="60px;" alt="Tech Garage"/><br /><sub><b>Tech Garage</b></sub></a><br /><a href="https://github.com/serilog-contrib/serilog-ui/commits?author=techgarage-ir" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

@@ -8,8 +8,8 @@
     <ItemGroup>
         <PackageReference Include="Elastic.Elasticsearch.Xunit" Version="0.5.0" />
         <PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
         <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="10.0.0" />
     </ItemGroup>
 
