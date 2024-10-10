@@ -16,7 +16,7 @@ public class MySqlQueryBuilder<TModel> : SqlQueryBuilder<TModel> where TModel : 
     {
         StringBuilder queryStr = new();
 
-        GenerateSelectClause(queryStr, columns, schema, tableName);
+        GenerateSelectClause(queryStr, columns, tableName);
 
         GenerateWhereClause(queryStr, columns, query.Level, query.SearchCriteria, query.StartDate, query.EndDate);
 
@@ -53,9 +53,8 @@ public class MySqlQueryBuilder<TModel> : SqlQueryBuilder<TModel> where TModel : 
     /// </summary>
     /// <param name="queryBuilder">The StringBuilder to append the SELECT clause to.</param>
     /// <param name="columns">The column names used in the sink for logging.</param>
-    /// <param name="schema">The schema of the table.</param>
     /// <param name="tableName">The name of the table.</param>
-    private static void GenerateSelectClause(StringBuilder queryBuilder, SinkColumnNames columns, string schema, string tableName)
+    private static void GenerateSelectClause(StringBuilder queryBuilder, SinkColumnNames columns, string tableName)
     {
         if (typeof(TModel) != typeof(MySqlLogModel))
         {
