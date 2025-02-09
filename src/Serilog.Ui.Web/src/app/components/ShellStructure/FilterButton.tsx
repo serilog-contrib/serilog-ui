@@ -13,6 +13,13 @@ const FilterButton = () => {
   const [filterModalOpened, { open, close }] = useDisclosure(false);
   const { reset } = useSearchForm();
   const { refetch } = useQueryLogs();
+  const onClear = async () => {
+    const shouldRefetch = reset();
+
+    if (shouldRefetch) {
+      await refetch();
+    }
+  };
 
   useCloseOnResize(close);
 
@@ -29,10 +36,7 @@ const FilterButton = () => {
           <Box className={classes.searchFiltersModalTitle}>
             <Text>Search filters</Text>
             <ActionIcon
-              onClick={async () => {
-                reset();
-                await refetch();
-              }}
+              onClick={onClear}
               size={28}
               variant="light"
               aria-label="reset filters"

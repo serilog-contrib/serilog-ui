@@ -14,7 +14,7 @@ import useQueryLogs from 'app/hooks/useQueryLogs';
 import { useQueryTableKeys } from 'app/hooks/useQueryTableKeys';
 import { useSearchForm } from 'app/hooks/useSearchForm';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { memo, useEffect } from 'react';
+import { memo } from 'react';
 import { useController, useWatch } from 'react-hook-form';
 import classes from 'style/search.module.css';
 import { LogLevel } from '../../../types/types';
@@ -28,25 +28,26 @@ const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
   const { isError } = useQueryTableKeys(true);
   const { isUtc, setIsUtc } = useSerilogUiProps();
   const { handleSubmit, reset, setValue } = useSearchForm();
-
   const { refetch } = useQueryLogs();
-  const currentDbKey = useWatch({ name: 'table' });
   const currentPage = useWatch({ name: 'page' });
 
-  const clean = async () => {
-    reset();
-    await refetch();
-  };
+  const onSubmit = async () => {
+    if (currentPage === 1) {
+      await refetch();
+    } else {
+      setValue('page', 1);
+    }
 
-  const submit = async () => {
-    setValue('page', 1);
-    await refetch();
     onRefetch?.();
   };
 
-  useEffect(() => {
-    void refetch();
-  }, [currentDbKey, currentPage, refetch]);
+  const onClear = async () => {
+    const shouldRefetch = reset();
+
+    if (shouldRefetch) {
+      await refetch();
+    }
+  };
 
   return (
     <form aria-label="search-logs-form" onSubmit={() => {}}>
@@ -67,13 +68,13 @@ const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
                 setIsUtc(event.currentTarget.checked);
               }}
             />
-            <Button type="submit" onClick={handleSubmit(submit)} disabled={isError}>
+            <Button type="submit" onClick={handleSubmit(onSubmit)} disabled={isError}>
               Submit
             </Button>
             <ActionIcon
               visibleFrom="lg"
               size={28}
-              onClick={clean}
+              onClick={onClear}
               variant="light"
               aria-label="reset filters"
             >
