@@ -13,7 +13,7 @@ import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { IconBook, IconListNumbers } from '@tabler/icons-react';
 import useQueryLogs from 'app/hooks/useQueryLogs';
 import { toNumber } from 'app/util/guards';
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 import { ControllerRenderProps, FieldValues } from 'react-hook-form';
 import classes from 'style/search.module.css';
 
@@ -21,7 +21,7 @@ export const PagingRightColumn = memo(
   ({ field }: { field: ControllerRenderProps<FieldValues, 'page'> }) => {
     const [opened, { close, toggle }] = useDisclosure(false);
 
-    const { data, refetch } = useQueryLogs();
+    const { data } = useQueryLogs();
 
     const lessPages = useMediaQuery(`(max-width: ${em(800)})`);
     const totalPages = useMemo(() => {
@@ -29,10 +29,6 @@ export const PagingRightColumn = memo(
       const pages = data.count > 0 ? Math.ceil(data.total / data.count) : 1;
       return Number.isNaN(pages) ? 1 : pages;
     }, [data]);
-
-    useEffect(() => {
-      void refetch();
-    }, [refetch, field.value]);
 
     return (
       <Box

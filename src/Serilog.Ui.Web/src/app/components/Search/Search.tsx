@@ -15,7 +15,7 @@ import { useQueryTableKeys } from 'app/hooks/useQueryTableKeys';
 import { useSearchForm } from 'app/hooks/useSearchForm';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { memo, useEffect } from 'react';
-import { useController } from 'react-hook-form';
+import { useController, useWatch } from 'react-hook-form';
 import classes from 'style/search.module.css';
 import { LogLevel } from '../../../types/types';
 
@@ -27,10 +27,11 @@ const levelsArray = Object.keys(LogLevel).map((level) => ({
 const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
   const { isError } = useQueryTableKeys(true);
   const { isUtc, setIsUtc } = useSerilogUiProps();
-  const { handleSubmit, reset, setValue, watch } = useSearchForm();
+  const { handleSubmit, reset, setValue } = useSearchForm();
 
   const { refetch } = useQueryLogs();
-  const currentDbKey = watch('table');
+  const currentDbKey = useWatch({ name: 'table' });
+  const currentPage = useWatch({ name: 'page' });
 
   const clean = async () => {
     reset();
@@ -45,7 +46,7 @@ const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
 
   useEffect(() => {
     void refetch();
-  }, [currentDbKey, refetch]);
+  }, [currentDbKey, currentPage, refetch]);
 
   return (
     <form aria-label="search-logs-form" onSubmit={() => {}}>
