@@ -54,7 +54,7 @@
     "eslint-plugin-testing-library": "^7.1.1",
     "eslint-plugin-vitest": "^0.5.4",
     "eslint-plugin-vitest-globals": "^1.5.0",
-    "happy-dom": "^17.4.2",
+    "happy-dom": "^17.4.3",
     "msw": "^2.7.3",
     "postcss": "^8.5.3",
     "postcss-preset-mantine": "^1.17.0",
