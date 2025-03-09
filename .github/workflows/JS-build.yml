@@ -36,11 +36,11 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: 'Cache: .nuke/temp, ~/.nuget/packages'
-        uses: actions/cache@v4
+        uses: actions/cache@v3
         with:
           path: |
             .nuke/temp
@@ -68,7 +68,7 @@ jobs:
             -Dsonar.test.inclusions=src/Serilog.Ui.Web/src/__tests__/**/*
             -Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/src/reports/coverage/lcov.info
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results
