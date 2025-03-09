@@ -8,7 +8,7 @@ import { useCloseOnResize } from 'app/hooks/useCloseOnResize';
 import { useQueryAuth } from 'app/hooks/useQueryAuth';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { Suspense, lazy } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router';
 
 const AppBody = lazy(() => import('./AppBody'));
 const Head = lazy(() => import('./ShellStructure/Header'));

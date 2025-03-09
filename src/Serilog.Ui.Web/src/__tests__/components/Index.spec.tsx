@@ -1,6 +1,6 @@
 import { act, render, within } from '__tests__/_setup/testing-utils';
 import { Index } from 'app/components/Index';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 
 const propsMock = {

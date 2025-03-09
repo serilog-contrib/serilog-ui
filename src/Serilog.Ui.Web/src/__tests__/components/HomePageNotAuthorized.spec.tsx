@@ -7,7 +7,7 @@ const propsMock = {
   setAuthenticatedFromAccessDenied: vi.fn(),
   blockHomeAccess: false,
 };
-vi.mock('react-router-dom', async () => {
+vi.mock('react-router', async () => {
   return {
     Navigate: () => <div>Move to</div>,
   };
