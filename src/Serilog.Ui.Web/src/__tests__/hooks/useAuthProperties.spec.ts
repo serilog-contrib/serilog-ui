@@ -1,7 +1,8 @@
 import { act, renderHook } from '__tests__/_setup/testing-utils';
 import { useAuthProperties } from 'app/hooks/useAuthProperties';
 import { IAuthPropertiesStorageKeys } from 'app/util/auth';
-import { describe, expect, it } from 'vitest';
+import { DispatchedCustomEvents } from 'types/types';
+import { describe, expect, it, vi } from 'vitest';
 
 describe('useAuthProperties', () => {
   it('renders with default values', () => {
@@ -52,6 +53,8 @@ describe('useAuthProperties', () => {
   });
 
   it('clears auth state', () => {
+    const mock = vi.fn()
+    document.addEventListener(DispatchedCustomEvents.RemoveTableKey, mock)
     sessionStorage.setItem(IAuthPropertiesStorageKeys.jwt_bearerToken, 'token');
     sessionStorage.setItem(IAuthPropertiesStorageKeys.basic_user, 'user');
 
@@ -66,5 +69,6 @@ describe('useAuthProperties', () => {
     expect(result.current.basic_user).toBe('');
     expect(result.current.basic_pwd).toBe('');
     expect(result.current.jwt_bearerToken).toBe('');
+    expect(mock).toHaveBeenCalledOnce()
   });
 });
