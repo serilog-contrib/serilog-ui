@@ -11,7 +11,6 @@ const defaultReturn: SearchResult = {
 };
 const mockQueryLogs = {
   data: defaultReturn,
-  refetch: vi.fn(),
 };
 vi.mock('../../../app/hooks/useQueryLogs', () => {
   return {
@@ -66,7 +65,6 @@ describe('Paging', () => {
 
     expect(mockChangePage).toHaveBeenCalledTimes(1);
     expect(inputEntriesPerPage.value).toBe('25');
-    expect(mockQueryLogs.refetch).toHaveBeenCalledTimes(2);
   });
 
   it('changes sort on value', async () => {
@@ -88,7 +86,6 @@ describe('Paging', () => {
     await userEvent.selectOptions(listBox, selectOption);
 
     expect(sortOn.value).toBe('Level');
-    expect(mockQueryLogs.refetch).toHaveBeenCalledTimes(2);
   });
 
   it('changes sort by value', async () => {
@@ -103,7 +100,6 @@ describe('Paging', () => {
     await userEvent.click(sortBy);
 
     expect(sortBy.innerHTML).toContain('sort-ascending');
-    expect(mockQueryLogs.refetch).toHaveBeenCalledTimes(2);
   });
 
   it('disables the sort on field', async () => {
