@@ -14,10 +14,10 @@ import useQueryLogs from 'app/hooks/useQueryLogs';
 import { useQueryTableKeys } from 'app/hooks/useQueryTableKeys';
 import { useSearchForm } from 'app/hooks/useSearchForm';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import { useController, useWatch } from 'react-hook-form';
 import classes from 'style/search.module.css';
-import { LogLevel } from '../../../types/types';
+import { DispatchedCustomEvents, LogLevel } from '../../../types/types';
 
 const levelsArray = Object.keys(LogLevel).map((level) => ({
   value: level,
@@ -48,6 +48,18 @@ const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
       await refetch();
     }
   };
+
+  useEffect(() => {
+    const resetTableKey = () => {
+      reset(true);
+    };
+
+    document.addEventListener(DispatchedCustomEvents.RemoveTableKey, resetTableKey);
+
+    return () =>
+      document.removeEventListener(DispatchedCustomEvents.RemoveTableKey, resetTableKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <form aria-label="search-logs-form" onSubmit={() => {}}>

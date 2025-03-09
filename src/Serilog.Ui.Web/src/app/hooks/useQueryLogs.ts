@@ -14,7 +14,6 @@ const useQueryLogs = () => {
   const sortBy = useWatch({ name: 'sortBy' })
   const sortOn = useWatch({ name: 'sortOn' })
 
-  console.log(['get-logs', entriesPerPage, page, sortBy, sortOn, currentDbKey])
   return useQuery({
     enabled: true,
     queryKey: ['get-logs', entriesPerPage, page, sortBy, sortOn, currentDbKey],

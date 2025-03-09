@@ -41,12 +41,12 @@ export const useSearchForm = () => {
   const { data } = useQueryTableKeys();
   const tableKeysDefaultValue = isArrayGuard(data) ? data.at(0)! : '';
 
-  const resetForm = () => {
+  const resetForm = (blankTable?: boolean) => {
     const runRefetch = runManualRefetch(useSearchContext.getValues, tableKeysDefaultValue)
 
     useSearchContext.reset({
       ...searchFormInitialValues,
-      table: tableKeysDefaultValue,
+      table: !blankTable ? tableKeysDefaultValue : null,
     });
 
     return runRefetch
