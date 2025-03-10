@@ -35,6 +35,11 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+      - task: UseDotNet@2
+        inputs:
+          packageType: 'sdk'
+          version: '8.x' # or 8.0.302 
+          installationPath: $(Agent.ToolsDirectory)/dotnet
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
