@@ -28,18 +28,13 @@ on:
 
 jobs:
   ubuntu-latest:
-    name: ubuntu-latest
-    runs-on: ubuntu-latest
+    name: ubuntu-20.04
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
-      - task: UseDotNet@2
-        inputs:
-          packageType: 'sdk'
-          version: '8.x' # or 8.0.302 
-          installationPath: $(Agent.ToolsDirectory)/dotnet
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
