@@ -105,16 +105,17 @@ const SelectDbKeyInput = memo(() => {
   const { control } = useSearchForm();
   const { data: queryTableKeys } = useQueryTableKeys(true);
   const { field } = useController({ ...control, name: 'table' });
-  const isTableDisabled = !queryTableKeys?.length;
+  const queryKeys = queryTableKeys?.map((d) => ({ value: d, label: d })) ?? [];
+  const isTableDisabled = !queryKeys.length;
 
   return (
     <Grid.Col span={dbKeySpan} order={dbKeyOrder}>
       <Select
-        label="Table"
-        data={queryTableKeys?.map((d) => ({ value: d, label: d })) ?? []}
         allowDeselect={false}
-        {...field}
+        data={queryKeys}
         disabled={isTableDisabled}
+        label="Table"
+        {...field}
       ></Select>
     </Grid.Col>
   );

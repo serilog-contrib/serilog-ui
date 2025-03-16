@@ -32,6 +32,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # temporary from here...
       - name: Setup dotnet 6
         uses: actions/setup-dotnet@v4
         with:
@@ -44,6 +45,8 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+      # ...to here
+
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
