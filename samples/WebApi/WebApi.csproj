@@ -22,7 +22,7 @@
     <!-- Serilog UI packages  -->
     <ItemGroup>
         <!-- comment/uncomment to directly reference Nuget release
-        <PackageReference Include="Serilog.UI" Version="3.1.0"/>
+        <PackageReference Include="Serilog.UI" Version="3.1.1"/>
         <PackageReference Include="Serilog.UI.MsSqlServerProvider" Version="3.1.0"/>
         <PackageReference Include="Serilog.UI.ElasticSearchProvider" Version="3.1.0"/>
         -->
