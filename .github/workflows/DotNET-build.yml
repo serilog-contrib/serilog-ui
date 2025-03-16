@@ -32,7 +32,12 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      # temporary from here...
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4.2.0
+        with:
+          node-version: '>=20.x'
+
+          # temporary from here...
       - name: Setup dotnet 6
         uses: actions/setup-dotnet@v4
         with:
