@@ -28,8 +28,8 @@ on:
 
 jobs:
   ubuntu-latest:
-    name: ubuntu-latest
-    runs-on: ubuntu-latest
+    name: ubuntu-22.04
+    runs-on: ubuntu-22.04
 
     steps:
       # temporary from here...
