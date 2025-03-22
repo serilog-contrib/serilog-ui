@@ -63,7 +63,7 @@ internal class SerilogUiAppRoutes(IHttpContextAccessor httpContextAccessor, IApp
             options.ShowBrand,
             options.HomeUrl,
             BlockHomeAccess,
-            routePrefix = ConstructRoutesPrefix(options),
+            RoutePrefix = ConstructRoutesPrefix(options),
             options.ExpandDropdownsByDefault
         };
         string encodeAuthOpts = Uri.EscapeDataString(JsonSerializer.Serialize(feOpts, JsonSerializerOptionsFactory.GetDefaultOptions));
@@ -79,11 +79,11 @@ internal class SerilogUiAppRoutes(IHttpContextAccessor httpContextAccessor, IApp
     private static string ConstructRoutesPrefix(UiOptions options)
     {
         var safeHostPath = string.IsNullOrWhiteSpace(options.ServerSubPath) ? "" : options.ServerSubPath;
-        var hostPathWithoutInitialSlash = safeHostPath.StartsWith("/", StringComparison.OrdinalIgnoreCase) ?
-            safeHostPath[1..] : safeHostPath;
+        var hostPathWithoutInitialSlash = safeHostPath.StartsWith("/", StringComparison.OrdinalIgnoreCase) ? safeHostPath[1..] : safeHostPath;
         var hostPathWithDivider = !string.IsNullOrWhiteSpace(hostPathWithoutInitialSlash) &&
-            !hostPathWithoutInitialSlash.EndsWith('/') ?
-            $"{hostPathWithoutInitialSlash}/" : hostPathWithoutInitialSlash;
+                                  !hostPathWithoutInitialSlash.EndsWith('/')
+            ? $"{hostPathWithoutInitialSlash}/"
+            : hostPathWithoutInitialSlash;
 
         return $"{hostPathWithDivider}{options.RoutePrefix}";
     }
