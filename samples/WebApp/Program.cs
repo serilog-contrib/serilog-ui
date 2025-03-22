@@ -36,7 +36,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-var serverSubPath = bool.Parse(builder.Configuration["SerilogUi:AddServerSubPath"] ?? "false") == true ? "log" : "";
+var serverSubPath = bool.Parse(builder.Configuration["SerilogUi:AddServerSubPath"] ?? "false") == true ? "log" : "/";
 app.UseSerilogUi(options => options
     .WithHomeUrl("/#Test")
     .WithServerSubPath(serverSubPath)
