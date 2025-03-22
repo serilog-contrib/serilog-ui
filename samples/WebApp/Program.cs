@@ -36,12 +36,14 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+var serverSubPath = bool.Parse(builder.Configuration["SerilogUi:AddServerSubPath"] ?? "false") == true ? "log" : "";
 app.UseSerilogUi(options => options
     .WithHomeUrl("/#Test")
+    .WithServerSubPath(serverSubPath)
     .WithAuthenticationType(AuthenticationType.Jwt)
     .WithExpandedDropdownsByDefault()
     .EnableAuthorizationOnAppRoutes()
-    .InjectJavascript("/js/serilog-ui/custom.js")
+    .InjectJavascript($"{serverSubPath}/js/serilog-ui/custom.js")
 );
 
 app.MapControllerRoute(

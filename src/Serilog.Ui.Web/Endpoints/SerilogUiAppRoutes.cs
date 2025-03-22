@@ -51,7 +51,7 @@ internal class SerilogUiAppRoutes(IHttpContextAccessor httpContextAccessor, IApp
 
     private async Task<string> LoadStream(Stream stream, UiOptions options)
     {
-        StringBuilder htmlStringBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
+        StringBuilder htmlStringBuilder = new(await new StreamReader(stream).ReadToEndAsync());
         string authType = options.Authorization.AuthenticationType.ToString();
 
         var feOpts = new
@@ -63,7 +63,7 @@ internal class SerilogUiAppRoutes(IHttpContextAccessor httpContextAccessor, IApp
             options.ShowBrand,
             options.HomeUrl,
             BlockHomeAccess,
-            options.RoutePrefix,
+            routePrefix = ConstructRoutesPrefix(options),
             options.ExpandDropdownsByDefault
         };
         string encodeAuthOpts = Uri.EscapeDataString(JsonSerializer.Serialize(feOpts, JsonSerializerOptionsFactory.GetDefaultOptions));
@@ -74,5 +74,17 @@ internal class SerilogUiAppRoutes(IHttpContextAccessor httpContextAccessor, IApp
             .Replace("<meta name=\"dummy\" content=\"%(BodyContent)\">", options.BodyContent);
 
         return htmlStringBuilder.ToString();
+    }
+
+    private static string ConstructRoutesPrefix(UiOptions options)
+    {
+        var safeHostPath = string.IsNullOrWhiteSpace(options.ServerSubPath) ? "" : options.ServerSubPath;
+        var hostPathWithoutInitialSlash = safeHostPath.StartsWith("/", StringComparison.OrdinalIgnoreCase) ?
+            safeHostPath[1..] : safeHostPath;
+        var hostPathWithDivider = !string.IsNullOrWhiteSpace(hostPathWithoutInitialSlash) &&
+            !hostPathWithoutInitialSlash.EndsWith('/') ?
+            $"{hostPathWithoutInitialSlash}/" : hostPathWithoutInitialSlash;
+
+        return $"{hostPathWithDivider}{options.RoutePrefix}";
     }
 }

@@ -16,6 +16,7 @@ public class UiOptionsTest
 
         sut.HomeUrl.Should().Be("/");
         sut.RoutePrefix.Should().Be("serilog-ui");
+        sut.ServerSubPath.Should().BeEmpty();
         sut.BodyContent.Should().BeEmpty();
         sut.HeadContent.Should().BeEmpty();
         sut.ShowBrand.Should().BeTrue();
@@ -33,12 +34,14 @@ public class UiOptionsTest
             .WithHomeUrl("test")
             .WithAuthenticationType(AuthenticationType.Basic)
             .WithRoutePrefix("prefix")
+            .WithServerSubPath("log")
             .HideSerilogUiBrand()
             .WithExpandedDropdownsByDefault()
             .EnableAuthorizationOnAppRoutes();
 
         sut.HomeUrl.Should().Be("test");
         sut.RoutePrefix.Should().Be("prefix");
+        sut.ServerSubPath.Should().Be("log");
         sut.ShowBrand.Should().BeFalse();
         sut.ExpandDropdownsByDefault.Should().BeTrue();
         sut.Authorization.AuthenticationType.Should().Be(AuthenticationType.Basic);
