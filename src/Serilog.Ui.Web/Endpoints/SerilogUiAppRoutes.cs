@@ -78,13 +78,26 @@ internal class SerilogUiAppRoutes(IHttpContextAccessor httpContextAccessor, IApp
 
     private static string ConstructRoutesPrefix(UiOptions options)
     {
-        var safeHostPath = string.IsNullOrWhiteSpace(options.ServerSubPath) ? "" : options.ServerSubPath;
-        var hostPathWithoutInitialSlash = safeHostPath.StartsWith("/", StringComparison.OrdinalIgnoreCase) ? safeHostPath[1..] : safeHostPath;
-        var hostPathWithDivider = !string.IsNullOrWhiteSpace(hostPathWithoutInitialSlash) &&
-                                  !hostPathWithoutInitialSlash.EndsWith('/')
-            ? $"{hostPathWithoutInitialSlash}/"
-            : hostPathWithoutInitialSlash;
+        // If ServerSubPath is empty, just return the RoutePrefix
+        if (string.IsNullOrWhiteSpace(options.ServerSubPath)) return options.RoutePrefix;
 
-        return $"{hostPathWithDivider}{options.RoutePrefix}";
+        // Create a span to avoid allocations when slicing
+        ReadOnlySpan<char> path = options.ServerSubPath.AsSpan();
+        // Skip leading slash if present
+        if (path.Length > 0 && path[0] == '/')
+        {
+            path = path[1..];
+        }
+
+        // If the path is empty after removing the slash, just return the RoutePrefix
+        if (path.Length == 0)
+        {
+            return options.RoutePrefix;
+        }
+
+        // Check if we need a trailing slash
+        bool needsTrailingSlash = path.Length > 0 && path[^1] != '/';
+        // Build the final string with minimal allocations
+        return needsTrailingSlash ? string.Concat(path.ToString(), "/", options.RoutePrefix) : string.Concat(path.ToString(), options.RoutePrefix);
     }
 }
