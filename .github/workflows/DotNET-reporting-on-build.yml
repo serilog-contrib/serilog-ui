@@ -7,15 +7,20 @@ on:
     workflows: ['DotNET-build']
     types:
       - completed
+permissions:
+  contents: read
+  actions: read
+  checks: write
 
 jobs:
   upload:
     runs-on: ubuntu-latest
     steps:
-      - uses: phoenix-actions/test-reporting@v14
+      - uses: actions/checkout@v4
+      - uses: dorny/test-reporter@v2
         with:
-          artifact: test-results # artifact name
-          name: DotNET - Tests # Name of the check run which will be created
-          path: '**/test-results.trx' # Path to test results (inside artifact .zip)
-          reporter: dotnet-trx # Format of test results
-          output-to: checks
+          artifact: test-results
+          name: DotNET - Tests
+          path: '**/test-results.trx'
+          reporter: dotnet-trx
+          fail-on-error: false
