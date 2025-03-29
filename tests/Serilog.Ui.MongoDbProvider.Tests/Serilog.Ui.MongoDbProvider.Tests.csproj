@@ -3,12 +3,14 @@
 	<PropertyGroup>
 		<AssemblyName>MongoDb.Tests</AssemblyName>
 		<RootNamespace>MongoDb.Tests</RootNamespace>
+		<!-- temporary fix due to issues with ubuntu-latest and EphemeralMongo -->
+		<IsTestProject>false</IsTestProject>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="EphemeralMongo.Core" Version="1.1.3" />
-		<PackageReference Include="EphemeralMongo6.runtime.linux-x64" Version="1.0.0" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
-		<PackageReference Include="EphemeralMongo6.runtime.osx-x64" Version="1.0.0" Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
+		<PackageReference Include="EphemeralMongo6.runtime.linux-x64" Version="1.1.3" Condition="$([MSBuild]::IsOSPlatform('Linux'))" />
+		<PackageReference Include="EphemeralMongo6.runtime.osx-x64" Version="1.1.3" Condition="$([MSBuild]::IsOSPlatform('OSX'))" />
 		<PackageReference Include="EphemeralMongo6.runtime.win-x64" Version="1.1.3" Condition="$([MSBuild]::IsOSPlatform('Windows'))" />
 		<PackageReference Include="Serilog.Sinks.MongoDB" Version="5.4.1" />
 	</ItemGroup>

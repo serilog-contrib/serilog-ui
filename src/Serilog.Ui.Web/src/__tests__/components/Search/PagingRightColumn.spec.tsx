@@ -12,7 +12,6 @@ const defaultReturn: () => SearchResult = () => ({
 });
 const mockQueryLogs = {
   data: defaultReturn(),
-  refetch: vi.fn(),
 };
 vi.mock('../../../app/hooks/useQueryLogs', async () => {
   return {
@@ -47,7 +46,6 @@ describe('PagingRightColumn', () => {
     expect(screen.getByRole('button', { name: 'pagination-dialog' })).not.toBeDisabled();
 
     field.value = '2';
-    expect(mockQueryLogs.refetch).toHaveBeenCalledTimes(1);
   });
 
   it('calls onChange on pagination button click', async () => {
@@ -75,6 +73,5 @@ describe('PagingRightColumn', () => {
     await userEvent.click(setPage);
 
     expect(field.onChange).toHaveBeenCalledTimes(1);
-    expect(mockQueryLogs.refetch).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,5 +1,6 @@
 import { dbKeysMock } from '__tests__/_setup/mocks/samples';
 import {
+  act,
   fireEvent,
   render,
   screen,
@@ -8,12 +9,13 @@ import {
   within,
 } from '__tests__/_setup/testing-utils';
 import Search from 'app/components/Search/Search';
+import { searchFormInitialValues } from 'app/hooks/useSearchForm';
 import * as logs from 'app/queries/logs';
 import { IAuthPropertiesStorageKeys } from 'app/util/auth';
 import dayjs from 'dayjs';
 import objectSupport from 'dayjs/plugin/objectSupport';
 import { byLabelText, byRole } from 'testing-library-selector';
-import { AuthType } from 'types/types';
+import { AuthType, DispatchedCustomEvents } from 'types/types';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 dayjs.extend(objectSupport);
@@ -73,147 +75,229 @@ describe('Search', () => {
     expect(screen.getByRole('form', { name: 'search-logs-form' })).toBeInTheDocument();
   });
 
-  it('fetch with selected table', async () => {
-    const spy = vi.spyOn(logs, 'fetchLogs');
+  describe('fields', () => {
+    it('fetch with selected table', async () => {
+      const spy = vi.spyOn(logs, 'fetchLogs');
 
-    render(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
+      render(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
 
-    await selectTable();
+      await selectTable();
 
-    expect(spy).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        table: dbKeysMock[0],
-      }),
-      expect.any(Object),
-      '',
-    );
+      expect(spy).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          table: dbKeysMock[0],
+        }),
+        expect.any(Object),
+        '',
+      );
+    });
+
+    it('fetch with selected level', async () => {
+      const spy = vi.spyOn(logs, 'fetchLogs');
+
+      render(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
+
+      await selectTable();
+
+      const levelInput = ui.textbox('Level').get();
+
+      await userEvent.click(levelInput);
+
+      const selectOption = ui.options(ui.listbox)[2];
+
+      await userEvent.selectOptions(ui.listbox.get(), selectOption);
+
+      await userEvent.click(ui.submit.get());
+
+      expect(spy).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          table: dbKeysMock[0],
+          level: selectOption.getAttribute('value'),
+        }),
+        expect.any(Object),
+        '',
+      );
+    });
+
+    it('fetch with selected text search', async () => {
+      const spy = vi.spyOn(logs, 'fetchLogs');
+
+      render(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
+
+      await selectTable();
+
+      const levelInput = ui.textbox('Search').get();
+
+      await userEvent.type(levelInput, 'my search');
+
+      await userEvent.click(ui.submit.get());
+
+      expect(spy).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          table: dbKeysMock[0],
+          search: 'my search',
+        }),
+        expect.any(Object),
+        '',
+      );
+    });
+
+    it('fetch with selected start date', async () => {
+      const spy = vi.spyOn(logs, 'fetchLogs');
+
+      render(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
+
+      await selectTable();
+
+      // open end date modal
+      await userEvent.click(ui.start_date.get());
+
+      // click sample day button
+      await userEvent.click(ui.day_btn(sampleDate.format('DD MMMM YYYY')).get());
+      // click sample time button
+      // using fireEvent due to userEvent.type not supporting seconds
+      // ref https://github.com/testing-library/user-event/blob/d0362796a33c2d39713998f82ae309020c37b385/tests/event/input.ts#L298
+      fireEvent.change(ui.time_btn('start-time-input').get(), {
+        target: { value: '15:15:30' },
+      });
+
+      // click submit date button
+      const submitBtn = within(screen.getByRole('dialog'))
+        .getAllByRole('button')
+        .slice(-1);
+      await userEvent.click(submitBtn[0]);
+      await waitForElementToBeRemoved(screen.queryByRole('dialog'));
+
+      // submit request
+      await userEvent.click(ui.submit.get());
+
+      expect(spy).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          table: dbKeysMock[0],
+          startDate: expect.toBeSameDate(sampleDate, { unit: 'seconds' }),
+        }),
+        expect.any(Object),
+        '',
+      );
+    });
+
+    it('fetch with selected end date', async () => {
+      const spy = vi.spyOn(logs, 'fetchLogs');
+
+      render(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
+
+      await selectTable();
+
+      // open end date modal
+      await userEvent.click(ui.end_date.get());
+
+      // click sample day button
+      await userEvent.click(ui.day_btn(sampleDate.format('DD MMMM YYYY')).get());
+      // click sample time button
+      // using fireEvent due to userEvent.type not supporting seconds
+      // ref https://github.com/testing-library/user-event/blob/d0362796a33c2d39713998f82ae309020c37b385/tests/event/input.ts#L298
+      fireEvent.change(ui.time_btn('end-time-input').get(), {
+        target: { value: '15:15:30' },
+      });
+
+      // click submit date button
+      const submitBtn = within(screen.getByRole('dialog'))
+        .getAllByRole('button')
+        .slice(-1);
+      await userEvent.click(submitBtn[0]);
+      await waitForElementToBeRemoved(screen.queryByRole('dialog'));
+
+      // submit request
+      await userEvent.click(ui.submit.get());
+
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          table: dbKeysMock[0],
+          endDate: expect.toBeSameDate(sampleDate, { unit: 'seconds' }),
+        }),
+        expect.any(Object),
+        '',
+      );
+    });
   });
 
-  it('fetch with selected level', async () => {
+  it('refetches automatically when page is more than one', async () => {
     const spy = vi.spyOn(logs, 'fetchLogs');
+    searchFormInitialValues.page = 2;
 
     render(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
 
     await selectTable();
-
-    const levelInput = ui.textbox('Level').get();
-
-    await userEvent.click(levelInput);
-
-    const selectOption = ui.options(ui.listbox)[2];
-
-    await userEvent.selectOptions(ui.listbox.get(), selectOption);
-
-    await userEvent.click(ui.submit.get());
-
-    expect(spy).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        table: dbKeysMock[0],
-        level: selectOption.getAttribute('value'),
-      }),
-      expect.any(Object),
-      '',
-    );
-  });
-
-  it('fetch with selected text search', async () => {
-    const spy = vi.spyOn(logs, 'fetchLogs');
-
-    render(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
-
-    await selectTable();
-
     const levelInput = ui.textbox('Search').get();
-
     await userEvent.type(levelInput, 'my search');
-
     await userEvent.click(ui.submit.get());
 
-    expect(spy).toHaveBeenLastCalledWith(
+    expect(spy).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        table: dbKeysMock[0],
+        search: '',
+        page: 2,
+      }),
+      expect.any(Object),
+      '',
+    );
+    expect(spy).toHaveBeenNthCalledWith(
+      2,
       expect.objectContaining({
         table: dbKeysMock[0],
         search: 'my search',
+        level: null,
+        page: 1,
       }),
       expect.any(Object),
       '',
     );
+    searchFormInitialValues.page = 1;
   });
 
-  it('fetch with selected start date', async () => {
+  it('invokes onRefetch on submit', async () => {
     const spy = vi.spyOn(logs, 'fetchLogs');
 
-    render(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
+    const onRefetchMock = vi.fn();
+    render(<Search onRefetch={onRefetchMock} />, AuthType.Jwt);
 
     await selectTable();
 
-    // open end date modal
-    await userEvent.click(ui.start_date.get());
+    const levelInput = ui.textbox('Search').get();
 
-    // click sample day button
-    await userEvent.click(ui.day_btn(sampleDate.format('DD MMMM YYYY')).get());
-    // click sample time button
-    // using fireEvent due to userEvent.type not supporting seconds
-    // ref https://github.com/testing-library/user-event/blob/d0362796a33c2d39713998f82ae309020c37b385/tests/event/input.ts#L298
-    fireEvent.change(ui.time_btn('start-time-input').get(), {
-      target: { value: '15:15:30' },
-    });
+    await userEvent.type(levelInput, 'my search');
 
-    // click submit date button
-    const submitBtn = within(screen.getByRole('dialog')).getAllByRole('button').slice(-1);
-    await userEvent.click(submitBtn[0]);
-    await waitForElementToBeRemoved(screen.queryByRole('dialog'));
-
-    // submit request
     await userEvent.click(ui.submit.get());
 
-    expect(spy).toHaveBeenLastCalledWith(
+    expect(spy).toHaveBeenNthCalledWith(
+      2,
       expect.objectContaining({
         table: dbKeysMock[0],
-        startDate: expect.toBeSameDate(sampleDate, { unit: 'seconds' }),
+        search: 'my search',
+        level: null,
       }),
       expect.any(Object),
       '',
     );
+    expect(onRefetchMock).toHaveBeenCalledOnce();
   });
 
-  it('fetch with selected end date', async () => {
-    const spy = vi.spyOn(logs, 'fetchLogs');
-
+  it('invokes reset on RemoveTableKey event, removing the table value', async () => {
+    const tableInput = ui.textbox('Table').get;
     render(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
 
     await selectTable();
+    expect(tableInput()).toHaveValue(dbKeysMock[0]);
 
-    // open end date modal
-    await userEvent.click(ui.end_date.get());
-
-    // click sample day button
-    await userEvent.click(ui.day_btn(sampleDate.format('DD MMMM YYYY')).get());
-    // click sample time button
-    // using fireEvent due to userEvent.type not supporting seconds
-    // ref https://github.com/testing-library/user-event/blob/d0362796a33c2d39713998f82ae309020c37b385/tests/event/input.ts#L298
-    fireEvent.change(ui.time_btn('end-time-input').get(), {
-      target: { value: '15:15:30' },
+    act(() => {
+      document.dispatchEvent(new CustomEvent(DispatchedCustomEvents.RemoveTableKey));
     });
 
-    // click submit date button
-    const submitBtn = within(screen.getByRole('dialog')).getAllByRole('button').slice(-1);
-    await userEvent.click(submitBtn[0]);
-    await waitForElementToBeRemoved(screen.queryByRole('dialog'));
-
-    // submit request
-    await userEvent.click(ui.submit.get());
-
-    expect(spy).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        table: dbKeysMock[0],
-        endDate: expect.toBeSameDate(sampleDate, { unit: 'seconds' }),
-      }),
-      expect.any(Object),
-      '',
-    );
+    expect(tableInput()).toHaveValue('');
   });
 
-  it('clean inputs', async () => {
+  it('clean inputs calling refetch', async () => {
     const spy = vi.spyOn(logs, 'fetchLogs');
 
     render(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
@@ -226,7 +310,8 @@ describe('Search', () => {
 
     await userEvent.click(ui.submit.get());
 
-    expect(spy).toHaveBeenLastCalledWith(
+    expect(spy).toHaveBeenNthCalledWith(
+      2,
       expect.objectContaining({
         table: dbKeysMock[0],
         search: 'my search',
@@ -238,7 +323,8 @@ describe('Search', () => {
 
     await userEvent.click(ui.clear.get());
 
-    expect(spy).toHaveBeenLastCalledWith(
+    expect(spy).toHaveBeenNthCalledWith(
+      3,
       expect.objectContaining({
         table: dbKeysMock[0],
         search: '',

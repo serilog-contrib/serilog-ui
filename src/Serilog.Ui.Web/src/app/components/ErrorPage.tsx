@@ -1,7 +1,7 @@
 import { Box, Button, Text } from '@mantine/core';
 import { IconArrowBarRight, IconBackspace, IconMoodSad } from '@tabler/icons-react';
 import { serilogUiUrl } from 'app/util/prettyPrints';
-import { Link, isRouteErrorResponse, useRouteError } from 'react-router-dom';
+import { Link, isRouteErrorResponse, useRouteError } from 'react-router';
 
 export const ErrorBoundaryPage = () => {
   const error = useRouteError();

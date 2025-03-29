@@ -61,12 +61,7 @@ const BasicModal = ({ onClose }: { onClose: () => void }) => {
         >
           Save
         </Button>
-        <Button
-          display={!isHeaderReady ? 'none' : 'inherit'}
-          onClick={() => {
-            clearAuthState();
-          }}
-        >
+        <Button display={!isHeaderReady ? 'none' : 'inherit'} onClick={clearAuthState}>
           Change
         </Button>
         <Button onClick={onClose}>Close</Button>

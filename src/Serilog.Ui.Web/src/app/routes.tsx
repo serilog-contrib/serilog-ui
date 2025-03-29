@@ -1,5 +1,5 @@
 import { FormProvider } from 'react-hook-form';
-import { Outlet, RouteObject } from 'react-router-dom';
+import { Outlet, RouteObject } from 'react-router';
 import { ErrorBoundaryPage } from './components/ErrorPage';
 import { HomePageNotAuthorized } from './components/HomePageNotAuthorized';
 import { Index } from './components/Index';

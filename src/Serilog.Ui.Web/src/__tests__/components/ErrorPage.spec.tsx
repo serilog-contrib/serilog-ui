@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 const mockFn = vi.hoisted(() => vi.fn());
-vi.mock('react-router-dom', async () => {
+vi.mock('react-router', async () => {
   return {
     Link: ({ children }: { children: ReactNode }) => <a>{children}</a>,
     isRouteErrorResponse: mockFn,

@@ -6,7 +6,6 @@ import {
   IconSortAscending,
   IconSortDescending,
 } from '@tabler/icons-react';
-import useQueryLogs from 'app/hooks/useQueryLogs';
 import { useSearchForm } from 'app/hooks/useSearchForm';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { memo, useEffect, useMemo } from 'react';
@@ -26,7 +25,6 @@ const sortOnOptions = Object.values(SortPropertyOptions).map((entry) => ({
 export const PagingLeftColumn = memo(
   ({ changePage }: { changePage: (page: number) => void }) => {
     const { disabledSortOnKeys } = useSerilogUiProps();
-    const { refetch } = useQueryLogs();
     const { control, watch } = useSearchForm();
     const currentDbKey = watch('table');
 
@@ -57,10 +55,6 @@ export const PagingLeftColumn = memo(
         fieldSortOn.onChange(SortPropertyOptions.Timestamp);
       }
     }, [disableSortOn, fieldSortOn]);
-
-    useEffect(() => {
-      void refetch();
-    }, [refetch, fieldEntries.value, fieldSortOn.value, fieldSortBy.value]);
 
     return (
       <Box

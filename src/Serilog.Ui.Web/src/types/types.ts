@@ -49,7 +49,7 @@ export enum SearchParameters {
 }
 
 export interface SearchForm {
-  table: string;
+  table: string | null;
   level: LogLevel | null;
   startDate: Date | null;
   endDate: Date | null;
@@ -95,6 +95,8 @@ export type ColumnsInfo = {
     removedColumns: RemovableColumns[];
   };
 };
+
+export enum DispatchedCustomEvents { RemoveTableKey = 'remove-table-key' }
 
 export interface SerilogUiConfig {
   authType?: AuthType;
