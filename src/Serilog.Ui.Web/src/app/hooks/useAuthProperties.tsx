@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import {
   checkErrors,
   clearAuth,
@@ -8,10 +9,17 @@ import {
   saveAuthKey,
 } from 'app/util/auth';
 import { createRequestInit } from 'app/util/queries';
-import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react';
-import { useSerilogUiProps } from './useSerilogUiProps';
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
+import { AuthType, DispatchedCustomEvents } from '../../types/types.ts';
 import { isStringGuard } from '../util/guards.ts';
-import { AuthType } from '../../types/types.ts';
+import { useSerilogUiProps } from './useSerilogUiProps';
 
 interface AuthProps {
   authProps: IAuthPropertiesData;
@@ -46,6 +54,7 @@ export const AuthPropertiesProvider = ({
 }: {
   children: ReactNode | undefined;
 }) => {
+  const queryClient = useQueryClient();
   const { authType, routePrefix } = useSerilogUiProps();
 
   const [authInfo, setAuthInfo] = useState<IAuthPropertiesData>({
@@ -57,7 +66,7 @@ export const AuthPropertiesProvider = ({
     [authInfo, authType],
   );
   const isHeaderReady = authType === AuthType.Custom || isStringGuard(authHeader);
-  
+
   const fetchInfo = useMemo(
     () => ({
       headers: createRequestInit(authType, authHeader),
@@ -68,8 +77,12 @@ export const AuthPropertiesProvider = ({
 
   const clearAuthState = useCallback(() => {
     const cleanState = clearAuth();
+
+    queryClient.removeQueries({ queryKey: ['get-keys'], exact: false });
+    document.dispatchEvent(new CustomEvent(DispatchedCustomEvents.RemoveTableKey));
+
     setAuthInfo(cleanState);
-  }, []);
+  }, [queryClient]);
 
   const saveAuthState = useCallback((input: { [key: string]: string }) => {
     const validationInfo: string[] = [];
@@ -114,8 +127,14 @@ export const AuthPropertiesProvider = ({
 };
 
 export const useAuthProperties = () => {
-  const { authProps, authHeader, fetchInfo, isHeaderReady, clearAuthState, saveAuthState } =
-    useContext(AuthPropertiesContext);
+  const {
+    authProps,
+    authHeader,
+    fetchInfo,
+    isHeaderReady,
+    clearAuthState,
+    saveAuthState,
+  } = useContext(AuthPropertiesContext);
 
   return {
     ...authProps,

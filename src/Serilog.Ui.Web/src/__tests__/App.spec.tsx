@@ -2,7 +2,7 @@ import { render, within } from '@testing-library/react';
 import { act, render as customRender } from '__tests__/_setup/testing-utils';
 import App from 'app/App';
 import { routes } from 'app/routes';
-import { RouterProvider, createMemoryRouter } from 'react-router-dom';
+import { RouterProvider, createMemoryRouter } from 'react-router';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 const propsMock = {

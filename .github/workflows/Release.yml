@@ -20,22 +20,22 @@ on:
   workflow_dispatch:
     inputs:
       ElasticProvider:
-        description: "Elastic Provider"
+        description: 'Elastic Provider'
         required: true
       MongoProvider:
-        description: "Mongo Provider"
+        description: 'Mongo Provider'
         required: true
       MsSqlProvider:
-        description: "Ms Sql Provider"
+        description: 'Ms Sql Provider'
         required: true
       MySqlProvider:
-        description: "My Sql Provider"
+        description: 'My Sql Provider'
         required: true
       PostgresProvider:
-        description: "Postgres Provider"
+        description: 'Postgres Provider'
         required: true
       Ui:
-        description: "Ui"
+        description: 'Ui'
         required: true
 
 jobs:
@@ -43,7 +43,6 @@ jobs:
     name: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
-
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'

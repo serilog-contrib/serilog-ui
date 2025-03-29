@@ -15,9 +15,9 @@ import { useQueryTableKeys } from 'app/hooks/useQueryTableKeys';
 import { useSearchForm } from 'app/hooks/useSearchForm';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { memo, useEffect } from 'react';
-import { useController } from 'react-hook-form';
+import { useController, useWatch } from 'react-hook-form';
 import classes from 'style/search.module.css';
-import { LogLevel } from '../../../types/types';
+import { DispatchedCustomEvents, LogLevel } from '../../../types/types';
 
 const levelsArray = Object.keys(LogLevel).map((level) => ({
   value: level,
@@ -27,25 +27,39 @@ const levelsArray = Object.keys(LogLevel).map((level) => ({
 const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
   const { isError } = useQueryTableKeys(true);
   const { isUtc, setIsUtc } = useSerilogUiProps();
-  const { handleSubmit, reset, setValue, watch } = useSearchForm();
-
+  const { handleSubmit, reset, setValue } = useSearchForm();
   const { refetch } = useQueryLogs();
-  const currentDbKey = watch('table');
+  const currentPage = useWatch({ name: 'page' });
 
-  const clean = async () => {
-    reset();
-    await refetch();
-  };
+  const onSubmit = async () => {
+    if (currentPage === 1) {
+      await refetch();
+    } else {
+      setValue('page', 1);
+    }
 
-  const submit = async () => {
-    setValue('page', 1);
-    await refetch();
     onRefetch?.();
   };
 
+  const onClear = async () => {
+    const shouldRefetch = reset();
+
+    if (shouldRefetch) {
+      await refetch();
+    }
+  };
+
   useEffect(() => {
-    void refetch();
-  }, [currentDbKey, refetch]);
+    const resetTableKey = () => {
+      reset(true);
+    };
+
+    document.addEventListener(DispatchedCustomEvents.RemoveTableKey, resetTableKey);
+
+    return () =>
+      document.removeEventListener(DispatchedCustomEvents.RemoveTableKey, resetTableKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <form aria-label="search-logs-form" onSubmit={() => {}}>
@@ -66,13 +80,13 @@ const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
                 setIsUtc(event.currentTarget.checked);
               }}
             />
-            <Button type="submit" onClick={handleSubmit(submit)} disabled={isError}>
+            <Button type="submit" onClick={handleSubmit(onSubmit)} disabled={isError}>
               Submit
             </Button>
             <ActionIcon
               visibleFrom="lg"
               size={28}
-              onClick={clean}
+              onClick={onClear}
               variant="light"
               aria-label="reset filters"
             >
@@ -91,16 +105,17 @@ const SelectDbKeyInput = memo(() => {
   const { control } = useSearchForm();
   const { data: queryTableKeys } = useQueryTableKeys(true);
   const { field } = useController({ ...control, name: 'table' });
-  const isTableDisabled = !queryTableKeys?.length;
+  const queryKeys = queryTableKeys?.map((d) => ({ value: d, label: d })) ?? [];
+  const isTableDisabled = !queryKeys.length;
 
   return (
     <Grid.Col span={dbKeySpan} order={dbKeyOrder}>
       <Select
-        label="Table"
-        data={queryTableKeys?.map((d) => ({ value: d, label: d })) ?? []}
         allowDeselect={false}
-        {...field}
+        data={queryKeys}
         disabled={isTableDisabled}
+        label="Table"
+        {...field}
       ></Select>
     </Grid.Col>
   );

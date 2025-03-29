@@ -44,21 +44,28 @@ describe('FilterButton', () => {
     });
   });
 
-  it('clears search state and refetch data', async () => {
-    render(<FilterButton />);
+  it.each([
+    { resetRes: true, times: 1 },
+    { resetRes: false, times: 0 },
+  ])(
+    'clears search state and refetch data if reset returns $resetRes',
+    async ({ resetRes, times }) => {
+      useMocks.reset.mockImplementationOnce(() => resetRes);
 
-    const filterBtn = screen.getByRole('button');
-    expect(filterBtn).toBeInTheDocument();
+      render(<FilterButton />);
 
-    await userEvent.click(filterBtn);
+      const filterBtn = screen.getByRole('button');
 
-    expect(useMocks.refetch).toHaveBeenCalledOnce();
+      expect(filterBtn).toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('button', { name: 'reset filters' }));
+      await userEvent.click(filterBtn);
 
-    expect(useMocks.reset).toHaveBeenCalledOnce();
-    expect(useMocks.refetch).toHaveBeenCalledTimes(2);
-  });
+      await userEvent.click(screen.getByRole('button', { name: 'reset filters' }));
+
+      expect(useMocks.reset).toHaveBeenCalledOnce();
+      expect(useMocks.refetch).toHaveBeenCalledTimes(times);
+    },
+  );
 
   it('closes modal on resize', async () => {
     render(<FilterButton />);
