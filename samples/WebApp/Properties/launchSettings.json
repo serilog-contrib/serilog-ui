@@ -4,7 +4,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:40034",
+      "applicationUrl": "http://localhost:40034/logs",
       "sslPort": 44304
     }
   },
@@ -23,7 +23,8 @@
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "SerilogUi:AddServerSubPath": "true"
       }
     }
   }

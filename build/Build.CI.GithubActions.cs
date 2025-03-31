@@ -2,6 +2,7 @@ using Nuke.Common;
 using Nuke.Common.CI.GitHubActions;
 using Nuke.Common.Tooling;
 using Nuke.Common.Tools.SonarScanner;
+using Serilog;
 using static CustomGithubActionsAttribute;
 
 /**
@@ -79,20 +80,24 @@ partial class Build
         new(nameof(Ui), Ui, "Serilog.Ui.Web")
     ];
 
-    readonly bool OnGithubActionRun = GitHubActions.Instance != null &&
-                                      !string.IsNullOrWhiteSpace(GitHubActions.Instance.RunId.ToString());
+    readonly bool OnGithubActionRun = GitHubActions.Instance != null && !string.IsNullOrWhiteSpace($"{GitHubActions.Instance.RunId}");
 
-    readonly bool IsPr = GitHubActions.Instance != null &&
-                         GitHubActions.Instance.IsPullRequest;
+    readonly bool IsPr = GitHubActions.Instance != null && GitHubActions.Instance.IsPullRequest;
+
+    private bool RunSonarqube()
+        => OnGithubActionRun && !IsPr && !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) && !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey);
 
     Target Backend_SonarScan_Start => targetDefinition => targetDefinition
         .DependsOn(Backend_Restore)
-        .OnlyWhenStatic(() => OnGithubActionRun && !IsPr &&
-                              !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
-                              !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
-        )
         .Executes(() =>
         {
+            var condition = RunSonarqube();
+            if (!condition)
+            {
+                Log.Information("--- Skipped Sonarqube analysis ---");
+                return;
+            }
+
             SonarScannerTasks.SonarScannerBegin(new SonarScannerBeginSettings()
                 .SetExcludeTestProjects(true)
                 .SetToken(SonarToken)
@@ -116,12 +121,15 @@ partial class Build
 
     Target Backend_SonarScan_End => targetDefinition => targetDefinition
         .DependsOn(Backend_Report_Ci)
-        .OnlyWhenStatic(() => OnGithubActionRun && !IsPr &&
-                              !string.IsNullOrWhiteSpace(SonarCloudInfo.Organization) &&
-                              !string.IsNullOrWhiteSpace(SonarCloudInfo.BackendProjectKey)
-        )
         .Executes(() =>
         {
+            var condition = RunSonarqube();
+            if (!condition)
+            {
+                Log.Information("--- Skipped Sonarqube analysis ---");
+                return;
+            }
+
             SonarScannerTasks.SonarScannerEnd(new SonarScannerEndSettings()
                 .SetToken(SonarToken)
                 .SetProcessEnvironmentVariable("GITHUB_TOKEN", GitHubActions.Instance.Token)

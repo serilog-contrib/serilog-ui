@@ -1,4 +1,4 @@
-﻿using EphemeralMongo;
+﻿using Mongo2Go;
 using MongoDB.Driver;
 using Serilog;
 using Serilog.Ui.Common.Tests.DataSamples;
@@ -11,7 +11,7 @@ namespace MongoDb.Tests.Util.Builders
     {
         private const string DefaultDbName = "IntegrationTests";
 
-        internal readonly IMongoRunner Runner;
+        internal readonly MongoDbRunner Runner;
         internal readonly MongoDbOptions Options;
         internal readonly IMongoClient Client;
         internal readonly IMongoDatabase Database;
@@ -22,7 +22,7 @@ namespace MongoDb.Tests.Util.Builders
         {
             Options = options;
             (Runner, Client) = IntegrationDbGeneration.Generate(options);
-            Database = Client.GetDatabase(options.DatabaseName);
+            Database = Client!.GetDatabase(options.DatabaseName);
 
             Sut = new MongoDbDataProvider(Client, Options);
             Collector = Seed(Options.ConnectionString);

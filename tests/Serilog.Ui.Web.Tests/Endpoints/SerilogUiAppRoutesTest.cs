@@ -39,18 +39,25 @@ namespace Serilog.Ui.Web.Tests.Endpoints
             _sut = new SerilogUiAppRoutes(_contextAccessor, _streamLoaderMock);
         }
 
-        [Fact]
-        public async Task It_gets_app_home()
+        [Theory]
+        [InlineData(null, "test")]
+        [InlineData("", "test")]
+        [InlineData(" ", "test")]
+        [InlineData("sub-path", "sub-path/test")]
+        [InlineData("sub-path/", "sub-path/test")]
+        [InlineData("/sub-path/", "sub-path/test")]
+        public async Task It_gets_app_home(string? serverSubPath, string expectedRoutePrefix)
         {
             // Arrange
-            _sut.SetOptions(new UiOptions(new ProvidersOptions())
-            {
-                BodyContent = "<div>body-test</div>",
-                HeadContent = "<div>head-test</div>"
-            }
-                .WithAuthenticationType(AuthenticationType.Jwt)
-                .WithRoutePrefix("test")
-                .WithHomeUrl("home-url")
+            var body = "<div>body-test</div>";
+            var head = "<div>head-test</div>";
+            var baseOpts = new UiOptions(new()) { BodyContent = body, HeadContent = head };
+            _sut
+                .SetOptions(baseOpts
+                    .WithAuthenticationType(AuthenticationType.Jwt)
+                    .WithRoutePrefix("test")
+                    .WithServerSubPath(serverSubPath!)
+                    .WithHomeUrl("home-url")
             );
             _testContext.Request.Path = "/serilog-ui-url/";
             _testContext.Response.Body = new MemoryStream();
@@ -75,9 +82,8 @@ namespace Serilog.Ui.Web.Tests.Endpoints
                 "<body><div id=\"serilog-ui-app\"></div>" +
                 "<script>const config = '%7B%22authType%22%3A%22Jwt%22%2C%22columnsInfo%22%3A%7B%7D%2C%22" +
                 "disabledSortOnKeys%22%3A%5B%5D%2C%22renderExceptionAsStringKeys%22%3A%5B%5D%2C%22showBrand%22%3Atrue%2C%22homeUrl%22%3A%22home-url" +
-                "%22%2C%22blockHomeAccess%22%3Afalse%2C%22routePrefix%22%3A%22" +
-                "test%22%2C%22expandDropdownsByDefault%22%3Afalse%7D';</script><div>body-test</div></body></html>"
-            );
+                "%22%2C%22blockHomeAccess%22%3Afalse%2C%22routePrefix%22%3A%22" + Uri.EscapeDataString(expectedRoutePrefix) +
+                "%22%2C%22expandDropdownsByDefault%22%3Afalse%7D';</script><div>body-test</div></body></html>");
         }
 
         [Fact]

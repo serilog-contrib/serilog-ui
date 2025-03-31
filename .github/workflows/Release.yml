@@ -20,22 +20,22 @@ on:
   workflow_dispatch:
     inputs:
       ElasticProvider:
-        description: 'Elastic Provider'
+        description: "Elastic Provider"
         required: true
       MongoProvider:
-        description: 'Mongo Provider'
+        description: "Mongo Provider"
         required: true
       MsSqlProvider:
-        description: 'Ms Sql Provider'
+        description: "Ms Sql Provider"
         required: true
       MySqlProvider:
-        description: 'My Sql Provider'
+        description: "My Sql Provider"
         required: true
       PostgresProvider:
-        description: 'Postgres Provider'
+        description: "Postgres Provider"
         required: true
       Ui:
-        description: 'Ui'
+        description: "Ui"
         required: true
 
 jobs:
@@ -43,6 +43,7 @@ jobs:
     name: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
+
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -71,11 +72,10 @@ jobs:
           NugetApiKey: ${{ secrets.NUGET_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: phoenix-actions/test-reporting@v14
+      - uses: dorny/test-reporter@v2
         if: always()
         with:
           name: DotNET - Tests
-          output-to: checks
           path: '**/test-results.trx'
           reporter: dotnet-trx
           fail-on-error: false
@@ -96,11 +96,10 @@ jobs:
             -Dsonar.test.inclusions=src/Serilog.Ui.Web/src/__tests__/**/*
             -Dsonar.javascript.lcov.reportPaths=./src/Serilog.Ui.Web/src/reports/coverage/lcov.info
 
-      - uses: phoenix-actions/test-reporting@v14
+      - uses: dorny/test-reporter@v2
         if: always()
         with:
           name: JS - Tests
-          output-to: checks
           path: '**/test-junit-report.xml'
           reporter: jest-junit
           fail-on-error: false

@@ -51,7 +51,7 @@ internal class SerilogUiAppRoutes(IHttpContextAccessor httpContextAccessor, IApp
 
     private async Task<string> LoadStream(Stream stream, UiOptions options)
     {
-        StringBuilder htmlStringBuilder = new StringBuilder(await new StreamReader(stream).ReadToEndAsync());
+        StringBuilder htmlStringBuilder = new(await new StreamReader(stream).ReadToEndAsync());
         string authType = options.Authorization.AuthenticationType.ToString();
 
         var feOpts = new
@@ -63,7 +63,7 @@ internal class SerilogUiAppRoutes(IHttpContextAccessor httpContextAccessor, IApp
             options.ShowBrand,
             options.HomeUrl,
             BlockHomeAccess,
-            options.RoutePrefix,
+            RoutePrefix = ConstructRoutesPrefix(options),
             options.ExpandDropdownsByDefault
         };
         string encodeAuthOpts = Uri.EscapeDataString(JsonSerializer.Serialize(feOpts, JsonSerializerOptionsFactory.GetDefaultOptions));
@@ -74,5 +74,30 @@ internal class SerilogUiAppRoutes(IHttpContextAccessor httpContextAccessor, IApp
             .Replace("<meta name=\"dummy\" content=\"%(BodyContent)\">", options.BodyContent);
 
         return htmlStringBuilder.ToString();
+    }
+
+    private static string ConstructRoutesPrefix(UiOptions options)
+    {
+        // If ServerSubPath is empty, just return the RoutePrefix
+        if (string.IsNullOrWhiteSpace(options.ServerSubPath)) return options.RoutePrefix;
+
+        // Create a span to avoid allocations when slicing
+        ReadOnlySpan<char> path = options.ServerSubPath.AsSpan();
+        // Skip leading slash if present
+        if (path.Length > 0 && path[0] == '/')
+        {
+            path = path[1..];
+        }
+
+        // If the path is empty after removing the slash, just return the RoutePrefix
+        if (path.Length == 0)
+        {
+            return options.RoutePrefix;
+        }
+
+        // Check if we need a trailing slash
+        bool needsTrailingSlash = path.Length > 0 && path[^1] != '/';
+        // Build the final string with minimal allocations
+        return needsTrailingSlash ? string.Concat(path.ToString(), "/", options.RoutePrefix) : string.Concat(path.ToString(), options.RoutePrefix);
     }
 }

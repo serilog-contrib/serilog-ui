@@ -1,67 +1,74 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "$ref": "#/definitions/build",
-  "title": "Build Schema",
   "definitions": {
-    "build": {
-      "type": "object",
+    "Host": {
+      "type": "string",
+      "enum": [
+        "AppVeyor",
+        "AzurePipelines",
+        "Bamboo",
+        "Bitbucket",
+        "Bitrise",
+        "GitHubActions",
+        "GitLab",
+        "Jenkins",
+        "Rider",
+        "SpaceAutomation",
+        "TeamCity",
+        "Terminal",
+        "TravisCI",
+        "VisualStudio",
+        "VSCode"
+      ]
+    },
+    "ExecutableTarget": {
+      "type": "string",
+      "enum": [
+        "Backend_Clean",
+        "Backend_Compile",
+        "Backend_Report_Ci",
+        "Backend_Restore",
+        "Backend_SonarScan_End",
+        "Backend_SonarScan_Start",
+        "Backend_Test",
+        "Backend_Test_Ci",
+        "Clean",
+        "Frontend_Build",
+        "Frontend_Clean",
+        "Frontend_Restore",
+        "Frontend_Tests",
+        "Frontend_Tests_Ci",
+        "Pack",
+        "Publish"
+      ]
+    },
+    "Verbosity": {
+      "type": "string",
+      "description": "",
+      "enum": [
+        "Verbose",
+        "Normal",
+        "Minimal",
+        "Quiet"
+      ]
+    },
+    "NukeBuild": {
       "properties": {
-        "Configuration": {
-          "type": "string",
-          "description": "Configuration to build - Default is 'Debug' (local) or 'Release' (server)",
-          "enum": [
-            "Debug",
-            "Release"
-          ]
-        },
         "Continue": {
           "type": "boolean",
           "description": "Indicates to continue a previously failed build attempt"
-        },
-        "ElasticProvider": {
-          "type": "string"
         },
         "Help": {
           "type": "boolean",
           "description": "Shows the help text for this build assembly"
         },
         "Host": {
-          "type": "string",
           "description": "Host for execution. Default is 'automatic'",
-          "enum": [
-            "AppVeyor",
-            "AzurePipelines",
-            "Bamboo",
-            "Bitbucket",
-            "Bitrise",
-            "GitHubActions",
-            "GitLab",
-            "Jenkins",
-            "Rider",
-            "SpaceAutomation",
-            "TeamCity",
-            "Terminal",
-            "TravisCI",
-            "VisualStudio",
-            "VSCode"
-          ]
-        },
-        "MongoProvider": {
-          "type": "string"
-        },
-        "MsSqlProvider": {
-          "type": "string"
-        },
-        "MySqlProvider": {
-          "type": "string"
+          "$ref": "#/definitions/Host"
         },
         "NoLogo": {
           "type": "boolean",
           "description": "Disables displaying the NUKE logo"
-        },
-        "NugetApiKey": {
-          "type": "string",
-          "default": "Secrets must be entered via 'nuke :secrets [profile]'"
         },
         "Partition": {
           "type": "string",
@@ -70,9 +77,6 @@
         "Plan": {
           "type": "boolean",
           "description": "Shows the execution plan (HTML)"
-        },
-        "PostgresProvider": {
-          "type": "string"
         },
         "Profile": {
           "type": "array",
@@ -89,26 +93,52 @@
           "type": "array",
           "description": "List of targets to be skipped. Empty list skips all dependencies",
           "items": {
-            "type": "string",
-            "enum": [
-              "Backend_Clean",
-              "Backend_Compile",
-              "Backend_Report_Ci",
-              "Backend_Restore",
-              "Backend_SonarScan_End",
-              "Backend_SonarScan_Start",
-              "Backend_Test",
-              "Backend_Test_Ci",
-              "Clean",
-              "Frontend_Build",
-              "Frontend_Clean",
-              "Frontend_Restore",
-              "Frontend_Tests",
-              "Frontend_Tests_Ci",
-              "Pack",
-              "Publish"
-            ]
+            "$ref": "#/definitions/ExecutableTarget"
           }
+        },
+        "Target": {
+          "type": "array",
+          "description": "List of targets to be invoked. Default is '{default_target}'",
+          "items": {
+            "$ref": "#/definitions/ExecutableTarget"
+          }
+        },
+        "Verbosity": {
+          "description": "Logging verbosity during build execution. Default is 'Normal'",
+          "$ref": "#/definitions/Verbosity"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "properties": {
+        "Configuration": {
+          "type": "string",
+          "description": "Configuration to build - Default is 'Debug' (local) or 'Release' (server)",
+          "enum": [
+            "Debug",
+            "Release"
+          ]
+        },
+        "ElasticProvider": {
+          "type": "string"
+        },
+        "MongoProvider": {
+          "type": "string"
+        },
+        "MsSqlProvider": {
+          "type": "string"
+        },
+        "MySqlProvider": {
+          "type": "string"
+        },
+        "NugetApiKey": {
+          "type": "string",
+          "default": "Secrets must be entered via 'nuke :secrets [profile]'"
+        },
+        "PostgresProvider": {
+          "type": "string"
         },
         "Solution": {
           "type": "string",
@@ -122,45 +152,13 @@
           "type": "string",
           "default": "Secrets must be entered via 'nuke :secrets [profile]'"
         },
-        "Target": {
-          "type": "array",
-          "description": "List of targets to be invoked. Default is '{default_target}'",
-          "items": {
-            "type": "string",
-            "enum": [
-              "Backend_Clean",
-              "Backend_Compile",
-              "Backend_Report_Ci",
-              "Backend_Restore",
-              "Backend_SonarScan_End",
-              "Backend_SonarScan_Start",
-              "Backend_Test",
-              "Backend_Test_Ci",
-              "Clean",
-              "Frontend_Build",
-              "Frontend_Clean",
-              "Frontend_Restore",
-              "Frontend_Tests",
-              "Frontend_Tests_Ci",
-              "Pack",
-              "Publish"
-            ]
-          }
-        },
         "Ui": {
           "type": "string"
-        },
-        "Verbosity": {
-          "type": "string",
-          "description": "Logging verbosity during build execution. Default is 'Normal'",
-          "enum": [
-            "Minimal",
-            "Normal",
-            "Quiet",
-            "Verbose"
-          ]
         }
       }
+    },
+    {
+      "$ref": "#/definitions/NukeBuild"
     }
-  }
+  ]
 }

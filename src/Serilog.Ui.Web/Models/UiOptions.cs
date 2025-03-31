@@ -28,6 +28,12 @@ public class UiOptions(ProvidersOptions options)
     public string RoutePrefix { get; private set; } = "serilog-ui";
 
     /// <summary>
+    /// Gets the server sub-path deployment.
+    /// </summary>
+    /// <value>The server sub path.</value>
+    public string ServerSubPath { get; private set; } = string.Empty;
+
+    /// <summary>
     /// Get the option to auto-expand dropdowns in the log viewer.
     /// </summary>
     public bool ExpandDropdownsByDefault { get; private set; }
@@ -123,6 +129,23 @@ public class UiOptions(ProvidersOptions options)
     public UiOptions WithRoutePrefix(string routePrefix)
     {
         RoutePrefix = routePrefix;
+        return this;
+    }
+
+    /// <summary>
+    /// Sets the server hosting base-path.
+    /// If the application is deployed under a server sub-path, this property provides the additional sub-path to
+    /// the dashboard to help the client-side routing.<br/>
+    /// If provided, the final routing result will be:<br/><c>{server-base-path}/{UiOptions.ServerSubPath}/{UiOptions.RoutePrefix}</c>.
+    /// </summary>
+    /// <example>
+    /// Server root: "server.com"
+    /// IF the application is deployed at root level ("server.com/{my-app}") => NOT set ServerSubPath
+    /// IF the application is deployed at sub-path level ("server.com/{additional-path}/{my-app}") => MUST set ServerSubPath
+    /// </example>
+    public UiOptions WithServerSubPath(string serverSubPath)
+    {
+        ServerSubPath = serverSubPath;
         return this;
     }
 
