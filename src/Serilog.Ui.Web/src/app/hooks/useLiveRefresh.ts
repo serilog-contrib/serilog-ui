@@ -12,13 +12,13 @@ enum options {
 }
 
 export const liveRefreshOptions = [
-  { label: '5s', liveLabel: '5s', value: 'five' },
-  { label: '15s', liveLabel: '15s', value: 'fifteen' },
-  { label: '30s', liveLabel: '30s', value: 'thirty' },
-  { label: '1m', liveLabel: '1m', value: 'sixty' },
-  { label: '2m', liveLabel: '2m', value: 'onehundredtwenty' },
-  { label: '5m', liveLabel: '5m', value: 'threehundred' },
-  { label: '15m', liveLabel: '15m', value: 'ninehundred' },
+  { label: '5s', value: 'five' },
+  { label: '15s', value: 'fifteen' },
+  { label: '30s', value: 'thirty' },
+  { label: '1m', value: 'sixty' },
+  { label: '2m', value: 'onehundredtwenty' },
+  { label: '5m', value: 'threehundred' },
+  { label: '15m', value: 'ninehundred' },
 ];
 
 export const useLiveRefresh = () => {
@@ -28,7 +28,7 @@ export const useLiveRefresh = () => {
   const liveRefreshLabel = !isLiveRefreshRunning
     ? ''
     : liveRefreshOptions.find((lr) => lr.value === options[refetchInterval / 1000])
-        ?.liveLabel;
+        ?.label;
 
   const startLiveRefresh = (v: string | null) => {
     if (v === null) {
@@ -36,7 +36,8 @@ export const useLiveRefresh = () => {
     }
 
     const eachSecond = options[v];
-    setRefetchInterval(eachSecond * 1000);
+    const isNan = Number.isNaN(Number.parseInt(eachSecond, 10));
+    setRefetchInterval(isNan ? 0 : eachSecond * 1000);
   };
 
   const stopLiveRefresh = () => {
