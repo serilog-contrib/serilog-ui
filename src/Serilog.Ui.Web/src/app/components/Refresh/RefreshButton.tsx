@@ -15,6 +15,7 @@ export const RefreshButton = () => {
         <Button
           fz={9}
           size="compact-md"
+          aria-label="refresh-duration-cancel-button"
           color={theme.colors?.green?.[7]}
           onClick={stopLiveRefresh}
           className={classes.refreshButton}
@@ -31,6 +32,7 @@ export const RefreshButton = () => {
           <Button
             fz={9}
             size="compact-md"
+            aria-label="refresh-duration-selector"
             color={theme.colors?.gray?.[7]}
             className={classes.activateRefreshButton}
           >
@@ -47,6 +49,7 @@ export const RefreshButton = () => {
                 startLiveRefresh(p.value);
               }}
               variant="default"
+              aria-label={`refresh-duration-${p.value}`}
             >
               {p.label}
             </Button>
