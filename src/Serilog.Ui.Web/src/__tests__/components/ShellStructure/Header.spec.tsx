@@ -23,8 +23,8 @@ describe('Header', () => {
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Filter' })).toBeInTheDocument();
     });
-    await waitFor(() => {
-      expect(screen.getByText('Serilog UI')).toBeInTheDocument();
-    });
+
+    expect(screen.getByText('Serilog UI')).toBeInTheDocument();
+    expect(screen.getByLabelText('refresh-duration-selector')).toBeInTheDocument();
   });
 });

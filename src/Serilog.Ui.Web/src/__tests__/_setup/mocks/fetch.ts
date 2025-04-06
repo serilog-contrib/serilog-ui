@@ -1,5 +1,6 @@
 ﻿import dayjs from 'dayjs';
 import { http, HttpResponse } from 'msw';
+import { defaultAuthType } from '../../../app/hooks/useSerilogUiProps.tsx';
 import {
   AuthType,
   EncodedSeriLogObject,
@@ -9,7 +10,6 @@ import {
   SortPropertyOptions,
 } from '../../../types/types';
 import { dbKeysMock, fakeLogs, fakeLogs2ndTable, fakeLogs3rdTable } from './samples';
-import { defaultAuthType } from '../../../app/hooks/useSerilogUiProps.tsx';
 
 export const developmentListenersHost = ['https://localhost:3001'];
 
@@ -51,7 +51,9 @@ export const handlers = developmentListenersHost.flatMap((dlh) => [
   http.get(`${dlh}/api/keys`, ({ request }) => {
     const auth = request.headers.get('authorization');
 
-    return defaultAuthType !== AuthType.Custom && !auth ? HttpResponse.error() : HttpResponse.json(dbKeysMock);
+    return defaultAuthType !== AuthType.Custom && !auth
+      ? HttpResponse.error()
+      : HttpResponse.json(dbKeysMock);
   }),
 ]);
 

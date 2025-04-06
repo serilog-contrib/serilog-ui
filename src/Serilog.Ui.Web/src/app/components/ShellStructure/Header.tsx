@@ -11,6 +11,7 @@ import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { isStringGuard } from 'app/util/guards';
 import { Suspense, lazy } from 'react';
 import classes from 'style/header.module.css';
+import { RefreshButton } from '../Refresh/RefreshButton';
 import BrandBadge from './BrandBadge';
 
 const HeaderActivity = lazy(() => import('./HeaderActivity'));
@@ -69,6 +70,8 @@ const Head = ({ isMobileOpen, toggleMobile }: IProps) => {
             <IconMoonStars size="1rem" stroke="3" />
           )}
         </ActionIcon>
+
+        <RefreshButton />
         <BrandBadge size={isMobileSize ? 'sm' : 'lg'} />
       </Group>
     </Group>
