@@ -15,8 +15,8 @@
         <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="7.0.1" />
         <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="10.0.0"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1"/>
-        <PackageReference Include="Testcontainers" Version="3.10.0"/>
-        <PackageReference Include="Testcontainers.MsSql" Version="3.10.0"/>
+        <PackageReference Include="Testcontainers" Version="4.3.0"/>
+        <PackageReference Include="Testcontainers.MsSql" Version="4.3.0"/>
     </ItemGroup>
 
     <!-- Serilog UI packages  -->

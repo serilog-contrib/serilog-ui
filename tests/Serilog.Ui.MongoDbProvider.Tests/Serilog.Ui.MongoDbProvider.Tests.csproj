@@ -8,8 +8,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Mongo2Go" Version="3.1.3" />
-		<PackageReference Include="Serilog.Sinks.MongoDB" Version="6.0.0" />
+		<PackageReference Include="Mongo2Go" Version="4.1.0" />
+		<PackageReference Include="Serilog.Sinks.MongoDB" Version="7.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
