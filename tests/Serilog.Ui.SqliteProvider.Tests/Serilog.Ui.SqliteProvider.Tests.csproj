@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<AssemblyName>Sqlite.Tests</AssemblyName>
 		<RootNamespace>Sqlite.Tests</RootNamespace>
+		<NoWarn>$(NoWarn);NETSDK1206</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
