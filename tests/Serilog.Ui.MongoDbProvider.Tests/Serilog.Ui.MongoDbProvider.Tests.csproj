@@ -3,8 +3,6 @@
 	<PropertyGroup>
 		<AssemblyName>MongoDb.Tests</AssemblyName>
 		<RootNamespace>MongoDb.Tests</RootNamespace>
-		<!-- temporary fix due to issues with ubuntu-latest and EphemeralMongo -->
-		<IsTestProject>false</IsTestProject>
 	</PropertyGroup>
 
 	<ItemGroup>
