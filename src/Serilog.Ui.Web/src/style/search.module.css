@@ -30,3 +30,32 @@
     justify-self: end;
   }
 }
+
+.refreshButton {
+  @keyframes blink {
+    0% {
+      box-shadow: 'transparent';
+    }
+    50% {
+      box-shadow: 0 0 0.7em #efeff0;
+    }
+    100% {
+      box-shadow: 'transparent';
+    }
+  }
+
+  border: 4px solid transparent;
+  animation: blink 2.5s ease-in infinite;
+  border-radius: 50%;
+  height: 30px;
+  padding: 2px;
+  width: 30px;
+}
+
+.activateRefreshButton {
+  border: 4px solid transparent;
+  border-radius: 50%;
+  height: 30px;
+  padding: 2px;
+  width: 30px;
+}

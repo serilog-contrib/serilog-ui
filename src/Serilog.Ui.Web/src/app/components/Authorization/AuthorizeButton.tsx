@@ -3,6 +3,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconLockCheck, IconLockOpen } from '@tabler/icons-react';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { lazy, memo, Suspense } from 'react';
+import { theme } from 'style/theme';
 import { AuthType } from 'types/types';
 import { useAuthProperties } from '../../hooks/useAuthProperties';
 
@@ -18,7 +19,7 @@ const AuthorizeButton = () => {
 
   return (
     <>
-      <Button color="green" size="compact-md" onClick={open}>
+      <Button color={theme.colors?.green?.[7]} size="compact-md" onClick={open}>
         {isHeaderReady ? <IconClose /> : <IconOpen />}
         Authorize
       </Button>
