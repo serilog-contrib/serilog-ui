@@ -13,7 +13,8 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.*" />
+    <!-- cannot upgrade due to old version referenced in sink -->
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.*" />
   </ItemGroup>
 
   <ItemGroup>
