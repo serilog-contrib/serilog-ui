@@ -5,7 +5,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Testcontainers.PostgreSql" Version="4.3.0"/>
+        <PackageReference Include="Testcontainers.PostgreSql" Version="4.4.0"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">

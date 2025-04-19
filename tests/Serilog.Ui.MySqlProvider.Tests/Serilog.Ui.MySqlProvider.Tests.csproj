@@ -7,8 +7,8 @@
 	<ItemGroup>
 		<PackageReference Include="Serilog.Sinks.MariaDB" Version="1.0.1" />
 		<PackageReference Include="Serilog.Sinks.MySQL" Version="5.0.0" />
-		<PackageReference Include="Testcontainers.MariaDb" Version="4.3.0"/>
-		<PackageReference Include="Testcontainers.MySql" Version="4.3.0"/>
+		<PackageReference Include="Testcontainers.MariaDb" Version="4.4.0"/>
+		<PackageReference Include="Testcontainers.MySql" Version="4.4.0"/>
 	</ItemGroup>
 
 	<ItemGroup>
