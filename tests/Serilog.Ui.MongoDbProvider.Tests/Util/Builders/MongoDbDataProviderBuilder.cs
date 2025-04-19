@@ -1,4 +1,5 @@
-﻿using Mongo2Go;
+﻿using System.Threading.Tasks;
+using EphemeralMongo;
 using MongoDB.Driver;
 using Serilog;
 using Serilog.Ui.Common.Tests.DataSamples;
@@ -11,29 +12,33 @@ namespace MongoDb.Tests.Util.Builders
     {
         private const string DefaultDbName = "IntegrationTests";
 
-        internal readonly MongoDbRunner Runner;
-        internal readonly MongoDbOptions Options;
-        internal readonly IMongoClient Client;
-        internal readonly IMongoDatabase Database;
+        internal IMongoRunner? Runner;
+        internal MongoDbOptions Options;
+        private IMongoClient? Client;
         internal IDataProvider? Sut;
         internal LogModelPropsCollector? Collector;
 
         private MongoDbDataProviderBuilder(MongoDbOptions options)
         {
             Options = options;
-            (Runner, Client) = IntegrationDbGeneration.Generate(options);
-            Database = Client!.GetDatabase(options.DatabaseName);
-
-            Sut = new MongoDbDataProvider(Client, Options);
-            Collector = Seed(Options.ConnectionString);
         }
 
-        public static MongoDbDataProviderBuilder Build()
+        public static Task<MongoDbDataProviderBuilder> Build()
         {
             var options = new MongoDbOptions()
                 .WithCollectionName("LogCollection")
                 .WithDatabaseName(DefaultDbName);
-            return new MongoDbDataProviderBuilder(options);
+            return new MongoDbDataProviderBuilder(options).Init();
+        }
+
+        private async Task<MongoDbDataProviderBuilder> Init()
+        {
+            (Runner, Client) = await IntegrationDbGeneration.Generate(Options);
+
+            Sut = new MongoDbDataProvider(Client, Options);
+            Collector = Seed(Options.ConnectionString);
+
+            return this;
         }
 
         private static LogModelPropsCollector Seed(string? connectionString)

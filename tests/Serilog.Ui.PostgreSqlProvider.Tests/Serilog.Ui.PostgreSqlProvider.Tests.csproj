@@ -1,12 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-			<AssemblyName>Postgres.Tests</AssemblyName>
-	    <RootNamespace>Postgres.Tests</RootNamespace>
+        <AssemblyName>Postgres.Tests</AssemblyName>
+        <RootNamespace>Postgres.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Testcontainers.PostgreSql" Version="4.4.0"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
         <PackageReference Include="Serilog.Sinks.Postgresql.Alternative" Version="4.1.1"/>
-        <PackageReference Include="Testcontainers.PostgreSql" Version="3.10.0"/>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+        <PackageReference Include="Serilog.Sinks.Postgresql.Alternative" Version="4.2.0"/>
     </ItemGroup>
 
     <ItemGroup>

@@ -4,15 +4,15 @@
     <PackageId>Serilog.UI.MySqlProvider</PackageId>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <Version>3.1.0</Version>
+    <Version>3.2.0</Version>
 
     <Description>MySQL and MariaDB data provider for Serilog UI.</Description>
     <PackageTags>serilog serilog-ui serilog.sinks.mysql serilog.sinks.mariadb</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.35" />
-    <PackageReference Include="MySqlConnector" Version="2.3.7" />
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="MySqlConnector" Version="2.4.0" />
   </ItemGroup>
 
   <ItemGroup>

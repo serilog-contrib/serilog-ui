@@ -1,5 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 using Raven.Client.Documents;
+using Raven.Client.Documents.Operations;
+using Raven.Client.Exceptions.Database;
 using Raven.Client.ServerWide;
 using Raven.Client.ServerWide.Operations;
 using Serilog;
@@ -25,21 +27,30 @@ public sealed class RavenDbTestProvider : DatabaseInstance
     public RavenDbTestProvider()
     {
         _documentStore = new DocumentStore { Database = DbName };
-        Container = new RavenDbBuilder().Build();
+        Container = new RavenDbBuilder()
+            .WithImage("ravendb/ravendb:7.0-ubuntu-latest")
+            .Build();
     }
 
     protected override string Name => nameof(RavenDbContainer);
 
-    protected override Task CheckDbReadinessAsync()
+    protected override async Task CheckDbReadinessAsync()
     {
         Guard.Against.Null(Container);
 
         var container = Container as RavenDbContainer;
         _documentStore.Urls = [container?.GetConnectionString()];
         _documentStore.Initialize();
-        _documentStore.Maintenance.Server.Send(new CreateDatabaseOperation(new DatabaseRecord(DbName)));
 
-        return Task.CompletedTask;
+        try
+        {
+            await _documentStore.Maintenance.ForDatabase(DbName).SendAsync(new GetStatisticsOperation());
+        }
+        catch (DatabaseDoesNotExistException)
+        {
+            var record = new DatabaseRecord(DbName);
+            await _documentStore.Maintenance.Server.SendAsync(new CreateDatabaseOperation(record));
+        }
     }
 
     protected override Task InitializeAdditionalAsync()
