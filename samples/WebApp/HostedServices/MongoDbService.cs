@@ -1,19 +1,18 @@
-﻿using Mongo2Go;
+﻿using EphemeralMongo;
 
 namespace WebApp.HostedServices;
 
 public class MongoDbService : IHostedService, IAsyncDisposable
 {
-    private static MongoDbRunner? _runner;
+    private static IMongoRunner? _runner;
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
-        _runner ??= MongoDbRunner.StartForDebugging(
-            singleNodeReplSet: true,
-            additionalMongodArguments: "--quiet",
-            port: 27099);
-
-        return Task.CompletedTask;
+        _runner ??= await MongoRunner.RunAsync(new()
+        {
+            UseSingleNodeReplicaSet = true,
+            MongoPort = 27099
+        }, cancellationToken);
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

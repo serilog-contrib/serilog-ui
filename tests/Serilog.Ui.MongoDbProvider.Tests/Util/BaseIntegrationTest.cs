@@ -23,11 +23,9 @@ namespace MongoDb.Tests.Util
 
         public Task DisposeAsync() => Task.CompletedTask;
 
-        public virtual Task InitializeAsync()
+        public virtual async Task InitializeAsync()
         {
-            Builder = MongoDbDataProviderBuilder.Build();
-
-            return Task.CompletedTask;
+            Builder = await MongoDbDataProviderBuilder.Build();
         }
 
         public IDataProvider GetDataProvider() => Guard.Against.Null(Builder?.Sut);
@@ -38,7 +36,7 @@ namespace MongoDb.Tests.Util
         {
             if (!_disposedValue)
             {
-                if (disposing && Builder != null)
+                if (disposing && Builder != null && Builder.Runner != null)
                 {
                     Builder.Runner.Dispose();
                 }
