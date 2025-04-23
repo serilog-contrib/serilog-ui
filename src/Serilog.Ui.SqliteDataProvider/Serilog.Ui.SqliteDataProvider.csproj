@@ -4,7 +4,7 @@
     <PackageId>Serilog.UI.SqliteProvider</PackageId>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
 
     <Authors>Tech Garage (team)</Authors>
     <Description>SQLite data provider for Serilog UI.</Description>
@@ -12,7 +12,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="Dapper" Version="2.1.66" />
+    <!-- cannot upgrade due to old version referenced in sink -->
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.*" />
   </ItemGroup>
 

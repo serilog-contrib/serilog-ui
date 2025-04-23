@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<AssemblyName>Sqlite.Tests</AssemblyName>
 		<RootNamespace>Sqlite.Tests</RootNamespace>
+		<NoWarn>$(NoWarn);NETSDK1206</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -12,10 +13,6 @@
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.*"/>
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.*"/>
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
