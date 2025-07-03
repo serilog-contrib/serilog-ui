@@ -118,13 +118,17 @@ namespace Serilog.Ui.Web.Tests.Endpoints
         [Fact]
         public async Task It_returns_dashboard_data()
         {
-            // Arrange / Act
+            // Arrange - Setup proper query string
+            _testContext.Request.QueryString = new QueryString("");
+            
+            // Act
             var result = await HappyPath<DashboardModel>(_sut.GetDashboardAsync);
 
-            // Assert - Let's see what we actually get first
+            // Assert - Match FakeProvider dashboard data
             result.Should().NotBeNull();
-            result.TotalLogs.Should().Be(100); // Should match FakeProvider
+            result.TotalLogs.Should().Be(100);
             result.LogsByLevel.Should().ContainKey("Information");
+            result.LogsByLevel["Information"].Should().Be(100);
             result.TodayLogs.Should().Be(10);
             result.TodayErrorLogs.Should().Be(1);
         }

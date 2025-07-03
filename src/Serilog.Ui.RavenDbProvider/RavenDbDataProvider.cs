@@ -106,6 +106,7 @@ public class RavenDbDataProvider(IDocumentStore documentStore, RavenDbOptions op
         };
     }
 
+    /// <inheritdoc/>
     public async Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
     {
         var dashboard = new DashboardModel();
