@@ -105,4 +105,35 @@ public class RavenDbDataProvider(IDocumentStore documentStore, RavenDbOptions op
             _ => query.OrderByDescending(q => q.Timestamp),
         };
     }
+
+    public async Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
+    {
+        var dashboard = new DashboardModel();
+        var today = DateTime.Today;
+        var tomorrow = today.AddDays(1);
+
+        using var session = _documentStore.OpenAsyncSession();
+
+        // Get total logs count
+        dashboard.TotalLogs = await session.Query<RavenDbLogModel>().CountAsync();
+
+        // Get logs count by level
+        var levelCounts = await session.Query<RavenDbLogModel>()
+            .GroupBy(x => x.Level)
+            .Select(g => new { Level = g.Key, Count = g.Count() })
+            .ToListAsync();
+        dashboard.LogsByLevel = levelCounts.ToDictionary(x => x.Level ?? "Unknown", x => x.Count);
+
+        // Get today's logs count
+        dashboard.TodayLogs = await session.Query<RavenDbLogModel>()
+            .Where(x => x.Timestamp >= today && x.Timestamp < tomorrow)
+            .CountAsync();
+
+        // Get today's error logs count
+        dashboard.TodayErrorLogs = await session.Query<RavenDbLogModel>()
+            .Where(x => x.Level == "Error" && x.Timestamp >= today && x.Timestamp < tomorrow)
+            .CountAsync();
+
+        return dashboard;
+    }
 }

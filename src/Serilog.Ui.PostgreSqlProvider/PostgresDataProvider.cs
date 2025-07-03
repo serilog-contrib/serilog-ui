@@ -79,4 +79,42 @@ public class PostgresDataProvider<T>(PostgreSqlDbOptions options, PostgresQueryB
                 queryParams.EndDate
             });
     }
+
+    /// <inheritdoc/>
+    public async Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
+    {
+        var dashboard = new DashboardModel();
+        var today = System.DateTime.Today;
+        var tomorrow = today.AddDays(1);
+
+        await using NpgsqlConnection connection = new(options.ConnectionString);
+
+        // Get total logs count
+        var totalQuery = $"SELECT COUNT(*) FROM \"{options.Schema}\".\"{options.TableName}\"";
+        dashboard.TotalLogs = await connection.QueryFirstOrDefaultAsync<int>(totalQuery);
+
+        // Get logs count by level
+        var levelQuery = $"SELECT {options.ColumnNames.Level} as Level, COUNT(*) as Count FROM \"{options.Schema}\".\"{options.TableName}\" GROUP BY {options.ColumnNames.Level}";
+        var levelCounts = await connection.QueryAsync<(int Level, int Count)>(levelQuery);
+        dashboard.LogsByLevel = levelCounts.ToDictionary(x => LogLevelConverter.GetLevelName(x.Level.ToString()), x => x.Count);
+
+        // Get today's logs count
+        var todayQuery = $"SELECT COUNT(*) FROM \"{options.Schema}\".\"{options.TableName}\" WHERE \"{options.ColumnNames.Timestamp}\" >= @StartDate AND \"{options.ColumnNames.Timestamp}\" < @EndDate";
+        dashboard.TodayLogs = await connection.QueryFirstOrDefaultAsync<int>(todayQuery, new
+        {
+            StartDate = today,
+            EndDate = tomorrow
+        });
+
+        // Get today's error logs count (Error level = 3 in PostgreSQL)
+        var todayErrorQuery = $"SELECT COUNT(*) FROM \"{options.Schema}\".\"{options.TableName}\" WHERE {options.ColumnNames.Level} = @ErrorLevel AND \"{options.ColumnNames.Timestamp}\" >= @StartDate AND \"{options.ColumnNames.Timestamp}\" < @EndDate";
+        dashboard.TodayErrorLogs = await connection.QueryFirstOrDefaultAsync<int>(todayErrorQuery, new
+        {
+            ErrorLevel = LogLevelConverter.GetLevelValue("Error"),
+            StartDate = today,
+            EndDate = tomorrow
+        });
+
+        return dashboard;
+    }
 }

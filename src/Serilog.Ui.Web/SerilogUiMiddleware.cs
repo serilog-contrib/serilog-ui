@@ -51,6 +51,11 @@ public class SerilogUiMiddleware
             return uiEndpoints.GetLogsAsync();
         }
 
+        if (CheckPath(path, "/api/dashboard/?"))
+        {
+            return uiEndpoints.GetDashboardAsync();
+        }
+
         // prefix without trailing slash or old index.html routing
         if (CheckPath(path, "/index.html") || CheckPath(path, ""))
         {
