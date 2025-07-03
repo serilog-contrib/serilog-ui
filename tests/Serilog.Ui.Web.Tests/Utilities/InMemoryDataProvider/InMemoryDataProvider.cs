@@ -42,4 +42,21 @@ public class SerilogInMemoryDataProvider : IDataProvider
 
         return Task.FromResult((logs as IEnumerable<LogModel>, logs.Count));
     }
+
+    public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
+    {
+        var events = InMemorySink.Instance.LogEvents;
+        var today = DateTime.Today;
+        var tomorrow = today.AddDays(1);
+
+        var dashboard = new DashboardModel
+        {
+            TotalLogs = events.Count(),
+            LogsByLevel = events.GroupBy(e => e.Level.ToString()).ToDictionary(g => g.Key, g => g.Count()),
+            TodayLogs = events.Count(e => e.Timestamp.Date == today),
+            TodayErrorLogs = events.Count(e => e.Timestamp.Date == today && e.Level == LogEventLevel.Error)
+        };
+
+        return Task.FromResult(dashboard);
+    }
 }
