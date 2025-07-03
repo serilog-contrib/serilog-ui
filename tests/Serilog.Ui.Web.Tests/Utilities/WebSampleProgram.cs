@@ -66,6 +66,7 @@ public class WebAppFactory
 
             public Task GetHomeAsync() => Oper(418);
             public Task GetLogsAsync() => Oper(409);
+            public Task GetDashboardAsync() => Oper(410);
             public Task RedirectHomeAsync() => Oper(400);
             public void SetOptions(UiOptions options) => Options = options;
 

@@ -149,6 +149,17 @@ namespace Serilog.Ui.Web.Tests.Endpoints
                 Array.Fill(modelArray, new());
                 return Task.FromResult<(IEnumerable<LogModel>, int)>((modelArray, 100));
             }
+
+            public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
+            {
+                return Task.FromResult(new DashboardModel
+                {
+                    TotalLogs = 100,
+                    LogsByLevel = new Dictionary<string, int> { ["Information"] = 100 },
+                    TodayLogs = 10,
+                    TodayErrorLogs = 1
+                });
+            }
         }
 
         private class FakeSecondProvider : IDataProvider
@@ -169,6 +180,17 @@ namespace Serilog.Ui.Web.Tests.Endpoints
                 Array.Fill(modelArray, new());
                 return Task.FromResult<(IEnumerable<LogModel>, int)>((modelArray, 50));
             }
+
+            public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
+            {
+                return Task.FromResult(new DashboardModel
+                {
+                    TotalLogs = 50,
+                    LogsByLevel = new Dictionary<string, int> { ["Verbose"] = 50 },
+                    TodayLogs = 5,
+                    TodayErrorLogs = 0
+                });
+            }
         }
 
         private class BrokenProvider : IDataProvider
@@ -179,6 +201,11 @@ namespace Serilog.Ui.Web.Tests.Endpoints
             }
 
             public string Name { get; } = "BrokenProvider";
+
+            public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
+            {
+                throw new NotImplementedException();
+            }
         };
 
         private record AnonymousObject
