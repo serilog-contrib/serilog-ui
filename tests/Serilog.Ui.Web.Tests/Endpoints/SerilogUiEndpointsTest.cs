@@ -115,6 +115,47 @@ namespace Serilog.Ui.Web.Tests.Endpoints
             ((JsonElement)problemDetails.Extensions["traceId"]!).GetString().Should().NotBeNullOrWhiteSpace();
         }
 
+        [Fact]
+        public async Task It_returns_dashboard_data()
+        {
+            // Arrange / Act
+            var result = await HappyPath<DashboardModel>(_sut.GetDashboardAsync);
+
+            // Assert - Let's see what we actually get first
+            result.Should().NotBeNull();
+            result.TotalLogs.Should().Be(100); // Should match FakeProvider
+            result.LogsByLevel.Should().ContainKey("Information");
+            result.TodayLogs.Should().Be(10);
+            result.TodayErrorLogs.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task It_serializes_dashboard_error_on_exception()
+        {
+            // Arrange
+            _testContext.Response.Body = new MemoryStream();
+            var sut = new SerilogUiEndpoints(_contextAccessor, _loggerMock, new AggregateDataProvider(new[] { new BrokenProvider() }));
+
+            // Act
+            await sut.GetDashboardAsync();
+
+            // Assert
+            _testContext.Response.StatusCode.Should().Be(500);
+            _testContext.Response.Body.Seek(0, SeekOrigin.Begin);
+            var result = await new StreamReader(_testContext.Response.Body).ReadToEndAsync();
+
+            _testContext.Response.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
+            _testContext.Response.ContentType.Should().Be("application/problem+json");
+
+            var problemDetails = JsonSerializer.Deserialize<ProblemDetails>(result)!;
+
+            problemDetails.Title.Should().StartWith("An error occured");
+            problemDetails.Detail.Should().NotBeNullOrWhiteSpace();
+            problemDetails.Status.Should().Be((int)HttpStatusCode.InternalServerError);
+            problemDetails.Extensions.Should().ContainKey("traceId");
+            ((JsonElement)problemDetails.Extensions["traceId"]!).GetString().Should().NotBeNullOrWhiteSpace();
+        }
+
         private async Task<T> HappyPath<T>(Func<Task> call)
         {
             // Arrange
