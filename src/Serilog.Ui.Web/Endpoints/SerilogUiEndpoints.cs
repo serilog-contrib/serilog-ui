@@ -55,6 +55,23 @@ internal class SerilogUiEndpoints(
         }
     }
 
+    public async Task GetDashboardAsync()
+    {
+        try
+        {
+            SetResponseContentType();
+
+            string result = await FetchDashboardAsync();
+            _httpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+
+            await _httpContext.Response.WriteAsync(result);
+        }
+        catch (Exception ex)
+        {
+            await OnError(ex);
+        }
+    }
+
     private async Task<string> FetchLogsAsync()
     {
         Dictionary<string, StringValues> queryDictionary = QueryHelpers.ParseQuery(_httpContext.Request.QueryString.Value);
@@ -78,6 +95,23 @@ internal class SerilogUiEndpoints(
             count = queryLogs.Count,
             currentPage = queryLogs.CurrentPage
         }, JsonSerializerOptionsFactory.GetDefaultOptions);
+
+        return result;
+    }
+
+    private async Task<string> FetchDashboardAsync()
+    {
+        Dictionary<string, StringValues> queryDictionary = QueryHelpers.ParseQuery(_httpContext.Request.QueryString.Value);
+        FetchLogsQuery queryLogs = FetchLogsQuery.ParseQuery(queryDictionary);
+
+        if (!string.IsNullOrWhiteSpace(queryLogs.DatabaseKey))
+        {
+            aggregateDataProvider.SwitchToProvider(queryLogs.DatabaseKey);
+        }
+
+        DashboardModel dashboard = await aggregateDataProvider.FetchDashboardAsync();
+
+        string result = JsonSerializer.Serialize(dashboard, JsonSerializerOptionsFactory.GetDefaultOptions);
 
         return result;
     }

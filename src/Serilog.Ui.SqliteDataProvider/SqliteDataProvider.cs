@@ -31,6 +31,42 @@ public class SqliteDataProvider(SqliteDbOptions options, SqliteQueryBuilder quer
 
     public string Name => _options.GetProviderName(SqliteProviderName);
 
+    public async Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
+    {
+        var dashboard = new DashboardModel();
+        var today = DateTime.Today;
+        var tomorrow = today.AddDays(1);
+
+        using var connection = new SqliteConnection(_options.ConnectionString);
+
+        // Get total logs count
+        var totalQuery = $"SELECT COUNT(*) FROM {_options.TableName}";
+        dashboard.TotalLogs = await connection.QueryFirstOrDefaultAsync<int>(totalQuery);
+
+        // Get logs count by level
+        var levelQuery = $"SELECT {_options.ColumnNames.Level} as Level, COUNT(*) as Count FROM {_options.TableName} GROUP BY {_options.ColumnNames.Level}";
+        var levelCounts = await connection.QueryAsync<(string Level, int Count)>(levelQuery);
+        dashboard.LogsByLevel = levelCounts.ToDictionary(x => x.Level ?? "Unknown", x => x.Count);
+
+        // Get today's logs count
+        var todayQuery = $"SELECT COUNT(*) FROM {_options.TableName} WHERE {_options.ColumnNames.Timestamp} >= @StartDate AND {_options.ColumnNames.Timestamp} < @EndDate";
+        dashboard.TodayLogs = await connection.QueryFirstOrDefaultAsync<int>(todayQuery, new
+        {
+            StartDate = StringifyDate(today),
+            EndDate = StringifyDate(tomorrow)
+        });
+
+        // Get today's error logs count
+        var todayErrorQuery = $"SELECT COUNT(*) FROM {_options.TableName} WHERE {_options.ColumnNames.Level} = 'Error' AND {_options.ColumnNames.Timestamp} >= @StartDate AND {_options.ColumnNames.Timestamp} < @EndDate";
+        dashboard.TodayErrorLogs = await connection.QueryFirstOrDefaultAsync<int>(todayErrorQuery, new
+        {
+            StartDate = StringifyDate(today),
+            EndDate = StringifyDate(tomorrow)
+        });
+
+        return dashboard;
+    }
+
     private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
     {
         var query = queryBuilder.BuildFetchLogsQuery(_options.ColumnNames, _options.Schema, _options.TableName, queryParams);

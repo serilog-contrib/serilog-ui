@@ -16,6 +16,11 @@ namespace Serilog.Ui.Core
         Task<(IEnumerable<LogModel> results, int total)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default);
 
         /// <summary>
+        /// Fetches dashboard statistics asynchronous.
+        /// </summary>
+        Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default);
+
+        /// <summary>
         /// Name of the provider, used to identify this provider when using multiple.
         /// </summary>
         string Name { get; }

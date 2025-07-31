@@ -10,7 +10,7 @@ import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { Suspense, lazy } from 'react';
 import { Navigate } from 'react-router';
 
-const AppBody = lazy(() => import('./AppBody'));
+const AppBody = lazy(() => import('./TabbedAppBody'));
 const Head = lazy(() => import('./ShellStructure/Header'));
 const Sidebar = lazy(() => import('./ShellStructure/Sidebar'));
 

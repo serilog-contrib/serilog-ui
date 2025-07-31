@@ -115,6 +115,51 @@ namespace Serilog.Ui.Web.Tests.Endpoints
             ((JsonElement)problemDetails.Extensions["traceId"]!).GetString().Should().NotBeNullOrWhiteSpace();
         }
 
+        [Fact]
+        public async Task It_returns_dashboard_data()
+        {
+            // Arrange - Setup proper query string
+            _testContext.Request.QueryString = new QueryString("");
+            
+            // Act
+            var result = await HappyPath<DashboardModel>(_sut.GetDashboardAsync);
+
+            // Assert - Match FakeProvider dashboard data
+            result.Should().NotBeNull();
+            result.TotalLogs.Should().Be(100);
+            result.LogsByLevel.Should().ContainKey("Information");
+            result.LogsByLevel["Information"].Should().Be(100);
+            result.TodayLogs.Should().Be(10);
+            result.TodayErrorLogs.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task It_serializes_dashboard_error_on_exception()
+        {
+            // Arrange
+            _testContext.Response.Body = new MemoryStream();
+            var sut = new SerilogUiEndpoints(_contextAccessor, _loggerMock, new AggregateDataProvider(new[] { new BrokenProvider() }));
+
+            // Act
+            await sut.GetDashboardAsync();
+
+            // Assert
+            _testContext.Response.StatusCode.Should().Be(500);
+            _testContext.Response.Body.Seek(0, SeekOrigin.Begin);
+            var result = await new StreamReader(_testContext.Response.Body).ReadToEndAsync();
+
+            _testContext.Response.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
+            _testContext.Response.ContentType.Should().Be("application/problem+json");
+
+            var problemDetails = JsonSerializer.Deserialize<ProblemDetails>(result)!;
+
+            problemDetails.Title.Should().StartWith("An error occured");
+            problemDetails.Detail.Should().NotBeNullOrWhiteSpace();
+            problemDetails.Status.Should().Be((int)HttpStatusCode.InternalServerError);
+            problemDetails.Extensions.Should().ContainKey("traceId");
+            ((JsonElement)problemDetails.Extensions["traceId"]!).GetString().Should().NotBeNullOrWhiteSpace();
+        }
+
         private async Task<T> HappyPath<T>(Func<Task> call)
         {
             // Arrange
@@ -149,6 +194,17 @@ namespace Serilog.Ui.Web.Tests.Endpoints
                 Array.Fill(modelArray, new());
                 return Task.FromResult<(IEnumerable<LogModel>, int)>((modelArray, 100));
             }
+
+            public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
+            {
+                return Task.FromResult(new DashboardModel
+                {
+                    TotalLogs = 100,
+                    LogsByLevel = new Dictionary<string, int> { ["Information"] = 100 },
+                    TodayLogs = 10,
+                    TodayErrorLogs = 1
+                });
+            }
         }
 
         private class FakeSecondProvider : IDataProvider
@@ -169,6 +225,17 @@ namespace Serilog.Ui.Web.Tests.Endpoints
                 Array.Fill(modelArray, new());
                 return Task.FromResult<(IEnumerable<LogModel>, int)>((modelArray, 50));
             }
+
+            public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
+            {
+                return Task.FromResult(new DashboardModel
+                {
+                    TotalLogs = 50,
+                    LogsByLevel = new Dictionary<string, int> { ["Verbose"] = 50 },
+                    TodayLogs = 5,
+                    TodayErrorLogs = 0
+                });
+            }
         }
 
         private class BrokenProvider : IDataProvider
@@ -179,6 +246,11 @@ namespace Serilog.Ui.Web.Tests.Endpoints
             }
 
             public string Name { get; } = "BrokenProvider";
+
+            public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
+            {
+                throw new NotImplementedException();
+            }
         };
 
         private record AnonymousObject

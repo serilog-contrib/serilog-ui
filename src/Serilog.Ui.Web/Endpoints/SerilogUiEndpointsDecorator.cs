@@ -23,4 +23,9 @@ internal class SerilogUiEndpointsDecorator(ISerilogUiEndpoints decoratedService,
     {
         return authFilterService.CheckAccessAsync(decoratedService.GetLogsAsync);
     }
+
+    public Task GetDashboardAsync()
+    {
+        return authFilterService.CheckAccessAsync(decoratedService.GetDashboardAsync);
+    }
 }

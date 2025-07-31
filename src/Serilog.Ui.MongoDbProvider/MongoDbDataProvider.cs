@@ -121,5 +121,38 @@ namespace Serilog.Ui.MongoDbProvider
 
             return isDesc ? Builders<MongoDbLogModel>.Sort.Descending(sortPropertyName) : Builders<MongoDbLogModel>.Sort.Ascending(sortPropertyName);
         }
+
+        public async Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
+        {
+            var dashboard = new DashboardModel();
+            var today = DateTime.Today.ToUniversalTime();
+            var tomorrow = today.AddDays(1);
+
+            // Get total logs count
+            dashboard.TotalLogs = Convert.ToInt32(await _collection.CountDocumentsAsync(Builders<MongoDbLogModel>.Filter.Empty, cancellationToken: cancellationToken));
+
+            // Get logs count by level
+            var levelCounts = await _collection.Aggregate()
+                .Group(x => x.Level, g => new { Level = g.Key, Count = g.Count() })
+                .ToListAsync(cancellationToken);
+            dashboard.LogsByLevel = levelCounts.ToDictionary(x => x.Level ?? "Unknown", x => x.Count);
+
+            // Get today's logs count
+            var todayFilter = Builders<MongoDbLogModel>.Filter.And(
+                Builders<MongoDbLogModel>.Filter.Gte(x => x.UtcTimeStamp, today),
+                Builders<MongoDbLogModel>.Filter.Lt(x => x.UtcTimeStamp, tomorrow)
+            );
+            dashboard.TodayLogs = Convert.ToInt32(await _collection.CountDocumentsAsync(todayFilter, cancellationToken: cancellationToken));
+
+            // Get today's error logs count
+            var todayErrorFilter = Builders<MongoDbLogModel>.Filter.And(
+                Builders<MongoDbLogModel>.Filter.Eq(x => x.Level, "Error"),
+                Builders<MongoDbLogModel>.Filter.Gte(x => x.UtcTimeStamp, today),
+                Builders<MongoDbLogModel>.Filter.Lt(x => x.UtcTimeStamp, tomorrow)
+            );
+            dashboard.TodayErrorLogs = Convert.ToInt32(await _collection.CountDocumentsAsync(todayErrorFilter, cancellationToken: cancellationToken));
+
+            return dashboard;
+        }
     }
 }

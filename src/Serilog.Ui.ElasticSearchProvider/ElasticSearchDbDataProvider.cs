@@ -56,4 +56,54 @@ public class ElasticSearchDbDataProvider(IElasticClient client, ElasticSearchDbO
 
         return (result?.Documents.Select((x, index) => x.ToLogModel(rowNoStart, index)).ToList() ?? [], total);
     }
+
+    public async Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
+    {
+        var dashboard = new DashboardModel();
+        var today = DateTime.Today;
+        var tomorrow = today.AddDays(1);
+
+        // Get total logs count
+        var totalResponse = await _client.CountAsync<ElasticSearchDbLogModel>(c => c
+            .Index(options.IndexName), cancellationToken);
+        dashboard.TotalLogs = (int)(totalResponse?.Count ?? 0);
+
+        // Get logs count by level
+        var levelResponse = await _client.SearchAsync<ElasticSearchDbLogModel>(s => s
+            .Index(options.IndexName)
+            .Size(0)
+            .Aggregations(aggs => aggs
+                .Terms("levels", t => t.Field(f => f.Level))
+            ), cancellationToken);
+        
+        if (levelResponse?.Aggregations?.Terms("levels") is { } levelsAgg)
+        {
+            dashboard.LogsByLevel = levelsAgg.Buckets.ToDictionary(
+                bucket => bucket.Key.ToString() ?? "Unknown", 
+                bucket => (int)bucket.DocCount);
+        }
+
+        // Get today's logs count
+        var todayResponse = await _client.CountAsync<ElasticSearchDbLogModel>(c => c
+            .Index(options.IndexName)
+            .Query(q => q
+                .DateRange(r => r.Field(f => f.Timestamp).GreaterThanOrEquals(today).LessThan(tomorrow))
+            ), cancellationToken);
+        dashboard.TodayLogs = (int)(todayResponse?.Count ?? 0);
+
+        // Get today's error logs count
+        var todayErrorResponse = await _client.CountAsync<ElasticSearchDbLogModel>(c => c
+            .Index(options.IndexName)
+            .Query(q => q
+                .Bool(b => b
+                    .Must(
+                        m => m.Term(t => t.Field(f => f.Level).Value("Error")),
+                        m => m.DateRange(r => r.Field(f => f.Timestamp).GreaterThanOrEquals(today).LessThan(tomorrow))
+                    )
+                )
+            ), cancellationToken);
+        dashboard.TodayErrorLogs = (int)(todayErrorResponse?.Count ?? 0);
+
+        return dashboard;
+    }
 }

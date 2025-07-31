@@ -75,5 +75,9 @@ namespace Serilog.Ui.Core
         /// <inheritdoc/>
         public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
             => SelectedDataProvider.FetchDataAsync(queryParams, cancellationToken);
+
+        /// <inheritdoc/>
+        public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
+            => SelectedDataProvider.FetchDashboardAsync(cancellationToken);
     }
 }

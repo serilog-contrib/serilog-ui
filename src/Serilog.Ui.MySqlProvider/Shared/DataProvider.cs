@@ -72,4 +72,40 @@ public abstract class DataProvider<T>(MySqlDbOptions options, MySqlQueryBuilder<
                 queryParams.EndDate
             });
     }
+
+    public async Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
+    {
+        var dashboard = new DashboardModel();
+        var today = DateTime.Today;
+        var tomorrow = today.AddDays(1);
+
+        using MySqlConnection connection = new(options.ConnectionString);
+
+        // Get total logs count
+        var totalQuery = $"SELECT COUNT(*) FROM `{options.Schema}`.`{options.TableName}`";
+        dashboard.TotalLogs = await connection.QueryFirstOrDefaultAsync<int>(totalQuery);
+
+        // Get logs count by level
+        var levelQuery = $"SELECT `{options.ColumnNames.Level}` as Level, COUNT(*) as Count FROM `{options.Schema}`.`{options.TableName}` GROUP BY `{options.ColumnNames.Level}`";
+        var levelCounts = await connection.QueryAsync<(string Level, int Count)>(levelQuery);
+        dashboard.LogsByLevel = levelCounts.ToDictionary(x => x.Level ?? "Unknown", x => x.Count);
+
+        // Get today's logs count
+        var todayQuery = $"SELECT COUNT(*) FROM `{options.Schema}`.`{options.TableName}` WHERE `{options.ColumnNames.Timestamp}` >= @StartDate AND `{options.ColumnNames.Timestamp}` < @EndDate";
+        dashboard.TodayLogs = await connection.QueryFirstOrDefaultAsync<int>(todayQuery, new
+        {
+            StartDate = today,
+            EndDate = tomorrow
+        });
+
+        // Get today's error logs count
+        var todayErrorQuery = $"SELECT COUNT(*) FROM `{options.Schema}`.`{options.TableName}` WHERE `{options.ColumnNames.Level}` = 'Error' AND `{options.ColumnNames.Timestamp}` >= @StartDate AND `{options.ColumnNames.Timestamp}` < @EndDate";
+        dashboard.TodayErrorLogs = await connection.QueryFirstOrDefaultAsync<int>(todayErrorQuery, new
+        {
+            StartDate = today,
+            EndDate = tomorrow
+        });
+
+        return dashboard;
+    }
 }
