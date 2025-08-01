@@ -15,19 +15,19 @@ public class SerilogInMemoryDataProvider : IDataProvider
 {
     public string Name => nameof(SerilogInMemoryDataProvider);
 
-    public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams, CancellationToken cancellationToken = default)
+    public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams,
+        CancellationToken cancellationToken = default)
     {
-        var events = InMemorySink.Instance.LogEvents;
+        IEnumerable<LogEvent>? events = InMemorySink.Instance.LogEvents;
 
         if (queryParams.SearchCriteria != null)
-            events = events.Where(l => l.RenderMessage().Contains(queryParams.SearchCriteria, StringComparison.CurrentCultureIgnoreCase));
+            events = events.Where(l =>
+                l.RenderMessage().Contains(queryParams.SearchCriteria, StringComparison.CurrentCultureIgnoreCase));
 
         if (queryParams.Level != null && Enum.TryParse("Active", out LogEventLevel logLevel))
-        {
             events = events.Where(l => l.Level == logLevel);
-        }
 
-        var logs = events
+        List<LogModel> logs = events
             .Skip(queryParams.Page * queryParams.Count)
             .Take(queryParams.Count)
             .Select(l => new LogModel
@@ -42,4 +42,7 @@ public class SerilogInMemoryDataProvider : IDataProvider
 
         return Task.FromResult((logs as IEnumerable<LogModel>, logs.Count));
     }
+
+    public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
+        throw new NotImplementedException();
 }

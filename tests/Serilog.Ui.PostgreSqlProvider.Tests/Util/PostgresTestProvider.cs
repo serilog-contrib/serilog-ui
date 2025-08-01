@@ -24,12 +24,12 @@ public sealed class PostgresTestProvider : PostgresTestProvider<PostgresLogModel
 public class PostgresTestProvider<T> : DatabaseInstance
     where T : PostgresLogModel
 {
-    protected override string Name => nameof(PostgreSqlContainer);
-
     protected PostgresTestProvider()
     {
         Container = new PostgreSqlBuilder().Build();
     }
+
+    protected override string Name => nameof(PostgreSqlContainer);
 
     private PostgreSqlDbOptions DbOptions { get; } = new PostgreSqlDbOptions("public")
         .WithTable("logs")
@@ -43,7 +43,7 @@ public class PostgresTestProvider<T> : DatabaseInstance
     {
         DbOptions.WithConnectionString((Container as PostgreSqlContainer)?.GetConnectionString()!);
 
-        await using var dataContext = new NpgsqlConnection(DbOptions.ConnectionString);
+        await using NpgsqlConnection dataContext = new(DbOptions.ConnectionString);
 
         await dataContext.ExecuteAsync("SELECT 1");
     }
@@ -65,7 +65,7 @@ public class PostgresTestProvider<T> : DatabaseInstance
 
         Collector = serilog.InitializeLogs();
 
-        var custom = typeof(T) != typeof(PostgresLogModel);
+        bool custom = typeof(T) != typeof(PostgresLogModel);
         Provider = custom
             ? new PostgresDataProvider<T>(DbOptions, new PostgresQueryBuilder<T>())
             : new PostgresDataProvider(DbOptions, new PostgresQueryBuilder<PostgresLogModel>());
