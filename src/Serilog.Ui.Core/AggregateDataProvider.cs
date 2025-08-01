@@ -68,7 +68,7 @@ public class AggregateDataProvider : IDataProvider
         => SelectedDataProvider.FetchDataAsync(queryParams, cancellationToken);
 
     /// <inheritdoc />
-    public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
+    public Task<LogStatisticModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
         => SelectedDataProvider.FetchDashboardAsync(cancellationToken);
 
     /// <summary>

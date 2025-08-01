@@ -43,6 +43,6 @@ public class SerilogInMemoryDataProvider : IDataProvider
         return Task.FromResult((logs as IEnumerable<LogModel>, logs.Count));
     }
 
-    public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
+    public Task<LogStatisticModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
         throw new NotImplementedException();
 }

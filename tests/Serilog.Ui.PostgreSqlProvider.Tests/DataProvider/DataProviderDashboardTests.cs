@@ -35,40 +35,40 @@ public class DataProviderDashboardTests(PostgresTestProvider instance)
         };
 
         // Act
-        DashboardModel dashboard = await _provider.FetchDashboardAsync();
+        LogStatisticModel logStatistic = await _provider.FetchDashboardAsync();
 
         // Assert
-        dashboard.Should().NotBeNull();
-        dashboard.TotalLogs.Should().BeGreaterThanOrEqualTo(27);
-        dashboard.LogsByLevel.Should().NotBeNull().And.NotBeEmpty();
-        dashboard.LogsByLevel.Should().BeEquivalentTo(expectedLogsByLevel);
-        dashboard.TodayLogs.Should().BeGreaterThanOrEqualTo(27);
-        dashboard.TodayErrorLogs.Should().BeGreaterThanOrEqualTo(2);
+        logStatistic.Should().NotBeNull();
+        logStatistic.TotalLogs.Should().BeGreaterThanOrEqualTo(27);
+        logStatistic.LogsByLevel.Should().NotBeNull().And.NotBeEmpty();
+        logStatistic.LogsByLevel.Should().BeEquivalentTo(expectedLogsByLevel);
+        logStatistic.TodayLogs.Should().BeGreaterThanOrEqualTo(27);
+        logStatistic.TodayErrorLogs.Should().BeGreaterThanOrEqualTo(2);
     }
 
     [Fact]
     public async Task It_returns_correct_total_logs_count()
     {
         // Act
-        DashboardModel dashboard = await _provider.FetchDashboardAsync();
+        LogStatisticModel logStatistic = await _provider.FetchDashboardAsync();
 
         // Assert
-        dashboard.TotalLogs.Should().Be(_logCollector.DataSet.Count);
+        logStatistic.TotalLogs.Should().Be(_logCollector.DataSet.Count);
     }
 
     [Fact]
     public async Task It_returns_correct_logs_by_level_count()
     {
         // Act
-        DashboardModel dashboard = await _provider.FetchDashboardAsync();
+        LogStatisticModel logStatistic = await _provider.FetchDashboardAsync();
 
         // Assert
-        dashboard.LogsByLevel.Should().NotBeNull();
+        logStatistic.LogsByLevel.Should().NotBeNull();
 
         foreach (KeyValuePair<string, int> expectedLevel in _logCollector.CountByLevel)
         {
-            dashboard.LogsByLevel.Should().ContainKey(expectedLevel.Key);
-            dashboard.LogsByLevel[expectedLevel.Key].Should().Be(expectedLevel.Value);
+            logStatistic.LogsByLevel.Should().ContainKey(expectedLevel.Key);
+            logStatistic.LogsByLevel[expectedLevel.Key].Should().Be(expectedLevel.Value);
         }
     }
 
@@ -83,10 +83,10 @@ public class DataProviderDashboardTests(PostgresTestProvider instance)
             .Count(log => log.Timestamp >= today && log.Timestamp < tomorrow);
 
         // Act
-        DashboardModel dashboard = await _provider.FetchDashboardAsync();
+        LogStatisticModel logStatistic = await _provider.FetchDashboardAsync();
 
         // Assert
-        dashboard.TodayLogs.Should().Be(expectedTodayLogs);
+        logStatistic.TodayLogs.Should().Be(expectedTodayLogs);
     }
 
     [Fact]
@@ -97,28 +97,28 @@ public class DataProviderDashboardTests(PostgresTestProvider instance)
         // For now, we'll test that the method doesn't throw and returns valid structure
 
         // Act
-        DashboardModel dashboard = await _provider.FetchDashboardAsync();
+        LogStatisticModel logStatistic = await _provider.FetchDashboardAsync();
 
         // Assert
-        dashboard.Should().NotBeNull();
-        dashboard.LogsByLevel.Should().NotBeNull();
-        dashboard.TotalLogs.Should().BeGreaterThanOrEqualTo(0);
-        dashboard.TodayLogs.Should().BeGreaterThanOrEqualTo(0);
+        logStatistic.Should().NotBeNull();
+        logStatistic.LogsByLevel.Should().NotBeNull();
+        logStatistic.TotalLogs.Should().BeGreaterThanOrEqualTo(0);
+        logStatistic.TodayLogs.Should().BeGreaterThanOrEqualTo(0);
     }
 
     [Fact]
     public async Task It_includes_all_expected_log_levels()
     {
         // Act
-        DashboardModel dashboard = await _provider.FetchDashboardAsync();
+        LogStatisticModel logStatistic = await _provider.FetchDashboardAsync();
 
         // Assert
         List<string?> availableLevels = _logCollector.DataSet.Select(log => log.Level).Distinct().ToList();
 
         foreach (string? level in availableLevels)
         {
-            dashboard.LogsByLevel.Should().ContainKey(level!);
-            dashboard.LogsByLevel[level!].Should().BeGreaterThan(0);
+            logStatistic.LogsByLevel.Should().ContainKey(level!);
+            logStatistic.LogsByLevel[level!].Should().BeGreaterThan(0);
         }
     }
 
@@ -126,8 +126,8 @@ public class DataProviderDashboardTests(PostgresTestProvider instance)
     public async Task It_calculates_dashboard_metrics_consistently()
     {
         // Act - Call multiple times to ensure consistency
-        DashboardModel dashboard1 = await _provider.FetchDashboardAsync();
-        DashboardModel dashboard2 = await _provider.FetchDashboardAsync();
+        LogStatisticModel dashboard1 = await _provider.FetchDashboardAsync();
+        LogStatisticModel dashboard2 = await _provider.FetchDashboardAsync();
 
         // Assert - Results should be identical
         dashboard1.TotalLogs.Should().Be(dashboard2.TotalLogs);
@@ -142,7 +142,7 @@ public class DataProviderDashboardTests(PostgresTestProvider instance)
         DateTime today = DateTime.Today;
 
         // Act
-        DashboardModel dashboard = await _provider.FetchDashboardAsync();
+        LogStatisticModel logStatistic = await _provider.FetchDashboardAsync();
 
         // Assert
         // The TodayLogs count should match manual calculation using same date boundaries
@@ -151,7 +151,7 @@ public class DataProviderDashboardTests(PostgresTestProvider instance)
 
         // Note: This might not be exact due to time zone handling and precise time boundaries
         // but should be in the same ballpark
-        dashboard.TodayLogs.Should().BeGreaterThanOrEqualTo(0);
+        logStatistic.TodayLogs.Should().BeGreaterThanOrEqualTo(0);
     }
 
     public override Task It_throws_when_skip_is_zero() => throw new NotImplementedException();
@@ -168,22 +168,22 @@ public class DataProviderDashboardWithColsTests(PostgresAdditionalColsTestProvid
     public async Task It_fetches_dashboard_data_with_additional_columns()
     {
         // Act
-        DashboardModel dashboard = await _provider.FetchDashboardAsync();
+        LogStatisticModel logStatistic = await _provider.FetchDashboardAsync();
 
         // Assert
-        dashboard.Should().NotBeNull();
-        dashboard.TotalLogs.Should().BeGreaterThan(0);
-        dashboard.LogsByLevel.Should().NotBeNull().And.NotBeEmpty();
-        dashboard.TodayLogs.Should().BeGreaterThanOrEqualTo(0);
+        logStatistic.Should().NotBeNull();
+        logStatistic.TotalLogs.Should().BeGreaterThan(0);
+        logStatistic.LogsByLevel.Should().NotBeNull().And.NotBeEmpty();
+        logStatistic.TodayLogs.Should().BeGreaterThanOrEqualTo(0);
     }
 
     [Fact]
     public async Task It_returns_correct_total_logs_count_with_additional_columns()
     {
         // Act
-        DashboardModel dashboard = await _provider.FetchDashboardAsync();
+        LogStatisticModel logStatistic = await _provider.FetchDashboardAsync();
 
         // Assert
-        dashboard.TotalLogs.Should().Be(_logCollector.DataSet.Count);
+        logStatistic.TotalLogs.Should().Be(_logCollector.DataSet.Count);
     }
 }

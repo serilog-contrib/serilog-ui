@@ -5,7 +5,7 @@ namespace Serilog.Ui.Core.Models;
 /// <summary>
 ///     Represents dashboard statistics for log data visualization.
 /// </summary>
-public class DashboardModel
+public class LogStatisticModel
 {
     /// <summary>
     ///     Gets or sets the total count of logs.

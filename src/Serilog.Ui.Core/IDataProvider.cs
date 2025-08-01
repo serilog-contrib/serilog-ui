@@ -24,5 +24,5 @@ public interface IDataProvider
     /// <summary>
     ///     Fetches dashboard statistics asynchronous.
     /// </summary>
-    Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default);
+    Task<LogStatisticModel> FetchDashboardAsync(CancellationToken cancellationToken = default);
 }

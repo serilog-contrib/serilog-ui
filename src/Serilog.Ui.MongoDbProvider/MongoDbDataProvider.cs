@@ -38,7 +38,7 @@ public class MongoDbDataProvider : IDataProvider
         return (logsTask, logCountTask);
     }
 
-    public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
+    public Task<LogStatisticModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
         throw new NotImplementedException();
 
     public string Name => _options.ProviderName;

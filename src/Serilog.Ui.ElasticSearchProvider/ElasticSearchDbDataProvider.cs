@@ -27,7 +27,7 @@ public class ElasticSearchDbDataProvider(IElasticClient client, ElasticSearchDbO
     public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams,
         CancellationToken cancellationToken = default) => GetLogsAsync(queryParams, cancellationToken);
 
-    public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
+    public Task<LogStatisticModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
         throw new NotImplementedException();
 
     public string Name => _options.ProviderName;

@@ -39,7 +39,7 @@ public class PostgresDataProvider<T>(PostgreSqlDbOptions options, PostgresQueryB
     }
 
     /// <inheritdoc />
-    public async Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
+    public async Task<LogStatisticModel> FetchDashboardAsync(CancellationToken cancellationToken = default)
     {
         DateTime today = DateTime.Today;
         DateTime tomorrow = today.AddDays(1);
@@ -72,7 +72,7 @@ public class PostgresDataProvider<T>(PostgreSqlDbOptions options, PostgresQueryB
         int todayErrorLogs = await connection.QueryFirstOrDefaultAsync<int>(todayErrorQuery,
             new { ErrorLevel = LogLevelConverter.GetLevelValue("Error"), StartDate = today, EndDate = tomorrow });
 
-        DashboardModel model = new()
+        LogStatisticModel model = new()
         {
             TotalLogs = totalLogs,
             LogsByLevel = logsByLevel,

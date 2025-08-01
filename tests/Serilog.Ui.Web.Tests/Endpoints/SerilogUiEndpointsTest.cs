@@ -150,7 +150,7 @@ public class SerilogUiEndpointsTest
             return Task.FromResult<(IEnumerable<LogModel>, int)>((modelArray, 100));
         }
 
-        public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
+        public Task<LogStatisticModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
             throw new NotImplementedException();
     }
 
@@ -174,7 +174,7 @@ public class SerilogUiEndpointsTest
             return Task.FromResult<(IEnumerable<LogModel>, int)>((modelArray, 50));
         }
 
-        public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
+        public Task<LogStatisticModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
             throw new NotImplementedException();
     }
 
@@ -183,7 +183,7 @@ public class SerilogUiEndpointsTest
         public Task<(IEnumerable<LogModel>, int)> FetchDataAsync(FetchLogsQuery queryParams,
             CancellationToken cancellationToken = default) => throw new NotImplementedException();
 
-        public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
+        public Task<LogStatisticModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
             throw new NotImplementedException();
 
         public string Name { get; } = "BrokenProvider";

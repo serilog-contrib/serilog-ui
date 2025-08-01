@@ -33,7 +33,7 @@ public class RavenDbDataProvider(IDocumentStore documentStore, RavenDbOptions op
         return (await logsTask, await logCountTask);
     }
 
-    public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
+    public Task<LogStatisticModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
         throw new NotImplementedException();
 
     private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams,

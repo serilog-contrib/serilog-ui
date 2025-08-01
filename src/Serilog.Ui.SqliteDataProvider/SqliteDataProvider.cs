@@ -30,7 +30,7 @@ public class SqliteDataProvider(SqliteDbOptions options, SqliteQueryBuilder quer
         return (await logsTask, await logCountTask);
     }
 
-    public Task<DashboardModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
+    public Task<LogStatisticModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
         throw new NotImplementedException();
 
     public string Name => _options.GetProviderName(SqliteProviderName);
