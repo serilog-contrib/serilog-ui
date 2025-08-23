@@ -40,7 +40,7 @@ partial class Build
 
             // due to [ref](https://github.com/Mongo2Go/Mongo2Go/issues/144)
             ProcessTasks
-                .StartProcess("sudo", $"chown -R {user}:{user} /home/runneradmin")
+                .StartProcess("sudo", $"chown -R {user}:{user} /home/runner")
                 .AssertZeroExitCode();
             // encoded spaces [ref](https://github.com/microsoft/azure-pipelines-tasks/issues/18731#issuecomment-1689118779)
             DotnetCoverage?.Invoke(
