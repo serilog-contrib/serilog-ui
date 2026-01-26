@@ -6,6 +6,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { useCloseOnResize } from 'app/hooks/useCloseOnResize';
 import { useQueryAuth } from 'app/hooks/useQueryAuth';
+import { useQueryParamSync } from 'app/hooks/useQueryParamSync';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { Suspense, lazy } from 'react';
 import { Navigate } from 'react-router';
@@ -18,6 +19,7 @@ export const Index = () => {
   const { blockHomeAccess, authenticatedFromAccessDenied } = useSerilogUiProps();
 
   useQueryAuth();
+  useQueryParamSync();
   const [mobileOpen, { toggle: toggleMobile, close }] = useDisclosure();
 
   const headerProps: AppShellHeaderConfiguration = { height: '4.3em' };
