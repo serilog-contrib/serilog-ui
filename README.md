@@ -86,6 +86,42 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 
 Do you want to test the package on-the-fly? Try out the [samples](https://github.com/serilog-contrib/serilog-ui/wiki/Develop#sample-applications), with no configuration required!
 
+## Query Parameters for Deep Linking
+
+You can now link directly to serilog-ui with specific filter values using query parameters in the URL. This is useful for:
+- Linking from external systems to specific logs or timeframes
+- Sharing filtered views with team members
+- Bookmarking frequently used filter combinations
+
+### Supported Query Parameters
+
+| Parameter | Aliases | Description | Example |
+|-----------|---------|-------------|---------|
+| `table` | `key` | The log table/database to query | `?table=MyLogs` |
+| `level` | - | Filter by log level | `?level=Error` |
+| `search` | - | Search text filter | `?search=exception` |
+| `startDate` | `from` | Start date/time (ISO 8601) | `?startDate=2024-01-01T00:00:00Z` |
+| `endDate` | `to`, `till` | End date/time (ISO 8601) | `?endDate=2024-01-02T00:00:00Z` |
+| `sortOn` | - | Property to sort by | `?sortOn=Timestamp` |
+| `sortBy` | - | Sort direction (`Asc` or `Desc`) | `?sortBy=Desc` |
+| `page` | - | Page number | `?page=2` |
+| `count` | `entriesPerPage` | Number of entries per page | `?count=50` |
+
+### Examples
+
+```
+# Link to errors from the last day
+/serilog-ui?level=Error&startDate=2024-01-25T00:00:00Z&endDate=2024-01-26T00:00:00Z
+
+# Link to logs containing "payment" in a specific table
+/serilog-ui?table=ProductionLogs&search=payment
+
+# Combine multiple filters
+/serilog-ui?level=Warning&startDate=2024-01-01T00:00:00Z&search=timeout&count=25
+```
+
+The URL will automatically update as you change filters in the UI, making it easy to share your current view with others.
+
 ## Issues and Contribution
 
 Everything is welcome! :trophy: See the [contribution guidelines](https://github.com/serilog-contrib/serilog-ui/blob/master/CONTRIBUTING.md) for details.
