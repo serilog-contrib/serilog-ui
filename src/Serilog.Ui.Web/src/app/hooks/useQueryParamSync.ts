@@ -14,6 +14,7 @@ export const useQueryParamSync = () => {
   const { setValue, watch, getValues } = useSearchForm();
   const { data: tableKeys } = useQueryTableKeys();
   const isInitialized = useRef(false);
+  const lastParamsRef = useRef<string>('');
 
   // Initialize form from URL params on mount
   useEffect(() => {
@@ -46,6 +47,7 @@ export const useQueryParamSync = () => {
       }
     }
     
+    lastParamsRef.current = searchParams.toString();
     isInitialized.current = true;
   }, [tableKeys, searchParams, setValue, getValues]);
 
@@ -55,13 +57,15 @@ export const useQueryParamSync = () => {
 
     const subscription = watch((formValues) => {
       const params = serializeSearchParams(formValues as SearchForm);
+      const newParamsString = params.toString();
       
-      // Only update if params are different from current URL
-      if (params.toString() !== searchParams.toString()) {
+      // Only update if params are different from last params we set
+      if (newParamsString !== lastParamsRef.current) {
+        lastParamsRef.current = newParamsString;
         setSearchParams(params, { replace: true });
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [watch, searchParams, setSearchParams]);
+  }, [watch, setSearchParams]);
 };
