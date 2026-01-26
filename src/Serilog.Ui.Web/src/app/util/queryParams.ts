@@ -1,4 +1,5 @@
 import { LogLevel, type SearchForm, SortDirectionOptions, SortPropertyOptions } from '../../types/types';
+import { searchFormInitialValues } from '../hooks/useSearchForm';
 
 /**
  * Parses URL search parameters and converts them into a SearchForm object
@@ -66,7 +67,11 @@ export const parseSearchParams = (searchParams: URLSearchParams): Partial<Search
   // Parse entries per page
   const entriesPerPage = searchParams.get('count') || searchParams.get('entriesPerPage');
   if (entriesPerPage) {
-    result.entriesPerPage = entriesPerPage;
+    const count = parseInt(entriesPerPage, 10);
+    // Validate it's a positive number
+    if (!isNaN(count) && count > 0) {
+      result.entriesPerPage = entriesPerPage;
+    }
   }
 
   return result;
@@ -98,19 +103,19 @@ export const serializeSearchParams = (form: SearchForm): URLSearchParams => {
     params.set('endDate', form.endDate.toISOString());
   }
 
-  if (form.sortOn && form.sortOn !== SortPropertyOptions.Timestamp) {
+  if (form.sortOn && form.sortOn !== searchFormInitialValues.sortOn) {
     params.set('sortOn', form.sortOn);
   }
 
-  if (form.sortBy && form.sortBy !== SortDirectionOptions.Desc) {
+  if (form.sortBy && form.sortBy !== searchFormInitialValues.sortBy) {
     params.set('sortBy', form.sortBy);
   }
 
-  if (form.page && form.page !== 1) {
+  if (form.page && form.page !== searchFormInitialValues.page) {
     params.set('page', form.page.toString());
   }
 
-  if (form.entriesPerPage && form.entriesPerPage !== '10') {
+  if (form.entriesPerPage && form.entriesPerPage !== searchFormInitialValues.entriesPerPage) {
     params.set('count', form.entriesPerPage);
   }
 

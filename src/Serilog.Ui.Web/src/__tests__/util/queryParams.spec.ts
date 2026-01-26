@@ -53,6 +53,16 @@ describe('util: queryParams', () => {
       expect(result.entriesPerPage).toBe('25');
     });
 
+    it('ignores invalid entries per page', () => {
+      const params = new URLSearchParams({
+        count: 'invalid',
+      });
+
+      const result = parseSearchParams(params);
+
+      expect(result.entriesPerPage).toBeUndefined();
+    });
+
     it('handles "till" as alternative for endDate', () => {
       const params = new URLSearchParams({
         till: '2024-01-02T00:00:00.000Z',

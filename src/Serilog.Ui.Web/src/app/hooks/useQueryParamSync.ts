@@ -24,7 +24,10 @@ export const useQueryParamSync = () => {
     
     // If there are URL params, initialize the form with them
     if (Object.keys(urlParams).length > 0) {
-      const tableKeysDefaultValue = tableKeys.at(0)!;
+      // Ensure we have at least one table key
+      if (tableKeys.length === 0) return;
+      
+      const tableKeysDefaultValue = tableKeys[0];
       
       // Validate and apply URL params to the form
       Object.entries(urlParams).forEach(([key, value]) => {
@@ -56,6 +59,9 @@ export const useQueryParamSync = () => {
     if (!isInitialized.current) return;
 
     const subscription = watch((formValues) => {
+      // Ensure we have a complete form object
+      if (!formValues) return;
+      
       const params = serializeSearchParams(formValues as SearchForm);
       const newParamsString = params.toString();
       
