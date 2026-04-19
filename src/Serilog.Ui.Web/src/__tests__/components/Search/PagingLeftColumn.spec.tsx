@@ -37,7 +37,7 @@ vi.mock('../../../app/hooks/useSearchForm', async () => {
 
 describe('Paging', () => {
   it('renders correctly', () => {
-    render(<PagingLeftColumn changePage={vi.fn()} />);
+    render(<PagingLeftColumn />);
 
     expect(screen.getByLabelText('paging-left-column')).toBeInTheDocument();
     expect(screen.getAllByDisplayValue('10')).toHaveLength(2);
@@ -47,7 +47,7 @@ describe('Paging', () => {
 
   it('changes entries per page value', async () => {
     const mockChangePage = vi.fn();
-    render(<PagingLeftColumn changePage={mockChangePage} />);
+    render(<PagingLeftColumn />);
 
     const inputEntriesPerPage = screen.getByRole<HTMLInputElement>('textbox', {
       name: 'entriesPerPage',
@@ -68,8 +68,7 @@ describe('Paging', () => {
   });
 
   it('changes sort on value', async () => {
-    const mockChangePage = vi.fn();
-    render(<PagingLeftColumn changePage={mockChangePage} />);
+    render(<PagingLeftColumn />);
 
     const sortOn = screen.getByRole<HTMLInputElement>('textbox', {
       name: 'sortOn',
@@ -89,8 +88,7 @@ describe('Paging', () => {
   });
 
   it('changes sort by value', async () => {
-    const mockChangePage = vi.fn();
-    render(<PagingLeftColumn changePage={mockChangePage} />);
+    render(<PagingLeftColumn />);
 
     const sortBy = screen.getByRole('button', {
       name: 'sortBy',
@@ -104,7 +102,7 @@ describe('Paging', () => {
 
   it('disables the sort on field', async () => {
     watchMock.mockReturnValue('test-key');
-    render(<PagingLeftColumn changePage={vi.fn()} />);
+    render(<PagingLeftColumn />);
 
     const sortOn = screen.getByRole<HTMLInputElement>('textbox', {
       name: 'sortOn',

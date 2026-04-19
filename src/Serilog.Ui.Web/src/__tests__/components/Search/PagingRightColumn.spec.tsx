@@ -18,6 +18,11 @@ vi.mock('../../../app/hooks/useQueryLogs', async () => {
     default: () => mockQueryLogs,
   };
 });
+vi.mock('react-router', async () => {
+  return {
+    useSearchParams: () => mockQueryLogs,
+  };
+});
 
 describe('PagingRightColumn', () => {
   const fieldMock: () => ControllerRenderProps<FieldValues, 'page'> = () => ({
@@ -29,7 +34,7 @@ describe('PagingRightColumn', () => {
   });
 
   it('renders correctly with no data', () => {
-    render(<PagingRightColumn field={fieldMock()} />);
+    render(<PagingRightColumn />);
 
     expect(screen.getByRole('button', { name: '1' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'pagination-dialog' })).toBeInTheDocument();
@@ -41,7 +46,7 @@ describe('PagingRightColumn', () => {
     mockQueryLogs.data.count = 10;
     mockQueryLogs.data.total = 30;
 
-    render(<PagingRightColumn field={field} />);
+    render(<PagingRightColumn />);
     expect(screen.getByRole('button', { name: '2' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'pagination-dialog' })).not.toBeDisabled();
 
@@ -53,7 +58,7 @@ describe('PagingRightColumn', () => {
     mockQueryLogs.data.count = 10;
     mockQueryLogs.data.total = 30;
 
-    render(<PagingRightColumn field={field} />);
+    render(<PagingRightColumn />);
     await userEvent.click(screen.getByRole('button', { name: '2' }));
 
     expect(field.onChange).toHaveBeenCalledTimes(1);
@@ -64,7 +69,7 @@ describe('PagingRightColumn', () => {
     mockQueryLogs.data.count = 10;
     mockQueryLogs.data.total = 30;
 
-    render(<PagingRightColumn field={field} />);
+    render(<PagingRightColumn />);
 
     await userEvent.click(screen.getByRole('button', { name: 'pagination-dialog' }));
     await userEvent.type(screen.getByPlaceholderText('1'), '2');

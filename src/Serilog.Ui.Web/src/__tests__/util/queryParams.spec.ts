@@ -1,8 +1,7 @@
-import { parseSearchParams, serializeSearchParams } from 'app/util/queryParams';
+import { parseSearchParams } from 'app/util/queryParams';
 import { describe, expect, it } from 'vitest';
 import {
   LogLevel,
-  SearchForm,
   SortDirectionOptions,
   SortPropertyOptions,
 } from 'types/types';
@@ -19,12 +18,12 @@ describe('util: queryParams', () => {
         sortOn: 'Level',
         sortBy: 'Asc',
         page: '2',
-        count: '20',
+        entriesPerPage: '25',
       });
 
       const result = parseSearchParams(params);
 
-      expect(result).toEqual({
+      expect(result.urlParams).toEqual({
         table: 'test-table',
         level: LogLevel.Error,
         search: 'test search',
@@ -33,57 +32,24 @@ describe('util: queryParams', () => {
         sortOn: SortPropertyOptions.Level,
         sortBy: SortDirectionOptions.Asc,
         page: 2,
-        entriesPerPage: '20',
-      });
-    });
-
-    it('parses alternative parameter names', () => {
-      const params = new URLSearchParams({
-        key: 'test-table',
-        from: '2024-01-01T00:00:00.000Z',
-        to: '2024-01-02T00:00:00.000Z',
         entriesPerPage: '25',
       });
-
-      const result = parseSearchParams(params);
-
-      expect(result.table).toBe('test-table');
-      expect(result.startDate).toEqual(new Date('2024-01-01T00:00:00.000Z'));
-      expect(result.endDate).toEqual(new Date('2024-01-02T00:00:00.000Z'));
-      expect(result.entriesPerPage).toBe('25');
+      expect(result.cleanedFromInvalidQueryString).toBeUndefined();
     });
 
-    it('ignores invalid entries per page', () => {
-      const params = new URLSearchParams({
-        count: 'invalid',
-      });
-
-      const result = parseSearchParams(params);
-
-      expect(result.entriesPerPage).toBeUndefined();
-    });
-
-    it('handles "till" as alternative for endDate', () => {
-      const params = new URLSearchParams({
-        till: '2024-01-02T00:00:00.000Z',
-      });
-
-      const result = parseSearchParams(params);
-
-      expect(result.endDate).toEqual(new Date('2024-01-02T00:00:00.000Z'));
-    });
-
-    it('ignores invalid log levels', () => {
+    it('ignores invalid log levels and flags them for cleanup', () => {
       const params = new URLSearchParams({
         level: 'InvalidLevel',
       });
 
       const result = parseSearchParams(params);
 
-      expect(result.level).toBeUndefined();
+      expect(result.urlParams.level).toBeUndefined();
+      expect(result.cleanedFromInvalidQueryString).toBeDefined();
+      expect(result.cleanedFromInvalidQueryString!.has('level')).toBe(false);
     });
 
-    it('ignores invalid dates', () => {
+    it('ignores invalid dates and flags them for cleanup', () => {
       const params = new URLSearchParams({
         startDate: 'not-a-date',
         endDate: 'invalid',
@@ -91,115 +57,102 @@ describe('util: queryParams', () => {
 
       const result = parseSearchParams(params);
 
-      expect(result.startDate).toBeUndefined();
-      expect(result.endDate).toBeUndefined();
+      expect(result.urlParams.startDate).toBeUndefined();
+      expect(result.urlParams.endDate).toBeUndefined();
+      expect(result.cleanedFromInvalidQueryString).toBeDefined();
+      expect(result.cleanedFromInvalidQueryString!.has('startDate')).toBe(false);
+      expect(result.cleanedFromInvalidQueryString!.has('endDate')).toBe(false);
     });
 
-    it('ignores invalid page numbers', () => {
+    it('ignores invalid page numbers and flags them for cleanup', () => {
       const params = new URLSearchParams({
         page: '0',
       });
 
       const result = parseSearchParams(params);
 
-      expect(result.page).toBeUndefined();
+      expect(result.urlParams.page).toBeUndefined();
+      expect(result.cleanedFromInvalidQueryString).toBeDefined();
+      expect(result.cleanedFromInvalidQueryString!.has('page')).toBe(false);
     });
 
-    it('returns empty object for no parameters', () => {
+    it('ignores non-numeric page values and flags them for cleanup', () => {
+      const params = new URLSearchParams({
+        page: 'abc',
+      });
+
+      const result = parseSearchParams(params);
+
+      expect(result.urlParams.page).toBeUndefined();
+      expect(result.cleanedFromInvalidQueryString).toBeDefined();
+    });
+
+    it('ignores invalid entriesPerPage values and flags them for cleanup', () => {
+      const params = new URLSearchParams({
+        entriesPerPage: '15',
+      });
+
+      const result = parseSearchParams(params);
+
+      expect(result.urlParams.entriesPerPage).toBeUndefined();
+      expect(result.cleanedFromInvalidQueryString).toBeDefined();
+      expect(result.cleanedFromInvalidQueryString!.has('entriesPerPage')).toBe(false);
+    });
+
+    it('accepts valid entriesPerPage values', () => {
+      for (const count of ['10', '25', '50', '100']) {
+        const params = new URLSearchParams({ entriesPerPage: count });
+        const result = parseSearchParams(params);
+        expect(result.urlParams.entriesPerPage).toBe(count);
+        expect(result.cleanedFromInvalidQueryString).toBeUndefined();
+      }
+    });
+
+    it('returns empty urlParams for no parameters', () => {
       const params = new URLSearchParams();
 
       const result = parseSearchParams(params);
 
-      expect(result).toEqual({});
-    });
-  });
-
-  describe('serializeSearchParams', () => {
-    const baseForm: SearchForm = {
-      table: 'test-table',
-      level: null,
-      startDate: null,
-      endDate: null,
-      search: '',
-      sortOn: SortPropertyOptions.Timestamp,
-      sortBy: SortDirectionOptions.Desc,
-      entriesPerPage: '10',
-      page: 1,
-    };
-
-    it('serializes all non-default values', () => {
-      const form: SearchForm = {
-        ...baseForm,
-        table: 'custom-table',
-        level: LogLevel.Error,
-        search: 'test search',
-        startDate: new Date('2024-01-01T00:00:00.000Z'),
-        endDate: new Date('2024-01-02T00:00:00.000Z'),
-        sortOn: SortPropertyOptions.Level,
-        sortBy: SortDirectionOptions.Asc,
-        page: 2,
-        entriesPerPage: '20',
-      };
-
-      const result = serializeSearchParams(form);
-
-      expect(result.get('table')).toBe('custom-table');
-      expect(result.get('level')).toBe('Error');
-      expect(result.get('search')).toBe('test search');
-      expect(result.get('startDate')).toBe('2024-01-01T00:00:00.000Z');
-      expect(result.get('endDate')).toBe('2024-01-02T00:00:00.000Z');
-      expect(result.get('sortOn')).toBe('Level');
-      expect(result.get('sortBy')).toBe('Asc');
-      expect(result.get('page')).toBe('2');
-      expect(result.get('count')).toBe('20');
+      expect(result.urlParams).toEqual({});
+      expect(result.cleanedFromInvalidQueryString).toBeUndefined();
     });
 
-    it('omits default values to keep URL clean', () => {
-      const form: SearchForm = {
-        ...baseForm,
+    it('skips parameters with no value without flagging them as invalid', () => {
+      const params = new URLSearchParams();
+
+      const result = parseSearchParams(params);
+
+      expect(result.cleanedFromInvalidQueryString).toBeUndefined();
+    });
+
+    it('preserves valid params while cleaning invalid ones', () => {
+      const params = new URLSearchParams({
+        table: 'my-table',
+        level: 'NotALevel',
+        page: '3',
+      });
+
+      const result = parseSearchParams(params);
+
+      expect(result.urlParams.table).toBe('my-table');
+      expect(result.urlParams.page).toBe(3);
+      expect(result.urlParams.level).toBeUndefined();
+      expect(result.cleanedFromInvalidQueryString).toBeDefined();
+      expect(result.cleanedFromInvalidQueryString!.get('table')).toBe('my-table');
+      expect(result.cleanedFromInvalidQueryString!.get('page')).toBe('3');
+      expect(result.cleanedFromInvalidQueryString!.has('level')).toBe(false);
+    });
+
+    it('ignores unknown query parameters', () => {
+      const params = new URLSearchParams({
         table: 'test-table',
-        sortOn: SortPropertyOptions.Timestamp, // default
-        sortBy: SortDirectionOptions.Desc, // default
-        page: 1, // default
-        entriesPerPage: '10', // default
-      };
+        unknownParam: 'value',
+      });
 
-      const result = serializeSearchParams(form);
+      const result = parseSearchParams(params);
 
-      expect(result.get('sortOn')).toBeNull();
-      expect(result.get('sortBy')).toBeNull();
-      expect(result.get('page')).toBeNull();
-      expect(result.get('count')).toBeNull();
-      expect(result.get('table')).toBe('test-table');
-    });
-
-    it('omits null and empty values', () => {
-      const form: SearchForm = {
-        ...baseForm,
-        level: null,
-        search: '',
-        startDate: null,
-        endDate: null,
-      };
-
-      const result = serializeSearchParams(form);
-
-      expect(result.get('level')).toBeNull();
-      expect(result.get('search')).toBeNull();
-      expect(result.get('startDate')).toBeNull();
-      expect(result.get('endDate')).toBeNull();
-    });
-
-    it('includes table even if empty string', () => {
-      const form: SearchForm = {
-        ...baseForm,
-        table: '',
-      };
-
-      const result = serializeSearchParams(form);
-
-      // Empty string should not be included
-      expect(result.get('table')).toBeNull();
+      expect(result.urlParams).toEqual({ table: 'test-table' });
+      expect(result.urlParams).not.toHaveProperty('unknownParam');
     });
   });
 });
