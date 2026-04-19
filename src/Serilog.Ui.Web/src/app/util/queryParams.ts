@@ -1,123 +1,127 @@
-import { LogLevel, type SearchForm, SortDirectionOptions, SortPropertyOptions } from '../../types/types';
-import { searchFormInitialValues } from '../hooks/useSearchForm';
+import dayjs from 'dayjs';
+import {
+  LogLevel,
+  type SearchForm,
+  SortDirectionOptions,
+  SortPropertyOptions,
+} from '../../types/types';
 
-/**
- * Parses URL search parameters and converts them into a SearchForm object
- */
-export const parseSearchParams = (searchParams: URLSearchParams): Partial<SearchForm> => {
-  const result: Partial<SearchForm> = {};
+interface ParamParser<T> {
+  canHandle: (key: string) => boolean;
+  extract: (
+    value: string | null,
+    key: string,
+  ) => {
+    valued?: boolean;
+    invalid?: boolean;
+    value: T | null;
+  };
+}
 
-  // Parse table (key parameter)
-  const table = searchParams.get('table') || searchParams.get('key');
-  if (table) {
-    result.table = table;
-  }
+const DateParser: ParamParser<Date> = {
+  canHandle: (k) => ['startDate', 'endDate'].includes(k),
+  extract: (value) => {
+    if (!value) return { valued: false, value: null };
 
-  // Parse level
-  const level = searchParams.get('level');
-  if (level && Object.values(LogLevel).includes(level as LogLevel)) {
-    result.level = level as LogLevel;
-  }
-
-  // Parse search text
-  const search = searchParams.get('search');
-  if (search) {
-    result.search = search;
-  }
-
-  // Parse start date
-  const startDate = searchParams.get('startDate') || searchParams.get('from');
-  if (startDate) {
-    const date = new Date(startDate);
-    if (!isNaN(date.getTime())) {
-      result.startDate = date;
-    }
-  }
-
-  // Parse end date
-  const endDate = searchParams.get('endDate') || searchParams.get('to') || searchParams.get('till');
-  if (endDate) {
-    const date = new Date(endDate);
-    if (!isNaN(date.getTime())) {
-      result.endDate = date;
-    }
-  }
-
-  // Parse sortOn
-  const sortOn = searchParams.get('sortOn');
-  if (sortOn && Object.values(SortPropertyOptions).includes(sortOn as SortPropertyOptions)) {
-    result.sortOn = sortOn as SortPropertyOptions;
-  }
-
-  // Parse sortBy
-  const sortBy = searchParams.get('sortBy');
-  if (sortBy && Object.values(SortDirectionOptions).includes(sortBy as SortDirectionOptions)) {
-    result.sortBy = sortBy as SortDirectionOptions;
-  }
-
-  // Parse page
-  const page = searchParams.get('page');
-  if (page) {
-    const pageNum = parseInt(page, 10);
-    if (!isNaN(pageNum) && pageNum > 0) {
-      result.page = pageNum;
-    }
-  }
-
-  // Parse entries per page
-  const entriesPerPage = searchParams.get('count') || searchParams.get('entriesPerPage');
-  if (entriesPerPage) {
-    const count = parseInt(entriesPerPage, 10);
-    // Validate it's a positive number
-    if (!isNaN(count) && count > 0) {
-      result.entriesPerPage = entriesPerPage;
-    }
-  }
-
-  return result;
+    const date = dayjs(value);
+    if (!date.isValid()) return { invalid: true, value: null };
+    return { valued: true, value: date.toDate() };
+  },
 };
 
-/**
- * Serializes a SearchForm object into URL search parameters
- */
-export const serializeSearchParams = (form: SearchForm): URLSearchParams => {
-  const params = new URLSearchParams();
+enum entriesPerPage {
+  'Ten' = '10',
+  'TwentyFive' = '25',
+  'Fifty' = '50',
+  'OneHundred' = '100',
+}
+const EnumParser: ParamParser<LogLevel | SortPropertyOptions | SortDirectionOptions> = {
+  canHandle: (k) => ['entriesPerPage', 'level', 'sortBy', 'sortOn'].includes(k),
+  extract: (value, k) => {
+    if (!value) return { valued: false, value: null };
+    let values: string[] = [];
+    switch (k) {
+      case 'entriesPerPage':
+        values = Object.values(entriesPerPage);
+        break;
+      case 'level':
+        values = Object.values(LogLevel);
+        break;
+      case 'sortBy':
+        values = Object.values(SortDirectionOptions);
+        break;
+      case 'sortOn':
+        values = Object.values(SortPropertyOptions);
+        break;
+    }
+    if (!values.includes(value)) return { invalid: true, value: null };
 
-  if (form.table) {
-    params.set('table', form.table);
-  }
+    return {
+      valued: true,
+      value: value as LogLevel | SortPropertyOptions | SortDirectionOptions,
+    };
+  },
+};
+const NumberParser: ParamParser<number> = {
+  canHandle: (k) => ['page'].includes(k),
+  extract: (value) => {
+    if (!value) return { valued: false, value: null };
 
-  if (form.level) {
-    params.set('level', form.level);
-  }
+    const pageNum = parseInt(value, 10);
+    if (!isNaN(pageNum) && pageNum > 0) {
+      return { valued: true, value: pageNum };
+    }
+    return { invalid: true, value: null };
+  },
+};
+const StringParser: ParamParser<string> = {
+  canHandle: (k) => ['search', 'table'].includes(k),
+  extract: (value) => {
+    return { valued: !!value, value };
+  },
+};
 
-  if (form.search) {
-    params.set('search', form.search);
-  }
+const keys = [
+  'endDate',
+  'entriesPerPage',
+  'level',
+  'page',
+  'search',
+  'sortBy',
+  'sortOn',
+  'startDate',
+  'table',
+] as (keyof SearchForm)[];
+const validators = [DateParser, EnumParser, NumberParser, StringParser];
 
-  if (form.startDate) {
-    params.set('startDate', form.startDate.toISOString());
-  }
+export const parseSearchParams = (searchParams: URLSearchParams) => {
+  const getParam = (key: string) => searchParams.get(key);
 
-  if (form.endDate) {
-    params.set('endDate', form.endDate.toISOString());
-  }
+  return keys.reduce<{
+    urlParams: Record<string, string | Date | number | null>;
+    cleanedFromInvalidQueryString: URLSearchParams | undefined;
+  }>(
+    (prev, curr) => {
+      const validator = validators.find((x) => x.canHandle(curr));
+      if (!validator) return prev;
+      const data = validator.extract(getParam(curr), curr);
 
-  if (form.sortOn && form.sortOn !== searchFormInitialValues.sortOn) {
-    params.set('sortOn', form.sortOn);
-  }
+      if (data.valued && data.value !== null) {
+        prev.urlParams[curr] = data.value;
+      }
 
-  if (form.sortBy && form.sortBy !== searchFormInitialValues.sortBy) {
-    params.set('sortBy', form.sortBy);
-  }
+      if (data.invalid) {
+        prev.cleanedFromInvalidQueryString ??= new URLSearchParams(
+          searchParams.toString(),
+        );
+        prev.cleanedFromInvalidQueryString.delete(curr);
+      }
 
-  if (form.page && form.page !== searchFormInitialValues.page) {
-    params.set('page', form.page.toString());
-  }
-
-  if (form.entriesPerPage && form.entriesPerPage !== searchFormInitialValues.entriesPerPage) {
-    params.set('count', form.entriesPerPage);
-  }
-
-  return params;
+      return prev;
+    },
+    {
+      urlParams: {},
+      cleanedFromInvalidQueryString: undefined,
+    },
+  );
 };

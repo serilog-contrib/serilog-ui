@@ -1,3 +1,4 @@
+import { getSearchableDate } from 'app/util/dates';
 import dayjs from 'dayjs';
 import { type SearchForm, type SearchResult } from '../../types/types';
 import { isNotNullGuard, isStringGuard } from '../util/guards';
@@ -62,9 +63,9 @@ const prepareSearchUrl = (input: SearchForm, routePrefix?: string) => {
 
   const url = `${determineHost(routePrefix)}/api/logs?page=${page}&count=${count}`;
 
-  const startAsString = startDate?.toISOString() ?? '';
+  const startAsString = getSearchableDate(startDate);
   inputData['startDate'] = startAsString as unknown as Date;
-  const endAsString = endDate?.toISOString() ?? '';
+  const endAsString = getSearchableDate(endDate);
   inputData['endDate'] = endAsString as unknown as Date;
   inputData['key'] = key;
 

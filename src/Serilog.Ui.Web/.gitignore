@@ -5,3 +5,4 @@ wwwroot/mockServiceWorker.js
 !wwwroot/dev/mockServiceWorker.js
 
 **/jest-*.xml
+.yarn/
