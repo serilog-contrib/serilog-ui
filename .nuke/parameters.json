@@ -1,4 +1,4 @@
 {
   "$schema": "./build.schema.json",
-  "Solution": "Serilog.Ui.sln"
+  "Solution": "Serilog.Ui.slnx"
 }
