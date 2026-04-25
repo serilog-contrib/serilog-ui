@@ -1,6 +1,9 @@
-import { render, screen, userEvent } from '__tests__/_setup/testing-utils';
+import {
+  renderSerilogUiTestWrapper,
+  screen,
+  userEvent,
+} from '__tests__/_setup/testing-utils';
 import { PagingRightColumn } from 'app/components/Search/PagingRightColumn';
-import { ControllerRenderProps, FieldValues } from 'react-hook-form';
 import { SearchResult } from 'types/types';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -25,16 +28,16 @@ vi.mock('react-router', async () => {
 });
 
 describe('PagingRightColumn', () => {
-  const fieldMock: () => ControllerRenderProps<FieldValues, 'page'> = () => ({
-    onChange: vi.fn(),
-    onBlur: vi.fn(),
-    value: '1',
-    name: 'page',
-    ref: () => null,
-  });
+  // const fieldMock: () => ControllerRenderProps<FieldValues, 'page'> = () => ({
+  //   onChange: vi.fn(),
+  //   onBlur: vi.fn(),
+  //   value: '1',
+  //   name: 'page',
+  //   ref: () => null,
+  // });
 
   it('renders correctly with no data', () => {
-    render(<PagingRightColumn />);
+    renderSerilogUiTestWrapper(<PagingRightColumn />);
 
     expect(screen.getByRole('button', { name: '1' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'pagination-dialog' })).toBeInTheDocument();
@@ -42,41 +45,41 @@ describe('PagingRightColumn', () => {
   });
 
   it('renders pagination correctly', () => {
-    const field = fieldMock();
     mockQueryLogs.data.count = 10;
     mockQueryLogs.data.total = 30;
 
-    render(<PagingRightColumn />);
+    renderSerilogUiTestWrapper(<PagingRightColumn />);
     expect(screen.getByRole('button', { name: '2' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'pagination-dialog' })).not.toBeDisabled();
-
-    field.value = '2';
   });
 
   it('calls onChange on pagination button click', async () => {
-    const field = fieldMock();
+    const activePageBtn = () => screen.getByRole('button', { current: 'page' });
     mockQueryLogs.data.count = 10;
     mockQueryLogs.data.total = 30;
 
-    render(<PagingRightColumn />);
+    renderSerilogUiTestWrapper(<PagingRightColumn />);
+    expect(activePageBtn().innerText).toBe('1');
     await userEvent.click(screen.getByRole('button', { name: '2' }));
 
-    expect(field.onChange).toHaveBeenCalledTimes(1);
+    expect(activePageBtn().innerText).toBe('2');
   });
 
   it('calls onChange when changing page in the modal', async () => {
-    const field = fieldMock();
+    const activePageBtn = () => screen.getByRole('button', { current: 'page' });
+
     mockQueryLogs.data.count = 10;
     mockQueryLogs.data.total = 30;
 
-    render(<PagingRightColumn />);
+    renderSerilogUiTestWrapper(<PagingRightColumn />);
+    expect(activePageBtn().innerText).toBe('1');
 
     await userEvent.click(screen.getByRole('button', { name: 'pagination-dialog' }));
-    await userEvent.type(screen.getByPlaceholderText('1'), '2');
+    await userEvent.type(screen.getByPlaceholderText('1'), '[Backspace]2');
 
     const setPage = screen.getByRole('button', { name: 'set-page-dialog' });
     await userEvent.click(setPage);
 
-    expect(field.onChange).toHaveBeenCalledTimes(1);
+    expect(activePageBtn().innerText).toBe('2');
   });
 });

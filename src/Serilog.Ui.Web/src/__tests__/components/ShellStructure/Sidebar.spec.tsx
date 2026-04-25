@@ -1,4 +1,8 @@
-import { render, screen, waitFor } from '__tests__/_setup/testing-utils';
+import {
+  renderSerilogUiTestWrapper,
+  screen,
+  waitFor,
+} from '__tests__/_setup/testing-utils';
 import Sidebar from 'app/components/ShellStructure/Sidebar';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -15,7 +19,7 @@ describe('Sidebar', () => {
   it('renders', async () => {
     window.innerWidth = 350;
 
-    render(<Sidebar />);
+    renderSerilogUiTestWrapper(<Sidebar />);
 
     expect(
       screen.getByRole('button', { name: 'Home', hidden: true }),

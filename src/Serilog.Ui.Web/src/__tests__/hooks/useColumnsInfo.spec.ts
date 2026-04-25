@@ -1,4 +1,4 @@
-import { renderHook } from '__tests__/_setup/testing-utils';
+import { renderHookSerilogUiTestWrapper } from '__tests__/_setup/testing-utils';
 import { useColumnsInfo } from 'app/hooks/useColumnsInfo';
 import {
   AdditionalColumnLogType,
@@ -37,7 +37,9 @@ describe('useColumnsInfo', () => {
   it('renders without additional data with not found key', () => {
     mockForm.getValues.mockReturnValue('db_key_2');
 
-    const { result } = renderHook(() => useColumnsInfo(), { columnsInfo: sample });
+    const { result } = renderHookSerilogUiTestWrapper(() => useColumnsInfo(), {
+      columnsInfo: sample,
+    });
 
     expect(result.current.additionalColumn).toBeUndefined();
     expect(result.current.removeException).toBeFalsy();
@@ -47,7 +49,7 @@ describe('useColumnsInfo', () => {
   it('finds info from table key', () => {
     mockForm.getValues.mockReturnValue('db_key');
 
-    const { result } = renderHook(() => useColumnsInfo('column'), {
+    const { result } = renderHookSerilogUiTestWrapper(() => useColumnsInfo('column'), {
       columnsInfo: sample,
     });
 
@@ -63,9 +65,12 @@ describe('useColumnsInfo', () => {
     (currentColumn) => {
       mockForm.getValues.mockReturnValue('db_key');
 
-      const { result } = renderHook(() => useColumnsInfo(currentColumn), {
-        columnsInfo: sample,
-      });
+      const { result } = renderHookSerilogUiTestWrapper(
+        () => useColumnsInfo(currentColumn),
+        {
+          columnsInfo: sample,
+        },
+      );
 
       expect(result.current.removeProperties).toBeTruthy();
     },
@@ -76,7 +81,7 @@ describe('useColumnsInfo', () => {
     (logType) => {
       mockForm.getValues.mockReturnValue('db_key');
 
-      const { result } = renderHook(
+      const { result } = renderHookSerilogUiTestWrapper(
         () => useColumnsInfo(RemovableColumns.properties, logType),
         {
           columnsInfo: sample,

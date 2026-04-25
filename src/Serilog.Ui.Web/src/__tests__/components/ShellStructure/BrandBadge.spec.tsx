@@ -1,4 +1,4 @@
-import { render, screen } from '__tests__/_setup/testing-utils';
+import { renderSerilogUiTestWrapper, screen } from '__tests__/_setup/testing-utils';
 import BrandBadge from 'app/components/ShellStructure/BrandBadge';
 import dayjs from 'dayjs';
 import { describe, expect, it, vi } from 'vitest';
@@ -14,7 +14,7 @@ vi.mock('../../../app/hooks/useSerilogUiProps', () => {
 
 describe('BrandBadge', () => {
   it('renders', () => {
-    render(<BrandBadge size="sm" />);
+    renderSerilogUiTestWrapper(<BrandBadge size="sm" />);
 
     expect(screen.getByText('Serilog UI')).toBeInTheDocument();
     expect(screen.getByText(dayjs().year())).toBeInTheDocument();
@@ -23,7 +23,7 @@ describe('BrandBadge', () => {
   it('not render if flag is false', () => {
     propsMock.showBrand = false;
 
-    render(<BrandBadge size="sm" />);
+    renderSerilogUiTestWrapper(<BrandBadge size="sm" />);
 
     expect(screen.queryByText('Serilog UI')).not.toBeInTheDocument();
     expect(screen.queryByText(dayjs().year())).not.toBeInTheDocument();

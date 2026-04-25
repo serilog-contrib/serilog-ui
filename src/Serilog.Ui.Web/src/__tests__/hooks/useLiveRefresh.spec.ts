@@ -1,10 +1,10 @@
-import { act, renderHook } from '__tests__/_setup/testing-utils';
+import { act, renderHookSerilogUiTestWrapper } from '__tests__/_setup/testing-utils';
 import { describe, expect, it } from 'vitest';
 import { useLiveRefresh } from '../../app/hooks/useLiveRefresh';
 
 describe('useLiveRefresh', () => {
   it('returns base properties', () => {
-    const { result } = renderHook(() => useLiveRefresh());
+    const { result } = renderHookSerilogUiTestWrapper(() => useLiveRefresh());
 
     expect(result.current.isLiveRefreshRunning).toBeFalsy();
     expect(result.current.liveRefreshLabel).toBe('');
@@ -20,7 +20,7 @@ describe('useLiveRefresh', () => {
     { refetch: 300000, label: '5m', time: 'threehundred' },
     { refetch: 900000, label: '15m', time: 'ninehundred' },
   ])('starts fetch interval', ({ label, refetch, time }) => {
-    const { result } = renderHook(() => useLiveRefresh());
+    const { result } = renderHookSerilogUiTestWrapper(() => useLiveRefresh());
 
     act(() => {
       result.current.startLiveRefresh(time);
@@ -32,7 +32,7 @@ describe('useLiveRefresh', () => {
   });
 
   it('stops fetch interval', () => {
-    const { result } = renderHook(() => useLiveRefresh());
+    const { result } = renderHookSerilogUiTestWrapper(() => useLiveRefresh());
 
     act(() => {
       result.current.startLiveRefresh('five');
@@ -48,7 +48,7 @@ describe('useLiveRefresh', () => {
   });
 
   it('does not activate on invalid time', () => {
-    const { result } = renderHook(() => useLiveRefresh());
+    const { result } = renderHookSerilogUiTestWrapper(() => useLiveRefresh());
 
     act(() => {
       result.current.startLiveRefresh('five');
@@ -64,7 +64,7 @@ describe('useLiveRefresh', () => {
   });
 
   it('set activation time to 0 on unexpected time', () => {
-    const { result } = renderHook(() => useLiveRefresh());
+    const { result } = renderHookSerilogUiTestWrapper(() => useLiveRefresh());
 
     act(() => {
       result.current.startLiveRefresh('uhm');

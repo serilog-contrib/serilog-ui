@@ -1,5 +1,5 @@
 import { notifications } from '@mantine/notifications';
-import { act, renderHook } from '__tests__/_setup/testing-utils';
+import { act, renderHookSerilogUiTestWrapper } from '__tests__/_setup/testing-utils';
 import { useJwtTimeout } from 'app/hooks/useJwtTimeout';
 import { IAuthPropertiesStorageKeys } from 'app/util/auth';
 import { AuthType } from 'types/types';
@@ -18,7 +18,9 @@ describe('useJwtTimeout', () => {
     const spy = vi.spyOn(notifications, 'show');
     sessionStorage.setItem(IAuthPropertiesStorageKeys.jwt_bearerToken, 'invalid_token');
 
-    const {} = renderHook(() => useJwtTimeout(), { authType: AuthType.Jwt });
+    const {} = renderHookSerilogUiTestWrapper(() => useJwtTimeout(), {
+      authType: AuthType.Jwt,
+    });
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(300005);
@@ -45,7 +47,9 @@ describe('useJwtTimeout', () => {
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjI5MTYyMzkwMjJ9.mYtgSqdUIxK8_RnYBTUP4cmpKw83aKi7cMiixF3qMB4',
     );
 
-    const {} = renderHook(() => useJwtTimeout(), { authType: AuthType.Jwt });
+    const {} = renderHookSerilogUiTestWrapper(() => useJwtTimeout(), {
+      authType: AuthType.Jwt,
+    });
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(300005);
@@ -58,7 +62,9 @@ describe('useJwtTimeout', () => {
     const spy = vi.spyOn(notifications, 'show');
     sessionStorage.setItem(IAuthPropertiesStorageKeys.jwt_bearerToken, 'invalid-token');
 
-    const {} = renderHook(() => useJwtTimeout(), { authType: AuthType.Custom });
+    const {} = renderHookSerilogUiTestWrapper(() => useJwtTimeout(), {
+      authType: AuthType.Custom,
+    });
 
     await act(async () => {
       await vi.advanceTimersByTimeAsync(300005);
