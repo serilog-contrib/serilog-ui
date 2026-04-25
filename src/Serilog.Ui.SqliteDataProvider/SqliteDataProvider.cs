@@ -61,13 +61,13 @@ public class SqliteDataProvider(SqliteDbOptions options, SqliteQueryBuilder quer
         }).ToList();
     }
 
-    private Task<int> CountLogsAsync(FetchLogsQuery queryParams)
+    private async Task<int> CountLogsAsync(FetchLogsQuery queryParams)
     {
         var query = queryBuilder.BuildCountLogsQuery(_options.ColumnNames, _options.Schema, _options.TableName, queryParams);
 
         using var connection = new SqliteConnection(_options.ConnectionString);
 
-        return connection.QueryFirstOrDefaultAsync<int>(
+        return await connection.QueryFirstOrDefaultAsync<int>(
             query.ToString(),
             new
             {

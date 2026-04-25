@@ -25,7 +25,7 @@ namespace MySql.Tests.Util
 
         public MySqlTestProvider()
         {
-            Container = new MySqlBuilder().Build();
+            Container = new MySqlBuilder("mysql:8.0").Build();
             DbOptions = new MySqlDbOptions("dbo").WithTable("Logs");
         }
 

@@ -27,8 +27,7 @@ public sealed class RavenDbTestProvider : DatabaseInstance
     public RavenDbTestProvider()
     {
         _documentStore = new DocumentStore { Database = DbName };
-        Container = new RavenDbBuilder()
-            .WithImage("ravendb/ravendb:7.0-ubuntu-latest")
+        Container = new RavenDbBuilder("ravendb/ravendb:7.0-ubuntu-latest")
             .Build();
     }
 

@@ -21,13 +21,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Nuke.Common" Version="9.0.4" />
-		<PackageReference Include="Nuke.Tooling.Generator" Version="9.0.4" />
+		<PackageReference Include="Nuke.Common" Version="10.1.0" />
+		<PackageReference Include="Nuke.Tooling.Generator" Version="10.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageDownload Include="dotnet-coverage" Version="[17.14.2]"/>
-		<PackageDownload Include="dotnet-reportgenerator-globaltool" Version="[5.4.5]"/>
-		<PackageDownload Include="dotnet-sonarscanner" Version="[10.1.2]" />
+		<PackageDownload Include="dotnet-coverage" Version="[18.6.2]"/>
+		<PackageDownload Include="dotnet-reportgenerator-globaltool" Version="[5.5.6]"/>
+		<PackageDownload Include="dotnet-sonarscanner" Version="[11.2.1]" />
 	</ItemGroup>
 </Project>
