@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Serilog.UI</PackageId>
-    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <Version>3.2.0</Version>
   </PropertyGroup>

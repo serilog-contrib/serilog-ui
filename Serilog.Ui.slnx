@@ -1,0 +1,43 @@
+<Solution>
+  <Folder Name="/samples/">
+    <Project Path="samples/WebApi/WebApi.csproj" />
+    <Project Path="samples/WebApp/WebApp.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.Props" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Solution Items/assets/">
+    <File Path="assets/serilog-ui.jpg" />
+  </Folder>
+  <Folder Name="/Solution Items/tests/">
+    <File Path="tests/Directory.Build.Props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Serilog.Ui.Core/Serilog.Ui.Core.csproj" />
+    <Project Path="src/Serilog.Ui.ElasticSearchProvider/Serilog.Ui.ElasticSearchProvider.csproj" />
+    <Project Path="src/Serilog.Ui.MongoDbProvider/Serilog.Ui.MongoDbProvider.csproj" />
+    <Project Path="src/Serilog.Ui.MsSqlServerProvider/Serilog.Ui.MsSqlServerProvider.csproj" />
+    <Project Path="src/Serilog.Ui.MySqlProvider/Serilog.Ui.MySqlProvider.csproj" />
+    <Project Path="src/Serilog.Ui.PostgreSqlProvider/Serilog.Ui.PostgreSqlProvider.csproj" />
+    <Project Path="src/Serilog.Ui.RavenDbProvider/Serilog.Ui.RavenDbProvider.csproj" />
+    <Project Path="src/Serilog.Ui.SqliteDataProvider/Serilog.Ui.SqliteDataProvider.csproj" />
+    <Project Path="src/Serilog.Ui.Web/Serilog.Ui.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Serilog.Ui.Common.Tests/Serilog.Ui.Common.Tests.csproj" />
+    <Project Path="tests/Serilog.Ui.ElasticSearchProvider.Tests/Serilog.Ui.ElasticSearchProvider.Tests.csproj" />
+    <Project Path="tests/Serilog.Ui.MongoDbProvider.Tests/Serilog.Ui.MongoDbProvider.Tests.csproj" />
+    <Project Path="tests/Serilog.Ui.MsSqlServerProvider.Tests/Serilog.Ui.MsSqlServerProvider.Tests.csproj" />
+    <Project Path="tests/Serilog.Ui.MySqlProvider.Tests/Serilog.Ui.MySqlProvider.Tests.csproj" />
+    <Project Path="tests/Serilog.Ui.PostgreSqlProvider.Tests/Serilog.Ui.PostgreSqlProvider.Tests.csproj" />
+    <Project Path="tests/Serilog.Ui.RavenDbProvider.Tests/Serilog.Ui.RavenDbProvider.Tests.csproj" />
+    <Project Path="tests/Serilog.Ui.SqliteProvider.Tests/Serilog.Ui.SqliteProvider.Tests.csproj" />
+    <Project Path="tests/Serilog.Ui.Web.Tests/Serilog.Ui.Web.Tests.csproj" />
+  </Folder>
+  <Project Path="build/_build.csproj">
+    <Build Project="false" />
+  </Project>
+</Solution>
