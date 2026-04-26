@@ -18,6 +18,9 @@ partial class Build
         .Before(Backend_Restore)
         .Executes(() =>
         {
+            ProcessTasks
+                .StartProcess("corepack", "enable") // yarn v4
+                .AssertZeroExitCode();
             YarnTasks.YarnInstall(s => s
                 .SetProcessWorkingDirectory(FrontendWorkingDirectory)
             );
