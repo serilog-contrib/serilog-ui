@@ -17,7 +17,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" PrivateAssets="All" />
+		<ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
 		<InternalsVisibleTo Include="MsSql.Tests" />
 	</ItemGroup>
 </Project>

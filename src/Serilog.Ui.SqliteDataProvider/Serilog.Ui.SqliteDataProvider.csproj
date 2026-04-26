@@ -25,7 +25,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" PrivateAssets="all" />
+    <ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
     <InternalsVisibleTo Include="Sqlite.Tests" />
   </ItemGroup>
 
