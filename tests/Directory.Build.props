@@ -4,6 +4,7 @@
         <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
         <LangVersion>latest</LangVersion>
         <IsPackable>false</IsPackable>
+        <TestTfmsInParallel>false</TestTfmsInParallel>
     </PropertyGroup>
 
     <ItemGroup>
