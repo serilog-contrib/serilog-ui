@@ -10,7 +10,7 @@
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.*"/>
         <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.1" />
         <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1"/>
-        <PackageReference Include="Serilog.Extensions.Hosting" Version="10.0.*"/>
+        <PackageReference Include="Serilog.Extensions.Hosting" Version="10.0.0"/>
         <PackageReference Include="Serilog.Sinks.Map" Version="2.0.0"/>
         <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="9.0.3" />
         <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="10.0.0"/>

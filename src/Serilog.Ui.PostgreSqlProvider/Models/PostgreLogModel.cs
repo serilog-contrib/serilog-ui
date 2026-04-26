@@ -17,9 +17,6 @@ public class PostgresLogModel : LogModel
     private string _level = string.Empty;
 
     /// <inheritdoc />
-    public override sealed int RowNo => base.RowNo;
-
-    /// <inheritdoc />
     public override sealed string? Message { get; set; }
 
     /// <inheritdoc />

@@ -13,8 +13,6 @@ namespace Serilog.Ui.MySqlProvider;
 /// </summary>
 public class MySqlLogModel : LogModel
 {
-    public override sealed int RowNo => base.RowNo;
-
     public override sealed string? Level { get; set; }
 
     public string LogLevel { get; set; } = string.Empty;
