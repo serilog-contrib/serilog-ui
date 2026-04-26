@@ -6,7 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Elastic.Elasticsearch.Xunit" Version="0.5.0" />
+        <PackageReference Include="Elastic.Elasticsearch.Xunit" Version="0.13.0" />
         <PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.7" />
         <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.7" />
