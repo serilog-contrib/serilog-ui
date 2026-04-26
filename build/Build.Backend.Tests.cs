@@ -39,9 +39,9 @@ partial class Build
             var user = Environment.GetEnvironmentVariable("USER") ?? Environment.GetEnvironmentVariable("USERNAME");
 
             // due to [ref](https://github.com/Mongo2Go/Mongo2Go/issues/144)
-            ProcessTasks
-                .StartProcess("sudo", $"chown -R {user}:{user} /home/runneradmin")
-                .AssertZeroExitCode();
+            // ProcessTasks
+            //     .StartProcess("sudo", $"chown -R {user}:{user} /home/runneradmin")
+            //     .AssertZeroExitCode();
             // encoded spaces [ref](https://github.com/microsoft/azure-pipelines-tasks/issues/18731#issuecomment-1689118779)
             DotnetCoverage?.Invoke(
                 "collect -f xml -o coverage.xml dotnet test --configuration=Release --no-build --collect=XPlat%20Code%20Coverage;Format=cobertura --logger=trx;LogFileName=test-results.trx");
