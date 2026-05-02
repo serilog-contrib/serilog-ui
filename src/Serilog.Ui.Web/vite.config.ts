@@ -1,11 +1,12 @@
 /// <reference types="vitest" />
 
+import type { PreviewOptions } from 'vite';
+import type { ViteUserConfig as VitestUserConfigInterface } from 'vitest/config';
 import react from '@vitejs/plugin-react-swc';
-import { PreviewOptions, defineConfig } from 'vite';
+import { defineConfig } from 'vite';
 import { checker } from 'vite-plugin-checker';
 import mkcert from 'vite-plugin-mkcert';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
-import type { ViteUserConfig as VitestUserConfigInterface } from 'vitest/config';
 
 const vitestConfig: VitestUserConfigInterface = {
   test: {
@@ -20,7 +21,7 @@ const vitestConfig: VitestUserConfigInterface = {
     setupFiles: './__tests__/_setup/setup-tests.ts',
     outputFile: {
       'vitest-sonar-reporter': './reports/test-report.xml',
-      junit: './reports/test-junit-report.xml',
+      'junit': './reports/test-junit-report.xml',
     },
     coverage: {
       provider: 'istanbul',
@@ -42,46 +43,40 @@ const previewConfig: PreviewOptions = {
   port: 4173,
   strictPort: true,
   proxy: {
-    ['^/serilog-ui/assets']: proxyAssets(/^\/serilog-ui/),
-    ['^/serilog-ui/access-denied/assets']: proxyAssets(/^\/serilog-ui\/access-denied/),
+    '^/serilog-ui/assets': proxyAssets(/^\/serilog-ui/),
+    '^/serilog-ui/access-denied/assets': proxyAssets(/^\/serilog-ui\/access-denied/),
   },
 };
 
 // https://vitejs.dev/config/
-export default defineConfig((env) => ({
+export default defineConfig(env => ({
   base: './',
   root: './src',
   build: {
     outDir: '../wwwroot/dist',
     emptyOutDir: true,
     sourcemap: false,
-    rollupOptions: {
-      external: ['**/__tests__/**/*', '**/*.{spec,test}.*', '**/mocks/**/*.*'],
+    rolldownOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            return id.toString().split('node_modules/')[1].split('/')[0].toString();
-          }
-        },
+        codeSplitting: true,
       },
     },
-    // target: 'ESNEXT',
   },
   plugins: [
     env.mode !== 'development' && react(),
-    env.mode === 'development' &&
-      react({
-        jsxImportSource: '@welldone-software/why-did-you-render',
-      }),
+    env.mode === 'development'
+    && react({
+      jsxImportSource: '@welldone-software/why-did-you-render',
+    }),
     viteTsconfigPaths(),
     mkcert(),
-    env.mode === 'development' &&
-      checker({
-        typescript: true,
-        eslint: {
-          lintCommand: 'eslint ./**/*.{ts,tsx}',
-        },
-      }),
+    env.mode === 'development'
+    && checker({
+      typescript: true,
+      eslint: {
+        lintCommand: 'eslint ./**/*.{ts,tsx}',
+      },
+    }),
   ],
   preview: previewConfig,
   server: {
