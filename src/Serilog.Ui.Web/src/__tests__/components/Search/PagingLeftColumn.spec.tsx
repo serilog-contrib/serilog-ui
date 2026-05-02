@@ -6,6 +6,7 @@ import {
 } from '__tests__/_setup/testing-utils';
 import { PagingLeftColumn } from 'app/components/Search/PagingLeftColumn';
 import { PagingRightColumn } from 'app/components/Search/PagingRightColumn';
+import { useQueryParamReader } from 'app/hooks/useQueryParamSync';
 import { SearchResult } from 'types/types';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -40,10 +41,14 @@ vi.mock('../../../app/hooks/useSearchForm', async () => {
     }),
   };
 });
+const PagingLeftTester = () => {
+  useQueryParamReader();
+  return <PagingLeftColumn />;
+};
 
 describe('Paging', () => {
   it('renders correctly', () => {
-    renderSerilogUiTestWrapper(<PagingLeftColumn />);
+    renderSerilogUiTestWrapper(<PagingLeftTester />);
 
     expect(screen.getByLabelText('paging-left-column')).toBeInTheDocument();
     expect(screen.getAllByDisplayValue('10')).toHaveLength(2);
@@ -54,7 +59,7 @@ describe('Paging', () => {
   it('changes entries per page value', async () => {
     renderSerilogUiTestWrapper(
       <>
-        <PagingLeftColumn />
+        <PagingLeftTester />
         <PagingRightColumn />
       </>,
     );
@@ -88,7 +93,7 @@ describe('Paging', () => {
   });
 
   it('changes sort on value', async () => {
-    renderSerilogUiTestWrapper(<PagingLeftColumn />);
+    renderSerilogUiTestWrapper(<PagingLeftTester />);
 
     const sortOn = screen.getByRole<HTMLInputElement>('textbox', {
       name: 'sortOn',
@@ -108,7 +113,7 @@ describe('Paging', () => {
   });
 
   it('changes sort by value', async () => {
-    renderSerilogUiTestWrapper(<PagingLeftColumn />);
+    renderSerilogUiTestWrapper(<PagingLeftTester />);
 
     const sortBy = screen.getByRole('button', {
       name: 'sortBy',
@@ -122,7 +127,7 @@ describe('Paging', () => {
 
   it('disables the sort on field', async () => {
     watchMock.mockReturnValue('test-key');
-    renderSerilogUiTestWrapper(<PagingLeftColumn />);
+    renderSerilogUiTestWrapper(<PagingLeftTester />);
 
     const sortOn = screen.getByRole<HTMLInputElement>('textbox', {
       name: 'sortOn',

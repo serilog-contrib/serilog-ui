@@ -1,22 +1,21 @@
 import { dbKeysMock } from '__tests__/_setup/mocks/samples';
 import {
-  act,
   fireEvent,
   renderSerilogUiTestWrapper,
   screen,
   userEvent,
-  waitFor,
   waitForElementToBeRemoved,
   within,
 } from '__tests__/_setup/testing-utils';
 import Search from 'app/components/Search/Search';
+import { useQueryParamReader } from 'app/hooks/useQueryParamSync';
 import { searchFormInitialValues } from 'app/hooks/useSearchForm';
 import * as logs from 'app/queries/logs';
 import { IAuthPropertiesStorageKeys } from 'app/util/auth';
 import dayjs from 'dayjs';
 import objectSupport from 'dayjs/plugin/objectSupport';
 import { byLabelText, byRole } from 'testing-library-selector';
-import { AuthType, DispatchedCustomEvents } from 'types/types';
+import { AuthType } from 'types/types';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 dayjs.extend(objectSupport);
@@ -54,6 +53,10 @@ const sampleDate = dayjs({
   minutes: 15,
   seconds: 30,
 });
+const SearchTester = ({ onRefetch }: { onRefetch?: () => void }) => {
+  useQueryParamReader();
+  return <Search onRefetch={onRefetch} />;
+};
 
 describe('Search', () => {
   const selectTable = async () => {
@@ -71,7 +74,7 @@ describe('Search', () => {
   });
 
   it('renders correctly', () => {
-    renderSerilogUiTestWrapper(<Search onRefetch={vi.fn()} />);
+    renderSerilogUiTestWrapper(<SearchTester onRefetch={vi.fn()} />);
 
     expect(screen.getByRole('form', { name: 'search-logs-form' })).toBeInTheDocument();
   });
@@ -80,7 +83,7 @@ describe('Search', () => {
     it('fetch with selected table', async () => {
       const spy = vi.spyOn(logs, 'fetchLogs');
 
-      renderSerilogUiTestWrapper(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
+      renderSerilogUiTestWrapper(<SearchTester onRefetch={vi.fn()} />, AuthType.Jwt);
 
       await selectTable();
 
@@ -96,7 +99,7 @@ describe('Search', () => {
     it('fetch with selected level', async () => {
       const spy = vi.spyOn(logs, 'fetchLogs');
 
-      renderSerilogUiTestWrapper(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
+      renderSerilogUiTestWrapper(<SearchTester onRefetch={vi.fn()} />, AuthType.Jwt);
 
       await selectTable();
 
@@ -123,7 +126,7 @@ describe('Search', () => {
     it('fetch with selected text search', async () => {
       const spy = vi.spyOn(logs, 'fetchLogs');
 
-      renderSerilogUiTestWrapper(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
+      renderSerilogUiTestWrapper(<SearchTester onRefetch={vi.fn()} />, AuthType.Jwt);
 
       await selectTable();
 
@@ -146,7 +149,7 @@ describe('Search', () => {
     it('fetch with selected start date', async () => {
       const spy = vi.spyOn(logs, 'fetchLogs');
 
-      renderSerilogUiTestWrapper(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
+      renderSerilogUiTestWrapper(<SearchTester onRefetch={vi.fn()} />, AuthType.Jwt);
 
       await selectTable();
 
@@ -185,7 +188,7 @@ describe('Search', () => {
     it('fetch with selected end date', async () => {
       const spy = vi.spyOn(logs, 'fetchLogs');
 
-      renderSerilogUiTestWrapper(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
+      renderSerilogUiTestWrapper(<SearchTester onRefetch={vi.fn()} />, AuthType.Jwt);
 
       await selectTable();
 
@@ -226,7 +229,7 @@ describe('Search', () => {
     const spy = vi.spyOn(logs, 'fetchLogs');
     searchFormInitialValues.page = 2;
 
-    renderSerilogUiTestWrapper(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
+    renderSerilogUiTestWrapper(<SearchTester onRefetch={vi.fn()} />, AuthType.Jwt);
 
     await selectTable();
     const levelInput = ui.textbox('Search').get();
@@ -261,7 +264,7 @@ describe('Search', () => {
     const spy = vi.spyOn(logs, 'fetchLogs');
 
     const onRefetchMock = vi.fn();
-    renderSerilogUiTestWrapper(<Search onRefetch={onRefetchMock} />, AuthType.Jwt);
+    renderSerilogUiTestWrapper(<SearchTester onRefetch={onRefetchMock} />, AuthType.Jwt);
 
     await selectTable();
 
@@ -284,26 +287,10 @@ describe('Search', () => {
     expect(onRefetchMock).toHaveBeenCalledOnce();
   });
 
-  it('invokes reset on RemoveTableKey event, removing the table value', async () => {
-    const tableInput = ui.textbox('Table').get;
-    renderSerilogUiTestWrapper(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
-
-    await selectTable();
-    expect(tableInput()).toHaveValue(dbKeysMock[0]);
-
-    act(() => {
-      document.dispatchEvent(new CustomEvent(DispatchedCustomEvents.RemoveTableKey));
-    });
-
-    await waitFor(() => {
-      expect(tableInput()).toHaveValue('');
-    });
-  });
-
   it('clean inputs calling refetch', async () => {
     const spy = vi.spyOn(logs, 'fetchLogs');
 
-    renderSerilogUiTestWrapper(<Search onRefetch={vi.fn()} />, AuthType.Jwt);
+    renderSerilogUiTestWrapper(<SearchTester onRefetch={vi.fn()} />, AuthType.Jwt);
 
     await selectTable();
 

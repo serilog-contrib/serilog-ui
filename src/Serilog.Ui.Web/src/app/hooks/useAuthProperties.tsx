@@ -17,7 +17,8 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { AuthType, DispatchedCustomEvents } from '../../types/types.ts';
+import { useSearchParams } from 'react-router';
+import { AuthType } from '../../types/types.ts';
 import { isStringGuard } from '../util/guards.ts';
 import { useSerilogUiProps } from './useSerilogUiProps';
 
@@ -75,14 +76,18 @@ export const AuthPropertiesProvider = ({
     [authHeader, authType, routePrefix],
   );
 
+  const [, setSearchParams] = useSearchParams();
   const clearAuthState = useCallback(() => {
     const cleanState = clearAuth();
 
     queryClient.removeQueries({ queryKey: ['get-keys'], exact: false });
-    document.dispatchEvent(new CustomEvent(DispatchedCustomEvents.RemoveTableKey));
+    setSearchParams((prev) => {
+      prev.delete('table');
+      return prev;
+    });
 
     setAuthInfo(cleanState);
-  }, [queryClient]);
+  }, [queryClient, setSearchParams]);
 
   const saveAuthState = useCallback((input: { [key: string]: string }) => {
     const validationInfo: string[] = [];

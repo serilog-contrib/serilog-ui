@@ -62,6 +62,7 @@ const Wrapper = ({
 
 const FormWrapper = ({ children }: { children: ReactNode }) => {
   const { methods } = useSearchForm();
+
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...methods}>

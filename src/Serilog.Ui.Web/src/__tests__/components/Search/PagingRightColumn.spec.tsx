@@ -4,6 +4,7 @@ import {
   userEvent,
 } from '__tests__/_setup/testing-utils';
 import { PagingRightColumn } from 'app/components/Search/PagingRightColumn';
+import { useQueryParamReader } from 'app/hooks/useQueryParamSync';
 import { SearchResult } from 'types/types';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -27,17 +28,18 @@ vi.mock('react-router', async () => {
   };
 });
 
-describe('PagingRightColumn', () => {
-  // const fieldMock: () => ControllerRenderProps<FieldValues, 'page'> = () => ({
-  //   onChange: vi.fn(),
-  //   onBlur: vi.fn(),
-  //   value: '1',
-  //   name: 'page',
-  //   ref: () => null,
-  // });
+const PagingRightTester = () => {
+  useQueryParamReader();
+  return (
+    <>
+      <PagingRightColumn />
+    </>
+  );
+};
 
+describe('PagingRightColumn', () => {
   it('renders correctly with no data', () => {
-    renderSerilogUiTestWrapper(<PagingRightColumn />);
+    renderSerilogUiTestWrapper(<PagingRightTester />);
 
     expect(screen.getByRole('button', { name: '1' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'pagination-dialog' })).toBeInTheDocument();
@@ -48,7 +50,7 @@ describe('PagingRightColumn', () => {
     mockQueryLogs.data.count = 10;
     mockQueryLogs.data.total = 30;
 
-    renderSerilogUiTestWrapper(<PagingRightColumn />);
+    renderSerilogUiTestWrapper(<PagingRightTester />);
     expect(screen.getByRole('button', { name: '2' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'pagination-dialog' })).not.toBeDisabled();
   });
@@ -58,7 +60,7 @@ describe('PagingRightColumn', () => {
     mockQueryLogs.data.count = 10;
     mockQueryLogs.data.total = 30;
 
-    renderSerilogUiTestWrapper(<PagingRightColumn />);
+    renderSerilogUiTestWrapper(<PagingRightTester />);
     expect(activePageBtn().innerText).toBe('1');
     await userEvent.click(screen.getByRole('button', { name: '2' }));
 
@@ -71,7 +73,7 @@ describe('PagingRightColumn', () => {
     mockQueryLogs.data.count = 10;
     mockQueryLogs.data.total = 30;
 
-    renderSerilogUiTestWrapper(<PagingRightColumn />);
+    renderSerilogUiTestWrapper(<PagingRightTester />);
     expect(activePageBtn().innerText).toBe('1');
 
     await userEvent.click(screen.getByRole('button', { name: 'pagination-dialog' }));
