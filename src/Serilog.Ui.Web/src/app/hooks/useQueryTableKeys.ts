@@ -2,13 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchKeys } from 'app/queries/table-keys';
 import { isArrayGuard } from 'app/util/guards';
 import { useAuthProperties } from './useAuthProperties';
-import { useSyncTable } from './useQueryParamSync';
+import { useQuerySyncTable } from './useQueryParamSync';
 import { useSerilogUiProps } from './useSerilogUiProps';
 
 export const useQueryTableKeys = (shouldNotify = false) => {
   const { blockHomeAccess, setAuthenticatedFromAccessDenied } = useSerilogUiProps();
   const { authHeader, isHeaderReady, fetchInfo } = useAuthProperties();
-  const { registerKeyOnQuery } = useSyncTable();
+  const { registerKeyOnQuery } = useQuerySyncTable();
 
   return useQuery({
     queryKey: ['get-keys', fetchInfo.routePrefix, authHeader],

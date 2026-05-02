@@ -11,15 +11,16 @@ import {
 import { DateTimePicker } from '@mantine/dates';
 import { useDebouncedCallback } from '@mantine/hooks';
 import { IconEraser } from '@tabler/icons-react';
+import { useAuthProperties } from 'app/hooks/useAuthProperties';
 import useQueryLogs from 'app/hooks/useQueryLogs';
 import { useQueryParamSync } from 'app/hooks/useQueryParamSync';
 import { useQueryTableKeys } from 'app/hooks/useQueryTableKeys';
 import { useSearchForm } from 'app/hooks/useSearchForm';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { ChangeEvent, KeyboardEvent, memo, useEffect } from 'react';
+import { ChangeEvent, KeyboardEvent, memo } from 'react';
 import { useController, useWatch } from 'react-hook-form';
 import classes from 'style/search.module.css';
-import { DispatchedCustomEvents, LogLevel } from '../../../types/types';
+import { LogLevel } from '../../../types/types';
 
 const levelsArray = Object.keys(LogLevel).map((level) => ({
   value: level,
@@ -27,6 +28,7 @@ const levelsArray = Object.keys(LogLevel).map((level) => ({
 }));
 
 const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
+  const { isHeaderReady } = useAuthProperties();
   const { isError } = useQueryTableKeys(true);
   const { isUtc, setIsUtc } = useSerilogUiProps();
   const { handleSubmit, reset, setValue } = useSearchForm();
@@ -51,18 +53,6 @@ const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
     }
   };
 
-  useEffect(() => {
-    const resetTableKey = () => {
-      reset(true);
-    };
-
-    document.addEventListener(DispatchedCustomEvents.RemoveTableKey, resetTableKey);
-
-    return () =>
-      document.removeEventListener(DispatchedCustomEvents.RemoveTableKey, resetTableKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   return (
     <form aria-label="search-logs-form" onSubmit={() => {}}>
       <Grid className={classes.searchFiltersGrid}>
@@ -82,7 +72,11 @@ const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
                 setIsUtc(event.currentTarget.checked);
               }}
             />
-            <Button type="submit" onClick={handleSubmit(onSubmit)} disabled={isError}>
+            <Button
+              type="submit"
+              onClick={handleSubmit(onSubmit)}
+              disabled={isError || !isHeaderReady}
+            >
               Submit
             </Button>
             <ActionIcon
