@@ -5,7 +5,7 @@ import { PreviewOptions, defineConfig } from 'vite';
 import { checker } from 'vite-plugin-checker';
 import mkcert from 'vite-plugin-mkcert';
 import viteTsconfigPaths from 'vite-tsconfig-paths';
-import type { UserConfig as VitestUserConfigInterface } from 'vitest/config';
+import type { ViteUserConfig as VitestUserConfigInterface } from 'vitest/config';
 
 const vitestConfig: VitestUserConfigInterface = {
   test: {
@@ -65,7 +65,7 @@ export default defineConfig((env) => ({
         },
       },
     },
-    target: 'ESNEXT',
+    // target: 'ESNEXT',
   },
   plugins: [
     env.mode !== 'development' && react(),
