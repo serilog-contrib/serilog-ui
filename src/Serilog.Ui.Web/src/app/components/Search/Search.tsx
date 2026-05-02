@@ -44,14 +44,7 @@ const Search = ({ onRefetch }: { onRefetch?: () => void }) => {
 
     onRefetch?.();
   };
-
-  const onClear = async () => {
-    const shouldRefetch = reset();
-
-    if (shouldRefetch) {
-      await refetch();
-    }
-  };
+  const onClear = () => reset();
 
   return (
     <form aria-label="search-logs-form" onSubmit={() => {}}>
@@ -145,6 +138,7 @@ const TextSearchInput = () => {
   const { control } = useSearchForm();
   const { field: searchField } = useController({ ...control, name: 'search' });
   const { updateSearchParam } = useQueryParamSync();
+  // const [searchParams] = useSearchParams();
 
   const handleSearch = useDebouncedCallback(async (query: string) => {
     updateSearchParam(query);

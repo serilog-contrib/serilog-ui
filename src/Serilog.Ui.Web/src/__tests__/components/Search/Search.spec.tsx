@@ -286,42 +286,4 @@ describe('Search', () => {
     );
     expect(onRefetchMock).toHaveBeenCalledOnce();
   });
-
-  it('clean inputs calling refetch', async () => {
-    const spy = vi.spyOn(logs, 'fetchLogs');
-
-    renderSerilogUiTestWrapper(<SearchTester onRefetch={vi.fn()} />, AuthType.Jwt);
-
-    await selectTable();
-
-    const levelInput = ui.textbox('Search').get();
-
-    await userEvent.type(levelInput, 'my search');
-
-    await userEvent.click(ui.submit.get());
-
-    expect(spy).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({
-        table: dbKeysMock[0],
-        search: 'my search',
-        level: null,
-      }),
-      expect.any(Object),
-      '',
-    );
-
-    await userEvent.click(ui.clear.get());
-
-    expect(spy).toHaveBeenNthCalledWith(
-      3,
-      expect.objectContaining({
-        table: dbKeysMock[0],
-        search: '',
-        level: null,
-      }),
-      expect.any(Object),
-      '',
-    );
-  });
 });

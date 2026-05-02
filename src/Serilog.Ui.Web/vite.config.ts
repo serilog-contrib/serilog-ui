@@ -86,7 +86,7 @@ export default defineConfig((env) => ({
   preview: previewConfig,
   server: {
     open: 'serilog-ui/',
-    port: 3001,
+    port: 3003,
   },
   test: vitestConfig.test,
 }));

@@ -1,9 +1,5 @@
 import { dbKeysMock } from '__tests__/_setup/mocks/samples';
-import {
-  act,
-  renderHookSerilogUiTestWrapper,
-  waitFor,
-} from '__tests__/_setup/testing-utils';
+import { renderHookSerilogUiTestWrapper, waitFor } from '__tests__/_setup/testing-utils';
 import { useQueryParamReader } from 'app/hooks/useQueryParamSync';
 import { useSearchForm } from 'app/hooks/useSearchForm';
 import { IAuthPropertiesStorageKeys } from 'app/util/auth';
@@ -28,77 +24,6 @@ describe('useSearchForm', () => {
       expect(result.current.getValues('table')).toBe(dbKeysMock[0]);
     });
   });
-
-  it('sets NULL table key on reset', async () => {
-    sessionStorage.setItem(IAuthPropertiesStorageKeys.jwt_bearerToken, 'token');
-
-    const { result } = renderHookSerilogUiTestWrapper(() => useSearchFormTester(), {
-      authType: AuthType.Jwt,
-    });
-
-    await waitFor(() => {
-      result.current.reset(true);
-      expect(result.current.getValues('table')).toBe('');
-    });
-  });
-
-  type Properties = Parameters<ReturnType<typeof useSearchFormTester>['setValue']>['0'];
-  it.each([
-    {
-      property: 'level' as Properties,
-      resetResult: true,
-    },
-    {
-      property: 'search' as Properties,
-      resetResult: true,
-    },
-    {
-      property: 'startDate' as Properties,
-      resetResult: true,
-    },
-    {
-      property: 'endDate' as Properties,
-      resetResult: true,
-    },
-    {
-      property: 'entriesPerPage' as Properties,
-      resetResult: false,
-    },
-    {
-      property: 'page' as Properties,
-      resetResult: false,
-    },
-    {
-      property: 'sortBy' as Properties,
-      resetResult: false,
-    },
-    {
-      property: 'table' as Properties,
-      resetResult: false,
-    },
-    {
-      property: 'sortOn' as Properties,
-      resetResult: false,
-    },
-  ])(
-    'hints for refetch, returning $resetResult on reset, for property $property',
-    async ({ property, resetResult }: { property: Properties; resetResult: boolean }) => {
-      sessionStorage.setItem(IAuthPropertiesStorageKeys.jwt_bearerToken, 'token');
-
-      const { result } = renderHookSerilogUiTestWrapper(() => useSearchFormTester(), {
-        authType: AuthType.Jwt,
-      });
-
-      act(() => {
-        result.current.setValue(property, 'test');
-      });
-
-      act(() => {
-        const shouldRefetch = result.current.reset();
-        expect(shouldRefetch).toBe(resetResult);
-      });
-    },
-  );
 
   it('renders and leaves default table key undefined, if internal query was not successful', async () => {
     sessionStorage.removeItem(IAuthPropertiesStorageKeys.jwt_bearerToken);

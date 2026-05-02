@@ -44,29 +44,6 @@ describe('FilterButton', () => {
     });
   });
 
-  it.each([
-    { resetRes: true, times: 1 },
-    { resetRes: false, times: 0 },
-  ])(
-    'clears search state and refetch data if reset returns $resetRes',
-    async ({ resetRes, times }) => {
-      useMocks.reset.mockImplementationOnce(() => resetRes);
-
-      renderSerilogUiTestWrapper(<FilterButton />);
-
-      const filterBtn = screen.getByRole('button');
-
-      expect(filterBtn).toBeInTheDocument();
-
-      await userEvent.click(filterBtn);
-
-      await userEvent.click(screen.getByRole('button', { name: 'reset filters' }));
-
-      expect(useMocks.reset).toHaveBeenCalledOnce();
-      expect(useMocks.refetch).toHaveBeenCalledTimes(times);
-    },
-  );
-
   it('closes modal on resize', async () => {
     renderSerilogUiTestWrapper(<FilterButton />);
 

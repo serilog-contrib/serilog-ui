@@ -2,7 +2,7 @@ import { getSearchableDate } from 'app/util/dates';
 import { parseSearchParams } from 'app/util/queryParams';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router';
-import type { SearchForm } from '../../types/types';
+import { type SearchForm } from '../../types/types';
 import { searchFormInitialValues, useSearchForm } from './useSearchForm';
 
 const parameterizeKeyValues = (key: keyof SearchForm, value: unknown) => {
