@@ -2,7 +2,6 @@ import { ActionIcon, Box, Button, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconEraser, IconFilterSearch } from '@tabler/icons-react';
 import { useCloseOnResize } from 'app/hooks/useCloseOnResize';
-import useQueryLogs from 'app/hooks/useQueryLogs';
 import { useSearchForm } from 'app/hooks/useSearchForm';
 import { Suspense, lazy } from 'react';
 import classes from 'style/header.module.css';
@@ -12,13 +11,8 @@ const Search = lazy(() => import('../Search/Search'));
 const FilterButton = () => {
   const [filterModalOpened, { open, close }] = useDisclosure(false);
   const { reset } = useSearchForm();
-  const { refetch } = useQueryLogs();
-  const onClear = async () => {
-    const shouldRefetch = reset();
-
-    if (shouldRefetch) {
-      await refetch();
-    }
+  const onClear = () => {
+    reset();
   };
 
   useCloseOnResize(close);

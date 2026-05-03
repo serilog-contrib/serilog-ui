@@ -1,7 +1,9 @@
 .parcel-cache/
+node_modules/
 wwwroot/dev/
 wwwroot/dist/
 wwwroot/mockServiceWorker.js
 !wwwroot/dev/mockServiceWorker.js
 
 **/jest-*.xml
+.yarn/

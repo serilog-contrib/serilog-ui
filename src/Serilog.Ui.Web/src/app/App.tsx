@@ -3,7 +3,6 @@ import { Notifications } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, createBrowserRouter } from 'react-router';
 import { theme } from 'style/theme';
-import { AuthPropertiesProvider } from './hooks/useAuthProperties';
 import { useSerilogUiProps } from './hooks/useSerilogUiProps';
 import { routes } from './routes';
 
@@ -21,9 +20,7 @@ const App = () => {
       <MantineProvider defaultColorScheme="auto" theme={theme}>
         <Notifications />
         <QueryClientProvider client={queryClient}>
-          <AuthPropertiesProvider>
-            <RouterProvider router={router} />
-          </AuthPropertiesProvider>
+          <RouterProvider router={router} />
         </QueryClientProvider>
       </MantineProvider>
     </>

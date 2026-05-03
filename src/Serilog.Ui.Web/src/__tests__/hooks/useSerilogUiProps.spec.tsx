@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { renderHook as renderHookCustom } from '__tests__/_setup/testing-utils';
+import { renderHookSerilogUiTestWrapper as renderHookCustom } from '__tests__/_setup/testing-utils';
 import { SerilogUiPropsProvider, useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { ReactNode } from 'react';
 import { AuthType, RemovableColumns } from 'types/types';

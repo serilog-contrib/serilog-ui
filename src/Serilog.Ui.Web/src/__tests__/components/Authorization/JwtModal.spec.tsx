@@ -1,4 +1,8 @@
-import { render, screen, userEvent } from '__tests__/_setup/testing-utils';
+import {
+  renderSerilogUiTestWrapper,
+  screen,
+  userEvent,
+} from '__tests__/_setup/testing-utils';
 import JwtModal from 'app/components/Authorization/JwtModal';
 import { IAuthPropertiesStorageKeys } from 'app/util/auth';
 import { byLabelText, byRole } from 'testing-library-selector';
@@ -21,7 +25,7 @@ describe('Jwt Modal', () => {
 
   it('renders without saved info', async () => {
     const closeMock = vi.fn();
-    render(<JwtModal onClose={closeMock} />, AuthType.Jwt);
+    renderSerilogUiTestWrapper(<JwtModal onClose={closeMock} />, AuthType.Jwt);
 
     expect(screen.getAllByRole('button')).toHaveLength(2);
 
@@ -37,7 +41,7 @@ describe('Jwt Modal', () => {
   it('renders with storage session info', () => {
     sessionStorage.setItem(IAuthPropertiesStorageKeys.jwt_bearerToken, 'my jwt token');
 
-    render(<JwtModal onClose={vi.fn()} />, AuthType.Jwt);
+    renderSerilogUiTestWrapper(<JwtModal onClose={vi.fn()} />, AuthType.Jwt);
 
     expect(jwt()).toHaveValue('my jwt token');
     expect(jwt()).toBeEmptyDOMElement();
@@ -48,7 +52,7 @@ describe('Jwt Modal', () => {
   });
 
   it('updates inputs, without saving them to the session storage', async () => {
-    const {} = render(<JwtModal onClose={vi.fn()} />, AuthType.Jwt);
+    const {} = renderSerilogUiTestWrapper(<JwtModal onClose={vi.fn()} />, AuthType.Jwt);
 
     await userEvent.type(jwt(), 'my test password');
 
@@ -58,7 +62,7 @@ describe('Jwt Modal', () => {
   });
 
   it('saves inputs value to the session storage', async () => {
-    render(<JwtModal onClose={vi.fn()} />, AuthType.Jwt);
+    renderSerilogUiTestWrapper(<JwtModal onClose={vi.fn()} />, AuthType.Jwt);
 
     await userEvent.type(jwt(), 'my test jwt');
 
@@ -77,7 +81,7 @@ describe('Jwt Modal', () => {
   });
 
   it('resets saved input and clears them from the session storage', async () => {
-    render(<JwtModal onClose={vi.fn()} />, AuthType.Jwt);
+    renderSerilogUiTestWrapper(<JwtModal onClose={vi.fn()} />, AuthType.Jwt);
 
     await userEvent.type(jwt(), 'my test jwt');
 

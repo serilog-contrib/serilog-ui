@@ -86,6 +86,8 @@ public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 
 Do you want to test the package on-the-fly? Try out the [samples](https://github.com/serilog-contrib/serilog-ui/wiki/Develop#sample-applications), with no configuration required!
 
+The URL will automatically update as you change filters in the UI, making it easy to share your current view with others.
+
 ## Issues and Contribution
 
 Everything is welcome! :trophy: See the [contribution guidelines](https://github.com/serilog-contrib/serilog-ui/blob/master/CONTRIBUTING.md) for details.

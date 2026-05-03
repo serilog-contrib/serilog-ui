@@ -5,6 +5,7 @@ import { useAuthProperties } from './useAuthProperties';
 import { useLiveRefresh } from './useLiveRefresh';
 import { useSearchForm } from './useSearchForm';
 
+const k = 'get-logs';
 const useQueryLogs = () => {
   const { fetchInfo, isHeaderReady } = useAuthProperties();
   const { getValues } = useSearchForm();
@@ -22,10 +23,11 @@ const useQueryLogs = () => {
   const sortBy = useWatch({ name: 'sortBy' });
   const sortOn = useWatch({ name: 'sortOn' });
 
+  const queryKey = [k, entriesPerPage, page, sortBy, sortOn, currentDbKey];
   return {
     ...useQuery({
       enabled: true,
-      queryKey: ['get-logs', entriesPerPage, page, sortBy, sortOn, currentDbKey],
+      queryKey,
       queryFn: async () => {
         if (!isHeaderReady) return null;
         const values = getValues();

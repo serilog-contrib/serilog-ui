@@ -12,73 +12,73 @@ import {
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { IconBook, IconListNumbers } from '@tabler/icons-react';
 import useQueryLogs from 'app/hooks/useQueryLogs';
+import { useQueryParamSync } from 'app/hooks/useQueryParamSync';
+import { useSearchForm } from 'app/hooks/useSearchForm';
 import { toNumber } from 'app/util/guards';
 import { memo, useMemo, useState } from 'react';
-import { ControllerRenderProps, FieldValues } from 'react-hook-form';
+import { useController } from 'react-hook-form';
 import classes from 'style/search.module.css';
 
-export const PagingRightColumn = memo(
-  ({ field }: { field: ControllerRenderProps<FieldValues, 'page'> }) => {
-    const [opened, { close, toggle }] = useDisclosure(false);
+export const PagingRightColumn = memo(() => {
+  const { control } = useSearchForm();
+  const { field } = useController({ ...control, name: 'page' });
+  const { updateParam } = useQueryParamSync();
 
-    const { data } = useQueryLogs();
+  const [opened, { close, toggle }] = useDisclosure(false);
 
-    const lessPages = useMediaQuery(`(max-width: ${em(800)})`);
-    const totalPages = useMemo(() => {
-      if (!data) return 1;
-      const pages = data.count > 0 ? Math.ceil(data.total / data.count) : 1;
-      return Number.isNaN(pages) ? 1 : pages;
-    }, [data]);
+  const { data } = useQueryLogs();
 
-    return (
-      <Box
-        className={classes.paginationGrid}
-        display={totalPages === 0 ? 'none' : 'inherit'}
-      >
-        <Box m="xs" style={{ justifySelf: 'end' }}>
-          <ActionIcon
-            aria-label="pagination-dialog"
-            disabled={totalPages < 2}
-            onClick={toggle}
-          >
-            <IconListNumbers strokeWidth={2} />
-          </ActionIcon>
-          <Dialog opened={opened} withCloseButton onClose={close} size="lg" radius="md">
-            <DialogContent
-              fieldValue={field.value}
-              onChange={field.onChange}
-              totalPages={totalPages}
-              close={close}
-            />
-          </Dialog>
-        </Box>
-        <Box m="xs">
-          <Pagination
-            withEdges
-            total={totalPages}
-            siblings={lessPages ? 1 : 2}
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...field}
-          />
-        </Box>
+  const lessPages = useMediaQuery(`(max-width: ${em(800)})`);
+  const totalPages = useMemo(() => {
+    if (!data) return 1;
+    const pages = data.count > 0 ? Math.ceil(data.total / data.count) : 1;
+    return Number.isNaN(pages) ? 1 : pages;
+  }, [data]);
+
+  return (
+    <Box
+      className={classes.paginationGrid}
+      display={totalPages === 0 ? 'none' : 'inherit'}
+    >
+      <Box m="xs" style={{ justifySelf: 'end' }}>
+        <ActionIcon
+          aria-label="pagination-dialog"
+          disabled={totalPages < 2}
+          onClick={toggle}
+        >
+          <IconListNumbers strokeWidth={2} />
+        </ActionIcon>
+        <Dialog opened={opened} withCloseButton onClose={close} size="lg" radius="md">
+          <DialogContent fieldValue={field.value} totalPages={totalPages} close={close} />
+        </Dialog>
       </Box>
-    );
-  },
-);
+      <Box m="xs">
+        <Pagination
+          withEdges
+          total={totalPages}
+          siblings={lessPages ? 1 : 2}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...field}
+          onChange={updateParam(field.name)}
+        />
+      </Box>
+    </Box>
+  );
+});
 
 const DialogContent = memo(
   ({
     close,
     fieldValue,
-    onChange,
     totalPages,
   }: {
     close: () => void;
     fieldValue: number;
-    onChange: (...event: unknown[]) => void;
     totalPages: number;
   }) => {
     const [dialogPage, setDialogPage] = useState(fieldValue);
+    const { updateParam } = useQueryParamSync();
+    const onUpdate = updateParam('page');
 
     const changePageInput = (val: string | number) => {
       const newPage = toNumber(`${val}`);
@@ -88,7 +88,7 @@ const DialogContent = memo(
     };
 
     const setPage = async () => {
-      onChange(dialogPage);
+      onUpdate(dialogPage);
       close();
     };
 
