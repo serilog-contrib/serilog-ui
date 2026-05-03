@@ -1,8 +1,11 @@
 import { render, within } from '@testing-library/react';
-import { act, render as customRender } from '__tests__/_setup/testing-utils';
+import {
+  act,
+  renderSerilogUiTestWrapper as customRender,
+} from '__tests__/_setup/testing-utils';
 import App from 'app/App';
 import { routes } from 'app/routes';
-import { RouterProvider, createMemoryRouter } from 'react-router';
+import { createMemoryRouter } from 'react-router';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 const propsMock = {
@@ -62,7 +65,7 @@ describe('App', () => {
         basename: `/test-serilog-ui/`,
         initialEntries: ['/test-serilog-ui/'],
       });
-      const { container } = customRender(<RouterProvider router={router} />);
+      const { container } = customRender(<div />, undefined, undefined, router);
 
       await act(async () => {
         await vi.runAllTimersAsync();
@@ -77,7 +80,7 @@ describe('App', () => {
         basename: `/test-serilog-ui/`,
         initialEntries: ['/test-serilog-ui/access-denied/'],
       });
-      const { container } = customRender(<RouterProvider router={router} />);
+      const { container } = customRender(<div />, undefined, undefined, router);
 
       await act(async () => {
         await vi.runAllTimersAsync();
@@ -93,7 +96,7 @@ describe('App', () => {
         basename: `/test-serilog-ui/`,
         initialEntries: ['/test-serilog-ui/not-found-route'],
       });
-      const { container } = customRender(<RouterProvider router={router} />);
+      const { container } = customRender(<div />, undefined, undefined, router);
 
       await act(async () => {
         await vi.runAllTimersAsync();

@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from '__tests__/_setup/testing-utils';
+import { renderHookSerilogUiTestWrapper, waitFor } from '__tests__/_setup/testing-utils';
 import { useQueryAuth } from 'app/hooks/useQueryAuth';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -28,7 +28,7 @@ describe('useQueryAuth', () => {
   it('not runs request if home is not blocked', () => {
     mockedProps.blockHomeAccess = false;
 
-    renderHook(() => useQueryAuth());
+    renderHookSerilogUiTestWrapper(() => useQueryAuth());
 
     expect(mockedProps.setAuthenticatedFromAccessDenied).not.toHaveBeenCalled();
     expect(mockTableKeys.refetch).not.toHaveBeenCalled();
@@ -37,7 +37,7 @@ describe('useQueryAuth', () => {
   it('not runs request if home is blocked but header is not ready', () => {
     mockedProps.blockHomeAccess = true;
 
-    renderHook(() => useQueryAuth());
+    renderHookSerilogUiTestWrapper(() => useQueryAuth());
 
     expect(mockedProps.setAuthenticatedFromAccessDenied).toHaveBeenCalledWith(false);
     expect(mockTableKeys.refetch).not.toHaveBeenCalled();
@@ -51,7 +51,7 @@ describe('useQueryAuth', () => {
       mockAuthProps.isHeaderReady = true;
       mockTableKeys.refetch.mockResolvedValueOnce({ data: response });
 
-      renderHook(() => useQueryAuth());
+      renderHookSerilogUiTestWrapper(() => useQueryAuth());
 
       expect(mockTableKeys.refetch).toHaveBeenCalledOnce();
       await waitFor(() => {
@@ -67,7 +67,7 @@ describe('useQueryAuth', () => {
 
     mockTableKeys.refetch.mockResolvedValueOnce({ data: ['key'] });
 
-    renderHook(() => useQueryAuth());
+    renderHookSerilogUiTestWrapper(() => useQueryAuth());
 
     expect(mockTableKeys.refetch).toHaveBeenCalledOnce();
     await waitFor(() => {

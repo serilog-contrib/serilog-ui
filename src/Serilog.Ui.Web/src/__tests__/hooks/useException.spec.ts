@@ -1,4 +1,4 @@
-import { renderHook } from '__tests__/_setup/testing-utils';
+import { renderHookSerilogUiTestWrapper } from '__tests__/_setup/testing-utils';
 import { useException } from 'app/hooks/useException';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -19,7 +19,9 @@ describe('useException', () => {
     mockForm.getValues.mockImplementation(() => 'test-db');
     mockForm.watch.mockImplementation(() => 'test-db');
 
-    const { result } = renderHook(() => useException('my-string untouched', 'log'));
+    const { result } = renderHookSerilogUiTestWrapper(() =>
+      useException('my-string untouched', 'log'),
+    );
 
     expect(result.current.logType).toBe('log');
     expect(result.current.exceptionContent).toBe('my-string untouched');
@@ -30,7 +32,7 @@ describe('useException', () => {
     mockForm.watch.mockImplementation(() => 'exception-string-sample');
     mockColInfo.removeException.mockReturnValue(true);
 
-    const { result } = renderHook(() =>
+    const { result } = renderHookSerilogUiTestWrapper(() =>
       useException('my-string modified with at sample', 'log'),
     );
 

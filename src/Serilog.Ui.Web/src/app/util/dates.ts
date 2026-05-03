@@ -29,3 +29,5 @@ export const isValidJwtUnixDate = (unixTime: number) => {
 
   return parse.isAfter(dayjs());
 };
+
+export const getSearchableDate = (date: Date | null) => date?.toISOString() ?? '';

@@ -1,5 +1,5 @@
 import {
-  render,
+  renderSerilogUiTestWrapper,
   screen,
   userEvent,
   waitFor,
@@ -11,13 +11,13 @@ import { describe, expect, it } from 'vitest';
 
 describe('AuthorizeButton', () => {
   it('renders null on custom authtype', () => {
-    render(<AuthorizeButton />, AuthType.Custom);
+    renderSerilogUiTestWrapper(<AuthorizeButton />, AuthType.Custom);
 
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
   it('renders button with Basic modal', async () => {
-    render(<AuthorizeButton />, AuthType.Basic);
+    renderSerilogUiTestWrapper(<AuthorizeButton />, AuthType.Basic);
 
     const btn = screen.getByRole('button');
     expect(btn).toBeInTheDocument();
@@ -37,7 +37,7 @@ describe('AuthorizeButton', () => {
   });
 
   it('renders button with JWT modal', async () => {
-    render(<AuthorizeButton />, AuthType.Jwt);
+    renderSerilogUiTestWrapper(<AuthorizeButton />, AuthType.Jwt);
 
     const btn = screen.getByRole('button');
     expect(btn).toBeInTheDocument();

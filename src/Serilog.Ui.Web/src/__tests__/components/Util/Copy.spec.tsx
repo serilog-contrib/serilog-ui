@@ -1,11 +1,15 @@
-import { render, screen, userEvent } from '__tests__/_setup/testing-utils';
+import {
+  renderSerilogUiTestWrapper,
+  screen,
+  userEvent,
+} from '__tests__/_setup/testing-utils';
 import { CopySection } from 'app/components/Util/Copy';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('Copy', () => {
   it('renders', async () => {
     const spy = vi.spyOn(navigator.clipboard, 'writeText');
-    render(
+    renderSerilogUiTestWrapper(
       <div>
         <CopySection value="my-value" />
       </div>,

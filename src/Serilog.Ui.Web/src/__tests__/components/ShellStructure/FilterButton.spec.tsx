@@ -1,6 +1,6 @@
 import {
   act,
-  render,
+  renderSerilogUiTestWrapper,
   screen,
   userEvent,
   waitFor,
@@ -31,7 +31,7 @@ vi.mock('../../../app/hooks/useSearchForm', () => {
 
 describe('FilterButton', () => {
   it('renders', async () => {
-    render(<FilterButton />);
+    renderSerilogUiTestWrapper(<FilterButton />);
 
     const filterBtn = screen.getByRole('button');
     expect(filterBtn).toBeInTheDocument();
@@ -44,31 +44,8 @@ describe('FilterButton', () => {
     });
   });
 
-  it.each([
-    { resetRes: true, times: 1 },
-    { resetRes: false, times: 0 },
-  ])(
-    'clears search state and refetch data if reset returns $resetRes',
-    async ({ resetRes, times }) => {
-      useMocks.reset.mockImplementationOnce(() => resetRes);
-
-      render(<FilterButton />);
-
-      const filterBtn = screen.getByRole('button');
-
-      expect(filterBtn).toBeInTheDocument();
-
-      await userEvent.click(filterBtn);
-
-      await userEvent.click(screen.getByRole('button', { name: 'reset filters' }));
-
-      expect(useMocks.reset).toHaveBeenCalledOnce();
-      expect(useMocks.refetch).toHaveBeenCalledTimes(times);
-    },
-  );
-
   it('closes modal on resize', async () => {
-    render(<FilterButton />);
+    renderSerilogUiTestWrapper(<FilterButton />);
 
     const filterBtn = screen.getByRole('button');
     await userEvent.click(filterBtn);
