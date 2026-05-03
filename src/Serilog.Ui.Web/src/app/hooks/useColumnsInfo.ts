@@ -1,5 +1,7 @@
-import {
+import type {
   AdditionalColumn,
+} from 'types/types';
+import {
   AdditionalColumnLogType,
   ColumnType,
   LogType,
@@ -32,7 +34,7 @@ export const useColumnsInfo = (currentColumn = '', logPropertyType = '') => {
     : propertiesColumn;
 
   const additionalColumn = additionalColumns.find(
-    (p) => p.name.toLowerCase() === currentColumn.toLowerCase(),
+    p => p.name.toLowerCase() === currentColumn.toLowerCase(),
   );
 
   const removeColumn = (col: RemovableColumns) =>
@@ -40,9 +42,9 @@ export const useColumnsInfo = (currentColumn = '', logPropertyType = '') => {
 
   const removeException = removeColumn(RemovableColumns.exception);
 
-  const removeProperties =
-    removeColumn(RemovableColumns.properties) &&
-    (!currentColumn || currentColumn === RemovableColumns.properties);
+  const removeProperties
+    = removeColumn(RemovableColumns.properties)
+      && (!currentColumn || currentColumn === RemovableColumns.properties);
 
   return { additionalColumn, removeException, removeProperties };
 };

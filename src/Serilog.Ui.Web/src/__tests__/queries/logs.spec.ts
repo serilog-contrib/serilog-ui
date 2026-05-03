@@ -1,12 +1,14 @@
+import type {
+  SearchForm,
+} from 'types/types';
 import { server } from '__tests__/_setup/mocks/msw-server';
 import { fakeLogs } from '__tests__/_setup/mocks/samples';
 import { fetchLogs } from 'app/queries/logs';
 import * as queryUtil from 'app/util/queries';
 import dayjs from 'dayjs';
-import { HttpResponse, http } from 'msw';
+import { http, HttpResponse } from 'msw';
 import {
   LogLevel,
-  SearchForm,
   SortDirectionOptions,
   SortPropertyOptions,
 } from 'types/types';

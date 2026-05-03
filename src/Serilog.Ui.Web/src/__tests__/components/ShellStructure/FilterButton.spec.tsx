@@ -29,7 +29,7 @@ vi.mock('../../../app/hooks/useSearchForm', () => {
   };
 });
 
-describe('FilterButton', () => {
+describe('filterButton', () => {
   it('renders', async () => {
     renderSerilogUiTestWrapper(<FilterButton />);
 

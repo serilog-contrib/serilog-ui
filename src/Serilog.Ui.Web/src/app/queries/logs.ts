@@ -1,6 +1,6 @@
+import type { SearchForm, SearchResult } from '../../types/types';
 import { getSearchableDate } from 'app/util/dates';
 import dayjs from 'dayjs';
-import { type SearchForm, type SearchResult } from '../../types/types';
 import { isNotNullGuard, isStringGuard } from '../util/guards';
 import {
   determineHost,
@@ -16,41 +16,20 @@ const defaultReturn = {
   total: 0,
 };
 
-export const fetchLogs = async (
-  values: SearchForm,
-  fetchOptions: RequestInit,
-  routePrefix?: string,
-): Promise<SearchResult> => {
-  const prepareUrl = prepareSearchUrl(values, routePrefix);
-  if (!prepareUrl.areDatesAdmitted) return defaultReturn;
+const queryParamIfSet = (paramName: string, paramValue?: string | null) =>
+  isNotNullGuard(paramValue) && isStringGuard(paramValue)
+    ? `&${paramName}=${paramValue}`
+    : '';
 
-  try {
-    const req = await fetch(prepareUrl.url, fetchOptions);
-
-    if (req.ok) return await (req.json() as Promise<SearchResult>);
-
-    return await Promise.reject(new UiApiError(req.status, 'Failed to fetch'));
-  } catch (error: unknown) {
-    const err = error as UiApiError;
-    if (err?.code === 403) {
-      send403Notification();
-    } else {
-      sendUnexpectedNotification(err.message);
-    }
-
-    return defaultReturn;
-  }
-};
-
-const prepareSearchUrl = (input: SearchForm, routePrefix?: string) => {
+const prepareSearchUrl = (input: SearchForm & { key?: string | null }, routePrefix?: string) => {
   const { entriesPerPage: count, page, table: key, ...inputData } = { ...input };
 
   const startDate = inputData.startDate;
   const endDate = inputData.endDate;
   if (
-    isNotNullGuard(startDate) &&
-    isNotNullGuard(endDate) &&
-    dayjs(startDate).isAfter(dayjs(endDate))
+    isNotNullGuard(startDate)
+    && isNotNullGuard(endDate)
+    && dayjs(startDate).isAfter(dayjs(endDate))
   ) {
     sendUnexpectedNotification(
       'Start date cannot be greater than end date',
@@ -64,10 +43,10 @@ const prepareSearchUrl = (input: SearchForm, routePrefix?: string) => {
   const url = `${determineHost(routePrefix)}/api/logs?page=${page}&count=${count}`;
 
   const startAsString = getSearchableDate(startDate);
-  inputData['startDate'] = startAsString as unknown as Date;
+  inputData.startDate = startAsString as unknown as Date;
   const endAsString = getSearchableDate(endDate);
-  inputData['endDate'] = endAsString as unknown as Date;
-  inputData['key'] = key;
+  inputData.endDate = endAsString as unknown as Date;
+  inputData.key = key;
 
   const urlWithOptionalParams = Object.keys(inputData).reduce(
     (prev, curr) => `${prev}${queryParamIfSet(curr, inputData[curr])}`,
@@ -77,7 +56,32 @@ const prepareSearchUrl = (input: SearchForm, routePrefix?: string) => {
   return { areDatesAdmitted: true, url: urlWithOptionalParams };
 };
 
-const queryParamIfSet = (paramName: string, paramValue?: string | null) =>
-  isNotNullGuard(paramValue) && isStringGuard(paramValue)
-    ? `&${paramName}=${paramValue}`
-    : '';
+export const fetchLogs = async (
+  values: SearchForm,
+  fetchOptions: RequestInit,
+  routePrefix?: string,
+): Promise<SearchResult> => {
+  const prepareUrl = prepareSearchUrl(values, routePrefix);
+  if (!prepareUrl.areDatesAdmitted) {
+    return defaultReturn;
+  }
+
+  try {
+    const req = await fetch(prepareUrl.url, fetchOptions);
+
+    if (req.ok) {
+      return await (req.json() as Promise<SearchResult>);
+    }
+
+    return await Promise.reject(new UiApiError(req.status, 'Failed to fetch'));
+  } catch (error: unknown) {
+    const err = error as UiApiError;
+    if (err?.code === 403) {
+      send403Notification();
+    } else {
+      sendUnexpectedNotification(err.message);
+    }
+
+    return defaultReturn;
+  }
+};

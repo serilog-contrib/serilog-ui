@@ -83,17 +83,6 @@ const setAuthDataValue = (
 };
 
 /**
- * Validate a value based on the data key.
- */
-export const validateKey = (key: keyof IAuthPropertiesData, value: string) => {
-  if (key === 'jwt_bearerToken') {
-    return validateBearerToken(value);
-  }
-
-  return { success: true, error: '' };
-};
-
-/**
  * Validate a bearer token.
  */
 const validateBearerToken = (bearerToken: string) => {
@@ -106,6 +95,17 @@ const validateBearerToken = (bearerToken: string) => {
   } catch {
     return { success: false, error: 'Token invalid' };
   }
+};
+
+/**
+ * Validate a value based on the data key.
+ */
+export const validateKey = (key: keyof IAuthPropertiesData, value: string) => {
+  if (key === 'jwt_bearerToken') {
+    return validateBearerToken(value);
+  }
+
+  return { success: true, error: '' };
 };
 
 export const saveAuthKey = (
@@ -129,8 +129,10 @@ export const checkErrors = ({
 }) => {
   if (!success) {
     sendUnexpectedNotification(
-      <Text ta="justify">
-        Your authorization data could be invalid, we noticed the following errors:
+
+      <Text ta='justify'>
+        Your authorization data could be invalid, we noticed the following
+        errors:
         <br />
         {errors?.join(', ')}
       </Text>,

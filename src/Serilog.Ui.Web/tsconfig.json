@@ -29,7 +29,6 @@
       "*": [
         "./src/*"
       ],
-      // "types/*": ["./src/types/*"]
     },
     "types": [
       "node"

@@ -1,10 +1,12 @@
-import {
+import type {
   IAuthPropertiesData,
-  IAuthPropertiesStorageKeys,
+} from 'app/util/auth';
+import {
   clearAuth,
   defaultAuthProps,
   getAuthKey,
   getAuthorizationHeader,
+  IAuthPropertiesStorageKeys,
   saveAuthKey,
 } from 'app/util/auth';
 import { AuthType } from 'types/types';
@@ -72,7 +74,7 @@ describe('util: auth', () => {
         getAuthorizationHeader({}, AuthType.Jwt),
       ];
 
-      suts.forEach((i) => expect(i).toBe(''));
+      suts.forEach(i => expect(i).toBe(''));
     });
 
     it('returns empty as fallback', () => {

@@ -19,7 +19,7 @@ vi.mock('../app/hooks/useSerilogUiProps', () => {
   };
 });
 
-describe('App', () => {
+describe('app', () => {
   beforeAll(async () => {
     vi.useFakeTimers();
   });
@@ -38,7 +38,9 @@ describe('App', () => {
       await vi.runAllTimersAsync();
     });
 
-    expect(within(container).queryByAltText('main-app')).not.toBeInTheDocument();
+    expect(
+      within(container).queryByAltText('main-app'),
+    ).not.toBeInTheDocument();
   });
 
   it('renders main app', async () => {
@@ -86,8 +88,12 @@ describe('App', () => {
         await vi.runAllTimersAsync();
       });
 
-      expect(within(container).queryByLabelText('main-app')).not.toBeInTheDocument();
-      expect(within(container).getByText(/not authorized/i)).toBeInTheDocument();
+      expect(
+        within(container).queryByLabelText('main-app'),
+      ).not.toBeInTheDocument();
+      expect(
+        within(container).getByText(/not authorized/i),
+      ).toBeInTheDocument();
       propsMock.blockHomeAccess = false;
     });
 
@@ -102,8 +108,12 @@ describe('App', () => {
         await vi.runAllTimersAsync();
       });
 
-      expect(within(container).queryByLabelText('main-app')).not.toBeInTheDocument();
-      expect(within(container).getByText(/Page not found/im)).toBeInTheDocument();
+      expect(
+        within(container).queryByLabelText('main-app'),
+      ).not.toBeInTheDocument();
+      expect(
+        within(container).getByText(/Page not found/i),
+      ).toBeInTheDocument();
     });
   });
 });

@@ -18,7 +18,7 @@ describe('useJwtTimeout', () => {
     const spy = vi.spyOn(notifications, 'show');
     sessionStorage.setItem(IAuthPropertiesStorageKeys.jwt_bearerToken, 'invalid_token');
 
-    const {} = renderHookSerilogUiTestWrapper(() => useJwtTimeout(), {
+    renderHookSerilogUiTestWrapper(() => useJwtTimeout(), {
       authType: AuthType.Jwt,
     });
 
@@ -47,7 +47,7 @@ describe('useJwtTimeout', () => {
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjI5MTYyMzkwMjJ9.mYtgSqdUIxK8_RnYBTUP4cmpKw83aKi7cMiixF3qMB4',
     );
 
-    const {} = renderHookSerilogUiTestWrapper(() => useJwtTimeout(), {
+    renderHookSerilogUiTestWrapper(() => useJwtTimeout(), {
       authType: AuthType.Jwt,
     });
 
@@ -62,7 +62,7 @@ describe('useJwtTimeout', () => {
     const spy = vi.spyOn(notifications, 'show');
     sessionStorage.setItem(IAuthPropertiesStorageKeys.jwt_bearerToken, 'invalid-token');
 
-    const {} = renderHookSerilogUiTestWrapper(() => useJwtTimeout(), {
+    renderHookSerilogUiTestWrapper(() => useJwtTimeout(), {
       authType: AuthType.Custom,
     });
 

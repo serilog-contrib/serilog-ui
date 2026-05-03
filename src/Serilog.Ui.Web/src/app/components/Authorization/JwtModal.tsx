@@ -1,10 +1,11 @@
+import type { ChangeEvent } from 'react';
 import { Button, Fieldset, Group, PasswordInput } from '@mantine/core';
-import { type ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import { useAuthProperties } from '../../hooks/useAuthProperties';
 
 const JwtModal = ({ onClose }: { onClose: () => void }) => {
-  const { isHeaderReady, clearAuthState, jwt_bearerToken, saveAuthState } =
-    useAuthProperties();
+  const { isHeaderReady, clearAuthState, jwt_bearerToken, saveAuthState }
+    = useAuthProperties();
   const [currentInput, setCurrentInput] = useState(jwt_bearerToken ?? '');
 
   const onSave = async () => {

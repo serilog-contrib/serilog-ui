@@ -1,3 +1,4 @@
+import type { SearchResult } from 'types/types';
 import {
   renderSerilogUiTestWrapper,
   screen,
@@ -7,7 +8,6 @@ import {
 import { PagingLeftColumn } from 'app/components/Search/PagingLeftColumn';
 import { PagingRightColumn } from 'app/components/Search/PagingRightColumn';
 import { useQueryParamReader } from 'app/hooks/useQueryParamSync';
-import { SearchResult } from 'types/types';
 import { describe, expect, it, vi } from 'vitest';
 
 const defaultReturn: SearchResult = {
@@ -46,7 +46,7 @@ const PagingLeftTester = () => {
   return <PagingLeftColumn />;
 };
 
-describe('Paging', () => {
+describe('paging', () => {
   it('renders correctly', () => {
     renderSerilogUiTestWrapper(<PagingLeftTester />);
 
@@ -66,7 +66,7 @@ describe('Paging', () => {
 
     // [we're on page 1, inputXPage 10]
     const activePageBtn = () => screen.getByRole('button', { current: 'page' });
-    expect(activePageBtn().innerText).toBe('1');
+    expect(activePageBtn().textContent).toBe('1');
     const pageBtn = screen.getByRole('button', { name: '2' });
     const inputEntriesPerPage = screen.getByRole<HTMLInputElement>('textbox', {
       name: 'entriesPerPage',
@@ -76,7 +76,7 @@ describe('Paging', () => {
 
     // [make sure our component moved to page 2]
     expect(inputEntriesPerPage.value).toBe('10');
-    expect(activePageBtn().innerText).toBe('2');
+    expect(activePageBtn().textContent).toBe('2');
 
     await userEvent.click(inputEntriesPerPage);
 
@@ -89,7 +89,7 @@ describe('Paging', () => {
 
     // [make sure our component moved to inputXPage 25, while going to page 1]
     expect(inputEntriesPerPage.value).toBe('25');
-    expect(activePageBtn().innerText).toBe('1');
+    expect(activePageBtn().textContent).toBe('1');
   });
 
   it('changes sort on value', async () => {

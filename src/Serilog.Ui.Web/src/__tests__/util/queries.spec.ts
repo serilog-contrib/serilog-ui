@@ -50,7 +50,7 @@ describe('util: queries', () => {
       expect.objectContaining({
         title: 'Unauthorized',
         message:
-          "You are not logged in or you don't have enough permissions to perform the requested operation",
+          'You are not logged in or you don\'t have enough permissions to perform the requested operation',
         color: 'red',
         radius: 'md',
         withBorder: true,

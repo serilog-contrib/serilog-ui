@@ -1,6 +1,6 @@
-import { DefaultMantineColor } from '@mantine/core';
+import type { DefaultMantineColor } from '@mantine/core';
+import type { ReactNode } from 'react';
 import { notifications } from '@mantine/notifications';
-import { ReactNode } from 'react';
 import { AuthType } from 'types/types';
 
 export const determineHost = (routePrefix?: string) =>
@@ -25,7 +25,7 @@ export const send403Notification = () => {
   notifications.show({
     title: 'Unauthorized',
     message:
-      "You are not logged in or you don't have enough permissions to perform the requested operation",
+      'You are not logged in or you don\'t have enough permissions to perform the requested operation',
     color: 'red',
     radius: 'md',
     withBorder: true,
@@ -41,9 +41,9 @@ export const sendUnexpectedNotification = (
   notifications.show({
     title,
     message,
-    color: color,
+    color,
     radius: 'md',
     withBorder: true,
-    autoClose: autoClose,
+    autoClose,
   });
 };

@@ -1,13 +1,17 @@
+import type { SearchForm } from '../../types/types';
 import { getSearchableDate } from 'app/util/dates';
 import { parseSearchParams } from 'app/util/queryParams';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router';
-import { type SearchForm } from '../../types/types';
 import { searchFormInitialValues, useSearchForm } from './useSearchForm';
 
 const parameterizeKeyValues = (key: keyof SearchForm, value: unknown) => {
-  if (!value) return value;
-  if (key === 'startDate' || key === 'endDate') return getSearchableDate(value as Date);
+  if (!value) {
+    return value;
+  }
+  if (key === 'startDate' || key === 'endDate') {
+    return getSearchableDate(value as Date);
+  }
 
   return value;
 };
@@ -15,13 +19,21 @@ const parameterizeKeyValues = (key: keyof SearchForm, value: unknown) => {
 export const useQueryParamSync = () => {
   const [, setSearchParams] = useSearchParams();
 
-  const updateParams =
-    <T>(key: keyof SearchForm) =>
-    (value: T) => {
-      const newValues = parameterizeKeyValues(key, value);
-
+  const updateParams
+    = <T>(key: keyof SearchForm) =>
+      (value: T) => {
+        const newValues = parameterizeKeyValues(key, value);
+        setSearchParams((prev) => {
+          prev.set(key, newValues as string);
+          return prev;
+        });
+      };
+  const updateMultipleParams
+    = <T>(data: { [key: string]: T }) => {
       setSearchParams((prev) => {
-        prev.set(key, newValues as string);
+        for (const k of Object.keys(data)) {
+          prev.set(k, parameterizeKeyValues(k as keyof SearchForm, data[k]) as string);
+        }
         return prev;
       });
     };
@@ -37,6 +49,7 @@ export const useQueryParamSync = () => {
   return {
     updateDateParam,
     updateLevelParam,
+    updateMultipleParams,
     updateParam,
     updateSearchParam,
     updateTableParam,
@@ -47,8 +60,12 @@ export const useQuerySyncTable = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const registerKeyOnQuery = (defaultTable?: string) => {
-    if (!defaultTable) return;
-    if (searchParams.get('table')) return;
+    if (!defaultTable) {
+      return;
+    }
+    if (searchParams.get('table')) {
+      return;
+    }
 
     setSearchParams((prev) => {
       prev.set('table', defaultTable);
@@ -71,25 +88,31 @@ export const useQueryParamReader = () => {
     // we set values for anything coming from the URL
     urlParamKeys.forEach((e) => {
       const paramExists = e in currentAppValues;
-      if (!paramExists) return;
+      if (!paramExists) {
+        return;
+      }
 
-      if (urlParams[e] === currentAppValues[e]) return;
+      if (urlParams[e] === currentAppValues[e]) {
+        return;
+      }
       setValue(e as keyof SearchForm, urlParams[e]);
     });
 
     // if the URL doesn't have the key, we need to remove it from the application search
     const resetMissingValues = Object.keys(currentAppValues).filter(
-      (value) => !urlParamKeys.includes(value),
+      value => !urlParamKeys.includes(value),
     );
     resetMissingValues.forEach((element) => {
       setValue(element as keyof SearchForm, searchFormInitialValues[element]);
     });
 
     // if there were invalid parameters, we need to set a cleaned query string
-    if (!cleanedFromInvalidQueryString) return;
+    if (!cleanedFromInvalidQueryString) {
+      return;
+    }
     setSearchParams(cleanedFromInvalidQueryString);
 
     // no need to register the useEffect for methods/setSearchParams
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps, react/exhaustive-deps
   }, [searchParams]);
 };

@@ -3,7 +3,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconEraser, IconFilterSearch } from '@tabler/icons-react';
 import { useCloseOnResize } from 'app/hooks/useCloseOnResize';
 import { useSearchForm } from 'app/hooks/useSearchForm';
-import { Suspense, lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import classes from 'style/header.module.css';
 
 const Search = lazy(() => import('../Search/Search'));
@@ -26,7 +26,7 @@ const FilterButton = () => {
       <Modal
         opened={filterModalOpened}
         onClose={close}
-        title={
+        title={(
           <Box className={classes.searchFiltersModalTitle}>
             <Text>Search filters</Text>
             <ActionIcon
@@ -38,7 +38,7 @@ const FilterButton = () => {
               <IconEraser />
             </ActionIcon>
           </Box>
-        }
+        )}
         centered
         size="lg"
       >

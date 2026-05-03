@@ -1,8 +1,8 @@
-import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 
 const { getComputedStyle: getCompStyle } = window;
-window.getComputedStyle = (elt) => getCompStyle(elt);
+window.getComputedStyle = elt => getCompStyle(elt);
 
 class ResizeObserverMock {
   observe() {}
@@ -15,7 +15,7 @@ window.ResizeObserver = ResizeObserverMock;
 // https://blog.lysender.com/2023/06/jest-react-testing-window-matchmedia-is-not-a-function/
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: (query) => ({
+  value: query => ({
     matches: false,
     media: query,
     onchange: null,

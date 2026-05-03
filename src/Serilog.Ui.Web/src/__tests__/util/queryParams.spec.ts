@@ -1,10 +1,10 @@
 import { parseSearchParams } from 'app/util/queryParams';
-import { describe, expect, it } from 'vitest';
 import {
   LogLevel,
   SortDirectionOptions,
   SortPropertyOptions,
 } from 'types/types';
+import { describe, expect, it } from 'vitest';
 
 describe('util: queryParams', () => {
   describe('parseSearchParams', () => {

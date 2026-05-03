@@ -1,16 +1,20 @@
+import type { ReactNode } from 'react';
 import { renderHook } from '@testing-library/react';
 import { renderHookSerilogUiTestWrapper as renderHookCustom } from '__tests__/_setup/testing-utils';
-import { SerilogUiPropsProvider, useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { ReactNode } from 'react';
+import { SerilogUiPropsProvider } from 'app/contexts/SerilogUiPropsProvider';
+import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { AuthType, RemovableColumns } from 'types/types';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('useSerilogUiProps', () => {
-  it('decodes and sets dom-defined properties', () => {
+  it('decodes and sets dom-defined properties', async () => {
     const { result } = renderHookCustom(() => useSerilogUiProps(), {
       authType: AuthType.Custom,
       columnsInfo: {
-        key: { additionalColumns: [], removedColumns: [RemovableColumns.exception] },
+        key: {
+          additionalColumns: [],
+          removedColumns: [RemovableColumns.exception],
+        },
       },
     });
 
@@ -18,9 +22,14 @@ describe('useSerilogUiProps', () => {
     expect(result.current.authenticatedFromAccessDenied).toBeFalsy();
     expect(result.current.blockHomeAccess).toBeFalsy();
     expect(result.current.columnsInfo).toStrictEqual({
-      key: { additionalColumns: [], removedColumns: [RemovableColumns.exception] },
+      key: {
+        additionalColumns: [],
+        removedColumns: [RemovableColumns.exception],
+      },
     });
-    expect(result.current.disabledSortOnKeys).toStrictEqual(['disabled-sort-db']);
+    expect(result.current.disabledSortOnKeys).toStrictEqual([
+      'disabled-sort-db',
+    ]);
     expect(result.current.homeUrl).toBe('https://test-google.com');
     expect(result.current.isUtc).toBeFalsy();
     expect(result.current.routePrefix).toBe('test-serilog-ui');
@@ -50,8 +59,8 @@ describe('useSerilogUiProps', () => {
     const { result } = renderHook(() => useSerilogUiProps(), {
       wrapper: ({ children }: { children: ReactNode }) => (
         <SerilogUiPropsProvider>
-          <div hidden id="serilog-ui-props">
-            {'some text that is not a json [][]'}
+          <div hidden id='serilog-ui-props'>
+            some text that is not a json [][]
           </div>{' '}
           {children}
         </SerilogUiPropsProvider>

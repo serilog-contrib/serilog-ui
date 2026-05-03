@@ -1,7 +1,7 @@
 import { Box, Button } from '@mantine/core';
 import { IconHomeDot } from '@tabler/icons-react';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { Suspense, lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import styles from 'style/header.module.css';
 import { isStringGuard } from '../../util/guards';
 import BrandBadge from './BrandBadge';
@@ -53,7 +53,7 @@ const Sidebar = () => {
         </Suspense>
 
         <Box display="flex">
-          <BrandBadge size="lg" margin={'0 auto'} />
+          <BrandBadge size="lg" margin="0 auto" />
         </Box>
       </Box>
     </Box>

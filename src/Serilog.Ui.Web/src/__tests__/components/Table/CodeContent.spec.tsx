@@ -7,7 +7,7 @@ import CodeContent from 'app/components/Table/CodeContent';
 import { LogType } from 'types/types';
 import { describe, expect, it } from 'vitest';
 
-describe('CodeContent', () => {
+describe('codeContent', () => {
   it('renders', async () => {
     renderSerilogUiTestWrapper(
       <CodeContent

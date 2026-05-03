@@ -1,11 +1,12 @@
+import type { ChangeEvent } from 'react';
 import { Alert, Button, Fieldset, Group, PasswordInput, TextInput } from '@mantine/core';
 import { IconAlertTriangleFilled } from '@tabler/icons-react';
 import { useAuthProperties } from 'app/hooks/useAuthProperties';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 
 const BasicModal = ({ onClose }: { onClose: () => void }) => {
-  const { isHeaderReady, basic_pwd, basic_user, clearAuthState, saveAuthState } =
-    useAuthProperties();
+  const { isHeaderReady, basic_pwd, basic_user, clearAuthState, saveAuthState }
+    = useAuthProperties();
   const [user, setUser] = useState(basic_user ?? '');
   const [pwd, setPwd] = useState(basic_pwd ?? '');
 

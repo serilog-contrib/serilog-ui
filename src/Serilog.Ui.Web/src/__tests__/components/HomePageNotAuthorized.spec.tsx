@@ -18,7 +18,7 @@ vi.mock('../../app/hooks/useSerilogUiProps', () => {
   };
 });
 
-describe('HomePageNotAuthorized', () => {
+describe('homePageNotAuthorized', () => {
   it('renders navigate component if block home is false', () => {
     renderSerilogUiTestWrapper(<HomePageNotAuthorized />);
 

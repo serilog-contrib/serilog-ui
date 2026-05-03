@@ -1,6 +1,7 @@
+import type { ComponentProps } from 'react';
+import type Head from './Header';
 import { Box, Burger, useMantineTheme } from '@mantine/core';
-import { ComponentProps, Suspense, lazy } from 'react';
-import Head from './Header';
+import { lazy, Suspense } from 'react';
 
 const AuthorizeButton = lazy(() => import('../Authorization/AuthorizeButton'));
 const FilterButton = lazy(() => import('./FilterButton'));

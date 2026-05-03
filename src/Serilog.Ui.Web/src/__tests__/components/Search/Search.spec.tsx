@@ -58,7 +58,7 @@ const SearchTester = ({ onRefetch }: { onRefetch?: () => void }) => {
   return <Search onRefetch={onRefetch} />;
 };
 
-describe('Search', () => {
+describe('search', () => {
   const selectTable = async () => {
     const tableInput = ui.textbox('Table').get();
 

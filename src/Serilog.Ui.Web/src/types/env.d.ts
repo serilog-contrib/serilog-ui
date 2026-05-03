@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
-import { UserEvent } from '@testing-library/user-event';
-import { ToBeSameDate } from '__tests__/_setup/vitest-extended';
+import type { UserEvent } from '@testing-library/user-event';
+import type { ToBeSameDate } from '__tests__/_setup/vitest-extended';
 
 interface ImportMetaEnv {
   readonly VITE_APP_TITLE: string;

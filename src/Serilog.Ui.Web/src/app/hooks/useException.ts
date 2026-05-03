@@ -12,9 +12,9 @@ export const useException = (logException?: string, logPropertyType?: string) =>
 
   const isExceptionAsString = useMemo(
     () =>
-      !!renderExceptionAsStringKeys?.length &&
-      !!currentDbKey &&
-      renderExceptionAsStringKeys.includes(currentDbKey),
+      !!renderExceptionAsStringKeys?.length
+      && !!currentDbKey
+      && renderExceptionAsStringKeys.includes(currentDbKey),
     [currentDbKey, renderExceptionAsStringKeys],
   );
 

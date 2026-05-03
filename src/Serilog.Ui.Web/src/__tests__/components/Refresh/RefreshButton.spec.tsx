@@ -30,7 +30,7 @@ vi.mock('../../../app/hooks/useAuthProperties', () => ({
   }),
 }));
 
-describe('RefreshButton', () => {
+describe('refreshButton', () => {
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
   });
@@ -47,12 +47,14 @@ describe('RefreshButton', () => {
 
     const times = liveRefreshOptions.map((lro) => lro.value);
     times.forEach((time) => {
-      expect(screen.getByLabelText('refresh-duration-' + time)).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(`refresh-duration-${time}`),
+      ).toBeInTheDocument();
     });
   });
 
   it('runs live feed activies with refetch sample', async () => {
-    const spy = vi.spyOn(global, 'fetch');
+    const spy = vi.spyOn(globalThis, 'fetch');
     renderSerilogUiTestWrapper(<RefreshButton />);
 
     const durationSelector = screen.getByLabelText('refresh-duration-selector');
@@ -60,7 +62,9 @@ describe('RefreshButton', () => {
     await act(vi.advanceTimersToNextTimerAsync);
 
     const sampleOpt = liveRefreshOptions[5];
-    const timeSelector = screen.getByLabelText('refresh-duration-' + sampleOpt.value);
+    const timeSelector = screen.getByLabelText(
+      `refresh-duration-${sampleOpt.value}`,
+    );
     await userEvent.click(timeSelector);
     await act(vi.advanceTimersToNextTimerAsync);
 
@@ -71,8 +75,12 @@ describe('RefreshButton', () => {
     });
     expect(spy).toHaveBeenCalledTimes(2);
 
-    const durationStopper = screen.getByLabelText('refresh-duration-cancel-button');
-    expect(screen.queryByLabelText('refresh-duration-selector')).not.toBeInTheDocument();
+    const durationStopper = screen.getByLabelText(
+      'refresh-duration-cancel-button',
+    );
+    expect(
+      screen.queryByLabelText('refresh-duration-selector'),
+    ).not.toBeInTheDocument();
     expect(durationStopper).toBeInTheDocument();
 
     await userEvent.click(durationStopper);
@@ -81,6 +89,8 @@ describe('RefreshButton', () => {
     expect(
       screen.queryByLabelText('refresh-duration-cancel-button'),
     ).not.toBeInTheDocument();
-    expect(screen.getByLabelText('refresh-duration-selector')).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('refresh-duration-selector'),
+    ).toBeInTheDocument();
   });
 });

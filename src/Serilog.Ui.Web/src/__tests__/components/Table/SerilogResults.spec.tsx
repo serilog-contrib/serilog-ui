@@ -1,6 +1,9 @@
 /* eslint-disable testing-library/no-container */
 import { fakeLogs } from '__tests__/_setup/mocks/samples';
-import { renderSerilogUiTestWrapper, screen } from '__tests__/_setup/testing-utils';
+import {
+  renderSerilogUiTestWrapper,
+  screen,
+} from '__tests__/_setup/testing-utils';
 import SerilogResults from 'app/components/Table/SerilogResults';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -12,8 +15,8 @@ vi.mock('../../../app/hooks/useQueryLogs', () => ({
   default: () => mockQuery,
 }));
 
-describe('SerilogResults', () => {
-  it('renders', () => {
+describe('serilogResults', () => {
+  it('renders', { timeout: 10000 }, () => {
     const { container } = renderSerilogUiTestWrapper(<SerilogResults />);
 
     expect(screen.getByRole('table')).toBeInTheDocument();

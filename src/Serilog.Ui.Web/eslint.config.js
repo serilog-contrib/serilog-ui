@@ -1,5 +1,6 @@
 import antfu from '@antfu/eslint-config'
 import vitest from '@vitest/eslint-plugin'
+import rHooks from 'eslint-plugin-react-hooks'
 import testingLibrary from 'eslint-plugin-testing-library'
 
 export default antfu({
@@ -9,19 +10,31 @@ export default antfu({
     quotes: 'single',
     semi: false,
     overrides: {
-      'style/semi': 'off',
-      'style/brace-style': 'off',
-      'style/member-delimiter-style': 'off',
+      'antfu/consistent-list-newline': 'off',
+      'style/max-statements-per-line': 'off',
       'antfu/no-top-level-await': 'off',
+      'style/arrow-parens': 'off',
+      'style/brace-style': 'off',
+      'style/jsx-closing-bracket-location': 'off',
+      'style/jsx-one-expression-per-line': 'off',
+      'style/jsx-quotes': 'off',
+      'style/member-delimiter-style': 'off',
+      'style/multiline-ternary': 'off',
+      'style/operator-linebreak': 'off',
+      'style/semi': 'off',
     },
   },
   ignores: ['obj/*', 'obj/*/**', 'bin/*', 'bin/*/**', 'wwwroot/*', 'wwwroot/*/**', 'coverage/*', 'coverage/*/**', '*.html', '**/*.html/**', 'src/mockServiceWorker.js', 'src/reports/*', 'src/reports/*/**'],
+}, {
+  files: ['**/*.ts', '**/*.tsx', '**/*.{spec,test}.*'],
+  ...rHooks.configs.flat['recommended-latest'],
 }, {
   files: ['**/__tests__/**/*', '**/*.{spec,test}.*'],
   plugins: { vitest, testingLibrary },
   ...vitest.configs.recommended,
   ...testingLibrary.configs['flat/react'],
   rules: {
+    'react/component-hook-factories': 'off',
     // https://github.com/testing-library/eslint-plugin-testing-library
     'testing-library/await-async-queries': 'error',
     'testing-library/await-async-utils': 'error',

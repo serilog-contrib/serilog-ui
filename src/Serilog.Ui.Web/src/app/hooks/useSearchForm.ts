@@ -1,10 +1,11 @@
+import type { SearchForm } from '../../types/types';
 import { isArrayGuard } from 'app/util/guards';
 import { useForm, useFormContext } from 'react-hook-form';
 import { useSearchParams } from 'react-router';
 import {
+
   SortDirectionOptions,
   SortPropertyOptions,
-  type SearchForm,
 } from '../../types/types';
 import { useQueryTableKeys } from './useQueryTableKeys';
 

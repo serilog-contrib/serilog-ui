@@ -8,7 +8,7 @@ import {
 import DetailsModal from 'app/components/Table/DetailsModal';
 import { describe, expect, it } from 'vitest';
 
-describe('DetailsModal', () => {
+describe('detailsModal', () => {
   it('renders', () => {
     renderSerilogUiTestWrapper(
       <DetailsModal

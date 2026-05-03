@@ -10,7 +10,7 @@ import { describe, expect, it } from 'vitest';
 describe('util: guards', () => {
   it.each([
     [null, false],
-    [, true],
+    [undefined, true],
     ['test', true],
     [{}, true],
     [[], true],
@@ -23,7 +23,7 @@ describe('util: guards', () => {
 
   it.each([
     [null, false],
-    [, false],
+    [undefined, false],
     [0, false],
     [10, false],
     [true, false],
@@ -37,7 +37,7 @@ describe('util: guards', () => {
 
   it.each([
     [null, false],
-    [, false],
+    [undefined, false],
     [[], false],
     [[0], true],
   ])('guards array on %s', (value, expected) => {
@@ -47,7 +47,7 @@ describe('util: guards', () => {
 
   it.each([
     [null, false],
-    [, false],
+    [undefined, false],
     [0, true],
     [10, true],
     [true, true],

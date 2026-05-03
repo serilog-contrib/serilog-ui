@@ -1,7 +1,7 @@
 import {
   ActionIcon,
-  Group,
   em,
+  Group,
   useMantineColorScheme,
   useMantineTheme,
 } from '@mantine/core';
@@ -9,16 +9,16 @@ import { useMediaQuery } from '@mantine/hooks';
 import { IconHomeDot, IconMoonStars, IconSun } from '@tabler/icons-react';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { isStringGuard } from 'app/util/guards';
-import { Suspense, lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import classes from 'style/header.module.css';
 import { RefreshButton } from '../Refresh/RefreshButton';
 import BrandBadge from './BrandBadge';
 
 const HeaderActivity = lazy(() => import('./HeaderActivity'));
 
-type IDispatch = {
+interface IDispatch {
   toggleMobile: () => void;
-};
+}
 interface IProps extends IDispatch {
   isMobileOpen?: boolean;
 }
@@ -64,11 +64,13 @@ const Head = ({ isMobileOpen, toggleMobile }: IProps) => {
           }}
           size={24}
         >
-          {colorScheme === 'dark' ? (
-            <IconSun size="1rem" stroke="3" />
-          ) : (
-            <IconMoonStars size="1rem" stroke="3" />
-          )}
+          {colorScheme === 'dark'
+            ? (
+                <IconSun size="1rem" stroke="3" />
+              )
+            : (
+                <IconMoonStars size="1rem" stroke="3" />
+              )}
         </ActionIcon>
 
         <RefreshButton />

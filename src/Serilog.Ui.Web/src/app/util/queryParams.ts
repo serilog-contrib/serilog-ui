@@ -1,7 +1,8 @@
+import type { SearchForm } from '../../types/types';
 import dayjs from 'dayjs';
 import {
   LogLevel,
-  type SearchForm,
+
   SortDirectionOptions,
   SortPropertyOptions,
 } from '../../types/types';
@@ -19,26 +20,32 @@ interface ParamParser<T> {
 }
 
 const DateParser: ParamParser<Date> = {
-  canHandle: (k) => ['startDate', 'endDate'].includes(k),
+  canHandle: k => ['startDate', 'endDate'].includes(k),
   extract: (value) => {
-    if (!value) return { valued: false, value: null };
+    if (!value) {
+      return { valued: false, value: null };
+    }
 
     const date = dayjs(value);
-    if (!date.isValid()) return { invalid: true, value: null };
+    if (!date.isValid()) {
+      return { invalid: true, value: null };
+    }
     return { valued: true, value: date.toDate() };
   },
 };
 
 enum entriesPerPage {
-  'Ten' = '10',
-  'TwentyFive' = '25',
-  'Fifty' = '50',
-  'OneHundred' = '100',
+  Ten = '10',
+  TwentyFive = '25',
+  Fifty = '50',
+  OneHundred = '100',
 }
 const EnumParser: ParamParser<LogLevel | SortPropertyOptions | SortDirectionOptions> = {
-  canHandle: (k) => ['entriesPerPage', 'level', 'sortBy', 'sortOn'].includes(k),
+  canHandle: k => ['entriesPerPage', 'level', 'sortBy', 'sortOn'].includes(k),
   extract: (value, k) => {
-    if (!value) return { valued: false, value: null };
+    if (!value) {
+      return { valued: false, value: null };
+    }
     let values: string[] = [];
     switch (k) {
       case 'entriesPerPage':
@@ -54,7 +61,9 @@ const EnumParser: ParamParser<LogLevel | SortPropertyOptions | SortDirectionOpti
         values = Object.values(SortPropertyOptions);
         break;
     }
-    if (!values.includes(value)) return { invalid: true, value: null };
+    if (!values.includes(value)) {
+      return { invalid: true, value: null };
+    }
 
     return {
       valued: true,
@@ -63,19 +72,21 @@ const EnumParser: ParamParser<LogLevel | SortPropertyOptions | SortDirectionOpti
   },
 };
 const NumberParser: ParamParser<number> = {
-  canHandle: (k) => ['page'].includes(k),
+  canHandle: k => ['page'].includes(k),
   extract: (value) => {
-    if (!value) return { valued: false, value: null };
+    if (!value) {
+      return { valued: false, value: null };
+    }
 
-    const pageNum = parseInt(value, 10);
-    if (!isNaN(pageNum) && pageNum > 0) {
+    const pageNum = Number.parseInt(value, 10);
+    if (!Number.isNaN(pageNum) && pageNum > 0) {
       return { valued: true, value: pageNum };
     }
     return { invalid: true, value: null };
   },
 };
 const StringParser: ParamParser<string> = {
-  canHandle: (k) => ['search', 'table'].includes(k),
+  canHandle: k => ['search', 'table'].includes(k),
   extract: (value) => {
     return { valued: !!value, value };
   },
@@ -102,8 +113,10 @@ export const parseSearchParams = (searchParams: URLSearchParams) => {
     cleanedFromInvalidQueryString: URLSearchParams | undefined;
   }>(
     (prev, curr) => {
-      const validator = validators.find((x) => x.canHandle(curr));
-      if (!validator) return prev;
+      const validator = validators.find(x => x.canHandle(curr));
+      if (!validator) {
+        return prev;
+      }
       const data = validator.extract(getParam(curr), curr);
 
       if (data.valued && data.value !== null) {

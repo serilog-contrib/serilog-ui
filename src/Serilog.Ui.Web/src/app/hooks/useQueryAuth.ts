@@ -10,7 +10,9 @@ export const useQueryAuth = () => {
   const { refetch } = useQueryTableKeys();
 
   useEffect(() => {
-    if (!blockHomeAccess) return;
+    if (!blockHomeAccess) {
+      return;
+    }
 
     if (!isHeaderReady) {
       setAuthenticatedFromAccessDenied(false);

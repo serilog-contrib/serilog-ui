@@ -1,5 +1,5 @@
 /* eslint-disable testing-library/render-result-naming-convention */
-import { MantineColorScheme, MantineTheme } from '@mantine/core';
+import type { MantineColorScheme, MantineTheme } from '@mantine/core';
 import dayjs from 'dayjs';
 import { theme } from 'style/theme';
 import { describe, expect, it, vi } from 'vitest';

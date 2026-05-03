@@ -15,18 +15,22 @@ export const useJwtTimeout = () => {
 
   // when token changes, validation can resume
   useEffect(() => {
-    setStopError(false);
+    setStopError(false); // todo
   }, [jwt_bearerToken]);
 
   useEffect(() => {
     // if error was already spotted, we don't start checking until jwt is changed
-    if (authType !== AuthType.Jwt || !jwt_bearerToken || stopError) return;
+    if (authType !== AuthType.Jwt || !jwt_bearerToken || stopError) {
+      return;
+    }
 
     const id = setTimeout(() => {
       const result = validateKey('jwt_bearerToken', jwt_bearerToken);
 
       checkErrors(result);
-      if (result.error) setStopError(true);
+      if (result.error) {
+        setStopError(true);
+      }
     }, MINUTES);
 
     return () => {

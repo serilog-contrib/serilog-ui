@@ -1,6 +1,6 @@
+import type { SearchResult } from 'types/types';
 import { renderSerilogUiTestWrapper, screen } from '__tests__/_setup/testing-utils';
 import Paging from 'app/components/Search/Paging';
-import { SearchResult } from 'types/types';
 import { describe, expect, it, vi } from 'vitest';
 
 const defaultReturn: () => SearchResult = () => ({
@@ -19,7 +19,7 @@ vi.mock('../../../app/hooks/useQueryLogs', async () => {
   };
 });
 
-describe('Paging', () => {
+describe('paging', () => {
   it('renders correctly', () => {
     renderSerilogUiTestWrapper(<Paging />);
 
