@@ -1,5 +1,5 @@
 {
-  "version": "3.2.0",
+  "version": "4.0.0",
   "name": "serilog-ui",
   "private": true,
   "type": "module",
@@ -15,10 +15,10 @@
   },
   "dependencies": {
     "@fontsource/mononoki": "^5.2.5",
-    "@mantine/core": "^7.17.4",
-    "@mantine/dates": "^7.17.4",
-    "@mantine/hooks": "^7.17.4",
-    "@mantine/notifications": "^7.17.4",
+    "@mantine/core": "^9.1.1",
+    "@mantine/dates": "^9.1.1",
+    "@mantine/hooks": "^9.1.1",
+    "@mantine/notifications": "^9.1.1",
     "@tabler/icons-react": "^3.41.1",
     "@tanstack/react-query": "^5.100.8",
     "dayjs": "^1.11.20",
@@ -64,7 +64,7 @@
     "vitest-sonar-reporter": "^3.0.0"
   },
   "engines": {
-    "node": ">=18.18.0"
+    "node": ">=24.15.0"
   },
   "msw": {
     "workerDirectory": "src"

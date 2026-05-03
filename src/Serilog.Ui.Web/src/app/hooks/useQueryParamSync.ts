@@ -38,8 +38,8 @@ export const useQueryParamSync = () => {
       });
     };
 
-  const updateDateParam = (key: 'startDate' | 'endDate') =>
-    updateParams<Date | null>(key);
+  const updateDateParam = (key: 'startDate' | 'endDate') => (value: string | null) =>
+    updateParams(key)(value ? new Date(value) : null);
   const updateLevelParam = updateParams<string | null>('level');
   const updateParam = <T>(key: 'page' | 'entriesPerPage' | 'sortBy' | 'sortOn') =>
     updateParams<T>(key);

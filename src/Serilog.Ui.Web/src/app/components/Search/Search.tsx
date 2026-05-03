@@ -122,7 +122,7 @@ const DateStartInput = () => {
       <DateTimePicker
         label='Start date'
         clearable
-        timeInputProps={{
+        timePickerProps={{
           'aria-label': 'start-time-input',
         }}
         withSeconds={true}
@@ -149,7 +149,7 @@ const DateEndInput = () => {
       <DateTimePicker
         label='End date'
         clearable
-        timeInputProps={{
+        timePickerProps={{
           'aria-label': 'end-time-input',
         }}
         withSeconds={true}
