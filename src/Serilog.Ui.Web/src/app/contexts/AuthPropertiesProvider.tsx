@@ -25,9 +25,8 @@ export const AuthPropertiesProvider = ({
   const queryClient = useQueryClient();
   const { authType, routePrefix } = useSerilogUiProps();
 
-  const [authInfo, setAuthInfo] = useState<IAuthPropertiesData>({
-    ...initialAuthProps(),
-  });
+  const [authInfo, setAuthInfo] =
+    useState<IAuthPropertiesData>(initialAuthProps);
 
   const authHeader = useMemo(
     () => getAuthorizationHeader(authInfo, authType),

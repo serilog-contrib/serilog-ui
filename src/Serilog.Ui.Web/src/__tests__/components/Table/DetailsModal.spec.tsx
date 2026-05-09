@@ -3,7 +3,6 @@ import {
   screen,
   userEvent,
   waitFor,
-  waitForElementToBeRemoved,
 } from '__tests__/_setup/testing-utils';
 import DetailsModal from 'app/components/Table/DetailsModal';
 import { describe, expect, it } from 'vitest';

@@ -4,7 +4,6 @@ import {
   screen,
   userEvent,
   waitFor,
-  waitForElementToBeRemoved,
 } from '__tests__/_setup/testing-utils';
 import FilterButton from 'app/components/ShellStructure/FilterButton';
 import { describe, expect, it, vi } from 'vitest';

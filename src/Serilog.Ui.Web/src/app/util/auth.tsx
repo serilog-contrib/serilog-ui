@@ -127,18 +127,18 @@ export const checkErrors = ({
   success: boolean;
   errors?: string[];
 }) => {
-  if (!success) {
-    sendUnexpectedNotification(
-
-      <Text ta='justify'>
-        Your authorization data could be invalid, we noticed the following
-        errors:
-        <br />
-        {errors?.join(', ')}
-      </Text>,
-      'Auth validation',
-      'yellow',
-      false,
-    );
+  if (success) {
+    return;
   }
+
+  sendUnexpectedNotification(
+    <Text ta='justify'>
+      Your authorization data could be invalid, we noticed the following errors:
+      <br />
+      {errors?.join(', ')}
+    </Text>,
+    'Auth validation',
+    'yellow',
+    false,
+  );
 };

@@ -8,7 +8,10 @@ export const determineHost = (routePrefix?: string) =>
     ? 'https://localhost:3001'
     : `${window.location.origin}/${routePrefix ?? ''}`;
 
-export const createRequestInit = (authType?: AuthType, header?: string): RequestInit => {
+export const createRequestInit = (
+  authType?: AuthType,
+  header?: string,
+): RequestInit => {
   const notWindowsAuth = authType !== AuthType.Custom;
 
   const headers: Headers = new Headers();
@@ -25,7 +28,7 @@ export const send403Notification = () => {
   notifications.show({
     title: 'Unauthorized',
     message:
-      'You are not logged in or you don\'t have enough permissions to perform the requested operation',
+      'You are not logged in or you do not have enough permissions to perform the requested operation',
     color: 'red',
     radius: 'md',
     withBorder: true,
