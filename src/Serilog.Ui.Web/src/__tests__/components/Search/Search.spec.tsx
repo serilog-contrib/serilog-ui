@@ -1,10 +1,8 @@
 import { dbKeysMock } from '__tests__/_setup/mocks/samples';
 import {
-  fireEvent,
   renderSerilogUiTestWrapper,
   screen,
   userEvent,
-  waitForElementToBeRemoved,
   within,
 } from '__tests__/_setup/testing-utils';
 import Search from 'app/components/Search/Search';
@@ -36,9 +34,11 @@ vi.mock('../../../app/hooks/useAuthProperties', () => ({
 }));
 
 const ui = {
+  combobox: (name: string) => byRole('combobox', { name }),
   textbox: (name: string) => byRole('textbox', { name }),
   listbox: byRole('listbox'),
-  options: (listbox: ReturnType<typeof byRole>) => byRole('option').getAll(listbox.get()),
+  options: (listbox: ReturnType<typeof byRole>) =>
+    byRole('option').getAll(listbox.get()),
   start_date: byRole('button', { name: 'Start date' }),
   end_date: byRole('button', { name: 'End date' }),
   day_btn: (name: string) => byRole('button', { name }),
@@ -60,7 +60,7 @@ const SearchTester = ({ onRefetch }: { onRefetch?: () => void }) => {
 
 describe('search', () => {
   const selectTable = async () => {
-    const tableInput = ui.textbox('Table').get();
+    const tableInput = ui.combobox('Table').get();
 
     await userEvent.click(tableInput);
 
@@ -76,14 +76,19 @@ describe('search', () => {
   it('renders correctly', () => {
     renderSerilogUiTestWrapper(<SearchTester onRefetch={vi.fn()} />);
 
-    expect(screen.getByRole('form', { name: 'search-logs-form' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('form', { name: 'search-logs-form' }),
+    ).toBeInTheDocument();
   });
 
   describe('fields', () => {
     it('fetch with selected table', async () => {
       const spy = vi.spyOn(logs, 'fetchLogs');
 
-      renderSerilogUiTestWrapper(<SearchTester onRefetch={vi.fn()} />, AuthType.Jwt);
+      renderSerilogUiTestWrapper(
+        <SearchTester onRefetch={vi.fn()} />,
+        AuthType.Jwt,
+      );
 
       await selectTable();
 
@@ -99,11 +104,14 @@ describe('search', () => {
     it('fetch with selected level', async () => {
       const spy = vi.spyOn(logs, 'fetchLogs');
 
-      renderSerilogUiTestWrapper(<SearchTester onRefetch={vi.fn()} />, AuthType.Jwt);
+      renderSerilogUiTestWrapper(
+        <SearchTester onRefetch={vi.fn()} />,
+        AuthType.Jwt,
+      );
 
       await selectTable();
 
-      const levelInput = ui.textbox('Level').get();
+      const levelInput = ui.combobox('Level').get();
 
       await userEvent.click(levelInput);
 
@@ -126,7 +134,10 @@ describe('search', () => {
     it('fetch with selected text search', async () => {
       const spy = vi.spyOn(logs, 'fetchLogs');
 
-      renderSerilogUiTestWrapper(<SearchTester onRefetch={vi.fn()} />, AuthType.Jwt);
+      renderSerilogUiTestWrapper(
+        <SearchTester onRefetch={vi.fn()} />,
+        AuthType.Jwt,
+      );
 
       await selectTable();
 
@@ -149,7 +160,10 @@ describe('search', () => {
     it('fetch with selected start date', async () => {
       const spy = vi.spyOn(logs, 'fetchLogs');
 
-      renderSerilogUiTestWrapper(<SearchTester onRefetch={vi.fn()} />, AuthType.Jwt);
+      renderSerilogUiTestWrapper(
+        <SearchTester onRefetch={vi.fn()} />,
+        AuthType.Jwt,
+      );
 
       await selectTable();
 
@@ -157,20 +171,19 @@ describe('search', () => {
       await userEvent.click(ui.start_date.get());
 
       // click sample day button
-      await userEvent.click(ui.day_btn(sampleDate.format('DD MMMM YYYY')).get());
+      await userEvent.click(
+        ui.day_btn(sampleDate.format('DD MMMM YYYY')).get(),
+      );
+
       // click sample time button
-      // using fireEvent due to userEvent.type not supporting seconds
-      // ref https://github.com/testing-library/user-event/blob/d0362796a33c2d39713998f82ae309020c37b385/tests/event/input.ts#L298
-      fireEvent.change(ui.time_btn('start-time-input').get(), {
-        target: { value: '15:15:30' },
-      });
+      await userEvent.type(ui.time_btn('start-time-input').get(), '15:15:30');
 
       // click submit date button
       const submitBtn = within(screen.getByRole('dialog'))
         .getAllByRole('button')
         .slice(-1);
       await userEvent.click(submitBtn[0]);
-      await waitForElementToBeRemoved(screen.queryByRole('dialog'));
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
       // submit request
       await userEvent.click(ui.submit.get());
@@ -188,7 +201,10 @@ describe('search', () => {
     it('fetch with selected end date', async () => {
       const spy = vi.spyOn(logs, 'fetchLogs');
 
-      renderSerilogUiTestWrapper(<SearchTester onRefetch={vi.fn()} />, AuthType.Jwt);
+      renderSerilogUiTestWrapper(
+        <SearchTester onRefetch={vi.fn()} />,
+        AuthType.Jwt,
+      );
 
       await selectTable();
 
@@ -196,20 +212,19 @@ describe('search', () => {
       await userEvent.click(ui.end_date.get());
 
       // click sample day button
-      await userEvent.click(ui.day_btn(sampleDate.format('DD MMMM YYYY')).get());
+      await userEvent.click(
+        ui.day_btn(sampleDate.format('DD MMMM YYYY')).get(),
+      );
+
       // click sample time button
-      // using fireEvent due to userEvent.type not supporting seconds
-      // ref https://github.com/testing-library/user-event/blob/d0362796a33c2d39713998f82ae309020c37b385/tests/event/input.ts#L298
-      fireEvent.change(ui.time_btn('end-time-input').get(), {
-        target: { value: '15:15:30' },
-      });
+      await userEvent.type(ui.time_btn('end-time-input').get(), '15:15:30');
 
       // click submit date button
       const submitBtn = within(screen.getByRole('dialog'))
         .getAllByRole('button')
         .slice(-1);
       await userEvent.click(submitBtn[0]);
-      await waitForElementToBeRemoved(screen.queryByRole('dialog'));
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
       // submit request
       await userEvent.click(ui.submit.get());
@@ -229,7 +244,10 @@ describe('search', () => {
     const spy = vi.spyOn(logs, 'fetchLogs');
     searchFormInitialValues.page = 2;
 
-    renderSerilogUiTestWrapper(<SearchTester onRefetch={vi.fn()} />, AuthType.Jwt);
+    renderSerilogUiTestWrapper(
+      <SearchTester onRefetch={vi.fn()} />,
+      AuthType.Jwt,
+    );
 
     await selectTable();
     const levelInput = ui.textbox('Search').get();
@@ -264,7 +282,10 @@ describe('search', () => {
     const spy = vi.spyOn(logs, 'fetchLogs');
 
     const onRefetchMock = vi.fn();
-    renderSerilogUiTestWrapper(<SearchTester onRefetch={onRefetchMock} />, AuthType.Jwt);
+    renderSerilogUiTestWrapper(
+      <SearchTester onRefetch={onRefetchMock} />,
+      AuthType.Jwt,
+    );
 
     await selectTable();
 

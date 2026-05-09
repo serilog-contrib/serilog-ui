@@ -2,6 +2,7 @@ import {
   renderSerilogUiTestWrapper,
   screen,
   userEvent,
+  within,
 } from '__tests__/_setup/testing-utils';
 import JwtModal from 'app/components/Authorization/JwtModal';
 import { IAuthPropertiesStorageKeys } from 'app/util/auth';
@@ -27,7 +28,11 @@ describe('jwt Modal', () => {
     const closeMock = vi.fn();
     renderSerilogUiTestWrapper(<JwtModal onClose={closeMock} />, AuthType.Jwt);
 
-    expect(screen.getAllByRole('button')).toHaveLength(2);
+    expect(
+      within(screen.getByLabelText('Jwt auth modal button group')).getAllByRole(
+        'button',
+      ),
+    ).toHaveLength(2);
 
     [jwt()].forEach((val) => {
       expect(val).toBeInTheDocument();

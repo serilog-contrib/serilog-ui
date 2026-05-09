@@ -2,6 +2,7 @@ import {
   renderSerilogUiTestWrapper,
   screen,
   userEvent,
+  within,
 } from '__tests__/_setup/testing-utils';
 import BasicModal from 'app/components/Authorization/BasicModal';
 import { IAuthPropertiesStorageKeys } from 'app/util/auth';
@@ -32,7 +33,11 @@ describe('basic Modal', () => {
       AuthType.Basic,
     );
 
-    expect(screen.getAllByRole('button')).toHaveLength(2);
+    expect(
+      within(screen.getByLabelText('Basic modal button group')).getAllByRole(
+        'button',
+      ),
+    ).toHaveLength(2);
 
     [username(), pwd()].forEach((val) => {
       expect(val).toBeInTheDocument();

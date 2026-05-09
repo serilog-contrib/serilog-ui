@@ -40,7 +40,9 @@ describe('filterButton', () => {
 
     expect(screen.getByText('Search filters')).toBeInTheDocument();
     await waitFor(() => {
-      expect(screen.getByRole('form', { name: 'search-logs-form' })).toBeInTheDocument();
+      expect(
+        screen.getByRole('form', { name: 'search-logs-form' }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -57,6 +59,6 @@ describe('filterButton', () => {
       window.dispatchEvent(new Event('resize'));
     });
 
-    await waitForElementToBeRemoved(modalTitle);
+    expect(modalTitle).not.toBeInTheDocument();
   });
 });

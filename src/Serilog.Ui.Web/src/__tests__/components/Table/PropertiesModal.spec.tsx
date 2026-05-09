@@ -8,7 +8,6 @@ import {
   screen,
   userEvent,
   waitFor,
-  waitForElementToBeRemoved,
 } from '__tests__/_setup/testing-utils';
 import PropertiesModal from 'app/components/Table/PropertiesModal';
 import { describe, expect, it, vi } from 'vitest';
@@ -58,13 +57,13 @@ describe('propertiesModal', () => {
     const btn = screen.getByRole('button', { name: 'title' });
     await userEvent.click(btn);
 
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
-
     const btnClose = screen.getByRole('button', {
       name: 'close-properties-modal',
     });
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+
     await userEvent.click(btnClose);
-    await waitForElementToBeRemoved(screen.queryByRole('dialog'));
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('show additional column: boolean', async () => {

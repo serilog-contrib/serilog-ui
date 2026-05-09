@@ -47,7 +47,7 @@ const Wrapper = ({
   const queryClient = new QueryClient();
 
   return (
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={theme} env='test'>
       <div hidden id='serilog-ui-props'>
         {JSON.stringify({
           routePrefix: 'test-serilog-ui',

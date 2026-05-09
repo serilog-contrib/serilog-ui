@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useAuthProperties } from '../../hooks/useAuthProperties';
 
 const JwtModal = ({ onClose }: { onClose: () => void }) => {
-  const { isHeaderReady, clearAuthState, jwt_bearerToken, saveAuthState }
-    = useAuthProperties();
+  const { isHeaderReady, clearAuthState, jwt_bearerToken, saveAuthState } =
+    useAuthProperties();
   const [currentInput, setCurrentInput] = useState(jwt_bearerToken ?? '');
 
   const onSave = async () => {
@@ -15,37 +15,40 @@ const JwtModal = ({ onClose }: { onClose: () => void }) => {
   return (
     <>
       <Fieldset
-        component="form"
-        legend="JWT Authentication"
-        mb="md"
+        component='form'
+        legend='JWT Authentication'
+        mb='md'
         onSubmit={(event) => {
           event.preventDefault();
-        }}
-      >
+        }}>
         <PasswordInput
-          placeholder="eyJhbGciOiJSUz [...]"
-          label="JWT Token"
-          radius="sm"
-          size="sm"
+          placeholder='eyJhbGciOiJSUz [...]'
+          label='JWT Token'
+          radius='sm'
+          size='sm'
           style={{ flexGrow: 1 }}
           value={currentInput}
           disabled={isHeaderReady}
           withAsterisk
-          autoComplete="off"
+          autoComplete='off'
           onChange={(event: ChangeEvent<HTMLInputElement>) => {
             setCurrentInput(event.currentTarget.value);
           }}
         />
       </Fieldset>
-      <Group display="flex" justify="right">
+      <Group
+        display='flex'
+        justify='right'
+        aria-label='Jwt auth modal button group'>
         <Button
           disabled={!currentInput}
           display={isHeaderReady ? 'none' : 'inherit'}
-          onClick={onSave}
-        >
+          onClick={onSave}>
           Save
         </Button>
-        <Button display={!isHeaderReady ? 'none' : 'inherit'} onClick={clearAuthState}>
+        <Button
+          display={!isHeaderReady ? 'none' : 'inherit'}
+          onClick={clearAuthState}>
           Change Token
         </Button>
         <Button onClick={onClose}>Close</Button>

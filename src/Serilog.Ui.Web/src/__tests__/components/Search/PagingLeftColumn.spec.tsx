@@ -68,7 +68,7 @@ describe('paging', () => {
     const activePageBtn = () => screen.getByRole('button', { current: 'page' });
     expect(activePageBtn().textContent).toBe('1');
     const pageBtn = screen.getByRole('button', { name: '2' });
-    const inputEntriesPerPage = screen.getByRole<HTMLInputElement>('textbox', {
+    const inputEntriesPerPage = screen.getByRole<HTMLInputElement>('combobox', {
       name: 'entriesPerPage',
     });
 
@@ -80,8 +80,10 @@ describe('paging', () => {
 
     await userEvent.click(inputEntriesPerPage);
 
-    const listBox = screen.getByRole('listbox');
-    const selectOption = within(listBox).getByRole('option', {
+    const listBox = screen.getByRole<HTMLInputElement>('listbox', {
+      name: 'entriesPerPage',
+    });
+    const selectOption = screen.getAllByRole('option', {
       name: '25',
     });
 
@@ -95,19 +97,21 @@ describe('paging', () => {
   it('changes sort on value', async () => {
     renderSerilogUiTestWrapper(<PagingLeftTester />);
 
-    const sortOn = screen.getByRole<HTMLInputElement>('textbox', {
+    const sortOn = screen.getByRole<HTMLInputElement>('combobox', {
       name: 'sortOn',
     });
     expect(sortOn.value).toBe('Timestamp');
 
     await userEvent.click(sortOn);
 
-    const listBox = screen.getByRole('listbox');
-    const selectOption = within(listBox).getByRole('option', {
+    const listbox = screen.getByRole<HTMLInputElement>('listbox', {
+      name: 'sortOn',
+    });
+    const selectOption = within(listbox).getByRole('option', {
       name: 'Level',
     });
 
-    await userEvent.selectOptions(listBox, selectOption);
+    await userEvent.selectOptions(listbox, selectOption);
 
     expect(sortOn.value).toBe('Level');
   });
@@ -129,7 +133,7 @@ describe('paging', () => {
     watchMock.mockReturnValue('test-key');
     renderSerilogUiTestWrapper(<PagingLeftTester />);
 
-    const sortOn = screen.getByRole<HTMLInputElement>('textbox', {
+    const sortOn = screen.getByRole<HTMLInputElement>('combobox', {
       name: 'sortOn',
     });
     expect(sortOn).toBeDisabled();
