@@ -30,23 +30,24 @@ jobs:
   ubuntu-latest:
     name: ubuntu-latest
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
-
       - uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: "temurin"
+          java-version: "17"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: 'Cache: .nuke/temp, ~/.nuget/packages'
+      - name: "Cache: .nuke/temp, ~/.nuget/packages"
         uses: actions/cache@v4
         with:
           path: |
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
-      - name: 'Run: Frontend_Tests_Ci'
+      - name: "Run: Frontend_Tests_Ci"
         run: ./build.cmd Frontend_Tests_Ci
         env:
           SonarTokenUi: ${{ secrets.SONAR_TOKEN_UI }}
@@ -72,4 +73,4 @@ jobs:
         if: always()
         with:
           name: test-results
-          path: '**/test-junit-report.xml'
+          path: "**/test-junit-report.xml"
