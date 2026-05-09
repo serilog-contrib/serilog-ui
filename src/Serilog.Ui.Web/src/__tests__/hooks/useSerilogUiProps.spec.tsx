@@ -1,10 +1,14 @@
 import type { ReactNode } from 'react';
-import { renderHook } from '@testing-library/react';
+import { renderHook as testingLibraryRenderHook } from '@testing-library/react';
 import { renderHookSerilogUiTestWrapper as renderHookCustom } from '__tests__/_setup/testing-utils';
 import { SerilogUiPropsProvider } from 'app/contexts/SerilogUiPropsProvider';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { AuthType, RemovableColumns } from 'types/types';
 import { describe, expect, it, vi } from 'vitest';
+
+const TestProvider = ({ children }: { children: ReactNode }) => (
+  <SerilogUiPropsProvider>{children}</SerilogUiPropsProvider>
+);
 
 describe('useSerilogUiProps', () => {
   it('decodes and sets dom-defined properties', async () => {
@@ -37,9 +41,9 @@ describe('useSerilogUiProps', () => {
   });
 
   it('sets defaults if no decodable id is found', () => {
-    const { result } = renderHook(() => useSerilogUiProps(), {
+    const { result } = testingLibraryRenderHook(() => useSerilogUiProps(), {
       wrapper: ({ children }: { children: ReactNode }) => (
-        <SerilogUiPropsProvider>{children}</SerilogUiPropsProvider>
+        <TestProvider>{children}</TestProvider>
       ),
     });
 
@@ -56,16 +60,23 @@ describe('useSerilogUiProps', () => {
     const warnMock = vi.fn();
     console.warn = warnMock;
 
-    const { result } = renderHook(() => useSerilogUiProps(), {
-      wrapper: ({ children }: { children: ReactNode }) => (
-        <SerilogUiPropsProvider>
-          <div hidden id='serilog-ui-props'>
-            some text that is not a json [][]
-          </div>{' '}
-          {children}
-        </SerilogUiPropsProvider>
-      ),
-    });
+    const { result, rerender } = testingLibraryRenderHook(
+      () => useSerilogUiProps(),
+      {
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <div>
+            <div hidden id='serilog-ui-props'>
+              some text that is not a json...
+            </div>
+            <div>
+              <TestProvider>{children}</TestProvider>
+            </div>
+          </div>
+        ),
+        initialProps: undefined,
+      },
+    );
+    rerender();
 
     expect(warnMock).toHaveBeenCalledOnce();
 

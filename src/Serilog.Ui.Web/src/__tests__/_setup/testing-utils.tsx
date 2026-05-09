@@ -1,4 +1,3 @@
-/* eslint-disable style/jsx-closing-tag-location */
 /* eslint-disable react-refresh/only-export-components */
 import type { UserEvent } from '@testing-library/user-event';
 import type { ReactNode } from 'react';
@@ -69,7 +68,8 @@ const Wrapper = ({
                 element: <FormWrapper>{children}</FormWrapper>,
               },
             ])
-          }></RouterProvider>
+          }
+        />
       </QueryClientProvider>
     </MantineProvider>
   );
