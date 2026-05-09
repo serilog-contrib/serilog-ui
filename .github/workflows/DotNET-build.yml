@@ -31,30 +31,32 @@ jobs:
     name: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ">=24.15.0"
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "6.0.x"
 
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '6.0.x'
-
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
+          dotnet-version: "8.0.x"
 
       - uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: "temurin"
+          java-version: "17"
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: 'Cache: .nuke/temp, ~/.nuget/packages'
+      - name: "Cache: .nuke/temp, ~/.nuget/packages"
         uses: actions/cache@v4
         with:
           path: |
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
-      - name: 'Run: Backend_SonarScan_End'
+      - name: "Run: Backend_SonarScan_End"
         run: ./build.cmd Backend_SonarScan_End
         env:
           SonarToken: ${{ secrets.SONAR_TOKEN }}
@@ -64,4 +66,4 @@ jobs:
         if: always()
         with:
           name: test-results
-          path: '**/test-results.trx'
+          path: "**/test-results.trx"
