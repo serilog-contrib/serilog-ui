@@ -37,94 +37,6 @@ describe('util: queryParams', () => {
       expect(result.cleanedFromInvalidQueryString).toBeUndefined();
     });
 
-    it('ignores invalid log levels and flags them for cleanup', () => {
-      const params = new URLSearchParams({
-        level: 'InvalidLevel',
-      });
-
-      const result = parseSearchParams(params);
-
-      expect(result.urlParams.level).toBeUndefined();
-      expect(result.cleanedFromInvalidQueryString).toBeDefined();
-      expect(result.cleanedFromInvalidQueryString!.has('level')).toBe(false);
-    });
-
-    it('ignores invalid dates and flags them for cleanup', () => {
-      const params = new URLSearchParams({
-        startDate: 'not-a-date',
-        endDate: 'invalid',
-      });
-
-      const result = parseSearchParams(params);
-
-      expect(result.urlParams.startDate).toBeUndefined();
-      expect(result.urlParams.endDate).toBeUndefined();
-      expect(result.cleanedFromInvalidQueryString).toBeDefined();
-      expect(result.cleanedFromInvalidQueryString!.has('startDate')).toBe(false);
-      expect(result.cleanedFromInvalidQueryString!.has('endDate')).toBe(false);
-    });
-
-    it('ignores invalid page numbers and flags them for cleanup', () => {
-      const params = new URLSearchParams({
-        page: '0',
-      });
-
-      const result = parseSearchParams(params);
-
-      expect(result.urlParams.page).toBeUndefined();
-      expect(result.cleanedFromInvalidQueryString).toBeDefined();
-      expect(result.cleanedFromInvalidQueryString!.has('page')).toBe(false);
-    });
-
-    it('ignores non-numeric page values and flags them for cleanup', () => {
-      const params = new URLSearchParams({
-        page: 'abc',
-      });
-
-      const result = parseSearchParams(params);
-
-      expect(result.urlParams.page).toBeUndefined();
-      expect(result.cleanedFromInvalidQueryString).toBeDefined();
-    });
-
-    it('ignores invalid entriesPerPage values and flags them for cleanup', () => {
-      const params = new URLSearchParams({
-        entriesPerPage: '15',
-      });
-
-      const result = parseSearchParams(params);
-
-      expect(result.urlParams.entriesPerPage).toBeUndefined();
-      expect(result.cleanedFromInvalidQueryString).toBeDefined();
-      expect(result.cleanedFromInvalidQueryString!.has('entriesPerPage')).toBe(false);
-    });
-
-    it('accepts valid entriesPerPage values', () => {
-      for (const count of ['10', '25', '50', '100']) {
-        const params = new URLSearchParams({ entriesPerPage: count });
-        const result = parseSearchParams(params);
-        expect(result.urlParams.entriesPerPage).toBe(count);
-        expect(result.cleanedFromInvalidQueryString).toBeUndefined();
-      }
-    });
-
-    it('returns empty urlParams for no parameters', () => {
-      const params = new URLSearchParams();
-
-      const result = parseSearchParams(params);
-
-      expect(result.urlParams).toEqual({});
-      expect(result.cleanedFromInvalidQueryString).toBeUndefined();
-    });
-
-    it('skips parameters with no value without flagging them as invalid', () => {
-      const params = new URLSearchParams();
-
-      const result = parseSearchParams(params);
-
-      expect(result.cleanedFromInvalidQueryString).toBeUndefined();
-    });
-
     it('preserves valid params while cleaning invalid ones', () => {
       const params = new URLSearchParams({
         table: 'my-table',
@@ -138,9 +50,100 @@ describe('util: queryParams', () => {
       expect(result.urlParams.page).toBe(3);
       expect(result.urlParams.level).toBeUndefined();
       expect(result.cleanedFromInvalidQueryString).toBeDefined();
-      expect(result.cleanedFromInvalidQueryString!.get('table')).toBe('my-table');
-      expect(result.cleanedFromInvalidQueryString!.get('page')).toBe('3');
-      expect(result.cleanedFromInvalidQueryString!.has('level')).toBe(false);
+      expect(result.cleanedFromInvalidQueryString?.get('table') ?? true).toBe(
+        'my-table',
+      );
+      expect(result.cleanedFromInvalidQueryString?.get('page') ?? true).toBe(
+        '3',
+      );
+      expect(
+        result.cleanedFromInvalidQueryString?.has('level') ?? true,
+      ).toBeFalsy();
+    });
+
+    describe('invalid parameters cleanup', () => {
+      it('ignores invalid dates and flags them for cleanup', () => {
+        const params = new URLSearchParams({
+          startDate: 'not-a-date',
+          endDate: 'invalid',
+        });
+
+        const result = parseSearchParams(params);
+
+        expect(result.urlParams.startDate).toBeUndefined();
+        expect(result.urlParams.endDate).toBeUndefined();
+        expect(result.cleanedFromInvalidQueryString).toBeDefined();
+        expect(
+          result.cleanedFromInvalidQueryString?.has('startDate') ?? true,
+        ).toBeFalsy();
+        expect(
+          result.cleanedFromInvalidQueryString?.has('endDate') ?? true,
+        ).toBeFalsy();
+      });
+
+      it('ignores invalid page numbers and flags them for cleanup', () => {
+        const params = new URLSearchParams({
+          page: '0',
+        });
+
+        const result = parseSearchParams(params);
+
+        expect(result.urlParams.page).toBeUndefined();
+        expect(result.cleanedFromInvalidQueryString).toBeDefined();
+        expect(result.cleanedFromInvalidQueryString!.has('page')).toBe(false);
+      });
+
+      it('ignores non-numeric page values and flags them for cleanup', () => {
+        const params = new URLSearchParams({
+          page: 'abc',
+        });
+
+        const result = parseSearchParams(params);
+
+        expect(result.urlParams.page).toBeUndefined();
+        expect(result.cleanedFromInvalidQueryString).toBeDefined();
+      });
+
+      it.each(['level', 'entriesPerPage', 'sortBy', 'sortOn'])(
+        'ignores invalid enum key for [%s] and flags them for cleanup',
+        (key) => {
+          const params = new URLSearchParams({
+            [key]: 'invalid',
+          });
+
+          const result = parseSearchParams(params);
+
+          expect(result.urlParams[key]).toBeUndefined();
+          expect(result.cleanedFromInvalidQueryString).toBeDefined();
+          expect(
+            result.cleanedFromInvalidQueryString?.has(key) ?? true,
+          ).toBeFalsy();
+        },
+      );
+    });
+
+    const mapper = (k: string) => (v: string) => ({ k, v });
+    const loglevels = Object.values(LogLevel).map(mapper('level'));
+    const by = Object.values(SortDirectionOptions).map(mapper('sortBy'));
+    const on = Object.values(SortPropertyOptions).map(mapper('sortOn'));
+    const entries = ['10', '25', '50', '100'].map(mapper('entriesPerPage'));
+    it.each([...loglevels, ...entries, ...by, ...on])(
+      'accepts valid $k value: $v',
+      ({ k, v }) => {
+        const params = new URLSearchParams({ [k]: v });
+        const result = parseSearchParams(params);
+        expect(result.urlParams[k]).toBe(v);
+        expect(result.cleanedFromInvalidQueryString).toBeUndefined();
+      },
+    );
+
+    it('returns empty urlParams for no parameters', () => {
+      const params = new URLSearchParams();
+
+      const result = parseSearchParams(params);
+
+      expect(result.urlParams).toEqual({});
+      expect(result.cleanedFromInvalidQueryString).toBeUndefined();
     });
 
     it('ignores unknown query parameters', () => {

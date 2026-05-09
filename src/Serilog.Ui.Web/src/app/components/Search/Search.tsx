@@ -77,7 +77,6 @@ const TextSearchInput = () => {
   const { control } = useSearchForm();
   const { field: searchField } = useController({ ...control, name: 'search' });
   const { updateSearchParam } = useQueryParamSync();
-  // const [searchParams] = useSearchParams();
 
   const handleSearch = useDebouncedCallback(async (query: string) => {
     updateSearchParam(query);

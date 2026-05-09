@@ -19,8 +19,8 @@ const parameterizeKeyValues = (key: keyof SearchForm, value: unknown) => {
 export const useQueryParamSync = () => {
   const [, setSearchParams] = useSearchParams();
 
-  const updateParams
-    = <T>(key: keyof SearchForm) =>
+  const updateParams =
+    <T>(key: keyof SearchForm) =>
       (value: T) => {
         const newValues = parameterizeKeyValues(key, value);
         setSearchParams((prev) => {
@@ -28,21 +28,25 @@ export const useQueryParamSync = () => {
           return prev;
         });
       };
-  const updateMultipleParams
-    = <T>(data: { [key: string]: T }) => {
-      setSearchParams((prev) => {
-        for (const k of Object.keys(data)) {
-          prev.set(k, parameterizeKeyValues(k as keyof SearchForm, data[k]) as string);
-        }
-        return prev;
-      });
-    };
+  const updateMultipleParams = <T>(data: { [key: string]: T }) => {
+    setSearchParams((prev) => {
+      for (const k of Object.keys(data)) {
+        prev.set(
+          k,
+          parameterizeKeyValues(k as keyof SearchForm, data[k]) as string,
+        );
+      }
+      return prev;
+    });
+  };
 
-  const updateDateParam = (key: 'startDate' | 'endDate') => (value: string | null) =>
-    updateParams(key)(value ? new Date(value) : null);
+  const updateDateParam =
+    (key: 'startDate' | 'endDate') => (value: string | null) =>
+      updateParams(key)(value ? new Date(value) : null);
   const updateLevelParam = updateParams<string | null>('level');
-  const updateParam = <T>(key: 'page' | 'entriesPerPage' | 'sortBy' | 'sortOn') =>
-    updateParams<T>(key);
+  const updateParam = <T>(
+    key: 'page' | 'entriesPerPage' | 'sortBy' | 'sortOn',
+  ) => updateParams<T>(key);
   const updateSearchParam = updateParams<string>('search');
   const updateTableParam = updateParams<string | null>('table');
 
@@ -81,7 +85,9 @@ export const useQueryParamReader = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    const { urlParams, cleanedFromInvalidQueryString } = parseSearchParams(searchParams);
+    const { urlParams, cleanedFromInvalidQueryString } =
+      parseSearchParams(searchParams);
+
     const urlParamKeys = Object.keys(urlParams);
     const currentAppValues = getValues();
 
@@ -100,7 +106,7 @@ export const useQueryParamReader = () => {
 
     // if the URL doesn't have the key, we need to remove it from the application search
     const resetMissingValues = Object.keys(currentAppValues).filter(
-      value => !urlParamKeys.includes(value),
+      (value) => !urlParamKeys.includes(value),
     );
     resetMissingValues.forEach((element) => {
       setValue(element as keyof SearchForm, searchFormInitialValues[element]);

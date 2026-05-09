@@ -22,11 +22,6 @@ vi.mock('../../../app/hooks/useQueryLogs', async () => {
     default: () => mockQueryLogs,
   };
 });
-vi.mock('react-router', async () => {
-  return {
-    useSearchParams: () => mockQueryLogs,
-  };
-});
 
 const PagingRightTester = () => {
   useQueryParamReader();

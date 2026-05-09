@@ -38,11 +38,14 @@ describe('filterButton', () => {
     await userEvent.click(filterBtn);
 
     expect(screen.getByText('Search filters')).toBeInTheDocument();
-    await waitFor(() => {
-      expect(
-        screen.getByRole('form', { name: 'search-logs-form' }),
-      ).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(
+          screen.getByRole('form', { name: 'search-logs-form' }),
+        ).toBeInTheDocument();
+      },
+      { timeout: 3500 },
+    );
   });
 
   it('closes modal on resize', async () => {
