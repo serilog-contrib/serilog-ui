@@ -11,15 +11,7 @@ const runMsw = async () => {
   const { worker } = await import('./__tests__/_setup/mocks/msw-worker');
   try {
     await worker.start({
-      onUnhandledRequest: (req, print) => {
-        const excludedPaths = ['/@fs/', '/app/', '/style/'];
-        const url = new URL(req.url);
-        if (excludedPaths.some(url.pathname.startsWith)) {
-          return;
-        }
-
-        print.warning();
-      },
+      onUnhandledRequest: 'bypass',
     });
   } catch (err) {
     console.error(err);

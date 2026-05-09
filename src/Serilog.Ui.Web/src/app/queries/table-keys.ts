@@ -18,7 +18,8 @@ export const fetchKeys = async (
     return await (req.json() as Promise<string[]>);
   }
 
-  const reject = () => Promise.reject(new UiApiError(req.status, 'Failed to fetch'));
+  const reject = () =>
+    Promise.reject(new UiApiError(req.status, 'Failed to fetch'));
 
   if (!notify) {
     return await reject();
