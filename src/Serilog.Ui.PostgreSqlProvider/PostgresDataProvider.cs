@@ -44,43 +44,47 @@ public class PostgresDataProvider<T>(PostgreSqlDbOptions options, PostgresQueryB
         DateTime today = DateTime.Today;
         DateTime tomorrow = today.AddDays(1);
 
-        await using NpgsqlConnection connection = new(options.ConnectionString);
-
-        // Get total logs count
         string totalQuery = $"SELECT COUNT(*) FROM \"{options.Schema}\".\"{options.TableName}\"";
-        int totalLogs = await connection.QueryFirstOrDefaultAsync<int>(totalQuery);
-
-        // Get logs count by level
         string levelQuery =
             $"SELECT \"{options.ColumnNames.Level}\" as Level, COUNT(*) as Count FROM \"{options.Schema}\".\"{options.TableName}\" GROUP BY \"{options.ColumnNames.Level}\"";
-
-        IEnumerable<(int Level, int Count)> levelCounts =
-            await connection.QueryAsync<(int Level, int Count)>(levelQuery);
-
-        Dictionary<string, int> logsByLevel =
-            levelCounts.ToDictionary(x => LogLevelConverter.GetLevelName(x.Level.ToString()), x => x.Count);
-
-        // Get today's logs count
         string todayQuery =
             $"SELECT COUNT(*) FROM \"{options.Schema}\".\"{options.TableName}\" WHERE \"{options.ColumnNames.Timestamp}\" >= @StartDate AND \"{options.ColumnNames.Timestamp}\" < @EndDate";
-        int todayLogs =
-            await connection.QueryFirstOrDefaultAsync<int>(todayQuery, new { StartDate = today, EndDate = tomorrow });
-
-        // Get today's error logs count (Error level = 3 in PostgreSQL)
         string todayErrorQuery =
             $"SELECT COUNT(*) FROM \"{options.Schema}\".\"{options.TableName}\" WHERE \"{options.ColumnNames.Level}\" = @ErrorLevel AND \"{options.ColumnNames.Timestamp}\" >= @StartDate AND \"{options.ColumnNames.Timestamp}\" < @EndDate";
-        int todayErrorLogs = await connection.QueryFirstOrDefaultAsync<int>(todayErrorQuery,
+
+        Task<int> totalTask = ExecuteScalarAsync<int>(totalQuery);
+        Task<IEnumerable<(int Level, int Count)>> levelTask =
+            ExecuteQueryAsync<(int Level, int Count)>(levelQuery);
+        Task<int> todayTask =
+            ExecuteScalarAsync<int>(todayQuery, new { StartDate = today, EndDate = tomorrow });
+        Task<int> todayErrorTask = ExecuteScalarAsync<int>(todayErrorQuery,
             new { ErrorLevel = LogLevelConverter.GetLevelValue("Error"), StartDate = today, EndDate = tomorrow });
 
-        LogStatisticModel model = new()
-        {
-            TotalLogs = totalLogs,
-            LogsByLevel = logsByLevel,
-            TodayLogs = todayLogs,
-            TodayErrorLogs = todayErrorLogs
-        };
+        await Task.WhenAll(totalTask, levelTask, todayTask, todayErrorTask);
 
-        return model;
+        Dictionary<string, int> logsByLevel =
+            (await levelTask).ToDictionary(x => LogLevelConverter.GetLevelName(x.Level.ToString()), x => x.Count);
+
+        return new LogStatisticModel
+        {
+            TotalLogs = await totalTask,
+            LogsByLevel = logsByLevel,
+            TodayLogs = await todayTask,
+            TodayErrorLogs = await todayErrorTask
+        };
+    }
+
+    private async Task<TResult> ExecuteScalarAsync<TResult>(string query, object? param = null)
+        where TResult : struct
+    {
+        await using NpgsqlConnection connection = new(options.ConnectionString);
+        return await connection.QueryFirstOrDefaultAsync<TResult>(query, param);
+    }
+
+    private async Task<IEnumerable<TResult>> ExecuteQueryAsync<TResult>(string query, object? param = null)
+    {
+        await using NpgsqlConnection connection = new(options.ConnectionString);
+        return await connection.QueryAsync<TResult>(query, param);
     }
 
     private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
