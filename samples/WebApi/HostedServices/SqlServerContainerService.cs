@@ -12,7 +12,7 @@ public class SqlServerContainerService(ILogger<SqlServerContainerService> logger
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        _runner = new MsSqlBuilder()
+        _runner = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04")
             .WithPortBinding(60555, 1433)
             .Build();
         await _runner.StartAsync(cancellationToken);

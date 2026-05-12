@@ -5,16 +5,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Testcontainers.PostgreSql" Version="4.4.0"/>
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
-        <PackageReference Include="Serilog.Sinks.Postgresql.Alternative" Version="4.1.1"/>
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+        <PackageReference Include="Testcontainers.PostgreSql" Version="4.11.0"/>
         <PackageReference Include="Serilog.Sinks.Postgresql.Alternative" Version="4.2.0"/>
     </ItemGroup>
+
 
     <ItemGroup>
         <Content Include="./../Serilog.Ui.Common.Tests/xunit.runner.json">

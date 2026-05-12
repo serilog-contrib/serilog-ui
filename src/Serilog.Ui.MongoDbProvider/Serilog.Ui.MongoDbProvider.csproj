@@ -13,11 +13,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-		<PackageReference Include="MongoDB.Driver" Version="3.3.0" />
+		<PackageReference Include="MongoDB.Driver" Version="3.8.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" PrivateAssets="all" />
+		<ProjectReference Include="..\Serilog.Ui.Core\Serilog.Ui.Core.csproj" />
 	</ItemGroup>
 
 </Project>
