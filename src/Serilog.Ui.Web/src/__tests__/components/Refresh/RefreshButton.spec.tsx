@@ -1,4 +1,9 @@
-import { act, render, screen, userEvent } from '__tests__/_setup/testing-utils';
+import {
+  act,
+  renderSerilogUiTestWrapper,
+  screen,
+  userEvent,
+} from '__tests__/_setup/testing-utils';
 import { RefreshButton } from 'app/components/Refresh/RefreshButton';
 import { liveRefreshOptions } from 'app/hooks/useLiveRefresh';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -32,7 +37,7 @@ describe('RefreshButton', () => {
   afterEach(vi.useRealTimers);
 
   it('renders', async () => {
-    render(<RefreshButton />);
+    renderSerilogUiTestWrapper(<RefreshButton />);
 
     const durationSelector = screen.getByLabelText('refresh-duration-selector');
     expect(durationSelector).toBeInTheDocument();
@@ -48,7 +53,7 @@ describe('RefreshButton', () => {
 
   it('runs live feed activies with refetch sample', async () => {
     const spy = vi.spyOn(global, 'fetch');
-    render(<RefreshButton />);
+    renderSerilogUiTestWrapper(<RefreshButton />);
 
     const durationSelector = screen.getByLabelText('refresh-duration-selector');
     await userEvent.click(durationSelector);

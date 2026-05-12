@@ -10,6 +10,7 @@ import { useSearchForm } from 'app/hooks/useSearchForm';
 import { SerilogUiPropsProvider } from 'app/hooks/useSerilogUiProps';
 import { ReactNode } from 'react';
 import { FormProvider } from 'react-hook-form';
+import { createMemoryRouter, RouterProvider } from 'react-router';
 import { theme } from 'style/theme';
 import { AuthType, ColumnsInfo } from 'types/types';
 
@@ -20,10 +21,12 @@ const Wrapper = ({
   children,
   authType,
   columnsInfo,
+  router,
 }: {
   children: ReactNode;
   authType: AuthType;
   columnsInfo: ColumnsInfo;
+  router?: ReturnType<typeof createMemoryRouter>;
 }) => {
   const queryClient = new QueryClient();
 
@@ -41,7 +44,17 @@ const Wrapper = ({
       </div>
 
       <QueryClientProvider client={queryClient}>
-        <FormWrapper>{children}</FormWrapper>
+        <RouterProvider
+          router={
+            router ??
+            createMemoryRouter([
+              {
+                index: true,
+                element: <FormWrapper>{children}</FormWrapper>,
+              },
+            ])
+          }
+        ></RouterProvider>
       </QueryClientProvider>
     </MantineProvider>
   );
@@ -49,6 +62,7 @@ const Wrapper = ({
 
 const FormWrapper = ({ children }: { children: ReactNode }) => {
   const { methods } = useSearchForm();
+
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...methods}>
@@ -59,27 +73,27 @@ const FormWrapper = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export function render(
+export function renderSerilogUiTestWrapper(
   ui: React.ReactNode,
   authType = AuthType.Jwt,
   columnsInfo?: ColumnsInfo,
+  router?: ReturnType<typeof createMemoryRouter>,
 ) {
   return testingLibraryRender(<>{ui}</>, {
     wrapper: ({ children }: { children: ReactNode }) => (
-      <Wrapper authType={authType} columnsInfo={columnsInfo ?? {}}>
+      <Wrapper authType={authType} columnsInfo={columnsInfo ?? {}} router={router}>
         {children}
       </Wrapper>
     ),
   });
 }
-
 interface RenderHookConfig<T> {
   initialProps?: T;
   authType?: AuthType;
   columnsInfo?: ColumnsInfo;
 }
 
-export const renderHook = <T, T1>(
+export const renderHookSerilogUiTestWrapper = <T, T1>(
   hook: (initialProps: T1) => T,
   config?: RenderHookConfig<T1>,
 ) => {

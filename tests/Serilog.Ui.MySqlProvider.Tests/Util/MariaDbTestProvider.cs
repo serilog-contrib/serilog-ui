@@ -28,7 +28,7 @@ public class MariaDbTestProvider<T> : DatabaseInstance
 
     protected MariaDbTestProvider()
     {
-        Container = new MariaDbBuilder().Build();
+        Container = new MariaDbBuilder("mariadb:10.10").Build();
         DbOptions = new MariaDbOptions("dbo").WithTable("Logs");
     }
 

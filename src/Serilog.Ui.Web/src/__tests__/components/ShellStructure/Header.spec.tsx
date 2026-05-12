@@ -1,4 +1,8 @@
-import { render, screen, waitFor } from '__tests__/_setup/testing-utils';
+import {
+  renderSerilogUiTestWrapper,
+  screen,
+  waitFor,
+} from '__tests__/_setup/testing-utils';
 import Head from 'app/components/ShellStructure/Header';
 import { AuthType } from 'types/types';
 import { describe, expect, it, vi } from 'vitest';
@@ -16,7 +20,10 @@ describe('Header', () => {
   it('renders', async () => {
     window.innerWidth = 800;
 
-    render(<Head toggleMobile={vi.fn()} isMobileOpen />, AuthType.Jwt);
+    renderSerilogUiTestWrapper(
+      <Head toggleMobile={vi.fn()} isMobileOpen />,
+      AuthType.Jwt,
+    );
 
     expect(screen.getByLabelText('home-icon-btn')).toBeInTheDocument();
     expect(screen.getByLabelText('color-scheme-changer')).toBeInTheDocument();

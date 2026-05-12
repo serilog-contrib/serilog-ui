@@ -1,5 +1,5 @@
 import {
-  render,
+  renderSerilogUiTestWrapper,
   screen,
   userEvent,
   waitFor,
@@ -10,7 +10,7 @@ import { describe, expect, it } from 'vitest';
 
 describe('DetailsModal', () => {
   it('renders', () => {
-    render(
+    renderSerilogUiTestWrapper(
       <DetailsModal
         buttonTitle="title"
         modalContent="my-content"
@@ -25,7 +25,7 @@ describe('DetailsModal', () => {
   });
 
   it('opens and close details modal with content', async () => {
-    render(
+    renderSerilogUiTestWrapper(
       <DetailsModal buttonTitle="title" modalContent="my-content" modalTitle="modal" />,
     );
 

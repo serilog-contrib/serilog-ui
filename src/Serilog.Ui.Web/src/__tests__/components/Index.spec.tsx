@@ -1,6 +1,5 @@
-import { act, render, within } from '__tests__/_setup/testing-utils';
+import { act, renderSerilogUiTestWrapper, within } from '__tests__/_setup/testing-utils';
 import { Index } from 'app/components/Index';
-import { MemoryRouter } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 
 const propsMock = {
@@ -17,7 +16,7 @@ vi.mock('../../app/hooks/useSerilogUiProps', () => {
 describe('Index', () => {
   it('renders', async () => {
     vi.useFakeTimers();
-    const { container } = render(<Index />);
+    const { container } = renderSerilogUiTestWrapper(<Index />);
 
     await act(async () => {
       await vi.runAllTimersAsync();
@@ -31,11 +30,7 @@ describe('Index', () => {
   it('not renders main app', async () => {
     propsMock.blockHomeAccess = true;
 
-    const { container } = render(
-      <MemoryRouter>
-        <Index />
-      </MemoryRouter>,
-    );
+    const { container } = renderSerilogUiTestWrapper(<Index />);
 
     expect(within(container).queryByLabelText('main-app')).not.toBeInTheDocument();
     propsMock.blockHomeAccess = false;

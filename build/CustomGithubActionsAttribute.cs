@@ -26,8 +26,8 @@ class CustomGithubActionsAttribute(string name, GitHubActionsImage image, params
     {
         var job = base.GetJobs(image, relevantTargets);
         GitHubActionsStep[] backendSteps = AddGithubActions.Any(act => act == GithubAction.Backend_Artifact) ?
-            [new GitHubActionSetupDotnet("6.0.x"), new GitHubActionSetupDotnet("8.0.x"),] : [];
-        GitHubActionsStep[] setupSteps = [.. backendSteps, new GitHubActionSetupJava17(), .. job.Steps];
+            [new GitHubActionSetupDotnet("8.0.x"), new GitHubActionSetupDotnet("10.0.x"),] : [];
+        GitHubActionsStep[] setupSteps = [.. backendSteps, new GitHubActionSetupJava25(), .. job.Steps];
         var newSteps = new List<GitHubActionsStep>(setupSteps);
 
         foreach (var act in AddGithubActions)
@@ -60,13 +60,13 @@ class CustomGithubActionsAttribute(string name, GitHubActionsImage image, params
 /// <summary>
 /// using: https://github.com/actions/setup-java
 /// </summary>
-class GitHubActionSetupJava17 : GitHubActionsStep
+class GitHubActionSetupJava25 : GitHubActionsStep
 {
     public override void Write(CustomFileWriter writer)
     {
         writer.WriteLine(); // empty line to separate tasks
 
-        writer.WriteLine("- uses: actions/setup-java@v4");
+        writer.WriteLine("- uses: actions/setup-java@v5");
 
         using (writer.Indent())
         {
@@ -75,7 +75,7 @@ class GitHubActionSetupJava17 : GitHubActionsStep
             using (writer.Indent())
             {
                 writer.WriteLine($"distribution: 'temurin'");
-                writer.WriteLine($"java-version: '17'");
+                writer.WriteLine($"java-version: '25'");
             }
         }
     }
@@ -87,7 +87,7 @@ class GitHubActionSetupDotnet(string dotnetV) : GitHubActionsStep
     {
         writer.WriteLine(); // empty line to separate tasks
 
-        writer.WriteLine("- uses: actions/setup-dotnet@v4");
+        writer.WriteLine("- uses: actions/setup-dotnet@v5");
 
         using (writer.Indent())
         {
@@ -107,7 +107,7 @@ class GithubActionUploadArtifact(string path) : GitHubActionsStep
     {
         writer.WriteLine(); // empty line to separate tasks
 
-        writer.WriteLine("- uses: actions/upload-artifact@v4");
+        writer.WriteLine("- uses: actions/upload-artifact@v7");
 
         using (writer.Indent())
         {
@@ -176,7 +176,7 @@ class GithubActionReporter(string name, string path, string reporter) : GitHubAc
     {
         writer.WriteLine(); // empty line to separate tasks
 
-        writer.WriteLine("- uses: dorny/test-reporter@v2");
+        writer.WriteLine("- uses: dorny/test-reporter@v3");
 
         using (writer.Indent())
         {

@@ -1,4 +1,4 @@
-import { render, screen } from '__tests__/_setup/testing-utils';
+import { renderSerilogUiTestWrapper, screen } from '__tests__/_setup/testing-utils';
 import { ErrorBoundaryPage } from 'app/components/ErrorPage';
 import { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -14,14 +14,14 @@ vi.mock('react-router', async () => {
 
 describe('ErrorPage', () => {
   it('renders unexpected error', async () => {
-    render(<ErrorBoundaryPage />);
+    renderSerilogUiTestWrapper(<ErrorBoundaryPage />);
 
     expect(screen.getByText(/unexpected error occurred/i)).toBeInTheDocument();
   });
 
   it('renders route error response', async () => {
     mockFn.mockImplementation(() => true);
-    render(<ErrorBoundaryPage />);
+    renderSerilogUiTestWrapper(<ErrorBoundaryPage />);
 
     expect(screen.queryByText(/unexpected error occurred/i)).not.toBeInTheDocument();
     expect(screen.getByText(/Page not found/i)).toBeInTheDocument();

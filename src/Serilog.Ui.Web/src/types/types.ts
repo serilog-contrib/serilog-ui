@@ -96,8 +96,6 @@ export type ColumnsInfo = {
   };
 };
 
-export enum DispatchedCustomEvents { RemoveTableKey = 'remove-table-key' }
-
 export interface SerilogUiConfig {
   authType?: AuthType;
   routePrefix?: string;

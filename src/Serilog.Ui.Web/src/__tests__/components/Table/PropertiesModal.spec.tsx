@@ -1,6 +1,6 @@
 import { dbKeysMock, fakeColumnsInfo, fakeLogs } from '__tests__/_setup/mocks/samples';
 import {
-  render,
+  renderSerilogUiTestWrapper,
   screen,
   userEvent,
   waitFor,
@@ -28,7 +28,7 @@ vi.mock('../../../app/hooks/useSerilogUiProps', () => {
 
 describe('PropertiesModal', () => {
   it('renders', () => {
-    render(
+    renderSerilogUiTestWrapper(
       <PropertiesModal
         modalContent={{
           level: '',
@@ -47,7 +47,9 @@ describe('PropertiesModal', () => {
   });
 
   it('opens and close properties modal', async () => {
-    render(<PropertiesModal modalContent={logExample} title="title" />);
+    renderSerilogUiTestWrapper(
+      <PropertiesModal modalContent={logExample} title="title" />,
+    );
 
     const btn = screen.getByRole('button', { name: 'title' });
     await userEvent.click(btn);
@@ -62,7 +64,9 @@ describe('PropertiesModal', () => {
   it('show additional column: boolean', async () => {
     mockForm.getValues.mockReturnValue(dbKey);
 
-    render(<PropertiesModal modalContent={logExample} title="title" />);
+    renderSerilogUiTestWrapper(
+      <PropertiesModal modalContent={logExample} title="title" />,
+    );
 
     const btn = screen.getByRole('button', { name: 'title' });
     await userEvent.click(btn);
@@ -73,7 +77,9 @@ describe('PropertiesModal', () => {
   it('show additional column: dates', async () => {
     mockForm.getValues.mockReturnValue(dbKey);
 
-    render(<PropertiesModal modalContent={logExample} title="title" />);
+    renderSerilogUiTestWrapper(
+      <PropertiesModal modalContent={logExample} title="title" />,
+    );
 
     const btn = screen.getByRole('button', { name: 'title' });
     await userEvent.click(btn);
@@ -88,7 +94,9 @@ describe('PropertiesModal', () => {
   it('show additional column: code', async () => {
     mockForm.getValues.mockReturnValue(dbKey);
 
-    render(<PropertiesModal modalContent={logExample} title="title" />);
+    renderSerilogUiTestWrapper(
+      <PropertiesModal modalContent={logExample} title="title" />,
+    );
 
     const btn = screen.getByRole('button', { name: 'title' });
     await userEvent.click(btn);
@@ -105,7 +113,9 @@ describe('PropertiesModal', () => {
   it('show additional column: text (default)', async () => {
     mockForm.getValues.mockReturnValue(dbKey);
 
-    render(<PropertiesModal modalContent={logExample} title="title" />);
+    renderSerilogUiTestWrapper(
+      <PropertiesModal modalContent={logExample} title="title" />,
+    );
 
     const btn = screen.getByRole('button', { name: 'title' });
     await userEvent.click(btn);
@@ -117,7 +127,9 @@ describe('PropertiesModal', () => {
   it('not show properties column even if available in log, if column is removed', async () => {
     mockForm.getValues.mockReturnValue(dbKeysMock[1]);
 
-    render(<PropertiesModal modalContent={logExample} title="title" />);
+    renderSerilogUiTestWrapper(
+      <PropertiesModal modalContent={logExample} title="title" />,
+    );
 
     const btn = screen.getByRole('button', { name: 'title' });
     await userEvent.click(btn);

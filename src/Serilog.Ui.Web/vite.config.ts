@@ -75,17 +75,18 @@ export default defineConfig((env) => ({
       }),
     viteTsconfigPaths(),
     mkcert(),
-    checker({
-      typescript: true,
-      eslint: {
-        lintCommand: 'eslint ./**/*.{ts,tsx}',
-      },
-    }),
+    env.mode === 'development' &&
+      checker({
+        typescript: true,
+        eslint: {
+          lintCommand: 'eslint ./**/*.{ts,tsx}',
+        },
+      }),
   ],
   preview: previewConfig,
   server: {
     open: 'serilog-ui/',
-    port: 3001,
+    port: 3003,
   },
   test: vitestConfig.test,
 }));

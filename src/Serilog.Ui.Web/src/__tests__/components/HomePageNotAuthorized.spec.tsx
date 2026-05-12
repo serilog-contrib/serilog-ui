@@ -1,4 +1,4 @@
-import { render, screen } from '__tests__/_setup/testing-utils';
+import { renderSerilogUiTestWrapper, screen } from '__tests__/_setup/testing-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { HomePageNotAuthorized } from '../../app/components/HomePageNotAuthorized';
 
@@ -20,7 +20,7 @@ vi.mock('../../app/hooks/useSerilogUiProps', () => {
 
 describe('HomePageNotAuthorized', () => {
   it('renders navigate component if block home is false', () => {
-    render(<HomePageNotAuthorized />);
+    renderSerilogUiTestWrapper(<HomePageNotAuthorized />);
 
     expect(screen.getByText('Move to')).toBeInTheDocument();
   });
@@ -29,7 +29,7 @@ describe('HomePageNotAuthorized', () => {
     propsMock.authenticatedFromAccessDenied = true;
     propsMock.blockHomeAccess = true;
 
-    render(<HomePageNotAuthorized />);
+    renderSerilogUiTestWrapper(<HomePageNotAuthorized />);
 
     expect(screen.getByText('Move to')).toBeInTheDocument();
 
@@ -40,7 +40,7 @@ describe('HomePageNotAuthorized', () => {
   it('renders unauthorized component if block from access is true and authenticated is false', () => {
     propsMock.blockHomeAccess = true;
 
-    render(<HomePageNotAuthorized />);
+    renderSerilogUiTestWrapper(<HomePageNotAuthorized />);
 
     expect(screen.queryByText('Move to')).not.toBeInTheDocument();
     expect(screen.getByText(/not authorized/i)).toBeInTheDocument();

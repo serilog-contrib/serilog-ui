@@ -26,7 +26,7 @@ public class PostgresTestProvider<T> : DatabaseInstance
 {
     protected PostgresTestProvider()
     {
-        Container = new PostgreSqlBuilder().Build();
+        Container = new PostgreSqlBuilder("postgres:15.1").Build();
     }
 
     protected override string Name => nameof(PostgreSqlContainer);

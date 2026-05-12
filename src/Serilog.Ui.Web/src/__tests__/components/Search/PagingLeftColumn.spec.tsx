@@ -1,5 +1,12 @@
-import { render, screen, userEvent, within } from '__tests__/_setup/testing-utils';
+import {
+  renderSerilogUiTestWrapper,
+  screen,
+  userEvent,
+  within,
+} from '__tests__/_setup/testing-utils';
 import { PagingLeftColumn } from 'app/components/Search/PagingLeftColumn';
+import { PagingRightColumn } from 'app/components/Search/PagingRightColumn';
+import { useQueryParamReader } from 'app/hooks/useQueryParamSync';
 import { SearchResult } from 'types/types';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -7,7 +14,7 @@ const defaultReturn: SearchResult = {
   count: 10,
   currentPage: 1,
   logs: [],
-  total: 1,
+  total: 1000,
 };
 const mockQueryLogs = {
   data: defaultReturn,
@@ -34,10 +41,14 @@ vi.mock('../../../app/hooks/useSearchForm', async () => {
     }),
   };
 });
+const PagingLeftTester = () => {
+  useQueryParamReader();
+  return <PagingLeftColumn />;
+};
 
 describe('Paging', () => {
   it('renders correctly', () => {
-    render(<PagingLeftColumn changePage={vi.fn()} />);
+    renderSerilogUiTestWrapper(<PagingLeftTester />);
 
     expect(screen.getByLabelText('paging-left-column')).toBeInTheDocument();
     expect(screen.getAllByDisplayValue('10')).toHaveLength(2);
@@ -46,13 +57,26 @@ describe('Paging', () => {
   });
 
   it('changes entries per page value', async () => {
-    const mockChangePage = vi.fn();
-    render(<PagingLeftColumn changePage={mockChangePage} />);
+    renderSerilogUiTestWrapper(
+      <>
+        <PagingLeftTester />
+        <PagingRightColumn />
+      </>,
+    );
 
+    // [we're on page 1, inputXPage 10]
+    const activePageBtn = () => screen.getByRole('button', { current: 'page' });
+    expect(activePageBtn().innerText).toBe('1');
+    const pageBtn = screen.getByRole('button', { name: '2' });
     const inputEntriesPerPage = screen.getByRole<HTMLInputElement>('textbox', {
       name: 'entriesPerPage',
     });
+
+    await userEvent.click(pageBtn);
+
+    // [make sure our component moved to page 2]
     expect(inputEntriesPerPage.value).toBe('10');
+    expect(activePageBtn().innerText).toBe('2');
 
     await userEvent.click(inputEntriesPerPage);
 
@@ -63,13 +87,13 @@ describe('Paging', () => {
 
     await userEvent.selectOptions(listBox, selectOption);
 
-    expect(mockChangePage).toHaveBeenCalledTimes(1);
+    // [make sure our component moved to inputXPage 25, while going to page 1]
     expect(inputEntriesPerPage.value).toBe('25');
+    expect(activePageBtn().innerText).toBe('1');
   });
 
   it('changes sort on value', async () => {
-    const mockChangePage = vi.fn();
-    render(<PagingLeftColumn changePage={mockChangePage} />);
+    renderSerilogUiTestWrapper(<PagingLeftTester />);
 
     const sortOn = screen.getByRole<HTMLInputElement>('textbox', {
       name: 'sortOn',
@@ -89,8 +113,7 @@ describe('Paging', () => {
   });
 
   it('changes sort by value', async () => {
-    const mockChangePage = vi.fn();
-    render(<PagingLeftColumn changePage={mockChangePage} />);
+    renderSerilogUiTestWrapper(<PagingLeftTester />);
 
     const sortBy = screen.getByRole('button', {
       name: 'sortBy',
@@ -104,7 +127,7 @@ describe('Paging', () => {
 
   it('disables the sort on field', async () => {
     watchMock.mockReturnValue('test-key');
-    render(<PagingLeftColumn changePage={vi.fn()} />);
+    renderSerilogUiTestWrapper(<PagingLeftTester />);
 
     const sortOn = screen.getByRole<HTMLInputElement>('textbox', {
       name: 'sortOn',
