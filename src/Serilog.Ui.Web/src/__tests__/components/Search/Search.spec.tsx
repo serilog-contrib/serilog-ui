@@ -176,7 +176,12 @@ describe('search', () => {
       );
 
       // click sample time button
-      await userEvent.type(ui.time_btn('start-time-input').get(), '15:15:30');
+      const inputs = within(ui.time_btn('start-time-input').get()).getAllByRole(
+        'spinbutton',
+      );
+      await userEvent.type(inputs[0], '15');
+      await userEvent.type(inputs[1], '15');
+      await userEvent.type(inputs[2], '30');
 
       // click submit date button
       const submitBtn = within(screen.getByRole('dialog'))
@@ -217,8 +222,12 @@ describe('search', () => {
       );
 
       // click sample time button
-      await userEvent.type(ui.time_btn('end-time-input').get(), '15:15:30');
-
+      const inputs = within(ui.time_btn('end-time-input').get()).getAllByRole(
+        'spinbutton',
+      );
+      await userEvent.type(inputs[0], '15');
+      await userEvent.type(inputs[1], '15');
+      await userEvent.type(inputs[2], '30');
       // click submit date button
       const submitBtn = within(screen.getByRole('dialog'))
         .getAllByRole('button')

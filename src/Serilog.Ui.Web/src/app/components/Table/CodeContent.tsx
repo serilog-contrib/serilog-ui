@@ -51,7 +51,7 @@ const CodeContent = ({
 
   return (
     <div
-      // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
+      // eslint-disable-next-line react/dom-no-dangerously-set-innerhtml
       dangerouslySetInnerHTML={{ __html: codeContent }}
       className={classes.modalCode}
     />
