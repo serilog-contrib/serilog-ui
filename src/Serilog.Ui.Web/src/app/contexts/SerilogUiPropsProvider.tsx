@@ -36,7 +36,7 @@ export const SerilogUiPropsProvider = ({
 }: {
   children: ReactNode | undefined;
 }) => {
-  const serverProps = readServerDataOnRender();
+  const serverProps = useMemo(() => readServerDataOnRender(), []);
   const [isUtc, setIsUtc] = useState<boolean>(false);
   const [authenticatedFromAccessDenied, setAuthenticatedFromAccessDenied] =
     useState<boolean>(false);
