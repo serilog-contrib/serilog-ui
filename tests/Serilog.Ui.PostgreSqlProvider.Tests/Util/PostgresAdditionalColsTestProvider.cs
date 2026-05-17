@@ -36,7 +36,7 @@ public sealed class PostgresAdditionalColsTestProvider : PostgresTestProvider<Po
 
 public class PostgresTestModel : PostgresLogModel
 {
-    public DateTime SampleDate { get; set; }
+    public DateOnly SampleDate { get; set; }
 
     public bool SampleBool { get; set; }
 

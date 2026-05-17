@@ -6,8 +6,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="EphemeralMongo" Version="3.0.0" />
-		<PackageReference Include="Serilog.Sinks.MongoDB" Version="7.0.0" />
+		<PackageReference Include="EphemeralMongo" Version="3.2.0" />
+		<PackageReference Include="Serilog.Sinks.MongoDB" Version="7.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>

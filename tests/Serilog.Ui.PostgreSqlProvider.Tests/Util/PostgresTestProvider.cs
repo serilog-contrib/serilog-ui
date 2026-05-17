@@ -28,7 +28,7 @@ public class PostgresTestProvider<T> : DatabaseInstance
 
     protected PostgresTestProvider()
     {
-        Container = new PostgreSqlBuilder().Build();
+        Container = new PostgreSqlBuilder("postgres:15.1").Build();
     }
 
     private PostgreSqlDbOptions DbOptions { get; } = new PostgreSqlDbOptions("public")

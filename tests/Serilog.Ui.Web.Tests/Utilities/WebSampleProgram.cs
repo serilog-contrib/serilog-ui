@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using NSubstitute;
 using Serilog.Sinks.InMemory;
 using Serilog.Ui.Core.Extensions;
 using Serilog.Ui.Web.Endpoints;
@@ -20,6 +21,7 @@ public class WebAppFactory
 {
     public class Default : WebApplicationFactory<WebSampleProgram>
     {
+        internal readonly IAppStreamLoader appStreamLoader = Substitute.For<IAppStreamLoader>();
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder
@@ -37,7 +39,9 @@ public class WebAppFactory
 
         protected virtual void WithTestServices(IServiceCollection services)
         {
-            services.AddSerilogUi(options => options.UseInMemory());
+            services
+                .AddSerilogUi(options => options.UseInMemory())
+                .AddSingleton(appStreamLoader);
         }
 
         protected virtual void WithCustomConfigure(IApplicationBuilder builder)
