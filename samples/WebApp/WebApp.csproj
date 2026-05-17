@@ -30,8 +30,8 @@
     <!-- Serilog UI packages  -->
     <ItemGroup>
         <!-- comment/uncomment to directly reference Nuget release
-        <PackageReference Include="Serilog.UI" Version="3.2.0"/>
-        <PackageReference Include="Serilog.UI.MongoDbProvider" Version="4.0.0"/>
+        <PackageReference Include="Serilog.UI" Version="4.0.0"/>
+        <PackageReference Include="Serilog.UI.MongoDbProvider" Version="5.0.0"/>
         -->
 
         <!-- comment/uncomment to directly reference solution projects -->
