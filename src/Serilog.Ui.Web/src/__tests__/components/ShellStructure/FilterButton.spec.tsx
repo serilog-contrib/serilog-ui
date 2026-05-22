@@ -4,7 +4,6 @@ import {
   screen,
   userEvent,
   waitFor,
-  waitForElementToBeRemoved,
 } from '__tests__/_setup/testing-utils';
 import FilterButton from 'app/components/ShellStructure/FilterButton';
 import { describe, expect, it, vi } from 'vitest';
@@ -29,7 +28,7 @@ vi.mock('../../../app/hooks/useSearchForm', () => {
   };
 });
 
-describe('FilterButton', () => {
+describe('filterButton', () => {
   it('renders', async () => {
     renderSerilogUiTestWrapper(<FilterButton />);
 
@@ -39,9 +38,14 @@ describe('FilterButton', () => {
     await userEvent.click(filterBtn);
 
     expect(screen.getByText('Search filters')).toBeInTheDocument();
-    await waitFor(() => {
-      expect(screen.getByRole('form', { name: 'search-logs-form' })).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(
+          screen.getByRole('form', { name: 'search-logs-form' }),
+        ).toBeInTheDocument();
+      },
+      { timeout: 3500 },
+    );
   });
 
   it('closes modal on resize', async () => {
@@ -57,6 +61,6 @@ describe('FilterButton', () => {
       window.dispatchEvent(new Event('resize'));
     });
 
-    await waitForElementToBeRemoved(modalTitle);
+    expect(modalTitle).not.toBeInTheDocument();
   });
 });

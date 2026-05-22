@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { ActionIcon, Box, Select } from '@mantine/core';
 import {
   IconColumns,
@@ -34,7 +33,7 @@ export const PagingLeftColumn = memo(() => {
   const { field: fieldSortOn } = useController({ ...control, name: 'sortOn' });
   const { field: fieldSortBy } = useController({ ...control, name: 'sortBy' });
 
-  const { updateParam } = useQueryParamSync();
+  const { updateMultipleParams, updateParam } = useQueryParamSync();
 
   const isSortByDesc = fieldSortBy.value === SortDirectionOptions.Desc;
 
@@ -47,8 +46,7 @@ export const PagingLeftColumn = memo(() => {
   );
 
   const setEntries = (event: string | null) => {
-    updateParam('page')(1);
-    updateParam(fieldEntries.name)(event);
+    updateMultipleParams({ page: 1, [fieldEntries.name]: event });
   };
   const setSortBy = () => {
     updateParam(fieldSortBy.name)(
@@ -65,10 +63,9 @@ export const PagingLeftColumn = memo(() => {
 
   return (
     <Box
-      aria-label="paging-left-column"
-      display="grid"
-      style={{ alignItems: 'center', justifyContent: 'center', gap: '0.4em' }}
-    >
+      aria-label='paging-left-column'
+      display='grid'
+      style={{ alignItems: 'center', justifyContent: 'center', gap: '0.4em' }}>
       <Select
         {...fieldEntries}
         onChange={setEntries}
@@ -76,15 +73,14 @@ export const PagingLeftColumn = memo(() => {
         leftSection={<IconLayoutList />}
         data={entriesOptions}
         allowDeselect={false}
-      ></Select>
+      />
       <Box
-        display="grid"
+        display='grid'
         style={{
           gridTemplateColumns: '4fr 1fr',
           alignItems: 'center',
           justifyItems: 'right',
-        }}
-      >
+        }}>
         <Select
           {...fieldSortOn}
           label={fieldSortOn.name}
@@ -93,8 +89,11 @@ export const PagingLeftColumn = memo(() => {
           disabled={disableSortOn}
           allowDeselect={false}
           onChange={updateParam(fieldSortOn.name)}
-        ></Select>
-        <ActionIcon {...fieldSortBy} aria-label={fieldSortBy.name} onClick={setSortBy}>
+        />
+        <ActionIcon
+          {...fieldSortBy}
+          aria-label={fieldSortBy.name}
+          onClick={setSortBy}>
           {isSortByDesc ? <IconSortDescending /> : <IconSortAscending />}
         </ActionIcon>
       </Box>

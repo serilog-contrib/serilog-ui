@@ -7,7 +7,7 @@ import HeaderActivity from 'app/components/ShellStructure/HeaderActivity';
 import { AuthType } from 'types/types';
 import { describe, expect, it, vi } from 'vitest';
 
-describe('HeaderActivity', () => {
+describe('headerActivity', () => {
   it('renders', async () => {
     window.innerWidth = 800;
 

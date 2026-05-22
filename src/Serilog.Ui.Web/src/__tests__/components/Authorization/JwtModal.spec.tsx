@@ -2,6 +2,7 @@ import {
   renderSerilogUiTestWrapper,
   screen,
   userEvent,
+  within,
 } from '__tests__/_setup/testing-utils';
 import JwtModal from 'app/components/Authorization/JwtModal';
 import { IAuthPropertiesStorageKeys } from 'app/util/auth';
@@ -16,7 +17,7 @@ const ui = {
   close: byRole('button', { name: 'Close' }),
 };
 
-describe('Jwt Modal', () => {
+describe('jwt Modal', () => {
   const jwt = () => ui.jwt.get();
 
   afterEach(() => {
@@ -27,7 +28,11 @@ describe('Jwt Modal', () => {
     const closeMock = vi.fn();
     renderSerilogUiTestWrapper(<JwtModal onClose={closeMock} />, AuthType.Jwt);
 
-    expect(screen.getAllByRole('button')).toHaveLength(2);
+    expect(
+      within(screen.getByLabelText('Jwt auth modal button group')).getAllByRole(
+        'button',
+      ),
+    ).toHaveLength(2);
 
     [jwt()].forEach((val) => {
       expect(val).toBeInTheDocument();
@@ -39,7 +44,10 @@ describe('Jwt Modal', () => {
   });
 
   it('renders with storage session info', () => {
-    sessionStorage.setItem(IAuthPropertiesStorageKeys.jwt_bearerToken, 'my jwt token');
+    sessionStorage.setItem(
+      IAuthPropertiesStorageKeys.jwt_bearerToken,
+      'my jwt token',
+    );
 
     renderSerilogUiTestWrapper(<JwtModal onClose={vi.fn()} />, AuthType.Jwt);
 
@@ -52,13 +60,15 @@ describe('Jwt Modal', () => {
   });
 
   it('updates inputs, without saving them to the session storage', async () => {
-    const {} = renderSerilogUiTestWrapper(<JwtModal onClose={vi.fn()} />, AuthType.Jwt);
+    renderSerilogUiTestWrapper(<JwtModal onClose={vi.fn()} />, AuthType.Jwt);
 
     await userEvent.type(jwt(), 'my test password');
 
     expect(jwt()).toHaveValue('my test password');
 
-    expect(sessionStorage.getItem(IAuthPropertiesStorageKeys.jwt_bearerToken)).toBeNull();
+    expect(
+      sessionStorage.getItem(IAuthPropertiesStorageKeys.jwt_bearerToken),
+    ).toBeNull();
   });
 
   it('saves inputs value to the session storage', async () => {
@@ -68,9 +78,9 @@ describe('Jwt Modal', () => {
 
     await userEvent.click(ui.save.get());
 
-    expect(sessionStorage.getItem(IAuthPropertiesStorageKeys.jwt_bearerToken)).toBe(
-      'my test jwt',
-    );
+    expect(
+      sessionStorage.getItem(IAuthPropertiesStorageKeys.jwt_bearerToken),
+    ).toBe('my test jwt');
 
     expect(ui.change.get()).toBeInTheDocument();
     expect(ui.save.query()).not.toBeInTheDocument();
@@ -87,13 +97,15 @@ describe('Jwt Modal', () => {
 
     await userEvent.click(ui.save.get());
 
-    expect(sessionStorage.getItem(IAuthPropertiesStorageKeys.jwt_bearerToken)).toBe(
-      'my test jwt',
-    );
+    expect(
+      sessionStorage.getItem(IAuthPropertiesStorageKeys.jwt_bearerToken),
+    ).toBe('my test jwt');
 
     await userEvent.click(ui.change.get());
 
-    expect(sessionStorage.getItem(IAuthPropertiesStorageKeys.jwt_bearerToken)).toBeNull();
+    expect(
+      sessionStorage.getItem(IAuthPropertiesStorageKeys.jwt_bearerToken),
+    ).toBeNull();
 
     expect(ui.save.query()).toBeInTheDocument();
     expect(ui.change.query()).not.toBeInTheDocument();

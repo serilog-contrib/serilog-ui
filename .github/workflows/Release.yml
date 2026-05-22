@@ -20,22 +20,22 @@ on:
   workflow_dispatch:
     inputs:
       ElasticProvider:
-        description: 'Elastic Provider'
+        description: "Elastic Provider"
         required: true
       MongoProvider:
-        description: 'Mongo Provider'
+        description: "Mongo Provider"
         required: true
       MsSqlProvider:
-        description: 'Ms Sql Provider'
+        description: "Ms Sql Provider"
         required: true
       MySqlProvider:
-        description: 'My Sql Provider'
+        description: "My Sql Provider"
         required: true
       PostgresProvider:
-        description: 'Postgres Provider'
+        description: "Postgres Provider"
         required: true
       Ui:
-        description: 'Ui'
+        description: "Ui"
         required: true
 
 jobs:
@@ -43,21 +43,25 @@ jobs:
     name: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24.x"
+
       - uses: actions/setup-java@v5
         with:
-          distribution: 'temurin'
-          java-version: '25'
+          distribution: "temurin"
+          java-version: "25"
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: 'Cache: .nuke/temp, ~/.nuget/packages'
+      - name: "Cache: .nuke/temp, ~/.nuget/packages"
         uses: actions/cache@v5
         with:
           path: |
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
-      - name: 'Run: Publish'
+      - name: "Run: Publish"
         run: ./build.cmd Publish
         env:
           ElasticProvider: ${{ github.event.inputs.ElasticProvider }}
@@ -75,7 +79,7 @@ jobs:
         if: always()
         with:
           name: DotNET - Tests
-          path: '**/test-results.trx'
+          path: "**/test-results.trx"
           reporter: dotnet-trx
           fail-on-error: false
 
@@ -99,6 +103,6 @@ jobs:
         if: always()
         with:
           name: JS - Tests
-          path: '**/test-junit-report.xml'
+          path: "**/test-junit-report.xml"
           reporter: jest-junit
           fail-on-error: false

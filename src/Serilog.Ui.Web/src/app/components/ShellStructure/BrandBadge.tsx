@@ -1,4 +1,5 @@
-import { Badge, MantineSize, MantineSpacing } from '@mantine/core';
+import type { MantineSize, MantineSpacing } from '@mantine/core';
+import { Badge } from '@mantine/core';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { currentYear } from 'app/util/dates';
 import { serilogUiUrl } from 'app/util/prettyPrints';
@@ -6,7 +7,7 @@ import { serilogUiUrl } from 'app/util/prettyPrints';
 const BrandBadge = ({ size, margin }: { margin?: MantineSpacing; size: MantineSize }) => {
   const { showBrand } = useSerilogUiProps();
 
-  if (!showBrand) return null;
+  if (!showBrand) { return null; }
 
   return (
     <Badge

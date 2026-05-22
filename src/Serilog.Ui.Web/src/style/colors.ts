@@ -1,4 +1,4 @@
-import { MantineThemeColors } from '@mantine/core';
+import type { MantineThemeColors } from '@mantine/core';
 
 export const serilogUi: Partial<MantineThemeColors> = {
   blue: [

@@ -1,4 +1,4 @@
-import { handlers } from '__tests__/_setup/mocks/fetch';
 import { setupServer } from 'msw/node';
+import { handlers } from './fetch';
 
 export const server = setupServer(...handlers);

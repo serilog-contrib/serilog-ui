@@ -1,7 +1,7 @@
 import { Box, Button, Text } from '@mantine/core';
 import { IconArrowBarRight, IconBackspace, IconMoodSad } from '@tabler/icons-react';
 import { serilogUiUrl } from 'app/util/prettyPrints';
-import { Link, isRouteErrorResponse, useRouteError } from 'react-router';
+import { isRouteErrorResponse, Link, useRouteError } from 'react-router';
 
 export const ErrorBoundaryPage = () => {
   const error = useRouteError();
@@ -23,7 +23,7 @@ export const ErrorBoundaryPage = () => {
           {error.status >= 500 ? 'An unexpected error occurred!' : 'Page not found!'}
           <IconMoodSad />
         </Text>
-        <Link to={`/`} style={{ textDecoration: 'none' }}>
+        <Link to="/" style={{ textDecoration: 'none' }}>
           <Button size="lg" display="block">
             <IconBackspace />
             <Text size="lg" p="0.6em" fw="bold">
@@ -54,7 +54,9 @@ export const ErrorBoundaryPage = () => {
           mb="sm"
           style={{ justifyContent: 'center', alignItems: 'center' }}
         >
-          An unexpected error occurred!!! <IconMoodSad />
+          An unexpected error occurred!!!
+          {' '}
+          <IconMoodSad />
         </Text>
         <Text ta="justify" display="flex" mb="sm">
           If you know how to replicate the issue, please open an issue to

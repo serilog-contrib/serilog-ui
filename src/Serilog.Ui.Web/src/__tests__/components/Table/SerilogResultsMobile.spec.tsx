@@ -1,4 +1,3 @@
-/* eslint-disable testing-library/no-container */
 import { fakeLogs } from '__tests__/_setup/mocks/samples';
 import { renderSerilogUiTestWrapper, screen } from '__tests__/_setup/testing-utils';
 import SerilogResultsMobile from 'app/components/Table/SerilogResultsMobile';
@@ -12,7 +11,7 @@ vi.mock('../../../app/hooks/useQueryLogs', () => ({
   default: () => mockQuery,
 }));
 
-describe('SerilogResultsMobile', () => {
+describe('serilogResultsMobile', () => {
   it('renders', () => {
     renderSerilogUiTestWrapper(<SerilogResultsMobile />);
 

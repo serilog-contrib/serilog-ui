@@ -15,7 +15,7 @@ vi.mock('../../../app/hooks/useSerilogUiProps', () => {
   };
 });
 
-describe('Sidebar', () => {
+describe('sidebar', () => {
   it('renders', async () => {
     window.innerWidth = 350;
 

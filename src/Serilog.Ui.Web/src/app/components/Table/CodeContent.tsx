@@ -1,11 +1,17 @@
+import type { LogType } from 'types/types';
 import { Box, Loader, Textarea } from '@mantine/core';
 import { renderCodeContent } from 'app/util/prettyPrints';
 import { useEffect, useState } from 'react';
 import classes from 'style/table.module.css';
-import { LogType } from 'types/types';
 import { CopySection } from '../Util/Copy';
 
-const CodeContent = ({ content, codeType }: { content: string; codeType: LogType }) => {
+const CodeContent = ({
+  content,
+  codeType,
+}: {
+  content: string;
+  codeType: LogType;
+}) => {
   const [codeContent, setCodeContent] = useState<TrustedHTML>('');
 
   useEffect(() => {
@@ -17,35 +23,38 @@ const CodeContent = ({ content, codeType }: { content: string; codeType: LogType
     };
 
     void fetchContent();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps, react/exhaustive-deps
   }, []);
 
-  if (!codeContent)
+  if (!codeContent) {
     return (
-      <Box w="100%" display="flex" style={{ justifyContent: 'center' }}>
-        <Loader color="grape" />
+      <Box w='100%' display='flex' style={{ justifyContent: 'center' }}>
+        <Loader color='grape' />
       </Box>
     );
+  }
 
-  if ((codeType as unknown as string) === 'string')
+  if ((codeType as unknown as string) === 'string') {
     return (
       <Textarea
         autosize
         value={codeContent as string}
         disabled
-        rightSectionPointerEvents="all"
+        rightSectionPointerEvents='all'
         rightSection={<CopySection value={codeContent as string} />}
         minRows={1}
         maxRows={20}
         classNames={{ input: classes.modalTextAreaInputWrapper }}
       />
     );
+  }
 
   return (
     <div
+      // eslint-disable-next-line react/dom-no-dangerously-set-innerhtml
       dangerouslySetInnerHTML={{ __html: codeContent }}
       className={classes.modalCode}
-    ></div>
+    />
   );
 };
 

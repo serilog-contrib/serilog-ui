@@ -1,20 +1,23 @@
-﻿import { faker } from '@faker-js/faker';
-import {
+import type {
   AdditionalColumn,
+  ColumnsInfo,
+  EncodedSeriLogObject,
+  SearchResult,
+} from '../../../types/types';
+import { faker } from '@faker-js/faker';
+import {
   AdditionalColumnLogType,
   ColumnType,
-  ColumnsInfo,
   LogLevel,
   RemovableColumns,
-  type EncodedSeriLogObject,
-  type SearchResult,
+
 } from '../../../types/types';
 
 faker.seed(10);
 
 export const dbKeysMock = ['MsSQL.dbo.Logs', 'MsSQL.dbo.Logs2', 'MsSQL.dbo.Logs3'];
 
-//#region code samples
+// #region code samples
 const createRandomJsonObject = (propLength: number = 13) => {
   const fakeObject = {};
   const nestedIndexes = [1, 4, 7];
@@ -40,8 +43,8 @@ const createRandomXmlObject = () => {
     return Object.keys(object).reduce((prev, curr) => {
       const openXml = `<${curr}>`;
       const currentItem = object[curr];
-      const xmlString =
-        typeof currentItem === 'string'
+      const xmlString
+        = typeof currentItem === 'string'
           ? currentItem
           : transformJsonStructureToXml(currentItem);
       const closeXml = `</${curr}>`;
@@ -58,9 +61,9 @@ const createRandomXmlObject = () => {
 
 const jsonExample = JSON.stringify(createRandomJsonObject());
 const xmlExample = createRandomXmlObject();
-//#endregion
+// #endregion
 
-//#region additional columns info
+// #region additional columns info
 const fakeAdditionalColumns: (AdditionalColumn & { value: () => unknown })[] = [
   {
     name: 'SampleText',
@@ -102,9 +105,9 @@ export const fakeColumnsInfo: ColumnsInfo = {
     removedColumns: [RemovableColumns.properties, RemovableColumns.exception],
   },
 };
-//#endregion
+// #endregion
 
-//#region faker - logs
+// #region faker - logs
 const createRandomLog = (): EncodedSeriLogObject => {
   const log: EncodedSeriLogObject = {
     rowNo: faker.number.int(),
@@ -166,4 +169,4 @@ export const fakeLogs3rdTable: SearchResult = {
   }),
   total: 33,
 };
-//#endregion
+// #endregion

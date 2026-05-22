@@ -1,8 +1,9 @@
-﻿export enum AuthType {
+export enum AuthType {
   Basic = 'Basic',
   Jwt = 'Jwt',
   Custom = 'Custom',
 }
+export const defaultAuthType: AuthType = AuthType.Jwt;
 
 export enum LogLevel {
   Verbose = 'Verbose',
@@ -78,23 +79,23 @@ export enum AdditionalColumnLogType {
   Json,
 }
 
-export type AdditionalColumn = {
+export interface AdditionalColumn {
   name: string;
   typeName: ColumnType;
   codeType: AdditionalColumnLogType | null;
-};
+}
 
 export enum RemovableColumns {
   exception = 'Exception',
   properties = 'Properties',
 }
 
-export type ColumnsInfo = {
+export interface ColumnsInfo {
   [dbKey: string]: {
     additionalColumns: AdditionalColumn[];
     removedColumns: RemovableColumns[];
   };
-};
+}
 
 export interface SerilogUiConfig {
   authType?: AuthType;

@@ -1,4 +1,5 @@
-import dayjs, { Dayjs, OpUnitType } from 'dayjs';
+import type { Dayjs, OpUnitType } from 'dayjs';
+import dayjs from 'dayjs';
 import { expect } from 'vitest';
 
 export type ToBeSameDate = (expected: Dayjs, options?: { unit?: OpUnitType }) => void;
@@ -16,7 +17,7 @@ expect.extend({
       message: () =>
         `${received.toISOString()} is ${isNot ? '' : 'not '}equal to ${expected.toISOString()}${options?.unit ? `, with unit ${options?.unit}` : ''}`,
       actual: dayjsReceived,
-      expected: expected,
+      expected,
     };
   },
 });

@@ -1,6 +1,6 @@
-import { DefaultMantineColor } from '@mantine/core';
+import type { DefaultMantineColor } from '@mantine/core';
+import type { ReactNode } from 'react';
 import { notifications } from '@mantine/notifications';
-import { ReactNode } from 'react';
 import { AuthType } from 'types/types';
 
 export const determineHost = (routePrefix?: string) =>
@@ -8,7 +8,10 @@ export const determineHost = (routePrefix?: string) =>
     ? 'https://localhost:3001'
     : `${window.location.origin}/${routePrefix ?? ''}`;
 
-export const createRequestInit = (authType?: AuthType, header?: string): RequestInit => {
+export const createRequestInit = (
+  authType?: AuthType,
+  header?: string,
+): RequestInit => {
   const notWindowsAuth = authType !== AuthType.Custom;
 
   const headers: Headers = new Headers();
@@ -25,7 +28,7 @@ export const send403Notification = () => {
   notifications.show({
     title: 'Unauthorized',
     message:
-      "You are not logged in or you don't have enough permissions to perform the requested operation",
+      'You are not logged in or you do not have enough permissions to perform the requested operation',
     color: 'red',
     radius: 'md',
     withBorder: true,
@@ -41,9 +44,9 @@ export const sendUnexpectedNotification = (
   notifications.show({
     title,
     message,
-    color: color,
+    color,
     radius: 'md',
     withBorder: true,
-    autoClose: autoClose,
+    autoClose,
   });
 };

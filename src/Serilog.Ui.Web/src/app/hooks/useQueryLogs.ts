@@ -29,7 +29,9 @@ const useQueryLogs = () => {
       enabled: true,
       queryKey,
       queryFn: async () => {
-        if (!isHeaderReady) return null;
+        if (!isHeaderReady) {
+          return null;
+        }
         const values = getValues();
 
         return currentDbKey

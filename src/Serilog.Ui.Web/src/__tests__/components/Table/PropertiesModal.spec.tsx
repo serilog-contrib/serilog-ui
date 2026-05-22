@@ -1,10 +1,13 @@
-import { dbKeysMock, fakeColumnsInfo, fakeLogs } from '__tests__/_setup/mocks/samples';
+import {
+  dbKeysMock,
+  fakeColumnsInfo,
+  fakeLogs,
+} from '__tests__/_setup/mocks/samples';
 import {
   renderSerilogUiTestWrapper,
   screen,
   userEvent,
   waitFor,
-  waitForElementToBeRemoved,
 } from '__tests__/_setup/testing-utils';
 import PropertiesModal from 'app/components/Table/PropertiesModal';
 import { describe, expect, it, vi } from 'vitest';
@@ -26,7 +29,7 @@ vi.mock('../../../app/hooks/useSerilogUiProps', () => {
   };
 });
 
-describe('PropertiesModal', () => {
+describe('propertiesModal', () => {
   it('renders', () => {
     renderSerilogUiTestWrapper(
       <PropertiesModal
@@ -37,7 +40,7 @@ describe('PropertiesModal', () => {
           rowNo: 1,
           timestamp: '',
         }}
-        title="props"
+        title='props'
       />,
     );
 
@@ -48,37 +51,41 @@ describe('PropertiesModal', () => {
 
   it('opens and close properties modal', async () => {
     renderSerilogUiTestWrapper(
-      <PropertiesModal modalContent={logExample} title="title" />,
+      <PropertiesModal modalContent={logExample} title='title' />,
     );
 
     const btn = screen.getByRole('button', { name: 'title' });
     await userEvent.click(btn);
 
+    const btnClose = screen.getByRole('button', {
+      name: 'close-properties-modal',
+    });
     expect(screen.getByRole('dialog')).toBeInTheDocument();
 
-    const btnClose = screen.getByRole('button', { name: 'close-properties-modal' });
     await userEvent.click(btnClose);
-    await waitForElementToBeRemoved(screen.queryByRole('dialog'));
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
   it('show additional column: boolean', async () => {
     mockForm.getValues.mockReturnValue(dbKey);
 
     renderSerilogUiTestWrapper(
-      <PropertiesModal modalContent={logExample} title="title" />,
+      <PropertiesModal modalContent={logExample} title='title' />,
     );
 
     const btn = screen.getByRole('button', { name: 'title' });
     await userEvent.click(btn);
 
-    expect(screen.getByRole('switch', { name: 'SampleBool' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('switch', { name: 'SampleBool' }),
+    ).toBeInTheDocument();
   });
 
   it('show additional column: dates', async () => {
     mockForm.getValues.mockReturnValue(dbKey);
 
     renderSerilogUiTestWrapper(
-      <PropertiesModal modalContent={logExample} title="title" />,
+      <PropertiesModal modalContent={logExample} title='title' />,
     );
 
     const btn = screen.getByRole('button', { name: 'title' });
@@ -88,14 +95,16 @@ describe('PropertiesModal', () => {
       name: /sampledate/i,
     });
     expect(date).toBeInTheDocument();
-    expect(date).toHaveValue((logExample['SampleDate'] as object)['value']);
+    expect(date).toHaveValue(
+      (logExample.SampleDate as { value: string }).value,
+    );
   });
 
   it('show additional column: code', async () => {
     mockForm.getValues.mockReturnValue(dbKey);
 
     renderSerilogUiTestWrapper(
-      <PropertiesModal modalContent={logExample} title="title" />,
+      <PropertiesModal modalContent={logExample} title='title' />,
     );
 
     const btn = screen.getByRole('button', { name: 'title' });
@@ -114,7 +123,7 @@ describe('PropertiesModal', () => {
     mockForm.getValues.mockReturnValue(dbKey);
 
     renderSerilogUiTestWrapper(
-      <PropertiesModal modalContent={logExample} title="title" />,
+      <PropertiesModal modalContent={logExample} title='title' />,
     );
 
     const btn = screen.getByRole('button', { name: 'title' });
@@ -128,7 +137,7 @@ describe('PropertiesModal', () => {
     mockForm.getValues.mockReturnValue(dbKeysMock[1]);
 
     renderSerilogUiTestWrapper(
-      <PropertiesModal modalContent={logExample} title="title" />,
+      <PropertiesModal modalContent={logExample} title='title' />,
     );
 
     const btn = screen.getByRole('button', { name: 'title' });

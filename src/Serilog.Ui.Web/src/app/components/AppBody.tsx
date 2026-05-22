@@ -1,6 +1,6 @@
 import { Box } from '@mantine/core';
 import { useJwtTimeout } from 'app/hooks/useJwtTimeout';
-import { Suspense, lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import classes from 'style/table.module.css';
 
 const Search = lazy(() => import('./Search/Search'));

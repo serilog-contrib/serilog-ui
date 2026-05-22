@@ -1,6 +1,6 @@
 /* eslint-disable testing-library/no-node-access */
+import FS from 'node:fs';
 import { act } from '@testing-library/react';
-import FS from 'fs';
 import { Window } from 'happy-dom';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
