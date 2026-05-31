@@ -8,7 +8,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Serilog.Sinks.RavenDB" Version="3.0.0" />
-		<PackageReference Include="Testcontainers.RavenDb " Version="4.11.0"/>
+		<PackageReference Include="Testcontainers.RavenDb " Version="4.12.0"/>
 	</ItemGroup>
 
 	<ItemGroup>
