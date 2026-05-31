@@ -41,12 +41,18 @@ internal class SerilogUiAppRoutes(IHttpContextAccessor httpContextAccessor, IApp
 
     public Task RedirectHomeAsync()
     {
-        string indexUrl = _httpContext.Request.GetEncodedUrl().Replace("index.html", "");
+        string queryString = _httpContext.Request.QueryString.HasValue ? _httpContext.Request.QueryString.Value : "";
+        string indexUrl = RemoveQueryString(_httpContext.Request
+            .GetEncodedUrl()
+            .Replace("index.html", ""));
         string indexUrlWithTrailingSlash = indexUrl.EndsWith('/') ? indexUrl : $"{indexUrl}/";
+        string indexWithTrailingSlashAndQuery = $"{indexUrlWithTrailingSlash}{queryString}";
 
-        _httpContext.Response.Redirect(indexUrlWithTrailingSlash, true);
+        _httpContext.Response.Redirect(indexWithTrailingSlashAndQuery, true);
 
         return Task.CompletedTask;
+
+        string RemoveQueryString(string text) => string.IsNullOrWhiteSpace(queryString) ? text : text.Replace(queryString, "");
     }
 
     private async Task<string> LoadStream(Stream stream, UiOptions options)
