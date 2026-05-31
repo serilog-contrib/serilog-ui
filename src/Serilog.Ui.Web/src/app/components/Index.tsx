@@ -8,8 +8,9 @@ import { useCloseOnResize } from 'app/hooks/useCloseOnResize';
 import { useQueryAuth } from 'app/hooks/useQueryAuth';
 import { useQueryParamReader } from 'app/hooks/useQueryParamSync';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
+import { queryParamsStatePreserverKey } from 'app/util/queryParams';
 import { lazy, Suspense } from 'react';
-import { Navigate } from 'react-router';
+import { Navigate, useSearchParams } from 'react-router';
 
 const AppBody = lazy(() => import('./AppBody'));
 const Head = lazy(() => import('./ShellStructure/Header'));
@@ -19,6 +20,7 @@ export const Index = () => {
   const { blockHomeAccess, authenticatedFromAccessDenied } =
     useSerilogUiProps();
 
+  const [searchParams] = useSearchParams();
   useQueryAuth();
   useQueryParamReader();
 
@@ -33,8 +35,17 @@ export const Index = () => {
 
   useCloseOnResize(close);
 
+  if (blockHomeAccess && authenticatedFromAccessDenied === undefined) {
+    return <div />;
+  }
   if (blockHomeAccess && !authenticatedFromAccessDenied) {
-    return <Navigate to='access-denied' replace />;
+    return (
+      <Navigate
+        to='access-denied'
+        replace
+        state={{ [queryParamsStatePreserverKey]: searchParams.toString() }}
+      />
+    );
   }
 
   return (
