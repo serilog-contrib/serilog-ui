@@ -34,6 +34,8 @@ dotnet add package Serilog.UI
 Install-Package Serilog.UI
 ```
 
+If you need to use the Serilog.UI.Core contracts layer, you can install the _Serilog.UI.Domain_ [NuGet package](https://www.nuget.org/packages/Serilog.UI.Domain) (available from v4).
+
 Install one or more of the available providers, based upon your sink(s):
 
 | Provider                                                                                                        | install: dotnet                                       | install: pkg manager                               |
