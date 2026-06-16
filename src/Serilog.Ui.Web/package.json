@@ -57,7 +57,7 @@
     "shiki": "^4.0.2",
     "testing-library-selector": "^0.3.1",
     "typescript": "^6.0.3",
-    "vite": "^8.0.13",
+    "vite": "^8.0.16",
     "vite-plugin-checker": "^0.13.0",
     "vite-plugin-mkcert": "^2.0.0",
     "vitest": "^4.1.6",
