@@ -8,18 +8,14 @@ import {
   useQuerySyncTable,
 } from 'app/hooks/useQueryParamSync';
 import dayjs from 'dayjs';
-import * as router from 'react-router';
+import { useSearchParams } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import * as form from '../../app/hooks/useSearchForm';
 
-const mockSearchParams = (startingParams?: string) => {
-  const setParamsMock = vi.fn();
-  const searchParams = new URLSearchParams(startingParams);
-  vi.spyOn(router, 'useSearchParams').mockImplementation(() => [
-    searchParams,
-    setParamsMock,
-  ]);
-  return { p: searchParams, fn: setParamsMock };
+const useSut = () => {
+  const [searchP] = useSearchParams();
+  const p = useQueryParamSync();
+  return { searchP, ...p };
 };
 
 describe('useQueryParamSync', () => {
@@ -31,49 +27,41 @@ describe('useQueryParamSync', () => {
       })),
     ),
   )('updates date param $d: $v', ({ d, v }) => {
-    const { p, fn } = mockSearchParams();
-    const { result } = renderHookSerilogUiTestWrapper(() =>
-      useQueryParamSync(),
-    );
+    const { result } = renderHookSerilogUiTestWrapper(useSut);
 
-    result.current.updateDateParam(d)(v);
-    fn.mock.lastCall?.[0](p);
-    expect(p.toString()).toBe(
+    act(() => {
+      result.current.updateDateParam(d)(v);
+    });
+
+    expect(result.current.searchP.toString()).toBe(
       `${d}=${v ? encodeURIComponent(dayjs(v).toISOString()) : null}`,
     );
   });
 
   it.each([null, 'test'])('updates level param: %s', (v) => {
-    const { p, fn } = mockSearchParams();
-    const { result } = renderHookSerilogUiTestWrapper(() =>
-      useQueryParamSync(),
-    );
+    const { result } = renderHookSerilogUiTestWrapper(useSut);
 
-    result.current.updateLevelParam(v);
-    fn.mock.lastCall?.[0](p);
-    expect(p.toString()).toBe(`level=${v}`);
+    act(() => {
+      result.current.updateLevelParam(v);
+    });
+
+    expect(result.current.searchP.toString()).toBe(`level=${v}`);
   });
 
   it('updates search param', () => {
-    const { p, fn } = mockSearchParams();
-    const { result } = renderHookSerilogUiTestWrapper(() =>
-      useQueryParamSync(),
-    );
-
-    result.current.updateSearchParam('test');
-    fn.mock.lastCall?.[0](p);
-    expect(p.toString()).toBe(`search=test`);
+    const { result } = renderHookSerilogUiTestWrapper(useSut);
+    act(() => {
+      result.current.updateSearchParam('test');
+    });
+    expect(result.current.searchP.toString()).toBe(`search=test`);
   });
 
   it.each([null, 'test'])('updates table param: %s', (v) => {
-    const { p, fn } = mockSearchParams();
-    const { result } = renderHookSerilogUiTestWrapper(() =>
-      useQueryParamSync(),
-    );
-
-    result.current.updateTableParam(v);
-    fn.mock.lastCall?.[0](p);
-    expect(p.toString()).toBe(`table=${v}`);
+    const { result } = renderHookSerilogUiTestWrapper(useSut);
+    act(() => {
+      result.current.updateTableParam(v);
+    });
+    expect(result.current.searchP.toString()).toBe(`table=${v}`);
   });
 
   it.each(
@@ -82,66 +70,60 @@ describe('useQueryParamSync', () => {
       v: 'test',
     })),
   )('updates $d param: $v', ({ d, v }) => {
-    const { p, fn } = mockSearchParams();
-    const { result } = renderHookSerilogUiTestWrapper(() =>
-      useQueryParamSync(),
-    );
+    const { result } = renderHookSerilogUiTestWrapper(useSut);
 
-    result.current.updateParam(d)(v);
-    fn.mock.lastCall?.[0](p);
-    expect(p.toString()).toBe(`${d}=test`);
+    act(() => {
+      result.current.updateParam(d)(v);
+    });
+    expect(result.current.searchP.toString()).toBe(`${d}=test`);
   });
 
   it('updates multiple params', () => {
-    const { p, fn } = mockSearchParams();
-    const { result } = renderHookSerilogUiTestWrapper(() =>
-      useQueryParamSync(),
-    );
+    const { result } = renderHookSerilogUiTestWrapper(useSut);
 
-    result.current.updateMultipleParams({ k: 'test', k2: 2 });
-    fn.mock.lastCall?.[0](p);
-    expect(p.toString()).toBe(`k=test&k2=2`);
+    act(() => {
+      result.current.updateMultipleParams({ k: 'test', k2: 2 });
+    });
+    expect(result.current.searchP.toString()).toBe(`k=test&k2=2`);
   });
 });
 
 describe('useQuerySyncTable', () => {
+  const useSutSyncTable = () => {
+    const [searchP, setSp] = useSearchParams();
+    const p = useQuerySyncTable();
+    return { searchP, setSp, ...p };
+  };
   it('not invokes set-params on empty table', () => {
-    const { fn } = mockSearchParams();
-    const { result } = renderHookSerilogUiTestWrapper(() =>
-      useQuerySyncTable(),
-    );
+    const { result } = renderHookSerilogUiTestWrapper(useSutSyncTable);
 
-    result.current.registerKeyOnQuery();
+    act(() => {
+      result.current.registerKeyOnQuery();
+    });
 
-    expect(fn).not.toHaveBeenCalled();
+    expect(result.current.searchP.toString()).toBe('');
   });
 
   it('not invokes set-params when query-params has table', () => {
-    const { fn } = mockSearchParams('table=def');
-    const { result } = renderHookSerilogUiTestWrapper(() =>
-      useQuerySyncTable(),
-    );
+    const { result } = renderHookSerilogUiTestWrapper(useSutSyncTable);
+    act(() => {
+      result.current.setSp({ table: 'def' });
+    });
+    act(() => {
+      result.current.registerKeyOnQuery('other-table');
+    });
 
-    result.current.registerKeyOnQuery('other-table');
-
-    expect(fn).not.toHaveBeenCalled();
+    expect(result.current.searchP.toString()).toBe('table=def');
   });
 
   it('invokes set-params when default table is provided', () => {
-    const { p, fn } = mockSearchParams();
-
-    const { result } = renderHookSerilogUiTestWrapper(() =>
-      useQuerySyncTable(),
-    );
+    const { result } = renderHookSerilogUiTestWrapper(useSutSyncTable);
 
     act(() => {
-      result.current.registerKeyOnQuery('default');
+      result.current.registerKeyOnQuery('default-3');
     });
 
-    expect(fn).toHaveBeenCalledOnce();
-
-    fn.mock.lastCall?.[0](p);
-    expect(p.toString()).toBe('table=default');
+    expect(result.current.searchP.toString()).toBe('table=default-3');
   });
 });
 
@@ -154,24 +136,32 @@ describe('useQueryParamReader', () => {
     });
     const setValue = vi.fn();
     vi.spyOn(form, 'useSearchForm').mockImplementation(
-      () => ({ getValues, setValue }) as any,
+      () => ({ getValues, setValue } as any),
     );
 
-    const { p, fn } = mockSearchParams();
-    p.set('level', 'Warning');
-    p.set('sortBy', 'invalid');
-    p.set('table', 'logs');
+    const { result } = renderHookSerilogUiTestWrapper(() => {
+      const [a, b] = useSearchParams();
+      useQueryParamReader();
+      return { a, b };
+    });
+    // clearing the mock, to remove the first render mocked calls
+    setValue.mockClear();
 
-    renderHookSerilogUiTestWrapper(() => useQueryParamReader());
+    act(() => {
+      result.current.b({
+        level: 'Warning',
+        sortBy: 'invalid',
+        table: 'logs',
+      });
+    });
 
     // adding values from search-params...
     expect(setValue).toHaveBeenNthCalledWith(1, 'level', 'Warning');
     expect(setValue).toHaveBeenNthCalledWith(2, 'table', 'logs');
-    // removing existing values that cannot be found in search-params...
+    // // removing existing values that cannot be found in search-params...
     expect(setValue).toHaveBeenNthCalledWith(3, 'search', '');
 
-    expect(fn).toHaveBeenCalledOnce();
     // checking that invalid values have been removed from the query params...
-    expect(fn.mock.lastCall?.[0].toString()).toBe('level=Warning&table=logs');
+    expect(result.current.a.toString()).toBe('level=Warning&table=logs');
   });
 });
