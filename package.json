@@ -6,5 +6,5 @@
     "contribs:check": "all-contributors check",
     "contribs:gen": "all-contributors generate"
   },
-  "packageManager": "yarn@4.15.0"
+  "packageManager": "yarn@4.17.0"
 }
