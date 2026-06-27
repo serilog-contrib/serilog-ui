@@ -2,6 +2,7 @@ import {
   renderSerilogUiTestWrapper,
   screen,
   userEvent,
+  within,
 } from '__tests__/_setup/testing-utils';
 import BasicModal from 'app/components/Authorization/BasicModal';
 import { IAuthPropertiesStorageKeys } from 'app/util/auth';
@@ -17,7 +18,7 @@ const ui = {
   close: byRole('button', { name: 'Close' }),
 };
 
-describe('Basic Modal', () => {
+describe('basic Modal', () => {
   const username = () => ui.username.get();
   const pwd = () => ui.password.get();
 
@@ -27,9 +28,16 @@ describe('Basic Modal', () => {
 
   it('renders without saved info', async () => {
     const closeMock = vi.fn();
-    renderSerilogUiTestWrapper(<BasicModal onClose={closeMock} />, AuthType.Basic);
+    renderSerilogUiTestWrapper(
+      <BasicModal onClose={closeMock} />,
+      AuthType.Basic,
+    );
 
-    expect(screen.getAllByRole('button')).toHaveLength(2);
+    expect(
+      within(screen.getByLabelText('Basic modal button group')).getAllByRole(
+        'button',
+      ),
+    ).toHaveLength(2);
 
     [username(), pwd()].forEach((val) => {
       expect(val).toBeInTheDocument();
@@ -41,10 +49,19 @@ describe('Basic Modal', () => {
   });
 
   it('renders with storage session info', () => {
-    sessionStorage.setItem(IAuthPropertiesStorageKeys.basic_user, 'my test user');
-    sessionStorage.setItem(IAuthPropertiesStorageKeys.basic_pwd, 'my test password');
+    sessionStorage.setItem(
+      IAuthPropertiesStorageKeys.basic_user,
+      'my test user',
+    );
+    sessionStorage.setItem(
+      IAuthPropertiesStorageKeys.basic_pwd,
+      'my test password',
+    );
 
-    renderSerilogUiTestWrapper(<BasicModal onClose={vi.fn()} />, AuthType.Basic);
+    renderSerilogUiTestWrapper(
+      <BasicModal onClose={vi.fn()} />,
+      AuthType.Basic,
+    );
 
     expect(username()).toHaveValue('my test user');
     expect(pwd()).toBeEmptyDOMElement();
@@ -55,7 +72,7 @@ describe('Basic Modal', () => {
   });
 
   it('updates inputs, without saving them to the session storage', async () => {
-    const {} = renderSerilogUiTestWrapper(
+    renderSerilogUiTestWrapper(
       <BasicModal onClose={vi.fn()} />,
       AuthType.Basic,
     );
@@ -66,12 +83,19 @@ describe('Basic Modal', () => {
     expect(username()).toHaveValue('my test user');
     expect(pwd()).toHaveValue('my test password');
 
-    expect(sessionStorage.getItem(IAuthPropertiesStorageKeys.basic_user)).toBeNull();
-    expect(sessionStorage.getItem(IAuthPropertiesStorageKeys.basic_pwd)).toBeNull();
+    expect(
+      sessionStorage.getItem(IAuthPropertiesStorageKeys.basic_user),
+    ).toBeNull();
+    expect(
+      sessionStorage.getItem(IAuthPropertiesStorageKeys.basic_pwd),
+    ).toBeNull();
   });
 
   it('saves inputs value to the session storage', async () => {
-    renderSerilogUiTestWrapper(<BasicModal onClose={vi.fn()} />, AuthType.Basic);
+    renderSerilogUiTestWrapper(
+      <BasicModal onClose={vi.fn()} />,
+      AuthType.Basic,
+    );
 
     await userEvent.type(username(), 'my test user');
     await userEvent.type(pwd(), 'my test password');
@@ -82,7 +106,9 @@ describe('Basic Modal', () => {
       'my test user',
     );
     // basic pwd is never saved, as it's a sensitive data
-    expect(sessionStorage.getItem(IAuthPropertiesStorageKeys.basic_pwd)).toBeNull();
+    expect(
+      sessionStorage.getItem(IAuthPropertiesStorageKeys.basic_pwd),
+    ).toBeNull();
 
     expect(ui.change.get()).toBeInTheDocument();
     expect(ui.save.query()).not.toBeInTheDocument();
@@ -93,7 +119,10 @@ describe('Basic Modal', () => {
   });
 
   it('resets saved input and clears them from the session storage', async () => {
-    renderSerilogUiTestWrapper(<BasicModal onClose={vi.fn()} />, AuthType.Basic);
+    renderSerilogUiTestWrapper(
+      <BasicModal onClose={vi.fn()} />,
+      AuthType.Basic,
+    );
 
     await userEvent.type(username(), 'my test user');
     await userEvent.type(pwd(), 'my test password');
@@ -103,12 +132,18 @@ describe('Basic Modal', () => {
     expect(sessionStorage.getItem(IAuthPropertiesStorageKeys.basic_user)).toBe(
       'my test user',
     );
-    expect(sessionStorage.getItem(IAuthPropertiesStorageKeys.basic_pwd)).toBeNull();
+    expect(
+      sessionStorage.getItem(IAuthPropertiesStorageKeys.basic_pwd),
+    ).toBeNull();
 
     await userEvent.click(ui.change.get());
 
-    expect(sessionStorage.getItem(IAuthPropertiesStorageKeys.basic_user)).toBeNull();
-    expect(sessionStorage.getItem(IAuthPropertiesStorageKeys.basic_pwd)).toBeNull();
+    expect(
+      sessionStorage.getItem(IAuthPropertiesStorageKeys.basic_user),
+    ).toBeNull();
+    expect(
+      sessionStorage.getItem(IAuthPropertiesStorageKeys.basic_pwd),
+    ).toBeNull();
 
     expect(ui.save.query()).toBeInTheDocument();
     expect(ui.change.query()).not.toBeInTheDocument();

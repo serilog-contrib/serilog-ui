@@ -1,6 +1,6 @@
 import { renderHookSerilogUiTestWrapper, waitFor } from '__tests__/_setup/testing-utils';
 import { useQueryAuth } from 'app/hooks/useQueryAuth';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockedProps = {
   blockHomeAccess: true,
@@ -25,6 +25,10 @@ vi.mock('../../app/hooks/useQueryTableKeys', () => ({
 }));
 
 describe('useQueryAuth', () => {
+  beforeEach(() => {
+    mockTableKeys.refetch.mockClear()
+  })
+
   it('not runs request if home is not blocked', () => {
     mockedProps.blockHomeAccess = false;
 

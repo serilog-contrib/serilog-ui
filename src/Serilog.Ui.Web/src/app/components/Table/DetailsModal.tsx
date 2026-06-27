@@ -1,3 +1,4 @@
+import type { LogType } from 'types/types';
 import {
   Box,
   Button,
@@ -6,9 +7,8 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { Suspense, lazy, memo } from 'react';
+import { lazy, memo, Suspense } from 'react';
 import { boxButton, boxGridProperties, overlayProps } from 'style/modal';
-import { LogType } from 'types/types';
 import { capitalize } from '../../util/prettyPrints';
 
 const CodeContent = lazy(() => import('./CodeContent'));

@@ -1,16 +1,24 @@
-import { renderHook } from '@testing-library/react';
+import type { ReactNode } from 'react';
+import { renderHook as testingLibraryRenderHook } from '@testing-library/react';
 import { renderHookSerilogUiTestWrapper as renderHookCustom } from '__tests__/_setup/testing-utils';
-import { SerilogUiPropsProvider, useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { ReactNode } from 'react';
+import { SerilogUiPropsProvider } from 'app/contexts/SerilogUiPropsProvider';
+import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { AuthType, RemovableColumns } from 'types/types';
 import { describe, expect, it, vi } from 'vitest';
 
+const TestProvider = ({ children }: { children: ReactNode }) => (
+  <SerilogUiPropsProvider>{children}</SerilogUiPropsProvider>
+);
+
 describe('useSerilogUiProps', () => {
-  it('decodes and sets dom-defined properties', () => {
+  it('decodes and sets dom-defined properties', async () => {
     const { result } = renderHookCustom(() => useSerilogUiProps(), {
       authType: AuthType.Custom,
       columnsInfo: {
-        key: { additionalColumns: [], removedColumns: [RemovableColumns.exception] },
+        key: {
+          additionalColumns: [],
+          removedColumns: [RemovableColumns.exception],
+        },
       },
     });
 
@@ -18,9 +26,14 @@ describe('useSerilogUiProps', () => {
     expect(result.current.authenticatedFromAccessDenied).toBeFalsy();
     expect(result.current.blockHomeAccess).toBeFalsy();
     expect(result.current.columnsInfo).toStrictEqual({
-      key: { additionalColumns: [], removedColumns: [RemovableColumns.exception] },
+      key: {
+        additionalColumns: [],
+        removedColumns: [RemovableColumns.exception],
+      },
     });
-    expect(result.current.disabledSortOnKeys).toStrictEqual(['disabled-sort-db']);
+    expect(result.current.disabledSortOnKeys).toStrictEqual([
+      'disabled-sort-db',
+    ]);
     expect(result.current.homeUrl).toBe('https://test-google.com');
     expect(result.current.isUtc).toBeFalsy();
     expect(result.current.routePrefix).toBe('test-serilog-ui');
@@ -28,9 +41,9 @@ describe('useSerilogUiProps', () => {
   });
 
   it('sets defaults if no decodable id is found', () => {
-    const { result } = renderHook(() => useSerilogUiProps(), {
+    const { result } = testingLibraryRenderHook(() => useSerilogUiProps(), {
       wrapper: ({ children }: { children: ReactNode }) => (
-        <SerilogUiPropsProvider>{children}</SerilogUiPropsProvider>
+        <TestProvider>{children}</TestProvider>
       ),
     });
 
@@ -47,16 +60,23 @@ describe('useSerilogUiProps', () => {
     const warnMock = vi.fn();
     console.warn = warnMock;
 
-    const { result } = renderHook(() => useSerilogUiProps(), {
-      wrapper: ({ children }: { children: ReactNode }) => (
-        <SerilogUiPropsProvider>
-          <div hidden id="serilog-ui-props">
-            {'some text that is not a json [][]'}
-          </div>{' '}
-          {children}
-        </SerilogUiPropsProvider>
-      ),
-    });
+    const { result, rerender } = testingLibraryRenderHook(
+      () => useSerilogUiProps(),
+      {
+        wrapper: ({ children }: { children: ReactNode }) => (
+          <div>
+            <div hidden id='serilog-ui-props'>
+              some text that is not a json...
+            </div>
+            <div>
+              <TestProvider>{children}</TestProvider>
+            </div>
+          </div>
+        ),
+        initialProps: undefined,
+      },
+    );
+    rerender();
 
     expect(warnMock).toHaveBeenCalledOnce();
 

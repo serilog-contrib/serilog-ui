@@ -1,11 +1,12 @@
+/* eslint-disable style/indent-binary-ops */
 /// <reference types="vitest" />
 
-import react from '@vitejs/plugin-react-swc';
-import { PreviewOptions, defineConfig } from 'vite';
+import type { PreviewOptions } from 'vite';
+import type { ViteUserConfig as VitestUserConfigInterface } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite';
 import { checker } from 'vite-plugin-checker';
 import mkcert from 'vite-plugin-mkcert';
-import viteTsconfigPaths from 'vite-tsconfig-paths';
-import type { UserConfig as VitestUserConfigInterface } from 'vitest/config';
 
 const vitestConfig: VitestUserConfigInterface = {
   test: {
@@ -20,6 +21,7 @@ const vitestConfig: VitestUserConfigInterface = {
     setupFiles: './__tests__/_setup/setup-tests.ts',
     outputFile: {
       'vitest-sonar-reporter': './reports/test-report.xml',
+      // eslint-disable-next-line style/quote-props
       junit: './reports/test-junit-report.xml',
     },
     coverage: {
@@ -42,8 +44,10 @@ const previewConfig: PreviewOptions = {
   port: 4173,
   strictPort: true,
   proxy: {
-    ['^/serilog-ui/assets']: proxyAssets(/^\/serilog-ui/),
-    ['^/serilog-ui/access-denied/assets']: proxyAssets(/^\/serilog-ui\/access-denied/),
+    '^/serilog-ui/assets': proxyAssets(/^\/serilog-ui/),
+    '^/serilog-ui/access-denied/assets': proxyAssets(
+      /^\/serilog-ui\/access-denied/,
+    ),
   },
 };
 
@@ -55,17 +59,14 @@ export default defineConfig((env) => ({
     outDir: '../wwwroot/dist',
     emptyOutDir: true,
     sourcemap: false,
-    rollupOptions: {
-      external: ['**/__tests__/**/*', '**/*.{spec,test}.*', '**/mocks/**/*.*'],
+    rolldownOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            return id.toString().split('node_modules/')[1].split('/')[0].toString();
-          }
-        },
+        codeSplitting: true,
       },
     },
-    target: 'ESNEXT',
+  },
+  resolve: {
+    tsconfigPaths: true,
   },
   plugins: [
     env.mode !== 'development' && react(),
@@ -73,7 +74,6 @@ export default defineConfig((env) => ({
       react({
         jsxImportSource: '@welldone-software/why-did-you-render',
       }),
-    viteTsconfigPaths(),
     mkcert(),
     env.mode === 'development' &&
       checker({
@@ -86,7 +86,7 @@ export default defineConfig((env) => ({
   preview: previewConfig,
   server: {
     open: 'serilog-ui/',
-    port: 3003,
+    port: 3001,
   },
   test: vitestConfig.test,
 }));

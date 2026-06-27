@@ -31,21 +31,25 @@ jobs:
     name: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "24.x"
+
       - uses: actions/setup-java@v5
         with:
-          distribution: 'temurin'
-          java-version: '25'
+          distribution: "temurin"
+          java-version: "25"
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: 'Cache: .nuke/temp, ~/.nuget/packages'
+      - name: "Cache: .nuke/temp, ~/.nuget/packages"
         uses: actions/cache@v5
         with:
           path: |
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
-      - name: 'Run: Frontend_Tests_Ci'
+      - name: "Run: Frontend_Tests_Ci"
         run: ./build.cmd Frontend_Tests_Ci
         env:
           SonarTokenUi: ${{ secrets.SONAR_TOKEN_UI }}
@@ -71,4 +75,4 @@ jobs:
         if: always()
         with:
           name: test-results
-          path: '**/test-junit-report.xml'
+          path: "**/test-junit-report.xml"

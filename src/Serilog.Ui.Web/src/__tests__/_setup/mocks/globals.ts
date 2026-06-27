@@ -1,5 +1,5 @@
-import '@testing-library/jest-dom/vitest';
 import { vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 
 const { getComputedStyle: getCompStyle } = window;
 window.getComputedStyle = (elt) => getCompStyle(elt);
@@ -25,4 +25,12 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: vi.fn(),
     dispatchEvent: vi.fn(),
   }),
+});
+
+Object.defineProperty(window.document, 'fonts', {
+  writable: true,
+  value: {
+    addEventListener: () => {},
+    removeEventListener: () => {},
+  },
 });

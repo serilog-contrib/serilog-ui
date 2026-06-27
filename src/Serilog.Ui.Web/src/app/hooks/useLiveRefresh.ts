@@ -1,14 +1,14 @@
 import { useState } from 'react';
 
 enum options {
-  'zero' = 0,
-  'five' = 5,
-  'fifteen' = 15,
-  'thirty' = 30,
-  'sixty' = 60,
-  'onehundredtwenty' = 120,
-  'threehundred' = 300,
-  'ninehundred' = 900,
+  zero = 0,
+  five = 5,
+  fifteen = 15,
+  thirty = 30,
+  sixty = 60,
+  onehundredtwenty = 120,
+  threehundred = 300,
+  ninehundred = 900,
 }
 
 export const liveRefreshOptions = [
@@ -27,8 +27,8 @@ export const useLiveRefresh = () => {
   const isLiveRefreshRunning = refetchInterval > 0;
   const liveRefreshLabel = !isLiveRefreshRunning
     ? ''
-    : liveRefreshOptions.find((lr) => lr.value === options[refetchInterval / 1000])
-        ?.label;
+    : liveRefreshOptions.find(lr => lr.value === options[refetchInterval / 1000])
+      ?.label;
 
   const startLiveRefresh = (v: string | null) => {
     if (v === null) {

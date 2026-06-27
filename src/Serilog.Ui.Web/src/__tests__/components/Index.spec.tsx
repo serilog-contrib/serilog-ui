@@ -13,7 +13,7 @@ vi.mock('../../app/hooks/useSerilogUiProps', () => {
   };
 });
 
-describe('Index', () => {
+describe('index', () => {
   it('renders', async () => {
     vi.useFakeTimers();
     const { container } = renderSerilogUiTestWrapper(<Index />);

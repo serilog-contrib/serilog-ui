@@ -6,7 +6,7 @@ import {
 import { CopySection } from 'app/components/Util/Copy';
 import { describe, expect, it, vi } from 'vitest';
 
-describe('Copy', () => {
+describe('copy', () => {
   it('renders', async () => {
     const spy = vi.spyOn(navigator.clipboard, 'writeText');
     renderSerilogUiTestWrapper(

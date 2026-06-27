@@ -1,6 +1,9 @@
-import { renderSerilogUiTestWrapper, screen } from '__tests__/_setup/testing-utils';
+import type { ReactNode } from 'react';
+import {
+  renderSerilogUiTestWrapper,
+  screen,
+} from '__tests__/_setup/testing-utils';
 import { ErrorBoundaryPage } from 'app/components/ErrorPage';
-import { ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 const mockFn = vi.hoisted(() => vi.fn());
@@ -12,10 +15,9 @@ vi.mock('react-router', async () => {
   };
 });
 
-describe('ErrorPage', () => {
+describe('errorPage', () => {
   it('renders unexpected error', async () => {
     renderSerilogUiTestWrapper(<ErrorBoundaryPage />);
-
     expect(screen.getByText(/unexpected error occurred/i)).toBeInTheDocument();
   });
 
@@ -23,7 +25,9 @@ describe('ErrorPage', () => {
     mockFn.mockImplementation(() => true);
     renderSerilogUiTestWrapper(<ErrorBoundaryPage />);
 
-    expect(screen.queryByText(/unexpected error occurred/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/unexpected error occurred/i),
+    ).not.toBeInTheDocument();
     expect(screen.getByText(/Page not found/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Home' })).toBeInTheDocument();
   });

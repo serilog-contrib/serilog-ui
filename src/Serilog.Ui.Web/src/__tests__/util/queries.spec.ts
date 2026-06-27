@@ -38,7 +38,9 @@ describe('util: queries', () => {
 
     const sutWitHeader = createRequestInit(AuthType.Custom, 'header');
 
-    expect(new Headers(sutWitHeader.headers).get('Authorization')).toBe('header');
+    expect(new Headers(sutWitHeader.headers).get('Authorization')).toBe(
+      'header',
+    );
     expect(sutWitHeader.credentials).toBe('same-origin');
   });
 
@@ -50,7 +52,7 @@ describe('util: queries', () => {
       expect.objectContaining({
         title: 'Unauthorized',
         message:
-          "You are not logged in or you don't have enough permissions to perform the requested operation",
+          'You are not logged in or you do not have enough permissions to perform the requested operation',
         color: 'red',
         radius: 'md',
         withBorder: true,

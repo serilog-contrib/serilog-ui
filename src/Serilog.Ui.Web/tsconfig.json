@@ -1,8 +1,12 @@
 ﻿{
   "compilerOptions": {
-    "baseUrl": "./src",
     "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "rootDir": "src",
     "module": "ESNext",
     "skipLibCheck": true,
     /* bundler */
@@ -20,9 +24,28 @@
     "noImplicitAny": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "typeRoots": ["./src/types/", "./node_modules/@types/"]
+    "noUncheckedSideEffectImports": false,
+    "paths": {
+      "*": [
+        "./src/*"
+      ]
+    },
+    "types": [
+      "node"
+    ]
   },
-  "include": ["./**/*.ts", "./**/*.tsx"],
-  "exclude": ["node_modules", "wwwroot", "vite.config.ts"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "wwwroot",
+    "vite.config.ts"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }

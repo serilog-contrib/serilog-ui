@@ -9,7 +9,7 @@ import AuthorizeButton from 'app/components/Authorization/AuthorizeButton';
 import { AuthType } from 'types/types';
 import { describe, expect, it } from 'vitest';
 
-describe('AuthorizeButton', () => {
+describe('authorizeButton', () => {
   it('renders null on custom authtype', () => {
     renderSerilogUiTestWrapper(<AuthorizeButton />, AuthType.Custom);
 

@@ -1,7 +1,7 @@
 import { server } from '__tests__/_setup/mocks/msw-server';
 import { fetchKeys } from 'app/queries/table-keys';
 import * as queryUtil from 'app/util/queries';
-import { HttpResponse, http } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('queries: table-keys', () => {

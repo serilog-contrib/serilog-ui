@@ -9,28 +9,31 @@ import { useSerilogUiProps } from './useSerilogUiProps';
  */
 export const useJwtTimeout = () => {
   const MINUTES = 300000;
-  const [stopError, setStopError] = useState(false);
   const { authType } = useSerilogUiProps();
   const { jwt_bearerToken } = useAuthProperties();
-
-  // when token changes, validation can resume
-  useEffect(() => {
-    setStopError(false);
-  }, [jwt_bearerToken]);
+  const [lastValidatedJwt, setLastValidatedJwt] = useState<string>();
 
   useEffect(() => {
     // if error was already spotted, we don't start checking until jwt is changed
-    if (authType !== AuthType.Jwt || !jwt_bearerToken || stopError) return;
+    if (
+      authType !== AuthType.Jwt ||
+      !jwt_bearerToken ||
+      lastValidatedJwt === jwt_bearerToken
+    ) {
+      return;
+    }
 
     const id = setTimeout(() => {
       const result = validateKey('jwt_bearerToken', jwt_bearerToken);
 
       checkErrors(result);
-      if (result.error) setStopError(true);
+      if (result.error) {
+        setLastValidatedJwt(jwt_bearerToken);
+      }
     }, MINUTES);
 
     return () => {
       clearTimeout(id);
     };
-  }, [authType, stopError, jwt_bearerToken]);
+  }, [authType, jwt_bearerToken, lastValidatedJwt]);
 };

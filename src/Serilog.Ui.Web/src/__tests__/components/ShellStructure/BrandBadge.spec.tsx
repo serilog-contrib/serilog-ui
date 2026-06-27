@@ -12,7 +12,7 @@ vi.mock('../../../app/hooks/useSerilogUiProps', () => {
   };
 });
 
-describe('BrandBadge', () => {
+describe('brandBadge', () => {
   it('renders', () => {
     renderSerilogUiTestWrapper(<BrandBadge size="sm" />);
 

@@ -10,20 +10,25 @@ import { useAuthProperties } from '../../hooks/useAuthProperties';
 const BasicModal = lazy(() => import('./BasicModal'));
 const JwtModal = lazy(() => import('./JwtModal'));
 
+const IconClose = memo(() => <IconLockCheck size='24px' />);
+const IconOpen = memo(() => <IconLockOpen size='24px' />);
+
 const AuthorizeButton = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const { authType } = useSerilogUiProps();
   const { isHeaderReady } = useAuthProperties();
 
-  if (![AuthType.Basic, AuthType.Jwt].includes(authType ?? AuthType.Custom)) return null;
+  if (![AuthType.Basic, AuthType.Jwt].includes(authType ?? AuthType.Custom)) {
+    return null;
+  }
 
   return (
     <>
-      <Button color={theme.colors?.green?.[7]} size="compact-md" onClick={open}>
+      <Button color={theme.colors?.green?.[7]} size='compact-md' onClick={open}>
         {isHeaderReady ? <IconClose /> : <IconOpen />}
         Authorize
       </Button>
-      <Modal opened={opened} onClose={close} centered size="lg">
+      <Modal opened={opened} onClose={close} centered size='lg'>
         <Suspense>
           {authType === AuthType.Basic && <BasicModal onClose={close} />}
           {authType === AuthType.Jwt && <JwtModal onClose={close} />}
@@ -32,8 +37,5 @@ const AuthorizeButton = () => {
     </>
   );
 };
-
-const IconClose = memo(() => <IconLockCheck size="24px" />);
-const IconOpen = memo(() => <IconLockOpen size="24px" />);
 
 export default AuthorizeButton;

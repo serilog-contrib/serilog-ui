@@ -1,25 +1,28 @@
-import '__tests__/_setup/mocks/globals';
-import { server } from '__tests__/_setup/mocks/msw-server';
-import '__tests__/_setup/vitest-extended';
+/* eslint-disable perfectionist/sort-imports */
+import './mocks/globals';
+import './vitest-extended';
+import type { UserEvent } from './testing-utils';
+import { server } from './mocks/msw-server';
 import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
-import { UserEvent, userEvent } from './testing-utils';
+import { userEvent } from './testing-utils';
 
-export let userEventInstance: UserEvent;
+// eslint-disable-next-line import/no-mutable-exports
+export let userEventInstance: UserEvent
 
 // Establish API mocking before all tests.
 beforeAll(() => {
   server.listen();
 });
 
-// Clean up after the tests are finished.
-afterAll(() => {
-  server.close();
-});
-
 beforeEach(() => {
-  userEventInstance = userEvent.setup();
-});
+  userEventInstance = userEvent.setup()
+})
 
 // Reset any request handlers that we may add during the tests,
 // so they don't affect other tests.
 afterEach(() => server.resetHandlers());
+
+// Clean up after the tests are finished.
+afterAll(() => {
+  server.close();
+});

@@ -6,24 +6,24 @@ import classes from 'style/search.module.css';
 import { theme } from 'style/theme';
 
 export const RefreshButton = () => {
-  const { isLiveRefreshRunning, liveRefreshLabel, startLiveRefresh, stopLiveRefresh } =
-    useQueryLogs();
+  const { isLiveRefreshRunning, liveRefreshLabel, startLiveRefresh, stopLiveRefresh }
+    = useQueryLogs();
 
   if (isLiveRefreshRunning)
-    return (
-      <Tooltip label="Stop live refresh">
-        <Button
-          fz={9}
-          size="compact-md"
-          aria-label="refresh-duration-cancel-button"
-          color={theme.colors?.green?.[7]}
-          onClick={stopLiveRefresh}
-          className={classes.refreshButton}
-        >
-          {liveRefreshLabel}
-        </Button>
-      </Tooltip>
-    );
+  { return (
+    <Tooltip label="Stop live refresh">
+      <Button
+        fz={9}
+        size="compact-md"
+        aria-label="refresh-duration-cancel-button"
+        color={theme.colors?.green?.[7]}
+        onClick={stopLiveRefresh}
+        className={classes.refreshButton}
+      >
+        {liveRefreshLabel}
+      </Button>
+    </Tooltip>
+  ); }
 
   return (
     <Popover width={105} trapFocus position="bottom" withArrow shadow="md">
@@ -42,7 +42,7 @@ export const RefreshButton = () => {
       </Popover.Target>
       <Popover.Dropdown>
         <Button.Group orientation="vertical">
-          {liveRefreshOptions.map((p) => (
+          {liveRefreshOptions.map(p => (
             <Button
               key={p.value}
               onClick={() => {

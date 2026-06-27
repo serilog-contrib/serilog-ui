@@ -1,5 +1,5 @@
-import { MantineColorScheme, type MantineTheme } from '@mantine/core';
-import { BundledTheme, CodeOptionsMultipleThemes } from 'shiki';
+import type { MantineColorScheme, MantineTheme } from '@mantine/core';
+import type { BundledTheme, CodeOptionsMultipleThemes } from 'shiki';
 import { highlighter } from 'style/shikijiBundle';
 import formatXml from 'xml-formatter';
 import { AdditionalColumnLogType, LogLevel, LogType } from '../../types/types';
@@ -45,8 +45,12 @@ export const splitPrintDate = (date: string, utc?: boolean) =>
   utc ? formatUtcSplitDate(date) : formatLocalSplitDate(date);
 
 export const convertLogType = (logType: AdditionalColumnLogType) => {
-  if (logType === AdditionalColumnLogType.Json) return LogType.Json;
-  if (logType === AdditionalColumnLogType.Xml) return LogType.Xml;
+  if (logType === AdditionalColumnLogType.Json) {
+    return LogType.Json;
+  }
+  if (logType === AdditionalColumnLogType.Xml) {
+    return LogType.Xml;
+  }
 
   return '' as LogType;
 };
@@ -62,8 +66,9 @@ export const renderCodeContent = async (
   modalContent: string,
   contentType: string = '',
 ) => {
-  if (!modalContent?.trim() || !Object.values(LogType).includes(contentType as LogType))
+  if (!modalContent?.trim() || !Object.values(LogType).includes(contentType as LogType)) {
     return modalContent;
+  }
 
   try {
     if (contentType === LogType.Xml) {

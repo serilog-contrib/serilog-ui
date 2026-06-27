@@ -16,7 +16,7 @@ vi.mock('../../../app/hooks/useSerilogUiProps', () => {
   };
 });
 
-describe('Header', () => {
+describe('header', () => {
   it('renders', async () => {
     window.innerWidth = 800;
 
@@ -28,10 +28,14 @@ describe('Header', () => {
     expect(screen.getByLabelText('home-icon-btn')).toBeInTheDocument();
     expect(screen.getByLabelText('color-scheme-changer')).toBeInTheDocument();
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Filter' })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Filter' }),
+      ).toBeInTheDocument();
     });
 
     expect(screen.getByText('Serilog UI')).toBeInTheDocument();
-    expect(screen.getByLabelText('refresh-duration-selector')).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('refresh-duration-selector'),
+    ).toBeInTheDocument();
   });
 });

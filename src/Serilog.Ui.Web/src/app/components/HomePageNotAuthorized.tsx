@@ -10,7 +10,7 @@ export const HomePageNotAuthorized = () => {
   useQueryAuth();
 
   if (!blockHomeAccess || authenticatedFromAccessDenied)
-    return <Navigate to={`/`} replace />;
+  { return <Navigate to="/" replace />; }
 
   return (
     <Box

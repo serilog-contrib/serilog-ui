@@ -27,7 +27,7 @@ class CustomGithubActionsAttribute(string name, GitHubActionsImage image, params
         var job = base.GetJobs(image, relevantTargets);
         GitHubActionsStep[] backendSteps = AddGithubActions.Any(act => act == GithubAction.Backend_Artifact) ?
             [new GitHubActionSetupDotnet("8.0.x"), new GitHubActionSetupDotnet("10.0.x"),] : [];
-        GitHubActionsStep[] setupSteps = [.. backendSteps, new GitHubActionSetupJava25(), .. job.Steps];
+        GitHubActionsStep[] setupSteps = [.. backendSteps, new GitHubActionSetupNode(), new GitHubActionSetupJava25(), .. job.Steps];
         var newSteps = new List<GitHubActionsStep>(setupSteps);
 
         foreach (var act in AddGithubActions)
@@ -76,6 +76,29 @@ class GitHubActionSetupJava25 : GitHubActionsStep
             {
                 writer.WriteLine($"distribution: 'temurin'");
                 writer.WriteLine($"java-version: '25'");
+            }
+        }
+    }
+}
+
+/// <summary>
+/// using: https://github.com/actions/setup-node
+/// </summary>
+class GitHubActionSetupNode : GitHubActionsStep
+{
+    public override void Write(CustomFileWriter writer)
+    {
+        writer.WriteLine(); // empty line to separate tasks
+
+        writer.WriteLine("- uses: actions/setup-node@v6");
+
+        using (writer.Indent())
+        {
+            writer.WriteLine("with:");
+
+            using (writer.Indent())
+            {
+                writer.WriteLine($"node-version: '24.x'");
             }
         }
     }
