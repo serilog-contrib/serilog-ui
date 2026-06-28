@@ -12,8 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.72" />
-    <!-- cannot upgrade due to old version referenced in sink -->
+    <PackageReference Include="Dapper" Version="2.1.79" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">

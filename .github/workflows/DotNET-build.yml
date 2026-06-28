@@ -26,38 +26,43 @@ on:
       - master
       - dev
 
+permissions:
+  pull-requests: write
+  contents: read
+
 jobs:
   ubuntu-latest:
     name: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: "8.0.x"
 
       - uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: "10.0.x"
+          dotnet-version: '8.0.x'
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
 
       - uses: actions/setup-node@v6
         with:
-          node-version: "24.x"
+          node-version: '24.x'
 
       - uses: actions/setup-java@v5
         with:
-          distribution: "temurin"
-          java-version: "25"
+          distribution: 'temurin'
+          java-version: '25'
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: "Cache: .nuke/temp, ~/.nuget/packages"
-        uses: actions/cache@v5
+      - name: 'Cache: .nuke/temp, ~/.nuget/packages'
+        uses: actions/cache@v4
         with:
           path: |
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
-      - name: "Run: Backend_SonarScan_End"
+      - name: 'Run: Backend_SonarScan_End'
         run: ./build.cmd Backend_SonarScan_End
         env:
           SonarToken: ${{ secrets.SONAR_TOKEN }}
@@ -67,4 +72,4 @@ jobs:
         if: always()
         with:
           name: test-results
-          path: "**/test-results.trx"
+          path: '**/test-results.trx'
