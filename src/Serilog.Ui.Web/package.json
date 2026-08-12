@@ -51,7 +51,7 @@
     "eslint-plugin-testing-library": "^7.16.2",
     "happy-dom": "^20.9.0",
     "msw": "^2.14.6",
-    "postcss": "^8.5.14",
+    "postcss": "^8.5.23",
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
     "shiki": "^4.0.2",
