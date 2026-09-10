@@ -60,7 +60,7 @@
     "vite": "^8.0.13",
     "vite-plugin-checker": "^0.13.0",
     "vite-plugin-mkcert": "^2.0.0",
-    "vitest": "^4.1.6",
+    "vitest": "^4.1.11",
     "vitest-sonar-reporter": "^3.0.0"
   },
   "engines": {
