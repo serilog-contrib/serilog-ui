@@ -19,6 +19,7 @@ import { useSearchForm } from 'app/hooks/useSearchForm';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
 import { memo, useEffect } from 'react';
 import { useController, useWatch } from 'react-hook-form';
+import { useSearchParams } from 'react-router';
 import classes from 'style/search.module.css';
 import { LogLevel } from '../../../types/types';
 
@@ -34,19 +35,29 @@ const SelectDbKeyInput = memo(() => {
   const { data: queryTableKeys } = useQueryTableKeys(true);
   const { field } = useController({ ...control, name: 'table' });
   const { updateTableParam } = useQueryParamSync();
+  const [searchParams] = useSearchParams();
 
   const queryKeys = queryTableKeys?.map((d) => ({ value: d, label: d })) ?? [];
   const isTableDisabled = !queryKeys.length;
   const defaultTable = queryKeys.at(0)?.value;
+  const tableParam = searchParams.get('table');
 
   useEffect(() => {
-    if (queryKeys.length !== 1 || !defaultTable || field.value) {
+    if (!tableParam || field.value === tableParam) {
+      return;
+    }
+
+    field.onChange(tableParam);
+  }, [field, tableParam]);
+
+  useEffect(() => {
+    if (queryKeys.length !== 1 || !defaultTable || field.value || tableParam) {
       return;
     }
 
     field.onChange(defaultTable);
     updateTableParam(defaultTable);
-  }, [defaultTable, field, queryKeys.length, updateTableParam]);
+  }, [defaultTable, field, queryKeys.length, tableParam, updateTableParam]);
 
   return (
     <Grid.Col span={dbKeySpan} order={dbKeyOrder}>
