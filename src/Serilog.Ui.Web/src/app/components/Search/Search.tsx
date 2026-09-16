@@ -17,7 +17,7 @@ import { useQueryParamSync } from 'app/hooks/useQueryParamSync';
 import { useQueryTableKeys } from 'app/hooks/useQueryTableKeys';
 import { useSearchForm } from 'app/hooks/useSearchForm';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import { useController, useWatch } from 'react-hook-form';
 import classes from 'style/search.module.css';
 import { LogLevel } from '../../../types/types';
@@ -37,6 +37,16 @@ const SelectDbKeyInput = memo(() => {
 
   const queryKeys = queryTableKeys?.map((d) => ({ value: d, label: d })) ?? [];
   const isTableDisabled = !queryKeys.length;
+  const defaultTable = queryKeys.at(0)?.value;
+
+  useEffect(() => {
+    if (queryKeys.length !== 1 || !defaultTable || field.value) {
+      return;
+    }
+
+    field.onChange(defaultTable);
+    updateTableParam(defaultTable);
+  }, [defaultTable, field, queryKeys.length, updateTableParam]);
 
   return (
     <Grid.Col span={dbKeySpan} order={dbKeyOrder}>
@@ -46,7 +56,10 @@ const SelectDbKeyInput = memo(() => {
         disabled={isTableDisabled}
         label='Table'
         {...field}
-        onChange={updateTableParam}
+        onChange={(value) => {
+          field.onChange(value);
+          updateTableParam(value);
+        }}
       />
     </Grid.Col>
   );
