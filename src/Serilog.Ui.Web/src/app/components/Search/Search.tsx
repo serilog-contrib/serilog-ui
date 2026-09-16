@@ -17,7 +17,7 @@ import { useQueryParamSync } from 'app/hooks/useQueryParamSync';
 import { useQueryTableKeys } from 'app/hooks/useQueryTableKeys';
 import { useSearchForm } from 'app/hooks/useSearchForm';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { memo, useEffect } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 import { useController, useWatch } from 'react-hook-form';
 import { useSearchParams } from 'react-router';
 import classes from 'style/search.module.css';
@@ -43,14 +43,18 @@ const SelectDbKeyInput = memo(() => {
   const tableParam = searchParams.get('table');
   const hasKnownFieldValue = queryKeys.some(({ value }) => value === field.value);
   const hasKnownTableParam = queryKeys.some(({ value }) => value === tableParam);
+  const syncTableValue = useCallback((value: string | null) => {
+    field.onChange(value);
+    updateTableParam(value);
+  }, [field, updateTableParam]);
 
   useEffect(() => {
     if (!tableParam || !hasKnownTableParam || field.value === tableParam) {
       return;
     }
 
-    field.onChange(tableParam);
-  }, [field, hasKnownTableParam, tableParam]);
+    syncTableValue(tableParam);
+  }, [field.value, hasKnownTableParam, syncTableValue, tableParam]);
 
   useEffect(() => {
     if (
@@ -62,16 +66,14 @@ const SelectDbKeyInput = memo(() => {
       return;
     }
 
-    field.onChange(defaultTable);
-    updateTableParam(defaultTable);
+    syncTableValue(defaultTable);
   }, [
     defaultTable,
-    field,
     hasKnownFieldValue,
     hasKnownTableParam,
     queryKeys.length,
     tableParam,
-    updateTableParam,
+    syncTableValue,
   ]);
 
   return (
@@ -82,10 +84,7 @@ const SelectDbKeyInput = memo(() => {
         disabled={isTableDisabled}
         label='Table'
         {...field}
-        onChange={(value) => {
-          field.onChange(value);
-          updateTableParam(value);
-        }}
+        onChange={syncTableValue}
       />
     </Grid.Col>
   );
