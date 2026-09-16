@@ -41,6 +41,7 @@ const SelectDbKeyInput = memo(() => {
   const isTableDisabled = !queryKeys.length;
   const defaultTable = queryKeys.at(0)?.value;
   const tableParam = searchParams.get('table');
+  const hasKnownFieldValue = queryKeys.some(({ value }) => value === field.value);
   const hasKnownTableParam = queryKeys.some(({ value }) => value === tableParam);
 
   useEffect(() => {
@@ -52,13 +53,26 @@ const SelectDbKeyInput = memo(() => {
   }, [field, hasKnownTableParam, tableParam]);
 
   useEffect(() => {
-    if (queryKeys.length !== 1 || !defaultTable || field.value || tableParam) {
+    if (
+      queryKeys.length !== 1
+      || !defaultTable
+      || hasKnownFieldValue
+      || (tableParam && hasKnownTableParam)
+    ) {
       return;
     }
 
     field.onChange(defaultTable);
     updateTableParam(defaultTable);
-  }, [defaultTable, field, queryKeys.length, tableParam, updateTableParam]);
+  }, [
+    defaultTable,
+    field,
+    hasKnownFieldValue,
+    hasKnownTableParam,
+    queryKeys.length,
+    tableParam,
+    updateTableParam,
+  ]);
 
   return (
     <Grid.Col span={dbKeySpan} order={dbKeyOrder}>

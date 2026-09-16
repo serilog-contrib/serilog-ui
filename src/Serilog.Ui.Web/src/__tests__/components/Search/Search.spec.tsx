@@ -15,6 +15,7 @@ import { IAuthPropertiesStorageKeys } from 'app/util/auth';
 import dayjs from 'dayjs';
 import objectSupport from 'dayjs/plugin/objectSupport';
 import { http, HttpResponse } from 'msw';
+import * as router from 'react-router';
 import { byLabelText, byRole } from 'testing-library-selector';
 import { AuthType } from 'types/types';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
@@ -111,6 +112,38 @@ describe('search', () => {
           '',
         );
       });
+    });
+
+    it('falls back to the only table when the query param table is invalid', async () => {
+      server.use(
+        http.get('https://localhost:3001/api/keys', () =>
+          HttpResponse.json([dbKeysMock[0]]),
+        ),
+      );
+      const searchParams = new URLSearchParams('table=invalid-table');
+      const setSearchParams = vi.fn();
+      vi.spyOn(router, 'useSearchParams').mockImplementation(
+        () => [searchParams, setSearchParams] as any,
+      );
+      const spy = vi.spyOn(logs, 'fetchLogs');
+
+      renderSerilogUiTestWrapper(
+        <SearchTester onRefetch={vi.fn()} />,
+        AuthType.Jwt,
+      );
+
+      await waitFor(() => {
+        expect(spy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            table: dbKeysMock[0],
+          }),
+          expect.any(Object),
+          '',
+        );
+      });
+      expect(setSearchParams).toHaveBeenCalled();
+      setSearchParams.mock.lastCall?.[0](searchParams);
+      expect(searchParams.get('table')).toBe(dbKeysMock[0]);
     });
 
     it('fetch with selected table', async () => {
