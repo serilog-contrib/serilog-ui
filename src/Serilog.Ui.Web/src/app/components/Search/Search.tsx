@@ -17,8 +17,9 @@ import { useQueryParamSync } from 'app/hooks/useQueryParamSync';
 import { useQueryTableKeys } from 'app/hooks/useQueryTableKeys';
 import { useSearchForm } from 'app/hooks/useSearchForm';
 import { useSerilogUiProps } from 'app/hooks/useSerilogUiProps';
-import { memo } from 'react';
+import { memo, useCallback, useEffect } from 'react';
 import { useController, useWatch } from 'react-hook-form';
+import { useSearchParams } from 'react-router';
 import classes from 'style/search.module.css';
 import { LogLevel } from '../../../types/types';
 
@@ -34,9 +35,46 @@ const SelectDbKeyInput = memo(() => {
   const { data: queryTableKeys } = useQueryTableKeys(true);
   const { field } = useController({ ...control, name: 'table' });
   const { updateTableParam } = useQueryParamSync();
+  const [searchParams] = useSearchParams();
 
   const queryKeys = queryTableKeys?.map((d) => ({ value: d, label: d })) ?? [];
   const isTableDisabled = !queryKeys.length;
+  const defaultTable = queryKeys.at(0)?.value;
+  const tableParam = searchParams.get('table');
+  const hasKnownFieldValue = queryKeys.some(({ value }) => value === field.value);
+  const hasKnownTableParam = queryKeys.some(({ value }) => value === tableParam);
+  const syncTableValue = useCallback((value: string | null) => {
+    field.onChange(value);
+    updateTableParam(value);
+  }, [field, updateTableParam]);
+
+  useEffect(() => {
+    if (!tableParam || !hasKnownTableParam || field.value === tableParam) {
+      return;
+    }
+
+    syncTableValue(tableParam);
+  }, [field.value, hasKnownTableParam, syncTableValue, tableParam]);
+
+  useEffect(() => {
+    if (
+      queryKeys.length !== 1
+      || !defaultTable
+      || hasKnownFieldValue
+      || (tableParam && hasKnownTableParam)
+    ) {
+      return;
+    }
+
+    syncTableValue(defaultTable);
+  }, [
+    defaultTable,
+    hasKnownFieldValue,
+    hasKnownTableParam,
+    queryKeys.length,
+    tableParam,
+    syncTableValue,
+  ]);
 
   return (
     <Grid.Col span={dbKeySpan} order={dbKeyOrder}>
@@ -46,7 +84,7 @@ const SelectDbKeyInput = memo(() => {
         disabled={isTableDisabled}
         label='Table'
         {...field}
-        onChange={updateTableParam}
+        onChange={syncTableValue}
       />
     </Grid.Col>
   );

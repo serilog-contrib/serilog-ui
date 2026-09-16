@@ -174,4 +174,24 @@ describe('useQueryParamReader', () => {
     // checking that invalid values have been removed from the query params...
     expect(fn.mock.lastCall?.[0].toString()).toBe('level=Warning&table=logs');
   });
+
+  it('keeps dotted table query params and applies them to the form', () => {
+    const getValues = () => ({
+      level: null,
+      search: '',
+      table: '',
+    });
+    const setValue = vi.fn();
+    vi.spyOn(form, 'useSearchForm').mockImplementation(
+      () => ({ getValues, setValue }) as any,
+    );
+
+    const { p, fn } = mockSearchParams();
+    p.set('table', 'MsSQL.dbo.Logs');
+
+    renderHookSerilogUiTestWrapper(() => useQueryParamReader());
+
+    expect(setValue).toHaveBeenCalledWith('table', 'MsSQL.dbo.Logs');
+    expect(fn).not.toHaveBeenCalled();
+  });
 });
