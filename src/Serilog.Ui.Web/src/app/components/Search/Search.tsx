@@ -41,14 +41,15 @@ const SelectDbKeyInput = memo(() => {
   const isTableDisabled = !queryKeys.length;
   const defaultTable = queryKeys.at(0)?.value;
   const tableParam = searchParams.get('table');
+  const hasKnownTableParam = queryKeys.some(({ value }) => value === tableParam);
 
   useEffect(() => {
-    if (!tableParam || field.value === tableParam) {
+    if (!tableParam || !hasKnownTableParam || field.value === tableParam) {
       return;
     }
 
     field.onChange(tableParam);
-  }, [field, tableParam]);
+  }, [field, hasKnownTableParam, tableParam]);
 
   useEffect(() => {
     if (queryKeys.length !== 1 || !defaultTable || field.value || tableParam) {
