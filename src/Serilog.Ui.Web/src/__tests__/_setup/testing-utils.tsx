@@ -37,11 +37,13 @@ const Wrapper = ({
   authType,
   columnsInfo,
   router,
+  initialEntries,
 }: {
   children: ReactNode;
   authType: AuthType;
   columnsInfo: ColumnsInfo;
   router?: ReturnType<typeof createMemoryRouter>;
+  initialEntries?: string[];
 }) => {
   const queryClient = new QueryClient();
 
@@ -62,12 +64,15 @@ const Wrapper = ({
         <RouterProvider
           router={
             router ??
-            createMemoryRouter([
-              {
-                index: true,
-                element: <FormWrapper>{children}</FormWrapper>,
-              },
-            ])
+            createMemoryRouter(
+              [
+                {
+                  index: true,
+                  element: <FormWrapper>{children}</FormWrapper>,
+                },
+              ],
+              { initialEntries },
+            )
           }
         />
       </QueryClientProvider>
@@ -80,13 +85,15 @@ export function renderSerilogUiTestWrapper(
   authType = AuthType.Jwt,
   columnsInfo?: ColumnsInfo,
   router?: ReturnType<typeof createMemoryRouter>,
+  initialEntries?: string[],
 ) {
   return testingLibraryRender(<>{ui}</>, {
     wrapper: ({ children }: { children: ReactNode }) => (
       <Wrapper
         authType={authType}
         columnsInfo={columnsInfo ?? {}}
-        router={router}>
+        router={router}
+        initialEntries={initialEntries}>
         {children}
       </Wrapper>
     ),
