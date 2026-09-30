@@ -5,7 +5,7 @@ import { queryParamsStatePreserverKey } from 'app/util/queryParams';
 import { Navigate, useLocation } from 'react-router';
 import AuthorizeButton from './Authorization/AuthorizeButton';
 
-const getPreviousQuery = (state: object) => {
+const getPreviousQuery = (state: Record<string, unknown>) => {
   if (!state || !(queryParamsStatePreserverKey in state)) {
     return '';
   }

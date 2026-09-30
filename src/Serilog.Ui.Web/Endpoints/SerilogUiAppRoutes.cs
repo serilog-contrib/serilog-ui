@@ -42,7 +42,9 @@ internal class SerilogUiAppRoutes(IHttpContextAccessor httpContextAccessor, IApp
     public Task RedirectHomeAsync()
     {
         string queryString = _httpContext.Request.QueryString.HasValue ? _httpContext.Request.QueryString.Value : "";
-        string indexUrl = RemoveQueryString(_httpContext.Request
+        string indexUrl = RemoveQueryString(queryString,
+            _httpContext
+            .Request
             .GetEncodedUrl()
             .Replace("index.html", ""));
         string indexUrlWithTrailingSlash = indexUrl.EndsWith('/') ? indexUrl : $"{indexUrl}/";
@@ -52,7 +54,7 @@ internal class SerilogUiAppRoutes(IHttpContextAccessor httpContextAccessor, IApp
 
         return Task.CompletedTask;
 
-        string RemoveQueryString(string text) => string.IsNullOrWhiteSpace(queryString) ? text : text.Replace(queryString, "");
+        static string RemoveQueryString(string qs, string text) => string.IsNullOrWhiteSpace(qs) ? text : text.Replace(qs, "");
     }
 
     private async Task<string> LoadStream(Stream stream, UiOptions options)
