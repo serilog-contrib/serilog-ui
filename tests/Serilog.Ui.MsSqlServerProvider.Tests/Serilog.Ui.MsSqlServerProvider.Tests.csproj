@@ -6,7 +6,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="10.0.0" />
-		<PackageReference Include="Testcontainers.MsSql" Version="4.12.0"/>
+		<PackageReference Include="Testcontainers.MsSql" Version="4.15.0"/>
 	</ItemGroup>
 
 	<ItemGroup>

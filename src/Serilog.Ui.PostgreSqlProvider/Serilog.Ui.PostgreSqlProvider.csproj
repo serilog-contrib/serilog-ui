@@ -11,7 +11,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Dapper" Version="2.1.79" />
+		<PackageReference Include="Dapper" Version="2.1.89" />
 		<PackageReference Include="Npgsql" Version="10.0.3" />
 	</ItemGroup>
 

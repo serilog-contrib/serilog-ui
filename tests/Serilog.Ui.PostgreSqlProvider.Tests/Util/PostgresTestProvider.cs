@@ -59,7 +59,7 @@ public class PostgresTestProvider<T> : DatabaseInstance
                     ColumnOptions,
                     schemaName: "public",
                     needAutoCreateTable: true,
-                    failureCallback: exc => throw exc,
+
                     batchSizeLimit: 1);
         });
 
