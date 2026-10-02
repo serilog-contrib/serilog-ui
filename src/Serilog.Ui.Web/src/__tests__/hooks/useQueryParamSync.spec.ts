@@ -8,7 +8,7 @@ import {
   useQuerySyncTable,
 } from 'app/hooks/useQueryParamSync';
 import dayjs from 'dayjs';
-import { useSearchParams } from 'react-router';
+import { useNavigationType, useSearchParams } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import * as form from '../../app/hooks/useSearchForm';
 
@@ -90,41 +90,51 @@ describe('useQueryParamSync', () => {
 
 describe('useQuerySyncTable', () => {
   const useSutSyncTable = () => {
-    const [searchP, setSp] = useSearchParams();
+    const [searchP] = useSearchParams();
+    const navigationType = useNavigationType();
     const p = useQuerySyncTable();
-    return { searchP, setSp, ...p };
+    return { searchP, navigationType, ...p };
   };
-  it('not invokes set-params on empty table', () => {
+
+  it('does not invoke set-params when there are no keys', () => {
     const { result } = renderHookSerilogUiTestWrapper(useSutSyncTable);
 
     act(() => {
-      result.current.registerKeyOnQuery();
+      result.current.registerKeyOnQuery([]);
     });
 
     expect(result.current.searchP.toString()).toBe('');
+    expect(result.current.navigationType).toBe('POP');
   });
 
-  it('not invokes set-params when query-params has table', () => {
-    const { result } = renderHookSerilogUiTestWrapper(useSutSyncTable);
-    act(() => {
-      result.current.setSp({ table: 'def' });
+  it('does not invoke set-params when query table is known', () => {
+    const { result } = renderHookSerilogUiTestWrapper(useSutSyncTable, {
+      initialEntries: ['/?table=def'],
     });
+
     act(() => {
-      result.current.registerKeyOnQuery('other-table');
+      result.current.registerKeyOnQuery(['other-table', 'def']);
     });
 
     expect(result.current.searchP.toString()).toBe('table=def');
+    expect(result.current.navigationType).toBe('POP');
   });
 
-  it('invokes set-params when default table is provided', () => {
-    const { result } = renderHookSerilogUiTestWrapper(useSutSyncTable);
+  it.each(['/', '/?table=unknown'])(
+    'sets the first key when the query table is missing or unknown: %s',
+    (initialEntry) => {
+      const { result } = renderHookSerilogUiTestWrapper(useSutSyncTable, {
+        initialEntries: [initialEntry],
+      });
 
-    act(() => {
-      result.current.registerKeyOnQuery('default-3');
-    });
+      act(() => {
+        result.current.registerKeyOnQuery(['default', 'other-table']);
+      });
 
-    expect(result.current.searchP.toString()).toBe('table=default-3');
-  });
+      expect(result.current.searchP.toString()).toBe('table=default');
+      expect(result.current.navigationType).toBe('REPLACE');
+    },
+  );
 });
 
 describe('useQueryParamReader', () => {
@@ -163,5 +173,29 @@ describe('useQueryParamReader', () => {
 
     // checking that invalid values have been removed from the query params...
     expect(result.current.a.toString()).toBe('level=Warning&table=logs');
+  });
+
+  it('keeps dotted table query params and applies them to the form', () => {
+    const getValues = () => ({
+      level: null,
+      search: '',
+      table: '',
+    });
+    const setValue = vi.fn();
+    vi.spyOn(form, 'useSearchForm').mockImplementation(
+      () => ({ getValues, setValue } as any),
+    );
+
+    const { result } = renderHookSerilogUiTestWrapper(
+      () => {
+        const [searchP] = useSearchParams();
+        useQueryParamReader();
+        return { searchP };
+      },
+      { initialEntries: ['/?table=MsSQL.dbo.Logs'] },
+    );
+
+    expect(setValue).toHaveBeenCalledWith('table', 'MsSQL.dbo.Logs');
+    expect(result.current.searchP.toString()).toBe('table=MsSQL.dbo.Logs');
   });
 });

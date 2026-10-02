@@ -31,7 +31,7 @@ export const useQueryTableKeys = (shouldNotify = false) => {
         setAuthenticatedFromAccessDenied(isArrayGuard(result));
       }
 
-      registerKeyOnQuery(result.at(0));
+      registerKeyOnQuery(isArrayGuard(result) ? result : []);
       return result;
     },
     refetchOnMount: false,

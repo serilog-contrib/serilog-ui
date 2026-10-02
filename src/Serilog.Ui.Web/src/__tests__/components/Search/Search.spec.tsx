@@ -1,8 +1,10 @@
+import { server } from '__tests__/_setup/mocks/msw-server';
 import { dbKeysMock } from '__tests__/_setup/mocks/samples';
 import {
   renderSerilogUiTestWrapper,
   screen,
   userEvent,
+  waitFor,
   within,
 } from '__tests__/_setup/testing-utils';
 import Search from 'app/components/Search/Search';
@@ -12,6 +14,7 @@ import * as logs from 'app/queries/logs';
 import { IAuthPropertiesStorageKeys } from 'app/util/auth';
 import dayjs from 'dayjs';
 import objectSupport from 'dayjs/plugin/objectSupport';
+import { http, HttpResponse } from 'msw';
 import { byLabelText, byRole } from 'testing-library-selector';
 import { AuthType } from 'types/types';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
@@ -82,6 +85,124 @@ describe('search', () => {
   });
 
   describe('fields', () => {
+    it('auto-selects and fetches when only one table is available', async () => {
+      server.use(
+        http.get('https://localhost:3001/api/keys', () =>
+          HttpResponse.json([dbKeysMock[0]]),
+        ),
+      );
+      const spy = vi.spyOn(logs, 'fetchLogs');
+
+      renderSerilogUiTestWrapper(
+        <SearchTester onRefetch={vi.fn()} />,
+        AuthType.Jwt,
+      );
+
+      await waitFor(() => {
+        expect(ui.combobox('Table').get()).toHaveValue(dbKeysMock[0]);
+      });
+
+      await waitFor(() => {
+        expect(spy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            table: dbKeysMock[0],
+          }),
+          expect.any(Object),
+          '',
+        );
+      });
+    });
+
+    it('selects and fetches the first table when several are available', async () => {
+      const spy = vi.spyOn(logs, 'fetchLogs');
+
+      renderSerilogUiTestWrapper(
+        <SearchTester onRefetch={vi.fn()} />,
+        AuthType.Jwt,
+      );
+
+      await waitFor(() => {
+        expect(ui.combobox('Table').get()).toHaveValue(dbKeysMock[0]);
+      });
+
+      await waitFor(() => {
+        expect(spy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            table: dbKeysMock[0],
+          }),
+          expect.any(Object),
+          '',
+        );
+      });
+    });
+
+    it.each([
+      { keys: [dbKeysMock[0]] },
+      { keys: dbKeysMock },
+    ])('replaces an unknown table query param with the first table', async ({ keys }) => {
+      server.use(
+        http.get('https://localhost:3001/api/keys', () =>
+          HttpResponse.json(keys),
+        ),
+      );
+      const spy = vi.spyOn(logs, 'fetchLogs');
+
+      renderSerilogUiTestWrapper(
+        <SearchTester onRefetch={vi.fn()} />,
+        AuthType.Jwt,
+        undefined,
+        undefined,
+        ['/?table=invalid-table'],
+      );
+
+      await waitFor(() => {
+        expect(ui.combobox('Table').get()).toHaveValue(keys[0]);
+      });
+
+      await waitFor(() => {
+        expect(spy).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            table: keys[0],
+          }),
+          expect.any(Object),
+          '',
+        );
+      });
+    });
+
+    it('keeps a known table query param', async () => {
+      const spy = vi.spyOn(logs, 'fetchLogs');
+
+      renderSerilogUiTestWrapper(
+        <SearchTester onRefetch={vi.fn()} />,
+        AuthType.Jwt,
+        undefined,
+        undefined,
+        [`/?table=${dbKeysMock[1]}`],
+      );
+
+      await waitFor(() => {
+        expect(ui.combobox('Table').get()).toHaveValue(dbKeysMock[1]);
+      });
+
+      await waitFor(() => {
+        expect(spy).toHaveBeenCalledWith(
+          expect.objectContaining({
+            table: dbKeysMock[1],
+          }),
+          expect.any(Object),
+          '',
+        );
+      });
+      expect(spy).not.toHaveBeenCalledWith(
+        expect.objectContaining({
+          table: dbKeysMock[0],
+        }),
+        expect.any(Object),
+        '',
+      );
+    });
+
     it('fetch with selected table', async () => {
       const spy = vi.spyOn(logs, 'fetchLogs');
 
