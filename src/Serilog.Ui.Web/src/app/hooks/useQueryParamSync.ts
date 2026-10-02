@@ -63,18 +63,16 @@ export const useQueryParamSync = () => {
 export const useQuerySyncTable = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const registerKeyOnQuery = (defaultTable?: string) => {
-    if (!defaultTable) {
-      return;
-    }
-    if (searchParams.get('table')) {
+  const registerKeyOnQuery = (keys: string[]) => {
+    const current = searchParams.get('table');
+    if (!keys.length || (current && keys.includes(current))) {
       return;
     }
 
     setSearchParams((prev) => {
-      prev.set('table', defaultTable);
+      prev.set('table', keys[0]);
       return prev;
-    });
+    }, { replace: true });
   };
 
   return { registerKeyOnQuery };

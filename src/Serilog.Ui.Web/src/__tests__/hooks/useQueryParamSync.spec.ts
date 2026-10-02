@@ -1,5 +1,4 @@
 import {
-  act,
   renderHookSerilogUiTestWrapper,
 } from '__tests__/_setup/testing-utils';
 import {
@@ -105,44 +104,45 @@ describe('useQueryParamSync', () => {
 });
 
 describe('useQuerySyncTable', () => {
-  it('not invokes set-params on empty table', () => {
+  it('does not invoke set-params when there are no keys', () => {
     const { fn } = mockSearchParams();
     const { result } = renderHookSerilogUiTestWrapper(() =>
       useQuerySyncTable(),
     );
 
-    result.current.registerKeyOnQuery();
+    result.current.registerKeyOnQuery([]);
 
     expect(fn).not.toHaveBeenCalled();
   });
 
-  it('not invokes set-params when query-params has table', () => {
+  it('does not invoke set-params when query table is known', () => {
     const { fn } = mockSearchParams('table=def');
     const { result } = renderHookSerilogUiTestWrapper(() =>
       useQuerySyncTable(),
     );
 
-    result.current.registerKeyOnQuery('other-table');
+    result.current.registerKeyOnQuery(['other-table', 'def']);
 
     expect(fn).not.toHaveBeenCalled();
   });
 
-  it('invokes set-params when default table is provided', () => {
-    const { p, fn } = mockSearchParams();
+  it.each([undefined, 'table=unknown'])(
+    'sets the first key when the query table is missing or unknown: %s',
+    (startingParams) => {
+      const { p, fn } = mockSearchParams(startingParams);
+      const { result } = renderHookSerilogUiTestWrapper(() =>
+        useQuerySyncTable(),
+      );
 
-    const { result } = renderHookSerilogUiTestWrapper(() =>
-      useQuerySyncTable(),
-    );
+      result.current.registerKeyOnQuery(['default', 'other-table']);
 
-    act(() => {
-      result.current.registerKeyOnQuery('default');
-    });
+      expect(fn).toHaveBeenCalledOnce();
+      expect(fn).toHaveBeenCalledWith(expect.any(Function), { replace: true });
 
-    expect(fn).toHaveBeenCalledOnce();
-
-    fn.mock.lastCall?.[0](p);
-    expect(p.toString()).toBe('table=default');
-  });
+      fn.mock.lastCall?.[0](p);
+      expect(p.get('table')).toBe('default');
+    },
+  );
 });
 
 describe('useQueryParamReader', () => {
@@ -173,5 +173,25 @@ describe('useQueryParamReader', () => {
     expect(fn).toHaveBeenCalledOnce();
     // checking that invalid values have been removed from the query params...
     expect(fn.mock.lastCall?.[0].toString()).toBe('level=Warning&table=logs');
+  });
+
+  it('keeps dotted table query params and applies them to the form', () => {
+    const getValues = () => ({
+      level: null,
+      search: '',
+      table: '',
+    });
+    const setValue = vi.fn();
+    vi.spyOn(form, 'useSearchForm').mockImplementation(
+      () => ({ getValues, setValue }) as any,
+    );
+
+    const { p, fn } = mockSearchParams();
+    p.set('table', 'MsSQL.dbo.Logs');
+
+    renderHookSerilogUiTestWrapper(() => useQueryParamReader());
+
+    expect(setValue).toHaveBeenCalledWith('table', 'MsSQL.dbo.Logs');
+    expect(fn).not.toHaveBeenCalled();
   });
 });
