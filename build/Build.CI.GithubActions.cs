@@ -115,6 +115,8 @@ partial class Build
                     "src/Serilog.Ui.Web/wwwroot/**/*",
                     "src/Serilog.Ui.Web/node_modules/**/*",
                     "src/Serilog.Ui.Web/*.js",
+                    "src/Serilog.Ui.Web/*.cjs",
+                    "src/Serilog.Ui.Web/*.mjs",
                     "src/Serilog.Ui.Web/*.ts",
                     "src/Serilog.Ui.Web/*.tsx",
                     "src/Serilog.Ui.Web/*.json")
