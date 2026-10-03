@@ -103,6 +103,7 @@ interface RenderHookConfig<T> {
   initialProps?: T;
   authType?: AuthType;
   columnsInfo?: ColumnsInfo;
+  initialEntries?: string[];
 }
 
 export const renderHookSerilogUiTestWrapper = <T, T1>(
@@ -113,7 +114,8 @@ export const renderHookSerilogUiTestWrapper = <T, T1>(
     wrapper: ({ children }: { children: ReactNode }) => (
       <Wrapper
         authType={config?.authType ?? AuthType.Basic}
-        columnsInfo={config?.columnsInfo ?? {}}>
+        columnsInfo={config?.columnsInfo ?? {}}
+        initialEntries={config?.initialEntries}>
         {children}
       </Wrapper>
     ),

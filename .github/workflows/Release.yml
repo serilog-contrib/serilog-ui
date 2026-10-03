@@ -38,30 +38,34 @@ on:
         description: "Ui"
         required: true
 
+permissions:
+  contents: read
+
 jobs:
   ubuntu-latest:
     name: ubuntu-latest
     runs-on: ubuntu-latest
     steps:
+
       - uses: actions/setup-node@v6
         with:
-          node-version: "24.x"
+          node-version: '24.x'
 
       - uses: actions/setup-java@v5
         with:
-          distribution: "temurin"
-          java-version: "25"
+          distribution: 'temurin'
+          java-version: '25'
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: "Cache: .nuke/temp, ~/.nuget/packages"
-        uses: actions/cache@v5
+      - name: 'Cache: .nuke/temp, ~/.nuget/packages'
+        uses: actions/cache@v4
         with:
           path: |
             .nuke/temp
             ~/.nuget/packages
           key: ${{ runner.os }}-${{ hashFiles('**/global.json', '**/*.csproj', '**/Directory.Packages.props') }}
-      - name: "Run: Publish"
+      - name: 'Run: Publish'
         run: ./build.cmd Publish
         env:
           ElasticProvider: ${{ github.event.inputs.ElasticProvider }}
@@ -79,12 +83,12 @@ jobs:
         if: always()
         with:
           name: DotNET - Tests
-          path: "**/test-results.trx"
+          path: '**/test-results.trx'
           reporter: dotnet-trx
           fail-on-error: false
 
       - name: SonarCloud run
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v8
         if: github.event_name != 'pull_request'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information, if any
@@ -103,6 +107,6 @@ jobs:
         if: always()
         with:
           name: JS - Tests
-          path: "**/test-junit-report.xml"
+          path: '**/test-junit-report.xml'
           reporter: jest-junit
           fail-on-error: false

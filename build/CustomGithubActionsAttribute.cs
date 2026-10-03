@@ -147,7 +147,7 @@ class GithubActionUploadArtifact(string path) : GitHubActionsStep
 }
 
 /// <summary>
-/// using: https://github.com/SonarSource/sonarcloud-github-action
+/// using: https://github.com/marketplace/actions/official-sonarqube-scan
 /// </summary>
 class GithubActionSonarCloud : GitHubActionsStep
 {
@@ -159,7 +159,7 @@ class GithubActionSonarCloud : GitHubActionsStep
 
         using (writer.Indent())
         {
-            writer.WriteLine("uses: SonarSource/sonarcloud-github-action@master");
+            writer.WriteLine("uses: SonarSource/sonarqube-scan-action@v8");
 
             writer.WriteLine("if: github.event_name != 'pull_request'");
 

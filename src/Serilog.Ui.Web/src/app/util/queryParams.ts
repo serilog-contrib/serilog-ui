@@ -2,11 +2,11 @@ import type { SearchForm } from '../../types/types';
 import dayjs from 'dayjs';
 import {
   LogLevel,
-
   SortDirectionOptions,
   SortPropertyOptions,
 } from '../../types/types';
 
+export const queryParamsStatePreserverKey = 'currentQuery';
 interface ParamParser<T> {
   canHandle: (key: string) => boolean;
   extract: (
@@ -20,7 +20,7 @@ interface ParamParser<T> {
 }
 
 const DateParser: ParamParser<Date> = {
-  canHandle: k => ['startDate', 'endDate'].includes(k),
+  canHandle: (k) => ['startDate', 'endDate'].includes(k),
   extract: (value) => {
     if (!value) {
       return { valued: false, value: null };
@@ -40,8 +40,10 @@ enum entriesPerPage {
   Fifty = '50',
   OneHundred = '100',
 }
-const EnumParser: ParamParser<LogLevel | SortPropertyOptions | SortDirectionOptions> = {
-  canHandle: k => ['entriesPerPage', 'level', 'sortBy', 'sortOn'].includes(k),
+const EnumParser: ParamParser<
+  LogLevel | SortPropertyOptions | SortDirectionOptions
+> = {
+  canHandle: (k) => ['entriesPerPage', 'level', 'sortBy', 'sortOn'].includes(k),
   extract: (value, k) => {
     if (!value) {
       return { valued: false, value: null };
@@ -72,7 +74,7 @@ const EnumParser: ParamParser<LogLevel | SortPropertyOptions | SortDirectionOpti
   },
 };
 const NumberParser: ParamParser<number> = {
-  canHandle: k => ['page'].includes(k),
+  canHandle: (k) => ['page'].includes(k),
   extract: (value) => {
     if (!value) {
       return { valued: false, value: null };
@@ -86,10 +88,12 @@ const NumberParser: ParamParser<number> = {
   },
 };
 const StringParser: ParamParser<string> = {
-  canHandle: k => ['search', 'table'].includes(k),
-  extract: (value) => {
-    return { valued: !!value, value };
-  },
+  canHandle: (k) => ['search', 'table'].includes(k),
+  extract: (value) => ({
+    valued: !!value,
+    // [NOTE] decoding due to string parameter encoding on query
+    value: decodeURIComponent(value ?? ''),
+  }),
 };
 
 const keys = [
@@ -113,7 +117,7 @@ export const parseSearchParams = (searchParams: URLSearchParams) => {
     cleanedFromInvalidQueryString: URLSearchParams | undefined;
   }>(
     (prev, curr) => {
-      const validator = validators.find(x => x.canHandle(curr));
+      const validator = validators.find((x) => x.canHandle(curr));
       if (!validator) {
         return prev;
       }

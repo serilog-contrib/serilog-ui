@@ -19,7 +19,9 @@ using static CustomGithubActionsAttribute;
     ImportSecrets = new[] { nameof(SonarToken) },
     InvokedTargets = new[] { nameof(Backend_SonarScan_End) },
     OnPushBranches = new[] { "master", "dev" },
-    OnPullRequestBranches = new[] { "master", "dev" }
+    OnPullRequestBranches = new[] { "master", "dev" },
+    ReadPermissions = [GitHubActionsPermissions.Contents],
+    WritePermissions = [GitHubActionsPermissions.PullRequests]
 )]
 [CustomGithubActions("JS-build",
     GitHubActionsImage.UbuntuLatest,
@@ -30,7 +32,9 @@ using static CustomGithubActionsAttribute;
     ImportSecrets = new[] { nameof(SonarTokenUi) },
     InvokedTargets = new[] { nameof(Frontend_Tests_Ci) },
     OnPushBranches = new[] { "master", "dev" },
-    OnPullRequestBranches = new[] { "master", "dev" }
+    OnPullRequestBranches = new[] { "master", "dev" },
+    ReadPermissions = [GitHubActionsPermissions.Contents],
+    WritePermissions = [GitHubActionsPermissions.PullRequests]
 )]
 [CustomGithubActions("Release",
     GitHubActionsImage.UbuntuLatest,
@@ -48,7 +52,8 @@ using static CustomGithubActionsAttribute;
         nameof(MySqlProvider),
         nameof(PostgresProvider),
         nameof(Ui),
-    }
+    },
+    ReadPermissions = [GitHubActionsPermissions.Contents]
 )]
 partial class Build
 {

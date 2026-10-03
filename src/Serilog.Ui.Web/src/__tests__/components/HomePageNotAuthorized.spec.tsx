@@ -1,4 +1,7 @@
-import { renderSerilogUiTestWrapper, screen } from '__tests__/_setup/testing-utils';
+import {
+  renderSerilogUiTestWrapper,
+  screen,
+} from '__tests__/_setup/testing-utils';
 import { describe, expect, it, vi } from 'vitest';
 import { HomePageNotAuthorized } from '../../app/components/HomePageNotAuthorized';
 
@@ -9,6 +12,7 @@ const propsMock = {
 };
 vi.mock('react-router', async () => {
   return {
+    ...(await vi.importActual<typeof import('react-router')>('react-router')),
     Navigate: () => <div>Move to</div>,
   };
 });

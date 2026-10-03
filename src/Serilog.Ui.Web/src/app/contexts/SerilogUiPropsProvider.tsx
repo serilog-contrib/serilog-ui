@@ -39,7 +39,7 @@ export const SerilogUiPropsProvider = ({
   const serverProps = readServerDataOnRender();
   const [isUtc, setIsUtc] = useState<boolean>(false);
   const [authenticatedFromAccessDenied, setAuthenticatedFromAccessDenied] =
-    useState<boolean>(false);
+    useState<boolean>();
 
   const providerValue = useMemo(
     () => ({

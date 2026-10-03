@@ -361,3 +361,4 @@ coverage/
 
 # JetBrains IDE user folders
 .idea/
+.yarn/

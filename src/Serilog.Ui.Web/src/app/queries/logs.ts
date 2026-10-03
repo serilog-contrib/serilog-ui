@@ -1,6 +1,7 @@
 import type { SearchForm, SearchResult } from '../../types/types';
 import { getSearchableDate } from 'app/util/dates';
 import dayjs from 'dayjs';
+import { SearchParameters } from '../../types/types';
 import { isNotNullGuard, isStringGuard } from '../util/guards';
 import {
   determineHost,
@@ -16,20 +17,33 @@ const defaultReturn = {
   total: 0,
 };
 
+/** we encode search to let users include query-special characters, otherwise those would be stripped (ex: + sign) */
+const encodeSearchParam = (paramName: string, paramValue?: string | null) =>
+  paramName === SearchParameters.Search
+    ? encodeURIComponent(paramValue as string)
+    : paramValue;
 const queryParamIfSet = (paramName: string, paramValue?: string | null) =>
   isNotNullGuard(paramValue) && isStringGuard(paramValue)
-    ? `&${paramName}=${paramValue}`
+    ? `&${paramName}=${encodeSearchParam(paramName, paramValue)}`
     : '';
 
-const prepareSearchUrl = (input: SearchForm & { key?: string | null }, routePrefix?: string) => {
-  const { entriesPerPage: count, page, table: key, ...inputData } = { ...input };
+const prepareSearchUrl = (
+  input: SearchForm & { key?: string | null },
+  routePrefix?: string,
+) => {
+  const {
+    entriesPerPage: count,
+    page,
+    table: key,
+    ...inputData
+  } = { ...input };
 
   const startDate = inputData.startDate;
   const endDate = inputData.endDate;
   if (
-    isNotNullGuard(startDate)
-    && isNotNullGuard(endDate)
-    && dayjs(startDate).isAfter(dayjs(endDate))
+    isNotNullGuard(startDate) &&
+    isNotNullGuard(endDate) &&
+    dayjs(startDate).isAfter(dayjs(endDate))
   ) {
     sendUnexpectedNotification(
       'Start date cannot be greater than end date',

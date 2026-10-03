@@ -1,4 +1,7 @@
-import { renderHookSerilogUiTestWrapper, waitFor } from '__tests__/_setup/testing-utils';
+import {
+  renderHookSerilogUiTestWrapper,
+  waitFor,
+} from '__tests__/_setup/testing-utils';
 import { useQueryAuth } from 'app/hooks/useQueryAuth';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -26,15 +29,18 @@ vi.mock('../../app/hooks/useQueryTableKeys', () => ({
 
 describe('useQueryAuth', () => {
   beforeEach(() => {
-    mockTableKeys.refetch.mockClear()
-  })
+    mockTableKeys.refetch.mockClear();
+  });
 
   it('not runs request if home is not blocked', () => {
     mockedProps.blockHomeAccess = false;
 
     renderHookSerilogUiTestWrapper(() => useQueryAuth());
 
-    expect(mockedProps.setAuthenticatedFromAccessDenied).not.toHaveBeenCalled();
+    // we call it to unblock the routing, considering the path-denial check completed
+    expect(
+      mockedProps.setAuthenticatedFromAccessDenied,
+    ).toHaveBeenCalledExactlyOnceWith(false);
     expect(mockTableKeys.refetch).not.toHaveBeenCalled();
   });
 
@@ -43,7 +49,9 @@ describe('useQueryAuth', () => {
 
     renderHookSerilogUiTestWrapper(() => useQueryAuth());
 
-    expect(mockedProps.setAuthenticatedFromAccessDenied).toHaveBeenCalledWith(false);
+    expect(mockedProps.setAuthenticatedFromAccessDenied).toHaveBeenCalledWith(
+      false,
+    );
     expect(mockTableKeys.refetch).not.toHaveBeenCalled();
   });
 
@@ -59,7 +67,9 @@ describe('useQueryAuth', () => {
 
       expect(mockTableKeys.refetch).toHaveBeenCalledOnce();
       await waitFor(() => {
-        expect(mockedProps.setAuthenticatedFromAccessDenied).toHaveBeenCalledWith(false);
+        expect(
+          mockedProps.setAuthenticatedFromAccessDenied,
+        ).toHaveBeenCalledWith(false);
       });
     },
   );
@@ -75,7 +85,9 @@ describe('useQueryAuth', () => {
 
     expect(mockTableKeys.refetch).toHaveBeenCalledOnce();
     await waitFor(() => {
-      expect(mockedProps.setAuthenticatedFromAccessDenied).toHaveBeenCalledWith(true);
+      expect(mockedProps.setAuthenticatedFromAccessDenied).toHaveBeenCalledWith(
+        true,
+      );
     });
   });
 });
