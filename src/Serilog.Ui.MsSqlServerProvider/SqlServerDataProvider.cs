@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using Serilog.Ui.Core;
 using Serilog.Ui.Core.Models;
 using Serilog.Ui.MsSqlServerProvider.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -36,6 +37,9 @@ public class SqlServerDataProvider<T>(SqlServerDbOptions options, SqlServerQuery
 
         return (await logsTask, await logCountTask);
     }
+
+    public Task<LogStatisticModel> FetchDashboardAsync(CancellationToken cancellationToken = default) =>
+        throw new NotImplementedException();
 
     private async Task<IEnumerable<LogModel>> GetLogsAsync(FetchLogsQuery queryParams)
     {
