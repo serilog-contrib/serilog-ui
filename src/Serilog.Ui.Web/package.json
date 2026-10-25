@@ -49,7 +49,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",
     "eslint-plugin-testing-library": "^7.16.2",
-    "happy-dom": "^20.14.5",
+    "happy-dom": "^21.0.4",
     "msw": "^2.14.6",
     "postcss": "^8.5.28",
     "postcss-preset-mantine": "^1.18.0",
