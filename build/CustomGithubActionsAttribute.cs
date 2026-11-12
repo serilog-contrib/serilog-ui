@@ -26,7 +26,7 @@ class CustomGithubActionsAttribute(string name, GitHubActionsImage image, params
     {
         var job = base.GetJobs(image, relevantTargets);
         GitHubActionsStep[] backendSteps = AddGithubActions.Any(act => act == GithubAction.Backend_Artifact) ?
-            [new GitHubActionSetupDotnet("8.0.x"), new GitHubActionSetupDotnet("10.0.x"),] : [];
+            [new GitHubActionSetupDotnet("10.0.x"), new GitHubActionSetupDotnet("11.0.x"),] : [];
         GitHubActionsStep[] setupSteps = [.. backendSteps, new GitHubActionSetupNode(), new GitHubActionSetupJava25(), .. job.Steps];
         var newSteps = new List<GitHubActionsStep>(setupSteps);
 
