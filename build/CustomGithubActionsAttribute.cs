@@ -25,8 +25,8 @@ class CustomGithubActionsAttribute(string name, GitHubActionsImage image, params
     protected override GitHubActionsJob GetJobs(GitHubActionsImage image, IReadOnlyCollection<ExecutableTarget> relevantTargets)
     {
         var job = base.GetJobs(image, relevantTargets);
-        GitHubActionsStep[] backendSteps = AddGithubActions.Any(act => act == GithubAction.Backend_Artifact) ?
-            AddGithubActions.Any(act => act == GithubAction.Backend_Artifact || act == GithubAction.Backend_Reporter) ?
+        GitHubActionsStep[] backendSteps = AddGithubActions.Any(act => act == GithubAction.Backend_Artifact || act == GithubAction.Backend_Reporter) ?
+            [new GitHubActionSetupDotnet("10.0.x"), new GitHubActionSetupDotnet("11.0.x"),] : [];
         GitHubActionsStep[] setupSteps = [.. backendSteps, new GitHubActionSetupNode(), new GitHubActionSetupJava25(), .. job.Steps];
         var newSteps = new List<GitHubActionsStep>(setupSteps);
 
