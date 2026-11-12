@@ -9,6 +9,8 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.*"/>
         <PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.1" />
+        <!-- pin patched version: Microsoft.Data.SqlClient pulls vulnerable System.Security.Cryptography.Pkcs -->
+        <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.15" />
         <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1"/>
         <PackageReference Include="Serilog.Extensions.Hosting" Version="10.0.0"/>
         <PackageReference Include="Serilog.Sinks.Map" Version="2.0.0"/>
